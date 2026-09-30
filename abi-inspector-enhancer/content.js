@@ -52,7 +52,7 @@
     .icon { width:14px; height:14px; fill:currentColor; flex:none; pointer-events:none; }
     button { display:inline-flex; align-items:center; justify-content:center; gap:7px; }
     #mute { width:34px; padding:0; }
-    .panel { padding:0 14px 10px; background:var(--abi-surface,#0b1114); background-image:repeating-linear-gradient(135deg,transparent 0 3px,#ffffff03 3px 4px); border:0; border-bottom:1px solid var(--abi-border,#41494b); }
+    .panel { padding:0 14px 10px; background:transparent; border:0; border-bottom:1px solid var(--abi-border,#41494b); }
     .timeline { display:flex; align-items:center; gap:16px; height:35px; }
     .time { font-size:13px; font-variant-numeric:tabular-nums; white-space:nowrap; min-width:87px; text-align:right; }
     .row { display:flex; align-items:center; flex-wrap:wrap; row-gap:10px; }
