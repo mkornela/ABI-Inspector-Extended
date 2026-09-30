@@ -2,7 +2,7 @@
 
 A focused Chrome and Edge extension for the **Arena Breakout: Infinite Inspector Workbench**. It replaces the default bottom video controls with a compact toolbar that uses the site's own typography and colors.
 
-**Version 1.2.0 · Manifest V3 · No build step · No runtime network requests**
+**Version 1.3.0 · Manifest V3 · No build step · No runtime network requests**
 
 ![ABI Inspector Extended preview](preview.png)
 

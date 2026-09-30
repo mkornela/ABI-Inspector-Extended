@@ -4,7 +4,7 @@ A self-contained Chrome / Edge Manifest V3 extension for the official Arena Brea
 
 https://www.arenabreakoutinfinite.com/act/a20251028patroller/?lang=en
 
-Version 1.2.0. No build step, dependencies, account connection, or external assets.
+Version 1.3.0. No build step, dependencies, account connection, or external assets.
 
 ## Install in Chrome or Edge
 
