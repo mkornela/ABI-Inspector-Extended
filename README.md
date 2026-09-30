@@ -6,6 +6,8 @@ A focused Chrome and Edge extension for the **Arena Breakout: Infinite Inspector
 
 ![ABI Inspector Extended preview](preview.png)
 
+![ABI Inspector Extended fullscreen preview](fullscreen-preview.png)
+
 ## Features
 
 - **Fits the Workbench frame.** Video, toolbar, and the official **Violation / No Violation / Uncertain** buttons are stacked inside the site's video box, with no padding around the footage.
