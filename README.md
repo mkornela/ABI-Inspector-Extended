@@ -4,7 +4,11 @@ A focused Chrome and Edge extension for the **Arena Breakout: Infinite Inspector
 
 **Version 1.3.0 · Manifest V3 · No build step · No runtime network requests**
 
+**Preview of the player**
+
 ![ABI Inspector Extended preview](preview.png)
+
+**Preview of the player (Fullscreen)**
 
 ![ABI Inspector Extended fullscreen preview](fullscreen-preview.png)
 
