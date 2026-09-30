@@ -140,3 +140,6 @@ tests/*-results.json
 tests/results.json
 tests/*.png
 
+
+# Release archives
+*.zip
