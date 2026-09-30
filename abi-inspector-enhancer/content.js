@@ -55,14 +55,24 @@
     .panel { padding:0 14px 10px; background:transparent; border:0; border-bottom:1px solid var(--abi-border,#41494b); }
     .timeline { display:flex; align-items:center; gap:16px; height:35px; }
     .time { font-size:13px; font-variant-numeric:tabular-nums; white-space:nowrap; min-width:87px; text-align:right; }
-    .row { display:flex; align-items:center; flex-wrap:wrap; row-gap:10px; }
-    .group { display:flex; align-items:center; gap:2px; padding:0 10px; border-left:1px solid color-mix(in srgb,var(--abi-border,#596160) 55%,transparent); }
-    .group:first-child { padding-left:0; border-left:0; }
-    .group:last-child { padding-right:0; }
-    button,select { font:inherit; font-size:15px; letter-spacing:inherit; text-transform:uppercase; height:34px; border:1px solid transparent; border-radius:0; color:inherit; background:transparent; padding:0 8px; cursor:pointer; white-space:nowrap; box-shadow:none; }
-    button:hover,select:hover { border-color:var(--abi-border,#707674); background:#ffffff05; }
+    .panel { container-type:inline-size; }
+    .row { display:grid; grid-template-columns:1fr auto 1fr; align-items:center; column-gap:12px; row-gap:8px; }
+    .left { justify-self:start; display:flex; align-items:center; }
+    .center { display:flex; align-items:center; justify-content:center; flex-wrap:wrap; gap:6px 26px; }
+    .right { justify-self:end; display:flex; align-items:center; gap:14px; }
+    .group { display:flex; align-items:center; gap:2px; }
+    .label { font-size:13px; text-transform:uppercase; padding:0 6px; opacity:.8; user-select:none; }
+    @container (max-width:860px) {
+      .row { grid-template-columns:1fr auto; }
+      .center { grid-column:1 / -1; grid-row:2; }
+    }
+    button { font:inherit; font-size:15px; letter-spacing:inherit; text-transform:uppercase; height:34px; border:1px solid transparent; border-radius:0; color:inherit; background:transparent; padding:0 8px; cursor:pointer; white-space:nowrap; box-shadow:none; }
+    button:hover { border-color:var(--abi-border,#707674); background:#ffffff05; }
     button[aria-pressed=true] { color:var(--abi-accent,#c3472d); border-bottom-color:currentColor; }
-    .primary { min-width:62px; color:var(--abi-accent,#c3472d); border:1px solid currentColor; margin-right:1px; }
+    .primary { width:40px; padding:0; color:var(--abi-accent,#c3472d); border:1px solid currentColor; }
+    #previous,#next,#fullscreen,#slower,#faster { width:34px; padding:0; }
+    #speedval { min-width:46px; padding:0 4px; text-transform:none; }
+    #speedval.changed { color:var(--abi-accent,#c3472d); }
     button:disabled,input:disabled { opacity:.35; cursor:default; }
     :focus-visible { outline:1px solid var(--abi-text,#e0e3de); outline-offset:2px; }
     input[type=range] { appearance:none; -webkit-appearance:none; height:18px; margin:0; padding:0; border:0; background:transparent; cursor:pointer; min-width:0; border-radius:0; }
@@ -70,9 +80,6 @@
     input[type=range]::-webkit-slider-thumb { appearance:none; -webkit-appearance:none; width:3px; height:11px; margin-top:-4px; border:0; border-radius:0; background:var(--abi-text,#e0e3de); box-shadow:none; }
     #seek { flex:1 1 0; width:0; }
     #volume { width:50px; }
-    label { display:flex; align-items:center; gap:4px; font-size:13px; text-transform:uppercase; }
-    select { font-size:14px; padding:0 3px; }
-    option { background:#0b1114; color:#e0e3de; }
     #status { font-size:13px; line-height:1.5; padding-top:6px; }
     #status:empty { display:none; }
     @media(max-width:600px) { .panel { padding-inline:8px; } button { padding-inline:6px; font-size:14px; } .group { padding-inline:6px; } }
@@ -136,14 +143,16 @@
     panel.innerHTML = `
       <div class="timeline"><input id="seek" type="range" min="0" max="1" step="0.01" value="0" aria-label="Video position"><span class="time" id="time">00:00 / --:--</span></div>
       <div class="row">
-        <div class="group" role="group" aria-label="Playback"><button id="play" class="primary" title="Play / Pause (Space or K)">Play</button></div>
-        <div class="group" role="group" aria-label="Seek">
-          <button id="back10" title="Back 10 seconds">−10s</button><button id="back5" title="Back 5 seconds (J or Left)">−5s</button><button id="forward5" title="Forward 5 seconds (L or Right)">+5s</button><button id="forward10" title="Forward 10 seconds">+10s</button>
+        <div class="left"><div class="group" role="group" aria-label="Playback"><button id="play" class="primary" title="Play / Pause (Space or K)">Play</button></div></div>
+        <div class="center">
+          <div class="group" role="group" aria-label="Seek"><button id="back10" title="Back 10 seconds">−10s</button><button id="back5" title="Back 5 seconds (J or Left)">−5s</button><button id="forward5" title="Forward 5 seconds (L or Right)">+5s</button><button id="forward10" title="Forward 10 seconds">+10s</button></div>
+          <div class="group" role="group" aria-label="Frame stepping"><button id="previous" title="Previous approximate frame (comma)">Previous frame</button><span class="label" aria-hidden="true">Frames</span><button id="next" title="Next approximate frame (period)">Next frame</button></div>
+          <div class="group" role="group" aria-label="Playback speed"><span class="label" aria-hidden="true">Speed</span><button id="slower" title="Slower ([)" aria-label="Slower playback ([)">−</button><button id="speedval" title="Reset to 1× (\)" aria-label="Playback speed. Click to reset to 1×">1×</button><button id="faster" title="Faster (])" aria-label="Faster playback (])">+</button></div>
         </div>
-        <div class="group" role="group" aria-label="Frame stepping"><button id="previous" title="Previous approximate frame (comma)">Previous frame</button><button id="next" title="Next approximate frame (period)">Next frame</button></div>
-        <div class="group" role="group" aria-label="Playback settings"><label>Speed <select id="speed" aria-label="Playback speed"><option value="0.1">0.1×</option><option value="0.25">0.25×</option><option value="0.5">0.5×</option><option value="0.75">0.75×</option><option value="1" selected>1×</option><option value="1.25">1.25×</option><option value="1.5">1.5×</option><option value="2">2×</option><option value="3">3×</option></select></label></div>
-        <div class="group" role="group" aria-label="Audio"><button id="mute" title="Mute (M)" aria-pressed="false">Mute</button><input id="volume" type="range" min="0" max="1" step="0.01" value="1" aria-label="Volume"></div>
-        <div class="group" role="group" aria-label="View"><button id="fullscreen" title="Fullscreen (F); Escape to exit" aria-pressed="false">Fullscreen</button></div>
+        <div class="right">
+          <div class="group" role="group" aria-label="Audio"><button id="mute" title="Mute (M)" aria-pressed="false">Mute</button><input id="volume" type="range" min="0" max="1" step="0.01" value="1" aria-label="Volume"></div>
+          <div class="group" role="group" aria-label="View"><button id="fullscreen" title="Fullscreen (F); Escape to exit" aria-pressed="false">Fullscreen</button></div>
+        </div>
       </div>
       <div id="status" role="status" aria-live="polite"></div>`;
     shadow.append(panel);
@@ -175,13 +184,13 @@
     decorate(
       ui.previous,
       "backward-step",
-      "Previous frame",
+      "",
       "Previous approximate frame (comma)",
     );
     decorate(
       ui.next,
       "forward-step",
-      "Next frame",
+      "",
       "Next approximate frame (period)",
     );
     decorate(ui.mute, "volume-high", "", "Mute (M)");
@@ -250,7 +259,7 @@
     }
     function render() {
       const ready = finite();
-      for (const id of ["play", "speed", "mute", "volume"])
+      for (const id of ["play", "slower", "speedval", "faster", "mute", "volume"])
         ui[id].disabled = !video;
       for (const id of [
         "seek",
@@ -266,7 +275,7 @@
       decorate(
         ui.play,
         paused ? "play" : "pause",
-        paused ? "Play" : "Pause",
+        "",
         `${paused ? "Play" : "Pause"} video (Space or K)`,
       );
       ui.play.setAttribute(
@@ -297,7 +306,11 @@
           `${video.muted ? "Unmute" : "Mute"} (M)`,
         );
         ui.mute.setAttribute("aria-pressed", String(video.muted));
-        ui.speed.value = String(video.playbackRate);
+        const rate = video.playbackRate;
+        ui.speedval.textContent = `${Number(rate.toFixed(2))}×`;
+        ui.speedval.classList.toggle("changed", Math.abs(rate - 1) > 0.001);
+        ui.slower.disabled = rate <= SPEEDS[0] + 0.001;
+        ui.faster.disabled = rate >= SPEEDS[SPEEDS.length - 1] - 0.001;
       }
       ui.fullscreen.setAttribute(
         "aria-pressed",
@@ -307,7 +320,7 @@
       decorate(
         ui.fullscreen,
         expanded ? "compress" : "expand",
-        expanded ? "Exit fullscreen" : "Fullscreen",
+        "",
         expanded ? "Exit fullscreen (F or Escape)" : "Fullscreen (F)",
       );
     }
@@ -330,7 +343,6 @@
       if (!video) return;
       video.pause();
       jump(direction / 30);
-      notice("Approximate frame step · 1/30 second");
     }
     async function togglePlay() {
       if (!video) return;
@@ -353,7 +365,26 @@
         notice("Fullscreen unavailable in this browser context");
       }
     }
+    // Speed ladder: one click per step; the value button resets to 1×.
+    const SPEEDS = [0.1, 0.25, 0.5, 0.75, 1, 1.25, 1.5, 2, 3];
+    function setSpeed(rate) {
+      if (!video) return;
+      video.playbackRate = rate;
+      render();
+    }
+    function stepSpeed(direction) {
+      if (!video) return;
+      const now = video.playbackRate;
+      const next =
+        direction > 0
+          ? SPEEDS.find((s) => s > now + 0.001)
+          : [...SPEEDS].reverse().find((s) => s < now - 0.001);
+      if (next !== undefined) setSpeed(next);
+    }
     const actions = {
+      slower: () => stepSpeed(-1),
+      faster: () => stepSpeed(1),
+      speedval: () => setSpeed(1),
       play: togglePlay,
       back10: () => jump(-10),
       back5: () => jump(-5),
@@ -379,12 +410,6 @@
       if (video) {
         video.volume = Number(ui.volume.value);
         video.muted = video.volume === 0;
-        render();
-      }
-    });
-    on(ui.speed, "change", () => {
-      if (video) {
-        video.playbackRate = Number(ui.speed.value);
         render();
       }
     });
@@ -428,6 +453,9 @@
           ".": "next",
           m: "mute",
           f: "fullscreen",
+          "[": "slower",
+          "]": "faster",
+          "\\": "speedval",
         };
         const action =
           keys[event.key.length === 1 ? event.key.toLowerCase() : event.key];
