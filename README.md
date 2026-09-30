@@ -6,8 +6,6 @@ A focused Chrome and Edge extension for the **Arena Breakout: Infinite Inspector
 
 ![ABI Inspector Extended preview](preview.png)
 
-_Toolbar preview from an offline fixture. No inspection footage or account identifiers are included._
-
 ## Features
 
 - Play and pause, with a progress slider and elapsed / total time.
