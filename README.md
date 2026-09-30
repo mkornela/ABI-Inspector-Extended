@@ -8,14 +8,36 @@ A focused Chrome and Edge extension for the **Arena Breakout: Infinite Inspector
 
 ## Features
 
-- Play and pause, with a progress slider and elapsed / total time.
-- Separate **−10s, −5s, +5s, and +10s** seek controls.
-- Clearly labeled **Previous frame** and **Next frame** buttons that pause playback and step approximately 1/30 second.
-- Nine playback speeds: **0.1×, 0.25×, 0.5×, 0.75×, 1×, 1.25×, 1.5×, 2×, and 3×**.
+- **Fits the Workbench frame.** Video, toolbar, and the official **Violation / No Violation / Uncertain** buttons are stacked inside the site's video box, with no padding around the footage.
+- **Three-zone toolbar.** Play on the left; seek, frame stepping, and speed centered; volume and fullscreen on the right. Play, mute, and fullscreen are icon-only, and the toolbar background is transparent so it blends into the site.
+- Progress slider with elapsed / total time.
+- Separate **−10s, −5s, +5s, and +10s** seek buttons.
+- **◀ Frames ▶** stepping: pauses playback and steps approximately 1/30 second.
+- **Speed stepper** (**SPEED − 1× +**) across nine speeds: **0.1×, 0.25×, 0.5×, 0.75×, 1×, 1.25×, 1.5×, 2×, and 3×**. The value turns accent-colored when it isn't 1×; click it to reset to 1×.
 - Volume slider and an accessible mute/unmute icon.
 - Fullscreen with the toolbar below the footage and no toolbar scrollbar.
 - Local Font Awesome icons for playback, frame stepping, audio, and fullscreen.
 - Keyboard shortcuts, visible focus states, and automatic reconnection when the official player changes cases.
+
+## Layout
+
+```text
+[            official video (fills the remaining height)            ]
+[ ━━━━━━━━━━━━━━━━━━━━━━ progress ━━━━━━━━━━━━━━━━━━━  00:10 / 01:28 ]
+[▶]      −10s −5s +5s +10s   ◀ FRAMES ▶   SPEED − 1× +      🔊━━  ⛶
+[ Violation ]        [ No Violation ]        [ Uncertain ]
+```
+
+- The Workbench box has a fixed height set by the site, so the video takes whatever height the toolbar and verdict row leave and letterboxes on black if needed. Because the site sizes in `rem` and the toolbar in pixels, the video gets shorter on small windows.
+- When the toolbar is narrower than about 860px, the centered controls wrap onto their own row instead of squeezing.
+- **Exit Inspection** stays in the site's tab bar; it is not moved.
+- To line the video up with the painted frame lines, adjust the insets at the top of the `.play-box` rule in `player.css` (all default to `0`):
+
+```css
+--abi-box-top: 0rem;
+--abi-box-right: 0rem;
+--abi-box-bottom: 0rem;
+```
 
 ## Installation
 
@@ -42,6 +64,8 @@ To restore the original player, disable or remove the extension and refresh the 
 | L or Right arrow | Forward 5 seconds          |
 | Comma            | Previous approximate frame |
 | Period           | Next approximate frame     |
+| [ or ]           | Slower / faster            |
+| \                | Reset speed to 1×          |
 | M                | Mute / unmute              |
 | F                | Enter / exit fullscreen    |
 | Escape           | Exit fullscreen            |
@@ -71,24 +95,21 @@ The extension is plain JavaScript and CSS. Edit the source, reload the unpacked 
 abi-inspector-enhancer/
   manifest.json             Browser declaration and page scope
   content.js                Toolbar, media controls, and lifecycle handling
-  player.css                Workbench and fullscreen layout
+  player.css                Workbench layout (video / toolbar / verdict row) and fullscreen
   README.md                 Standalone installation guide
   THIRD_PARTY_NOTICES.md     Icon attribution
   FONT-AWESOME-LICENSE.txt   Upstream license notice
 ```
 
-### Run the offline checks
+### Check the source
 
-With Node.js and npm installed, run from the repository root:
+With Node.js 20 or newer, run from the repository root:
 
-````sh
-npm install --no-save playwright
-npx playwright install chromium
-npm run check`n```
+```sh
+npm run check
+```
 
-The first suite covers playback controls, all nine speeds, keyboard focus, rerenders, preserved watermark/verdict markup, page scope, and prohibited network/URL access. The second loads the real Manifest V3 extension, exercises an in-memory synthetic video, and checks fullscreen sizing at desktop and narrow widths.
-
-Test HTTP requests are fulfilled locally or blocked. No authenticated account, official footage, or captured case URLs are needed. Generated builds and test fixtures are intentionally excluded from this public source tree.
+This runs a syntax check (`node --check`) on `content.js`. There are no runtime dependencies and no build step. Test fixtures and generated builds are intentionally excluded from this public source tree, and no authenticated account, official footage, or captured case URLs are needed to work on the extension.
 
 ## Troubleshooting and contributions
 
@@ -105,5 +126,3 @@ Bug reports and improvements are welcome. Include the browser version, extension
 Icons: **[Font Awesome Free 6.7.2](https://fontawesome.com/)** by Fonticons, Inc., licensed under **CC BY 4.0**. Eight SVG paths are bundled locally; see [third-party notices](abi-inspector-enhancer/THIRD_PARTY_NOTICES.md) and the [upstream license](abi-inspector-enhancer/FONT-AWESOME-LICENSE.txt).
 
 The site supplies its existing typeface and artwork. Those assets are not distributed in the extension.
-
-````
