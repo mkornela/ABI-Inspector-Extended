@@ -1,15 +1,28 @@
 {
   "manifest_version": 3,
   "name": "ABI Inspector Extended",
-  "version": "1.3.0",
+  "version": "1.4.0",
   "description": "Local playback controls for the official Arena Breakout: Infinite Inspector video. No network requests or verdict automation.",
+  "permissions": ["storage"],
+  "action": {
+    "default_title": "ABI Inspector Extended",
+    "default_popup": "popup.html"
+  },
   "content_scripts": [
     {
       "matches": [
         "https://www.arenabreakoutinfinite.com/act/a20251028patroller/*"
       ],
-      "js": ["content.js"],
-      "css": ["player.css"],
+      "js": ["settings.js"],
+      "run_at": "document_start",
+      "all_frames": false
+    },
+    {
+      "matches": [
+        "https://www.arenabreakoutinfinite.com/act/a20251028patroller/*"
+      ],
+      "js": ["content.js", "dialogs.js"],
+      "css": ["player.css", "layout.css", "dialogs.css"],
       "run_at": "document_idle",
       "all_frames": false
     }

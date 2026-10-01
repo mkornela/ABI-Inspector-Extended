@@ -1,4 +1,4 @@
-(() => {
+function main() {
   "use strict";
   // Exact document guard in addition to the narrow manifest match pattern.
   if (
@@ -549,4 +549,15 @@
     true,
   );
   reconcile();
-})();
+}
+
+// "Player controls" switch (popup). Read once per page load; changing it takes
+// effect after the Inspector page is reloaded.
+if (typeof chrome !== "undefined" && chrome.storage) {
+  chrome.storage.local.get({ controls: true }, ({ controls }) => {
+    document.documentElement.dataset.abiControlsLoaded = controls ? "on" : "off";
+    if (controls) main();
+  });
+} else {
+  main();
+}

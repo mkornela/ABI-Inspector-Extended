@@ -56,36 +56,15 @@ abi-local-player[data-controls-ready]
   display: none !important;
 }
 
-#xcWorking > .content.video:has(abi-local-player) {
-  display: grid !important;
-  grid-template-columns: minmax(240px, 25%) minmax(0, 1fr);
-  grid-template-rows: minmax(0, 1fr); /* keep the site's fixed .content height */
-  align-items: stretch;
-  gap: 0;
-}
-#xcWorking > .content.video:has(abi-local-player) > .info-team {
-  grid-column: 1;
-  grid-row: 1;
-  width: 100% !important;
-  height: auto; /* site sets 8.75rem, taller than the 8.55rem box */
-  min-width: 0;
-  margin: 0 !important;
-  padding: 24px;
-  box-sizing: border-box;
-  border-right: 1px solid #ffffff20;
-}
+/* Workbench box = fixed-height flex column: video, toolbar, verdict row.
+   Works on the site's native flex layout as well as the grid in layout.css. */
 #xcWorking > .content.video:has(abi-local-player) > .play-box {
   /* Insets = gap between the content box and the painted frame lines.
      0 = flush with the site's content box; raise a value if the video covers a frame line. */
   --abi-box-top: 0rem;
   --abi-box-right: 0rem;
   --abi-box-bottom: 0rem;
-  grid-column: 2;
-  grid-row: 1;
-  width: 100% !important;
   min-width: 0;
-  max-width: none;
-  float: none !important;
   margin: 0 !important;
   padding: var(--abi-box-top) var(--abi-box-right) var(--abi-box-bottom) 0;
   box-sizing: border-box;
@@ -106,51 +85,6 @@ abi-local-player[data-controls-ready]
   min-height: 0 !important;
   aspect-ratio: auto;
 }
-#xcWorking > .content.video:has(abi-local-player) .user-info {
-  display: grid;
-  grid-template-columns: 72px minmax(0, 1fr);
-  align-items: center;
-  gap: 5px 12px;
-  height: auto;
-  min-height: 0;
-  padding: 0 0 24px;
-}
-#xcWorking > .content.video:has(abi-local-player) .avatar {
-  grid-column: 1;
-  grid-row: 1 / span 3;
-  width: 72px;
-  height: 82px;
-  margin: 0;
-  position: static;
-  float: none;
-}
-#xcWorking > .content.video:has(abi-local-player) .avatar img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-#xcWorking
-  > .content.video:has(abi-local-player)
-  :is(.username, .userid, .user-status) {
-  position: static;
-  float: none;
-  margin: 0;
-  min-width: 0;
-}
-#xcWorking > .content.video:has(abi-local-player) .userid {
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-#xcWorking > .content.video:has(abi-local-player) .user-status {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-#xcWorking > .content.video:has(abi-local-player) .tips-content {
-  height: auto;
-  max-height: none;
-}
 #xcWorking > .content.video:has(abi-local-player) .play-box > .operation {
   flex: 0 0 auto;
   width: 100%;
@@ -159,20 +93,4 @@ abi-local-player[data-controls-ready]
   box-sizing: border-box;
   justify-content: space-between; /* buttons keep the site's native size */
   background: transparent;
-}
-@media (max-width: 820px) {
-  #xcWorking > .content.video:has(abi-local-player) {
-    grid-template-columns: minmax(0, 1fr);
-    grid-template-rows: none;
-  }
-  #xcWorking > .content.video:has(abi-local-player) > .info-team {
-    grid-column: 1;
-    grid-row: 2;
-    border-right: 0;
-    border-top: 1px solid #ffffff20;
-  }
-  #xcWorking > .content.video:has(abi-local-player) > .play-box {
-    grid-column: 1;
-    grid-row: 1;
-  }
 }

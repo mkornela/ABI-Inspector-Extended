@@ -1,12 +1,12 @@
 {
   "name": "abi-inspector-extended",
-  "version": "1.3.0",
+  "version": "1.4.0",
   "private": true,
   "description": "Development metadata for ABI Inspector Extended.",
   "engines": {
     "node": ">=20"
   },
   "scripts": {
-    "check": "node --check abi-inspector-enhancer/content.js"
+    "check": "node --check abi-inspector-enhancer/content.js && node --check abi-inspector-enhancer/settings.js && node --check abi-inspector-enhancer/dialogs.js && node --check abi-inspector-enhancer/popup.js"
   }
 }
