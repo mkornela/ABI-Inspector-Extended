@@ -44,7 +44,7 @@ Frame stepping is approximate, not decoded-frame-accurate. It uses 1/30 second r
 Click the extension's toolbar icon for two switches, both **on** by default:
 
 - **Player controls**: the replacement toolbar and the layout it needs. Takes effect after reloading the Inspector page; the popup offers a **Reload page** button when a reload is needed.
-- **Site modifications**: the sidebar layout and the restyled verdict dialogs. Takes effect instantly.
+- **Site modifications**: the sidebar layout, full-width tab row with updated labels and version branding, and the restyled verdict dialogs. Takes effect instantly.
 
 With both off, the page is exactly as the site ships it. The switches are stored in the browser's local extension storage.
 
@@ -96,6 +96,7 @@ The source is readable without a build:
 
 - `manifest.json`: narrow Manifest V3 declaration.
 - `settings.js`: mirrors the popup switches onto the page and answers the popup.
+- `site-ui.js`: updates the navigation labels and adds the version brand cell when Exit Inspection is absent (**Site modifications**).
 - `content.js` / `player.css`: toolbar, keyboard controls, media binding, and the video / toolbar / verdict-row layout (**Player controls**).
 - `layout.css`, `dialogs.css` / `dialogs.js`: sidebar layout and verdict dialogs (**Site modifications**).
 - `popup.html` / `popup.css` / `popup.js`: the toolbar popup.

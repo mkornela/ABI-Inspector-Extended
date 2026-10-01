@@ -21,7 +21,7 @@
       "matches": [
         "https://www.arenabreakoutinfinite.com/act/a20251028patroller/*"
       ],
-      "js": ["content.js", "dialogs.js"],
+      "js": ["site-ui.js", "content.js", "dialogs.js"],
       "css": ["player.css", "layout.css", "dialogs.css"],
       "run_at": "document_idle",
       "all_frames": false

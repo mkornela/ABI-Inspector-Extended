@@ -7,6 +7,6 @@
     "node": ">=20"
   },
   "scripts": {
-    "check": "node --check abi-inspector-enhancer/content.js && node --check abi-inspector-enhancer/settings.js && node --check abi-inspector-enhancer/dialogs.js && node --check abi-inspector-enhancer/popup.js"
+    "check": "node --check abi-inspector-enhancer/content.js && node --check abi-inspector-enhancer/settings.js && node --check abi-inspector-enhancer/site-ui.js && node --check abi-inspector-enhancer/dialogs.js && node --check abi-inspector-enhancer/popup.js"
   }
 }
