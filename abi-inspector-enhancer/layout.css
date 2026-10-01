@@ -1,26 +1,167 @@
-/* Site modifications: Workbench layout (sidebar + video column).
-   Switched off by the popup's "Site modifications" toggle, which sets
-   data-abi-site="off" on <html> (see settings.js). Nested so one wrapper
-   gates every rule; needs Chrome/Edge 120+. */
+/* Site modifications: Workbench layout, navigation, and inspector sidebar.
+   Original navigation and profile nodes remain in place, so the site's own
+   tab handlers and live inspector data continue to work. */
 html:not([data-abi-site="off"]) {
+  --abi-accent: #c3472d;
+  --abi-line: #41494b;
+  --abi-text: #e0e3de;
+  --abi-muted: #929a9b;
+  --abi-surface: #0e1214;
+
+  /* The page tabs, Exit Inspection link, and Overview brand cell share one
+     six-column header row. The site's original links stay in place. */
+  .main {
+    --abi-header-gap: 0.12rem;
+    --abi-header-slot: calc((100% - 1.16rem) / 6);
+    background-color: var(--abi-surface) !important;
+  }
+
+  /* Tabs use the same square outlines, thin rules, and restrained accent as
+     the replacement player controls. */
+  .main > .nav,
+  .main .nav,
+  .nav {
+    display: flex !important;
+    align-items: center !important;
+    gap: var(--abi-header-gap);
+    width: calc(100% - var(--abi-header-slot) - 0.4rem) !important;
+    min-height: 58px;
+    margin: 0 !important;
+    padding: 0 0 0 0.28rem !important;
+    box-sizing: border-box;
+    border-bottom: 1px solid var(--abi-line);
+    background: var(--abi-surface);
+    list-style: none;
+  }
+
+  .main .nav.abi-has-brand {
+    width: 100% !important;
+    padding-right: 0.28rem !important;
+  }
+
+  .nav > li {
+    position: relative;
+    display: inline-flex !important;
+    flex: 1 1 0;
+    align-items: center;
+    justify-content: center;
+    min-width: 0;
+    width: var(--abi-header-slot) !important;
+    height: 58px !important;
+    min-height: 58px;
+    margin: 0 !important;
+    padding: 0 8px !important;
+    box-sizing: border-box;
+    border: 1px solid var(--abi-line) !important;
+    border-radius: 0;
+    color: #aab1af !important;
+    background: #101416 !important;
+    font-family: inherit;
+    font-size: 16px;
+    font-weight: 700;
+    letter-spacing: 0.045em;
+    line-height: 1.15;
+    text-align: center;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition:
+      color 140ms ease,
+      border-color 140ms ease,
+      background-color 140ms ease;
+  }
+
+  .main .exit_btn2 {
+    top: -1rem;
+    right: 0.28rem;
+    width: var(--abi-header-slot) !important;
+    height: 58px !important;
+    box-sizing: border-box;
+    border: 1px solid var(--abi-line) !important;
+    border-radius: 0;
+    color: #aab1af !important;
+    background: #101416 !important;
+    font-family: inherit;
+    font-size: 16px !important;
+    font-weight: 700;
+    letter-spacing: 0.045em;
+    line-height: 1.15;
+    white-space: nowrap;
+  }
+
+  .nav > .abi-extension-brand {
+    flex-direction: column;
+    gap: 3px;
+    cursor: default;
+    line-height: 1.05;
+    pointer-events: none;
+  }
+
+  .abi-extension-brand .abi-brand-name {
+    font-size: 14px;
+    text-transform: none;
+    white-space: nowrap;
+  }
+
+  .abi-extension-brand .abi-brand-version {
+    color: var(--abi-muted);
+    font-size: 11px;
+    letter-spacing: 0.08em;
+    text-transform: none;
+  }
+
+  .main .exit_btn2:hover {
+    border-color: #737a78 !important;
+    color: var(--abi-text) !important;
+    background: #ffffff08 !important;
+  }
+
+  .main .exit_btn2::after {
+    display: none !important;
+    content: none !important;
+  }
+
+  .nav > li::before,
+  .nav > li::after {
+    display: none !important;
+    content: none !important;
+  }
+
+  .nav > li:hover {
+    border-color: #737a78 !important;
+    color: var(--abi-text) !important;
+    background: #ffffff08 !important;
+  }
+
+  .nav > li.current {
+    border-color: var(--abi-accent) !important;
+    color: #e66b4e !important;
+    background: #c3472d12 !important;
+    box-shadow: inset 0 -2px 0 var(--abi-accent);
+  }
+
   #xcWorking > .content.video {
     display: grid !important;
     grid-template-columns: minmax(240px, 25%) minmax(0, 1fr);
-    grid-template-rows: minmax(0, 1fr); /* keep the site's fixed .content height */
+    grid-template-rows: minmax(0, 1fr);
     align-items: stretch;
     gap: 0;
   }
+
+  /* Keep the profile and notes visually quiet so the footage stays primary. */
   #xcWorking > .content.video > .info-team {
     grid-column: 1;
     grid-row: 1;
     width: 100% !important;
-    height: auto; /* site sets 8.75rem, taller than the 8.55rem box */
+    height: auto;
     min-width: 0;
+    min-height: 0;
     margin: 0 !important;
-    padding: 24px;
+    padding: 22px 20px;
     box-sizing: border-box;
-    border-right: 1px solid #ffffff20;
+    border-right: 1px solid var(--abi-line);
+    background: var(--abi-surface);
   }
+
   #xcWorking > .content.video > .play-box {
     grid-column: 2;
     grid-row: 1;
@@ -28,63 +169,190 @@ html:not([data-abi-site="off"]) {
     max-width: none;
     float: none !important;
   }
+
   #xcWorking > .content.video .user-info {
     display: grid;
-    grid-template-columns: 72px minmax(0, 1fr);
+    grid-template-columns: 60px minmax(0, 1fr);
+    grid-template-rows: auto auto auto;
     align-items: center;
-    gap: 5px 12px;
+    gap: 4px 12px;
     height: auto;
     min-height: 0;
-    padding: 0 0 24px;
+    width: 100%;
+    box-sizing: border-box;
+    padding: 0 0 18px;
+    border-bottom: 1px solid var(--abi-line);
   }
+
   #xcWorking > .content.video .avatar {
+    position: static;
     grid-column: 1;
     grid-row: 1 / span 3;
-    width: 72px;
-    height: 82px;
+    width: 60px;
+    height: 60px;
     margin: 0;
-    position: static;
     float: none;
+    overflow: hidden;
+    border: 1px solid #68706e;
+    background: #202628;
   }
+
   #xcWorking > .content.video .avatar img {
+    display: block;
     width: 100%;
     height: 100%;
     object-fit: cover;
   }
+
   #xcWorking > .content.video :is(.username, .userid, .user-status) {
     position: static;
-    float: none;
-    margin: 0;
     min-width: 0;
+    margin: 0;
+    float: none;
   }
-  #xcWorking > .content.video .userid {
+
+  #xcWorking > .content.video .username {
     overflow: hidden;
+    color: var(--abi-text);
+    font-size: 16px;
+    font-weight: 700;
+    letter-spacing: 0.015em;
     text-overflow: ellipsis;
     white-space: nowrap;
   }
+
+  #xcWorking > .content.video .userid {
+    overflow: hidden;
+    color: var(--abi-muted);
+    font-size: 11px;
+    letter-spacing: 0.025em;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
   #xcWorking > .content.video .user-status {
     display: flex;
     align-items: center;
-    gap: 12px;
+    justify-content: space-between;
+    gap: 8px;
+    color: #aab1af;
+    font-size: 11px;
+    letter-spacing: 0.055em;
+    text-transform: uppercase;
   }
+
+  #xcWorking > .content.video .user-status strong {
+    color: var(--abi-accent);
+    font-size: 18px;
+    font-variant-numeric: tabular-nums;
+    letter-spacing: 0;
+  }
+
+  #xcWorking > .content.video .tips-title {
+    position: relative !important;
+    display: block;
+    width: auto !important;
+    height: auto !important;
+    margin: 19px 0 12px !important;
+    padding: 0 0 0 10px !important;
+    border: 0 !important;
+    background: transparent !important;
+    color: #d2d8d3;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.065em;
+    line-height: 1.4;
+    text-transform: uppercase;
+  }
+
+  #xcWorking > .content.video .tips-title::before {
+    position: absolute;
+    top: 1px;
+    bottom: 1px;
+    left: 0;
+    width: 2px;
+    background: var(--abi-accent);
+    content: "";
+  }
+
   #xcWorking > .content.video .tips-content {
-    height: auto;
-    max-height: none;
+    position: static !important;
+    display: block;
+    width: 100% !important;
+    height: auto !important;
+    max-height: none !important;
+    min-width: 0;
+    margin: 0 !important;
+    padding: 0 !important;
+    overflow: visible !important;
+    border: 0 !important;
+    background: transparent !important;
+    color: #aab1af;
+    font-size: 12px;
+    line-height: 1.6;
+    white-space: normal;
+    overflow-wrap: anywhere;
+    box-sizing: border-box;
   }
+
+  #xcWorking > .content.video .tips-content p {
+    position: static !important;
+    display: block;
+    width: 100% !important;
+    height: auto !important;
+    min-width: 0;
+    margin: 0 0 10px !important;
+    padding: 0 0 10px 10px !important;
+    box-sizing: border-box;
+    border: 0;
+    border-left: 1px solid #626967;
+    background: transparent;
+    white-space: normal !important;
+    overflow-wrap: anywhere;
+  }
+
+  #xcWorking > .content.video .tips-content p:last-child {
+    margin-bottom: 0;
+    padding-bottom: 0;
+  }
+
   @media (max-width: 820px) {
     #xcWorking > .content.video {
       grid-template-columns: minmax(0, 1fr);
-      grid-template-rows: none;
+      grid-template-rows: minmax(0, 1fr) auto;
     }
+
     #xcWorking > .content.video > .info-team {
       grid-column: 1;
       grid-row: 2;
+      border-top: 1px solid var(--abi-line);
       border-right: 0;
-      border-top: 1px solid #ffffff20;
     }
+
     #xcWorking > .content.video > .play-box {
       grid-column: 1;
       grid-row: 1;
+    }
+  }
+
+  @media (max-width: 680px) {
+    .nav {
+      gap: var(--abi-header-gap);
+      overflow-x: auto;
+      padding: 0 0 0 0.28rem !important;
+    }
+
+    .nav > li {
+      flex: 1 1 0;
+      min-width: 0;
+      height: 52px !important;
+      min-height: 52px;
+      padding-inline: 4px !important;
+      font-size: 13px;
+    }
+
+    #xcWorking > .content.video > .info-team {
+      padding: 16px;
     }
   }
 }
