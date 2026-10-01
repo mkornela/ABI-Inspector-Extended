@@ -88,15 +88,26 @@ main { padding: 6px 0; }
 
 footer {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
   justify-content: space-between;
-  gap: 10px;
-  min-height: 42px;
+  gap: 4px 10px;
+  min-height: 48px;
   padding: 9px 14px;
   border-top: 1px solid var(--line);
 }
 #status { margin: 0; flex: 1; color: var(--muted); font-size: 11.5px; line-height: 1.35; }
 #status.attention { color: var(--text); }
+.credit {
+  flex: 0 0 100%;
+  color: var(--muted);
+  font-size: 10.5px;
+  line-height: 1.2;
+  text-align: right;
+}
+.credit a { color: var(--text); text-decoration-color: var(--accent); text-underline-offset: 2px; }
+.credit a:hover { color: #fff; }
+.credit a:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 button {
   flex: 0 0 auto;
   height: 26px;

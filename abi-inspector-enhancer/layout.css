@@ -12,8 +12,7 @@ html:not([data-abi-site="off"]) {
      six-column header row. The site's original links stay in place. */
   .main {
     --abi-header-gap: 0.12rem;
-    --abi-header-slot: calc((100% - 1.16rem) / 6);
-    background-color: var(--abi-surface) !important;
+    background: var(--abi-surface) !important;
   }
 
   /* Tabs use the same square outlines, thin rules, and restrained accent as
@@ -21,22 +20,27 @@ html:not([data-abi-site="off"]) {
   .main > .nav,
   .main .nav,
   .nav {
+    position: relative;
     display: flex !important;
     align-items: center !important;
     gap: var(--abi-header-gap);
-    width: calc(100% - var(--abi-header-slot) - 0.4rem) !important;
+    width: 100% !important;
     min-height: 58px;
     margin: 0 !important;
-    padding: 0 0 0 0.28rem !important;
+    padding: 0 0.28rem !important;
     box-sizing: border-box;
     border-bottom: 1px solid var(--abi-line);
     background: var(--abi-surface);
+    background-image: none !important;
     list-style: none;
   }
 
   .main .nav.abi-has-brand {
     width: 100% !important;
-    padding-right: 0.28rem !important;
+  }
+
+  .main .nav:not(.abi-has-brand) > li {
+    flex: 0 0 var(--abi-header-slot) !important;
   }
 
   .nav > li {
@@ -70,16 +74,28 @@ html:not([data-abi-site="off"]) {
       background-color 140ms ease;
   }
 
-  .main .exit_btn2 {
-    top: -1rem;
-    right: 0.28rem;
+  .main a.exit_btn2 {
+    position: absolute !important;
+    top: -1rem !important;
+    right: 0.28rem !important;
+    transform: translateY(-8px) !important;
+    display: flex !important;
+    flex: 0 0 var(--abi-header-slot) !important;
     width: var(--abi-header-slot) !important;
+    min-width: var(--abi-header-slot) !important;
+    max-width: var(--abi-header-slot) !important;
     height: 58px !important;
+    min-height: 58px !important;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 0 8px !important;
     box-sizing: border-box;
     border: 1px solid var(--abi-line) !important;
     border-radius: 0;
     color: #aab1af !important;
-    background: #101416 !important;
+    background-color: #101416 !important;
+    background-image: none !important;
     font-family: inherit;
     font-size: 16px !important;
     font-weight: 700;
@@ -139,6 +155,542 @@ html:not([data-abi-site="off"]) {
     box-shadow: inset 0 -2px 0 var(--abi-accent);
   }
 
+  /* Overview is an extension-owned dashboard. Official profile nodes are
+     moved into it; the site's original column is taken out of the layout. */
+  #wxMine.content.mine:has(.abi-overview) {
+    overflow: auto !important;
+  }
+
+  #wxMine.content.mine > .user:has(.abi-overview) {
+    display: block !important;
+    width: 100% !important;
+    height: 100% !important;
+    min-height: 100%;
+    margin: 0 !important;
+    padding: 0.16rem !important;
+    box-sizing: border-box;
+    background: transparent !important;
+    background-image: none !important;
+  }
+
+  #wxMine > .user:has(.abi-overview) > .user-info,
+  #wxMine > .user:has(.abi-overview) > .user-data,
+  #wxMine > .user:has(.abi-overview) > .abi-overview-cards,
+  #wxMine .grade-popup,
+  #wxMine .abi-overview .help-btn {
+    display: none !important;
+  }
+
+  #wxMine .abi-overview {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 3fr);
+    grid-template-rows: minmax(0, 1fr);
+    gap: 0.14rem;
+    width: 100%;
+    height: 100%;
+    min-height: 0;
+  }
+
+  #wxMine .abi-identity {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.28rem;
+    min-width: 0;
+    min-height: 0;
+    padding: 0.2rem 0.16rem;
+    box-sizing: border-box;
+    border: 1px solid var(--abi-line);
+    border-top: 2px solid var(--abi-accent);
+    background: #111719;
+  }
+
+  #wxMine .abi-identity-person {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.08rem;
+    width: 100%;
+    min-width: 0;
+  }
+
+  #wxMine .abi-identity-person > .avatar {
+    display: none !important;
+  }
+
+  #wxMine .abi-identity-person > .userid {
+    position: static !important;
+    display: block !important;
+    align-self: stretch !important;
+    width: 100% !important;
+    height: auto !important;
+    min-width: 0;
+    margin: 0 !important;
+    padding: 0 !important;
+    color: var(--abi-muted) !important;
+    font-size: 0.13rem !important;
+    letter-spacing: 0.02em;
+    line-height: 1.2;
+    text-align: center !important;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+    background: none !important;
+  }
+
+  #wxMine .abi-identity-rank > .grade {
+    display: none !important;
+  }
+
+  #wxMine .abi-identity-rank {
+    display: flex;
+    flex-direction: column;
+    gap: 0.14rem;
+    width: 100%;
+    min-width: 0;
+  }
+
+  #wxMine .abi-title-row {
+    display: flex;
+    flex-flow: row nowrap !important;
+    align-items: center;
+    justify-content: center;
+    gap: 0.14rem;
+    margin-top: 0.14rem;
+    width: 100%;
+    min-width: 0;
+    white-space: nowrap;
+  }
+
+  #wxMine .abi-identity-person > .username {
+    position: static !important;
+    display: block !important;
+    flex: 0 0 auto;
+    width: auto !important;
+    height: auto !important;
+    min-width: 0;
+    align-self: stretch !important;
+    text-align: center !important;
+    max-width: 100%;
+    margin: 0 0 0.04rem !important;
+    padding: 0 !important;
+    float: none !important;
+    overflow: hidden;
+    color: var(--abi-text) !important;
+    font-size: 0.36rem !important;
+    font-weight: 800 !important;
+    line-height: 1.25;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    background: none !important;
+  }
+
+  #wxMine .abi-title-row > .honor {
+    position: static !important;
+    display: flex !important;
+    flex: 0 1 auto;
+    align-items: center;
+    justify-content: flex-start;
+    min-width: 0;
+    width: auto !important;
+    height: auto !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    float: none !important;
+    background: none !important;
+  }
+
+  #wxMine .abi-title-row #level-text {
+    position: static !important;
+    display: block !important;
+    width: auto !important;
+    max-width: 100%;
+    min-width: 0;
+    margin: 0 !important;
+    padding: 0 !important;
+    overflow: hidden;
+    color: var(--abi-text) !important;
+    text-align: center;
+    font-size: 0.2rem !important;
+    font-weight: 700;
+    line-height: 1.25 !important;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    background: none !important;
+    border: 0 !important;
+  }
+
+  #wxMine .abi-rank-open,
+  #wxMine .abi-rank-close {
+    flex: 0 0 auto;
+    height: 0.4rem;
+    padding: 0 0.14rem;
+    border: 1px solid var(--abi-line);
+    background: #0e1214;
+    color: var(--abi-text);
+    font: inherit;
+    font-size: 0.13rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    line-height: 1;
+    text-transform: uppercase;
+    cursor: pointer;
+  }
+
+  #wxMine .abi-rank-open {
+    display: inline-flex;
+    width: auto;
+    min-width: 0;
+    height: 0.32rem;
+    align-items: center;
+    justify-content: center;
+    padding: 0 0.12rem;
+    font-size: 0.16rem;
+  }
+
+  #wxMine .abi-rank-open:hover,
+  #wxMine .abi-rank-close:hover {
+    border-color: #737a78;
+    background: #ffffff08;
+  }
+
+  #wxMine .abi-meter .abi-rank-progress {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    grid-template-areas:
+      "kicker percent"
+      "caption percent"
+      "track track"
+      "count count";
+    gap: 0.1rem 0.14rem;
+    align-items: end;
+    width: 100%;
+    margin: 0 !important;
+    padding: 0 !important;
+    border: 0 !important;
+    background: none !important;
+  }
+
+  #wxMine .abi-rank-caption {
+    grid-area: caption;
+    overflow: hidden;
+    color: var(--abi-text);
+    font-size: 0.18rem;
+    font-weight: 700;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  #wxMine .abi-rank-percent {
+    grid-area: percent;
+    color: #e66b4e;
+    font-size: 0.42rem;
+    font-variant-numeric: tabular-nums;
+    font-weight: 700;
+    line-height: 0.9;
+  }
+
+  #wxMine .abi-rank-track {
+    grid-area: track;
+    display: block;
+    position: relative;
+    height: 0.13rem;
+    min-height: 8px;
+    overflow: hidden;
+    border: 1px solid #293336;
+    background: linear-gradient(180deg, #0b0f10, #1b2326);
+    box-shadow: inset 0 1px 2px #0009;
+  }
+
+  #wxMine .abi-rank-fill {
+    display: block;
+    width: 0;
+    height: 100%;
+    background: linear-gradient(90deg, #bd4c34, #ed7657);
+    box-shadow: 0 0 8px #e66b4e55;
+    transition: width 650ms cubic-bezier(0.2, 0.8, 0.2, 1);
+  }
+
+  #wxMine .abi-rank-count,
+  #wxMine .abi-rank-kicker {
+    color: #8d9698;
+    font-size: 0.15rem;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+
+  #wxMine .abi-rank-count { grid-area: count; }
+  #wxMine .abi-rank-kicker {
+    grid-area: kicker;
+    justify-self: start;
+  }
+
+  #wxMine .abi-level-progress {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: center;
+    gap: 0.08rem 0.12rem;
+    width: 100%;
+    padding-top: 0.14rem;
+    border-top: 1px solid #ffffff14;
+  }
+
+  #wxMine .abi-level-label {
+    color: #aab1af;
+    font-size: 0.16rem;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+  }
+
+  #wxMine .abi-level-count {
+    color: #e66b4e;
+    font-size: 0.38rem;
+    font-variant-numeric: tabular-nums;
+    font-weight: 700;
+    line-height: 0.9;
+  }
+
+  #wxMine .abi-level-current {
+    font-size: 0.34rem;
+  }
+
+  #wxMine .abi-level-maximum {
+    font-size: 0.38rem;
+  }
+
+  #wxMine .abi-level-track {
+    grid-column: 1 / -1;
+    display: block;
+    position: relative;
+    height: 0.12rem;
+    min-height: 7px;
+    overflow: hidden;
+    border: 1px solid #293336;
+    background: linear-gradient(180deg, #0b0f10, #1b2326);
+    box-shadow: inset 0 1px 2px #0009;
+  }
+
+  #wxMine .abi-level-fill {
+    display: block;
+    width: 0;
+    height: 100%;
+    background: linear-gradient(90deg, #8ba848, #c1df72);
+    box-shadow: 0 0 8px #b8d66a55;
+    transition: width 650ms cubic-bezier(0.2, 0.8, 0.2, 1);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    #wxMine .abi-rank-fill,
+    #wxMine .abi-level-fill {
+      transition-duration: 0.01ms;
+    }
+  }
+
+  #wxMine .abi-board {
+    display: grid;
+    grid-column: 2;
+    grid-row: 1;
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: repeat(4, minmax(0, 1fr));
+    gap: 0.12rem;
+    min-width: 0;
+    min-height: 0;
+  }
+
+  #wxMine .abi-stat-card {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.4fr);
+    align-items: center;
+    gap: 0.16rem;
+    min-height: 0;
+    margin: 0;
+    padding: 0.16rem 0.2rem 0.14rem;
+    box-sizing: border-box;
+    border: 1px solid var(--abi-line);
+    background: #111719;
+  }
+
+  #wxMine .abi-stat-card h3 {
+    margin: 0;
+    padding-left: 0.12rem;
+    border-left: 2px solid var(--abi-accent);
+    color: #c3cbc6;
+    font-size: 0.21rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    line-height: 1.3;
+    text-transform: uppercase;
+  }
+
+  #wxMine .abi-stat-values {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    align-items: center;
+    width: 100%;
+    min-width: 0;
+  }
+
+  #wxMine .abi-stat-item {
+    display: flex;
+    flex-direction: column-reverse;
+    align-items: center;
+    gap: 0.04rem;
+    min-width: 0;
+    width: 100%;
+    padding: 0;
+    text-align: center;
+  }
+
+  #wxMine .abi-stat-successful .abi-stat-item {
+    grid-column: 1 / -1;
+  }
+
+  #wxMine .abi-stat-label {
+    color: #9aa3a1;
+    font-size: 0.16rem;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    white-space: nowrap;
+  }
+
+  #wxMine .abi-stat-item strong {
+    color: #e66b4e;
+    font-size: 0.46rem;
+    font-variant-numeric: tabular-nums;
+    line-height: 0.9;
+    white-space: nowrap;
+  }
+
+  #wxMine .abi-stat-item[data-stat="last-ban"] strong {
+    color: var(--abi-text);
+    font-size: 0.32rem;
+    line-height: 1;
+  }
+
+  #wxMine .abi-stat-accuracy .abi-stat-item[data-stat="overall-accuracy"] strong {
+    color: #b8d66a;
+  }
+
+  #wxMine > .abi-rank-dialog {
+    position: fixed;
+    inset: 0;
+    z-index: 100000;
+    display: grid;
+    place-items: center;
+    padding: 28px;
+    box-sizing: border-box;
+    background: rgba(6, 8, 9, 0.72);
+  }
+
+  #wxMine > .abi-rank-dialog[hidden] {
+    display: none !important;
+  }
+
+  #wxMine .abi-rank-panel {
+    width: min(860px, 100%);
+    max-height: min(78vh, 760px);
+    overflow: auto;
+    padding: 22px 24px 8px;
+    box-sizing: border-box;
+    border: 1px solid var(--abi-line);
+    background: #12181a;
+    box-shadow: 0 24px 64px rgba(0, 0, 0, 0.55);
+    color: var(--abi-text);
+  }
+
+  #wxMine .abi-rank-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    margin-bottom: 8px;
+    padding-bottom: 14px;
+    border-bottom: 1px solid #ffffff14;
+  }
+
+  #wxMine .abi-rank-head h2 {
+    margin: 0;
+    color: var(--abi-text);
+    font-size: 18px;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+
+  #wxMine .abi-rank-card {
+    display: grid;
+    grid-template-columns: minmax(0, 1.5fr) auto minmax(180px, 1fr);
+    gap: 18px;
+    align-items: center;
+    padding: 14px 10px;
+    border-bottom: 1px solid #ffffff12;
+  }
+
+  #wxMine .abi-rank-card.is-current {
+    background: #c3472d14;
+    box-shadow: inset 3px 0 0 #e66b4e;
+  }
+
+  #wxMine .abi-rank-card h3 {
+    margin: 0;
+    color: var(--abi-text);
+    font-size: 15px;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+
+  #wxMine .abi-rank-card p {
+    margin: 4px 0 0;
+    color: #8d9698;
+    font-size: 13px;
+    line-height: 1.4;
+  }
+
+  #wxMine .abi-rank-bonus {
+    color: #e66b4e;
+    font-size: 18px;
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+  }
+
+  #wxMine .abi-rank-reward {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 10px;
+    min-width: 0;
+    color: #d5dbd6;
+    font-size: 14px;
+  }
+
+  #wxMine .abi-rank-reward img {
+    width: 36px;
+    height: 36px;
+    object-fit: contain;
+  }
+
+  #wxMine .abi-rank-reward .abi-koen-amount {
+    color: #d7bd71;
+    font-size: 16px;
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+  }
+
+  #wxMine .abi-rank-reward img.abi-koen-icon {
+    width: 24px;
+    height: 24px;
+  }
+
+  #wxMine .abi-rank-reward em {
+    color: #c3cbc6;
+    font-style: normal;
+  }
   #xcWorking > .content.video {
     display: grid !important;
     grid-template-columns: minmax(240px, 25%) minmax(0, 1fr);
@@ -147,19 +699,21 @@ html:not([data-abi-site="off"]) {
     gap: 0;
   }
 
-  /* Keep the profile and notes visually quiet so the footage stays primary. */
+  /* Give the Workbench inspector profile the same framed-card treatment as
+     the Overview identity panel, while leaving all official data in place. */
   #xcWorking > .content.video > .info-team {
     grid-column: 1;
     grid-row: 1;
-    width: 100% !important;
+    width: auto !important;
     height: auto;
     min-width: 0;
     min-height: 0;
-    margin: 0 !important;
-    padding: 22px 20px;
+    margin: 12px !important;
+    padding: 18px 16px;
     box-sizing: border-box;
-    border-right: 1px solid var(--abi-line);
-    background: var(--abi-surface);
+    border: 1px solid var(--abi-line);
+    border-top: 2px solid var(--abi-accent);
+    background: #111719;
   }
 
   #xcWorking > .content.video > .play-box {
@@ -172,15 +726,15 @@ html:not([data-abi-site="off"]) {
 
   #xcWorking > .content.video .user-info {
     display: grid;
-    grid-template-columns: 60px minmax(0, 1fr);
+    grid-template-columns: 68px minmax(0, 1fr);
     grid-template-rows: auto auto auto;
     align-items: center;
-    gap: 4px 12px;
+    gap: 5px 12px;
     height: auto;
     min-height: 0;
     width: 100%;
     box-sizing: border-box;
-    padding: 0 0 18px;
+    padding: 0 0 14px;
     border-bottom: 1px solid var(--abi-line);
   }
 
@@ -188,13 +742,13 @@ html:not([data-abi-site="off"]) {
     position: static;
     grid-column: 1;
     grid-row: 1 / span 3;
-    width: 60px;
-    height: 60px;
+    width: 68px;
+    height: 68px;
     margin: 0;
     float: none;
     overflow: hidden;
-    border: 1px solid #68706e;
-    background: #202628;
+    border: 1px solid var(--abi-line);
+    background: #0b0f10;
   }
 
   #xcWorking > .content.video .avatar img {
@@ -214,7 +768,7 @@ html:not([data-abi-site="off"]) {
   #xcWorking > .content.video .username {
     overflow: hidden;
     color: var(--abi-text);
-    font-size: 16px;
+    font-size: 18px;
     font-weight: 700;
     letter-spacing: 0.015em;
     text-overflow: ellipsis;
@@ -235,15 +789,20 @@ html:not([data-abi-site="off"]) {
     align-items: center;
     justify-content: space-between;
     gap: 8px;
+    margin-top: 5px;
+    padding: 9px 10px;
+    border: 1px solid #293336;
+    background: #0d1214;
     color: #aab1af;
-    font-size: 11px;
-    letter-spacing: 0.055em;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.045em;
     text-transform: uppercase;
   }
 
   #xcWorking > .content.video .user-status strong {
     color: var(--abi-accent);
-    font-size: 18px;
+    font-size: 22px;
     font-variant-numeric: tabular-nums;
     letter-spacing: 0;
   }
@@ -253,12 +812,12 @@ html:not([data-abi-site="off"]) {
     display: block;
     width: auto !important;
     height: auto !important;
-    margin: 19px 0 12px !important;
+    margin: 20px 0 11px !important;
     padding: 0 0 0 10px !important;
     border: 0 !important;
     background: transparent !important;
     color: #d2d8d3;
-    font-size: 12px;
+    font-size: 13px;
     font-weight: 700;
     letter-spacing: 0.065em;
     line-height: 1.4;
@@ -288,8 +847,8 @@ html:not([data-abi-site="off"]) {
     border: 0 !important;
     background: transparent !important;
     color: #aab1af;
-    font-size: 12px;
-    line-height: 1.6;
+    font-size: 13px;
+    line-height: 1.65;
     white-space: normal;
     overflow-wrap: anywhere;
     box-sizing: border-box;
@@ -301,12 +860,12 @@ html:not([data-abi-site="off"]) {
     width: 100% !important;
     height: auto !important;
     min-width: 0;
-    margin: 0 0 10px !important;
-    padding: 0 0 10px 10px !important;
+    margin: 0 0 8px !important;
+    padding: 9px 10px !important;
     box-sizing: border-box;
-    border: 0;
-    border-left: 1px solid #626967;
-    background: transparent;
+    border: 1px solid #293336;
+    border-left: 2px solid #626967;
+    background: #0d1214;
     white-space: normal !important;
     overflow-wrap: anywhere;
   }
@@ -317,6 +876,38 @@ html:not([data-abi-site="off"]) {
   }
 
   @media (max-width: 820px) {
+    #wxMine .abi-overview {
+      grid-template-columns: minmax(0, 1fr);
+      grid-template-rows: auto minmax(0, 1fr);
+      height: auto;
+    }
+
+    #wxMine.content.mine > .user:has(.abi-overview) {
+      height: auto !important;
+    }
+
+    #wxMine .abi-identity {
+      grid-column: 1;
+      grid-row: 1;
+      height: auto;
+      flex-direction: row;
+      justify-content: space-around;
+      gap: 0.2rem;
+    }
+
+    #wxMine .abi-identity-person,
+    #wxMine .abi-identity-rank {
+      flex: 1 1 0;
+      width: auto;
+      min-width: 0;
+    }
+
+    #wxMine .abi-board {
+      grid-column: 1;
+      grid-row: 2;
+      min-height: 4.2rem;
+    }
+
     #xcWorking > .content.video {
       grid-template-columns: minmax(0, 1fr);
       grid-template-rows: minmax(0, 1fr) auto;
@@ -336,6 +927,57 @@ html:not([data-abi-site="off"]) {
   }
 
   @media (max-width: 680px) {
+    #wxMine.content.mine:has(.abi-overview) {
+      min-height: 0;
+      overflow-y: auto;
+    }
+
+    #wxMine.content.mine > .user:has(.abi-overview) {
+      min-height: 100%;
+    }
+
+    #wxMine .abi-overview {
+      grid-template-rows: auto minmax(0, 1fr);
+      min-height: 100%;
+    }
+
+    #wxMine .abi-identity {
+      grid-column: 1;
+      grid-row: 1;
+      flex-direction: column;
+      padding: 0.18rem 0.16rem;
+    }
+
+    #wxMine .abi-identity-person,
+    #wxMine .abi-identity-rank {
+      flex: initial;
+      width: 100%;
+    }
+
+    #wxMine .abi-board {
+      grid-column: 1;
+      grid-row: 2;
+      grid-template-columns: 1fr;
+      grid-template-rows: repeat(4, minmax(1rem, auto));
+      min-height: 4.4rem;
+    }
+
+    #wxMine .abi-stat-card {
+      min-height: 1.3rem;
+      padding: 0.16rem;
+    }
+
+    #wxMine .abi-stat-item strong {
+      font-size: 0.42rem;
+    }
+
+    #wxMine .help-btn:hover > .grade-popup,
+    #wxMine .help-btn:focus-within > .grade-popup {
+      top: calc(100% + 0.1rem);
+      left: 0;
+      width: min(9.4rem, calc(100vw - 0.4rem));
+    }
+
     .nav {
       gap: var(--abi-header-gap);
       overflow-x: auto;

@@ -1,4 +1,4 @@
-# ABI Inspector Extended v1.4
+# ABI Inspector Extended v1.5
 
 A self-contained Chrome / Edge Manifest V3 extension for the official Arena Breakout: Infinite Inspector page:
 
@@ -44,9 +44,25 @@ Frame stepping is approximate, not decoded-frame-accurate. It uses 1/30 second r
 Click the extension's toolbar icon for two switches, both **on** by default:
 
 - **Player controls**: the replacement toolbar and the layout it needs. Takes effect after reloading the Inspector page; the popup offers a **Reload page** button when a reload is needed.
-- **Site modifications**: the sidebar layout, full-width tab row with updated labels and version branding, and the restyled verdict dialogs. Takes effect instantly.
+- **Site modifications**: a centered inspector profile beside a live inspection stats list, Inspector sidebar, full-width tab row with updated labels and version branding, and restyled verdict dialogs. Takes effect instantly.
 
 With both off, the page is exactly as the site ships it. The switches are stored in the browser's local extension storage.
+
+## Screenshots
+
+The extension refreshes the Inspector's Overview and Workbench presentation while keeping the official inspection content and workflow in place.
+
+### Overview
+
+![ABI Inspector Extended Overview tab](tab_1_overview.png)
+
+### Workbench and video controls
+
+![ABI Inspector Extended Workbench tab and video controls](tab_2_video.png)
+
+### Extension settings
+
+![ABI Inspector Extended settings popup](settings.png)
 
 ## Layout
 
@@ -98,7 +114,7 @@ The source is readable without a build:
 - `settings.js`: mirrors the popup switches onto the page and answers the popup.
 - `site-ui.js`: updates the navigation labels and adds the version brand cell when Exit Inspection is absent (**Site modifications**).
 - `content.js` / `player.css`: toolbar, keyboard controls, media binding, and the video / toolbar / verdict-row layout (**Player controls**).
-- `layout.css`, `dialogs.css` / `dialogs.js`: sidebar layout and verdict dialogs (**Site modifications**).
+- `layout.css`, `dialogs.css` / `dialogs.js`: profile and stats Overview, sidebar, navigation, and verdict dialog layouts (**Site modifications**).
 - `popup.html` / `popup.css` / `popup.js`: the toolbar popup.
 
 The public repository contains source and documentation only; generated builds and test fixtures are kept out of the extension package.

@@ -1,6 +1,6 @@
 {
   "name": "abi-inspector-extended",
-  "version": "1.4.0",
+  "version": "1.5.0",
   "private": true,
   "description": "Development metadata for ABI Inspector Extended.",
   "engines": {
