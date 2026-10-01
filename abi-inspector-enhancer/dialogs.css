@@ -1,0 +1,170 @@
+/* Site modifications: verdict dialogs (Violation / Uncertain / No Violation).
+   Presentation only: original nodes, IDs, values and handlers are untouched.
+   Gated by data-abi-site="off" on <html> (see settings.js); needs Chrome/Edge 120+. */
+html:not([data-abi-site="off"]) {
+  /* ---- shared ---- */
+  #illegalPopup, #drillResult1, #drillResult2 {
+    --abi-accent: #ca4d31;
+    --abi-line: #414343;
+    --abi-text: #d2dbd3;
+    --abi-muted: #8b9190;
+  }
+  #illegalPopup h4, #drillResult2 h4 {
+    padding: 0.22rem 0.4rem 0.08rem;
+    font-size: 0.2rem;
+    line-height: 1.45;
+    color: var(--abi-muted);
+  }
+  #illegalPopup h4 br, #drillResult2 h4 br { display: none; }
+
+  /* ---- option lists → selectable chips ---- */
+  #courtMenu.popup-checkbox, #notSure.popup-checkbox {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 0.12rem;
+    width: auto;
+    margin: 0.1rem 0.4rem 0.2rem;
+  }
+  #notSure.popup-checkbox { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+
+  #courtMenu.popup-checkbox li, #notSure.popup-checkbox li {
+    position: relative;
+    min-width: 0;
+    width: auto;
+    height: auto;
+    min-height: 0.64rem;
+    padding: 0.08rem 0.16rem 0.08rem 0.56rem;   /* room for the check box */
+    box-sizing: border-box;
+    display: flex;
+    align-items: center;
+    font-size: 0.21rem;
+    line-height: 1.15;
+    color: #b9c0bb;
+    background: rgba(255, 255, 255, 0.035);
+    border: 1px solid var(--abi-line);
+    cursor: pointer;
+    transition: background 0.12s, border-color 0.12s, color 0.12s;
+  }
+  #notSure.popup-checkbox li:last-child { padding-bottom: 0.08rem; }
+  #courtMenu.popup-checkbox li:hover, #notSure.popup-checkbox li:hover {
+    background: rgba(255, 255, 255, 0.07);
+    border-color: #5b5f5f;
+  }
+
+  /* check box drawn on the li; the real input stretches over the whole chip
+     (invisible) so a click anywhere on the chip hits the genuine checkbox */
+  #courtMenu.popup-checkbox li::before, #notSure.popup-checkbox li::before {
+    content: "";
+    position: absolute;
+    left: 0.16rem;
+    top: 50%;
+    width: 0.22rem;
+    height: 0.22rem;
+    box-sizing: border-box;
+    transform: translateY(-50%);
+    border: 1px solid #6a6f6e;
+    background: rgba(0, 0, 0, 0.35);
+    pointer-events: none;
+  }
+  #courtMenu.popup-checkbox li:has(input:checked), #notSure.popup-checkbox li:has(input:checked) {
+    color: #fff;
+    background: rgba(202, 77, 49, 0.16);
+    border-color: var(--abi-accent);
+  }
+  #courtMenu.popup-checkbox li:has(input:checked)::before, #notSure.popup-checkbox li:has(input:checked)::before {
+    background: var(--abi-accent);
+    border-color: var(--abi-accent);
+  }
+  #courtMenu.popup-checkbox li:has(input:checked)::after, #notSure.popup-checkbox li:has(input:checked)::after {
+    content: "";
+    position: absolute;
+    left: calc(0.16rem + 0.075rem);
+    top: 50%;
+    width: 0.06rem;
+    height: 0.12rem;
+    border: solid #fff;
+    border-width: 0 2px 2px 0;
+    transform: translateY(-62%) rotate(45deg);
+    pointer-events: none;
+  }
+  #courtMenu.popup-checkbox li:has(input:focus-visible), #notSure.popup-checkbox li:has(input:focus-visible) {
+    outline: 2px solid var(--abi-accent);
+    outline-offset: 2px;
+  }
+  #courtMenu.popup-checkbox input[type="checkbox"], #notSure.popup-checkbox input[type="checkbox"] {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    flex: none;
+    opacity: 0;
+    cursor: pointer;
+    background: none;
+  }
+
+  /* "Select up to 3": dim the rest once three are chosen (set by content script) */
+  #courtMenu.abi-full li:not(:has(input:checked)) { opacity: 0.45; }
+
+  /* ---- category tag + counter ---- */
+  #illegalPopup .tag-box { padding: 0.04rem 0.4rem 0; }
+  #illegalPopup .tag-box li { margin: 0.08rem 0 0; }
+  .abi-counter {
+    margin: 0.16rem 0.4rem 0;
+    text-align: right;
+    font-size: 0.17rem;
+    letter-spacing: 0.02em;
+    color: var(--abi-muted);
+    font-variant-numeric: tabular-nums;
+  }
+  .abi-counter.abi-max { color: var(--abi-accent); }
+
+  /* ---- description box ---- */
+  #guiltyDetail, #notSureReason {
+    display: block;
+    width: calc(100% - 0.8rem);
+    height: 1.1rem;
+    margin: 0 0.4rem;
+    padding: 0.12rem 0.16rem;
+    box-sizing: border-box;
+    resize: none;
+    font-size: 0.21rem;
+    line-height: 1.4;
+    color: var(--abi-text);
+    background: rgba(0, 0, 0, 0.3);
+    border: 1px solid var(--abi-line);
+    transition: border-color 0.12s;
+  }
+  #guiltyDetail:focus, #notSureReason:focus { border-color: var(--abi-accent); }
+  #guiltyDetail::placeholder, #notSureReason::placeholder { color: #6f7675; }
+  .abi-textcount {
+    margin: 0.05rem 0.4rem 0;
+    text-align: right;
+    font-size: 0.16rem;
+    color: var(--abi-muted);
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* ---- No Violation confirmation ---- */
+  #drillResult1 .popup-content {
+    min-height: 0;
+    padding: 0.5rem 0.3rem 0.35rem;
+    font-size: 0.21rem;
+    line-height: 1.55;
+    color: #b9c0bb;
+  }
+  #drillResult1 .popup-content p { text-wrap: balance; }
+  #drillResult1 .popup-content p::before {
+    content: "";
+    display: block;
+    width: 0.5rem;
+    height: 0.02rem;
+    margin: 0 auto 0.28rem;
+    background: var(--abi-accent);
+  }
+
+  /* ---- buttons row ---- */
+  #illegalPopup .popup-btn-box, #drillResult1 .popup-btn-box, #drillResult2 .popup-btn-box {
+    padding: 0.26rem 0.4rem 0.1rem;
+  }
+}

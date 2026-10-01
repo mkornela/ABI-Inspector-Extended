@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>ABI Inspector Extended</title>
+    <link rel="stylesheet" href="popup.css" />
+  </head>
+  <body>
+    <header>
+      <h1>ABI Inspector Extended</h1>
+      <span id="version" class="version"></span>
+    </header>
+
+    <main>
+      <label class="option" for="controls">
+        <span class="text">
+          <strong>Player controls</strong>
+          <small>Compact toolbar: seek, frame step, speed, volume, fullscreen.</small>
+        </span>
+        <input id="controls" type="checkbox" role="switch" checked />
+        <span class="switch" aria-hidden="true"></span>
+      </label>
+
+      <label class="option" for="site">
+        <span class="text">
+          <strong>Site modifications</strong>
+          <small>Sidebar layout and cleaner verdict dialogs.</small>
+        </span>
+        <input id="site" type="checkbox" role="switch" checked />
+        <span class="switch" aria-hidden="true"></span>
+      </label>
+    </main>
+
+    <footer>
+      <p id="status" role="status"></p>
+      <button id="reload" type="button" hidden>Reload page</button>
+    </footer>
+
+    <script src="popup.js"></script>
+  </body>
+</html>

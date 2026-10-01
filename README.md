@@ -1,132 +1,103 @@
 # ABI Inspector Extended
 
-A focused Chrome and Edge extension for the **Arena Breakout: Infinite Inspector Workbench**. It replaces the default bottom video controls with a compact toolbar that uses the site's own typography and colors.
+A self-contained Chrome / Edge Manifest V3 extension for the official Arena Breakout: Infinite Inspector page:
 
-**Version 1.3.0 · Manifest V3 · No build step · No runtime network requests**
+https://www.arenabreakoutinfinite.com/act/a20251028patroller/?lang=en
 
-**Preview of the player**
-![ABI Inspector Extended preview](preview.png)
+Version 1.4.0. No build step, dependencies, account connection, or external assets.
 
-**Preview of the player (Fullscreen)**
-![ABI Inspector Extended fullscreen preview](fullscreen-preview.png)
+## Install in Chrome or Edge
 
-## Features
+1. Extract the ZIP to a permanent folder. If using the provided unpacked folder, skip extraction.
+2. Open `chrome://extensions` in Chrome, or `edge://extensions` in Edge.
+3. Enable **Developer mode**.
+4. Select **Load unpacked** and choose the `abi-inspector-enhancer` folder containing `manifest.json`.
+5. Open or reload the official Inspector page. The replacement toolbar sits flush beneath the working video and takes over from the native bottom controls.
 
-- **Fits the Workbench frame.** Video, toolbar, and the official **Violation / No Violation / Uncertain** buttons are stacked inside the site's video box, with no padding around the footage.
-- **Three-zone toolbar.** Play on the left; seek, frame stepping, and speed centered; volume and fullscreen on the right. Play, mute, and fullscreen are icon-only, and the toolbar background is transparent so it blends into the site.
-- Progress slider with elapsed / total time.
-- Separate **−10s, −5s, +5s, and +10s** seek buttons.
-- **◀ Frames ▶** stepping: pauses playback and steps approximately 1/30 second.
-- **Speed stepper** (**SPEED − 1× +**) across nine speeds: **0.1×, 0.25×, 0.5×, 0.75×, 1×, 1.25×, 1.5×, 2×, and 3×**. The value turns accent-colored when it isn't 1×; click it to reset to 1×.
-- Volume slider and an accessible mute/unmute icon.
-- Fullscreen with the toolbar below the footage and no toolbar scrollbar.
-- Local Font Awesome icons for playback, frame stepping, audio, and fullscreen.
-- Keyboard shortcuts, visible focus states, and automatic reconnection when the official player changes cases.
+Keep the folder in place. After replacing extension files, select **Reload** on its extensions-page card and reload the Inspector tab. To remove the enhancement, disable/remove the extension and reload the tab.
+
+## Controls
+
+| Control               | Action / shortcut                                                       |
+| --------------------- | ----------------------------------------------------------------------- |
+| Play / Pause          | Space or K                                                              |
+| −5s / +5s             | J / L or Left / Right arrow                                             |
+| −10s / +10s           | Toolbar buttons                                                         |
+| Progress slider       | Seek within the current video's duration; displays current / total time |
+| ◀ Frames ▶            | Comma / period; pauses and seeks approximately 1/30 second              |
+| Speed − / +           | `[` slower / `]` faster through 0.1×, 0.25×, 0.5×, 0.75×, 1×, 1.25×, 1.5×, 2×, 3× |
+| Speed value           | Click, or `\`, to reset to 1×                                          |
+| Volume                | Slider; arrow keys adjust it when focused                               |
+| Mute / Unmute         | M                                                                       |
+| Fullscreen            | F or toolbar button; Escape exits                                       |
+
+Shortcuts work when focus is on the page/player. They are ignored in inputs, textareas, contenteditable elements, selects, buttons, links, and dialog controls, including the extension's own sliders. Tab navigates the toolbar; Enter/Space activates its buttons. Modifier-key combinations and composition input are left alone. Holding a seek key repeats seeking; holding play/mute/fullscreen does not repeatedly toggle.
+
+Frame stepping is approximate, not decoded-frame-accurate. It uses 1/30 second regardless of the footage's actual frame rate. Seeking is disabled until a finite duration is available. The site may impose its own media limits or reset settings when a case changes. The extension uses the currently visible official video and does not force playback preferences onto replacement videos. Only the two popup switches are stored (see below).
+
+## Settings popup
+
+Click the extension's toolbar icon for two switches, both **on** by default:
+
+- **Player controls**: the replacement toolbar and the layout it needs. Takes effect after reloading the Inspector page; the popup offers a **Reload page** button when a reload is needed.
+- **Site modifications**: the sidebar layout and the restyled verdict dialogs. Takes effect instantly.
+
+With both off, the page is exactly as the site ships it. The switches are stored in the browser's local extension storage.
 
 ## Layout
 
-```text
-[            official video (fills the remaining height)            ]
-[ ━━━━━━━━━━━━━━━━━━━━━━ progress ━━━━━━━━━━━━━━━━━━━  00:10 / 01:28 ]
-[▶]      −10s −5s +5s +10s   ◀ FRAMES ▶   SPEED − 1× +      🔊━━  ⛶
-[ Violation ]        [ No Violation ]        [ Uncertain ]
-```
+The toolbar has three zones: play on the left; seek, frame stepping, and speed centered; volume and fullscreen on the right. Play, mute, and fullscreen are icon-only. The toolbar background is transparent, and when it is narrower than about 860px the centered controls wrap onto their own row.
 
-- The Workbench box has a fixed height set by the site, so the video takes whatever height the toolbar and verdict row leave and letterboxes on black if needed. Because the site sizes in `rem` and the toolbar in pixels, the video gets shorter on small windows.
-- When the toolbar is narrower than about 860px, the centered controls wrap onto their own row instead of squeezing.
-- **Exit Inspection** stays in the site's tab bar; it is not moved.
-- To line the video up with the painted frame lines, adjust the insets at the top of the `.play-box` rule in `player.css` (all default to `0`):
+The video, toolbar, and the official verdict buttons are stacked inside the Workbench's fixed-height video box. The video fills whatever height remains and letterboxes on black. **Exit Inspection** is left where the site puts it. To align with the site's painted frame lines, adjust `--abi-box-top`, `--abi-box-right`, and `--abi-box-bottom` in the `.play-box` rule of `player.css` (all default to `0rem`).
 
-```css
---abi-box-top: 0rem;
---abi-box-right: 0rem;
---abi-box-bottom: 0rem;
-```
+## Verdict dialogs
 
-## Installation
+The Violation, Uncertain, and No Violation dialogs are restyled by `dialogs.css` and `dialogs.js` (part of **Site modifications**):
 
-1. Clone this repository, or choose Code → Download ZIP on GitHub and extract the source.
-2. Open `chrome://extensions` in Chrome or `edge://extensions` in Edge.
-3. Enable **Developer mode**.
-4. Click **Load unpacked** and select the **`abi-inspector-enhancer` folder**, which contains `manifest.json`. Do not select the repository root.
-5. Open or reload the [official Inspector page](https://www.arenabreakoutinfinite.com/act/a20251028patroller/?lang=en).
+- Options are selectable chips; the whole chip is the real checkbox, so the site's own selection logic still runs.
+- Violation shows a `0 / 3 selected` counter and dims the remaining options once three are chosen. The site still enforces its own limit.
+- Both description boxes show a live character counter, and their Chinese placeholders are replaced with English text (display only; submitted values are untouched, and the original text returns when the switch is off).
+- Nothing is submitted, clicked, or read by the extension.
 
-The toolbar appears when the Workbench's working video player is present. It does not apply to the training player. Use a current Chrome or Edge version; Node.js is not required to install or use the extension.
+## Explicit safety boundaries
 
-### Updating or removing
+- Controls operate only on the official HTML video inside `#workingPlayer`. No substitute player, external review copy, footage analysis, or inspection automation.
+- `.watermark` and `.txp-watermark` are never edited, hidden, removed, restyled, cloned, or covered by the custom toolbar. The original player subtree stays intact, including both overlay layers. Fullscreen includes that whole subtree; it never makes the bare video fullscreen. The CSS guard keeps native controls visible if a future player places a watermark inside their container.
+- The profile and official inspection notes are arranged as a left sidebar beside the video. The official verdict buttons keep their original nodes, IDs, classes, links, event handlers, and behavior; only their local appearance and position are changed: they sit as the bottom row of the video box, below the toolbar. No submission logic, account/case APIs, or verdict listeners are accessed, and no clicks are synthesized on the official page.
+- No fetch, XMLHttpRequest, WebSocket, beacons, network interception, downloads, remote scripts, CDNs, analytics, telemetry, or background worker. The only data saved is the two popup switches in `chrome.storage.local`. The extension never reads `src`, `currentSrc`, source elements, or video URLs.
+- The official site continues loading its own video. User-directed playback/seeking can naturally cause the site's existing media pipeline to load video data; the extension makes no network requests of its own.
+- The manifest's only permission is `storage` (for the two popup switches). It has no `host_permissions`, `optional_permissions`, or web-accessible resources. Its sole content-script match is the exact HTTPS hostname and Inspector directory. An additional runtime guard accepts only `/act/a20251028patroller/` (or its slashless form when injected), with any language query, and only the top frame. No subdomains or other page paths are enabled. The slashless URL normally redirects to the configured trailing-slash path.
+- The native `.plugin_ctrl_txp_bottom` and its bottom gradient are hidden only while the replacement controls are mounted and ready. Their nodes and handlers are retained. Disabling the extension and reloading restores the original controls. The custom toolbar stays outside the footage, including in fullscreen, and the video uses `object-fit: contain` to avoid cropping it.
+- Text and icon controls reuse the host navigation's computed font family, weight, tracking, active color, and border color. On the inspected English page this is `font_en` (Refrigerator Deluxe), accent `#ca4d31`, and 1px square borders. No fonts, icons, backgrounds, or CDN resources are requested by the extension. The progress and volume tracks have thin dark backgrounds and square handles; filled sections use the host accent.
+- Every playback action remains separate, grouped into playback, seeking, frame stepping, speed, audio, and view controls. Shortcut hints are in button tooltips. Status text appears only temporarily after feedback or an error.
+- The extension wraps the complete player once to place controls below the footage and support fullscreen with all original overlays. Modern Chromium's state-preserving DOM move is used when available; older versions fall back to an ordinary DOM move, which may restart initial media loading. Use an up-to-date browser (Chrome or Edge 120+).
 
-Keep the unpacked folder in a permanent location. To update, replace its files, click **Reload** on the extension's browser card, and refresh the Inspector page. If you move the folder, remove the old browser entry and load the new folder.
+This is an independent local UI enhancement, not an official ABI product or confirmation of publisher approval. Technical boundaries do not establish permission under the Inspector rules.
 
-To restore the original player, disable or remove the extension and refresh the page.
+## Rerenders and troubleshooting
 
-## Keyboard controls
+MutationObservers reconnect controls after video-slot switches, video replacement, player replacement, and toolbar removal. Old media listeners are removed. Rerender cleanup unwraps any remaining official nodes rather than deleting them.
 
-| Key              | Action                     |
-| ---------------- | -------------------------- |
-| Space or K       | Play / pause               |
-| J or Left arrow  | Back 5 seconds             |
-| L or Right arrow | Forward 5 seconds          |
-| Comma            | Previous approximate frame |
-| Period           | Next approximate frame     |
-| [ or ]           | Slower / faster            |
-| \                | Reset speed to 1×          |
-| M                | Mute / unmute              |
-| F                | Enter / exit fullscreen    |
-| Escape           | Exit fullscreen            |
+If no toolbar appears, confirm the exact address above, refresh the tab after installation, and wait until the official working player is available. Training/drill players are intentionally excluded. A future change to the site's player ID or layout may require updating the extension.
 
-Shortcuts are ignored while typing or when an input, slider, select, button, link, editable area, or dialog control has focus. Tab moves through the toolbar; Enter or Space activates a focused button. Button tooltips show their shortcuts.
+If the official player rejects playback/seeking, the toolbar reports it locally. It does not retry via a different source or bypass site restrictions. Reload the page with the extension disabled to compare the original behavior.
 
-Frame stepping is a **time-based approximation**, not a decoded-frame operation. A 1/30-second step may not correspond to exactly one source frame. Seeking becomes available after the official video reports a finite duration.
+## Icon attribution
 
-## Scope and privacy
+Font Awesome Free 6.7.2 icons are embedded locally under CC BY 4.0. See [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md) for attribution and the included license.
 
-The extension acts on the official video already loaded inside `#workingPlayer`. It does not read video addresses, download footage, replace the media source, analyze footage, or call case/account APIs. The official site still handles its own video loading; playback and seeking can cause its existing media pipeline to load data normally.
+## Verification and source
 
-- **Watermarks are preserved.** The original video and watermark subtree stays together, including in fullscreen. The toolbar sits outside the footage.
-- **Verdicts remain official.** Existing verdict buttons retain their nodes and behavior. The extension adjusts the surrounding layout but never clicks verdict buttons, submits decisions, or accesses submission logic.
-- **Everything runs locally.** No telemetry, analytics, storage, background worker, remote scripts, or icon CDN. Settings are not persisted between page loads.
-- **Access is narrowly scoped.** The manifest injects only on the official Inspector directory at `https://www.arenabreakoutinfinite.com/act/a20251028patroller/`. A runtime guard further limits it to that exact page and the top frame. No additional extension API permissions are requested; the browser can still show a site-access notice for the content script.
+The source is readable without a build:
 
-The native bottom toolbar is hidden only once the replacement is ready. Its elements and handlers remain intact. If a future player places a watermark inside that toolbar, the hiding rule leaves it visible.
+- `manifest.json`: narrow Manifest V3 declaration.
+- `settings.js`: mirrors the popup switches onto the page and answers the popup.
+- `content.js` / `player.css`: toolbar, keyboard controls, media binding, and the video / toolbar / verdict-row layout (**Player controls**).
+- `layout.css`, `dialogs.css` / `dialogs.js`: sidebar layout and verdict dialogs (**Site modifications**).
+- `popup.html` / `popup.css` / `popup.js`: the toolbar popup.
 
-This project is independent of Tencent and Arena Breakout: Infinite. It is not an official product, endorsement, or confirmation that browser extensions are permitted by the Inspector rules.
+The public repository contains source and documentation only; generated builds and test fixtures are kept out of the extension package.
 
-## Development
+No authenticated live case was tested. Real-site CSS, proprietary player behavior, and future site changes remain a compatibility limit.
 
-The extension is plain JavaScript and CSS. Edit the source, reload the unpacked extension in the browser, and refresh the target tab.
-
-```text
-abi-inspector-enhancer/
-  manifest.json             Browser declaration and page scope
-  content.js                Toolbar, media controls, and lifecycle handling
-  player.css                Workbench layout (video / toolbar / verdict row) and fullscreen
-  README.md                 Standalone installation guide
-  THIRD_PARTY_NOTICES.md     Icon attribution
-  FONT-AWESOME-LICENSE.txt   Upstream license notice
-```
-
-### Check the source
-
-With Node.js 20 or newer, run from the repository root:
-
-```sh
-npm run check
-```
-
-This runs a syntax check (`node --check`) on `content.js`. There are no runtime dependencies and no build step. Test fixtures and generated builds are intentionally excluded from this public source tree, and no authenticated account, official footage, or captured case URLs are needed to work on the extension.
-
-## Troubleshooting and contributions
-
-**No toolbar:** reload the extension and page, check the exact Inspector address, and wait for the Workbench player to appear.
-
-**Controls stop working after a site update:** compare with the extension disabled. A change to the site's player structure may require an extension update.
-
-**Playback or seeking is rejected:** the extension reports the error locally. It does not switch sources or bypass site restrictions.
-
-Bug reports and improvements are welcome. Include the browser version, extension version, steps to reproduce, and whether fullscreen is involved. Redact inspector IDs and account details from screenshots; do not include case footage, video URLs, or copied account data. Keep changes within the presentation/playback scope above.
-
-## Credits
-
-Icons: **[Font Awesome Free 6.7.2](https://fontawesome.com/)** by Fonticons, Inc., licensed under **CC BY 4.0**. Eight SVG paths are bundled locally; see [third-party notices](abi-inspector-enhancer/THIRD_PARTY_NOTICES.md) and the [upstream license](abi-inspector-enhancer/FONT-AWESOME-LICENSE.txt).
-
-The site supplies its existing typeface and artwork. Those assets are not distributed in the extension.
+Manifest and permission references: [Chrome content scripts](https://developer.chrome.com/docs/extensions/reference/manifest/content-scripts), [Chrome match patterns](https://developer.chrome.com/docs/extensions/develop/concepts/match-patterns), [Chrome permissions](https://developer.chrome.com/docs/extensions/develop/concepts/declare-permissions).
