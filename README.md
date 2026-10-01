@@ -1,10 +1,14 @@
-# ABI Inspector Extended
+# ABI Inspector Extended v1.4
 
 A self-contained Chrome / Edge Manifest V3 extension for the official Arena Breakout: Infinite Inspector page:
 
 https://www.arenabreakoutinfinite.com/act/a20251028patroller/?lang=en
 
-Version 1.4.0. No build step, dependencies, account connection, or external assets.
+**Preview of the player**
+![ABI Inspector Extended preview](preview.png)
+
+**Preview of the player (Fullscreen)**
+![ABI Inspector Extended fullscreen preview](fullscreen-preview.png)
 
 ## Install in Chrome or Edge
 
