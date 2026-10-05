@@ -1,4 +1,4 @@
-# ABI Inspector Extended v1.5
+# ABI Inspector Extended v1.6.0
 
 A self-contained Chrome / Edge Manifest V3 extension for the official Arena Breakout: Infinite Inspector page:
 
@@ -37,16 +37,17 @@ Keep the folder in place. After replacing extension files, select **Reload** on 
 
 Shortcuts work when focus is on the page/player. They are ignored in inputs, textareas, contenteditable elements, selects, buttons, links, and dialog controls, including the extension's own sliders. Tab navigates the toolbar; Enter/Space activates its buttons. Modifier-key combinations and composition input are left alone. Holding a seek key repeats seeking; holding play/mute/fullscreen does not repeatedly toggle.
 
-Frame stepping is approximate, not decoded-frame-accurate. It uses 1/30 second regardless of the footage's actual frame rate. Seeking is disabled until a finite duration is available. The site may impose its own media limits or reset settings when a case changes. The extension uses the currently visible official video and does not force playback preferences onto replacement videos. Only the two popup switches are stored (see below).
+Frame stepping is approximate, not decoded-frame-accurate. It uses 1/30 second regardless of the footage's actual frame rate. Seeking is disabled until a finite duration is available. The site may impose its own media limits or reset settings when a case changes. The extension uses the currently visible official video and does not extract or store video URLs. The two popup switches and the preferred player volume are stored (see below).
 
 ## Settings popup
 
-Click the extension's toolbar icon for two switches, both **on** by default:
+Click the extension's toolbar icon for two switches, both **on** by default, plus a saved volume setting:
 
 - **Player controls**: the replacement toolbar and the layout it needs. Takes effect after reloading the Inspector page; the popup offers a **Reload page** button when a reload is needed.
+- **Player volume**: sets the official video's volume from 0% to 100%. The value is remembered across cases and page reloads; adjusting the toolbar volume updates this setting too.
 - **Site modifications**: a centered inspector profile beside a live inspection stats list, Inspector sidebar, full-width tab row with updated labels and version branding, and restyled verdict dialogs. Takes effect instantly.
 
-With both off, the page is exactly as the site ships it. The switches are stored in the browser's local extension storage.
+With both switches off, the page keeps the site's original presentation and controls. The two switches and preferred volume are stored in the browser's local extension storage.
 
 ## Screenshots
 
@@ -84,9 +85,9 @@ The Violation, Uncertain, and No Violation dialogs are restyled by `dialogs.css`
 - Controls operate only on the official HTML video inside `#workingPlayer`. No substitute player, external review copy, footage analysis, or inspection automation.
 - `.watermark` and `.txp-watermark` are never edited, hidden, removed, restyled, cloned, or covered by the custom toolbar. The original player subtree stays intact, including both overlay layers. Fullscreen includes that whole subtree; it never makes the bare video fullscreen. The CSS guard keeps native controls visible if a future player places a watermark inside their container.
 - The profile and official inspection notes are arranged as a left sidebar beside the video. The official verdict buttons keep their original nodes, IDs, classes, links, event handlers, and behavior; only their local appearance and position are changed: they sit as the bottom row of the video box, below the toolbar. No submission logic, account/case APIs, or verdict listeners are accessed, and no clicks are synthesized on the official page.
-- No fetch, XMLHttpRequest, WebSocket, beacons, network interception, downloads, remote scripts, CDNs, analytics, telemetry, or background worker. The only data saved is the two popup switches in `chrome.storage.local`. The extension never reads `src`, `currentSrc`, source elements, or video URLs.
+- No fetch, XMLHttpRequest, WebSocket, beacons, network interception, downloads, remote scripts, CDNs, analytics, telemetry, or background worker. The only data saved is the two popup switches and preferred volume in `chrome.storage.local`. The extension never reads `src`, `currentSrc`, source elements, or video URLs.
 - The official site continues loading its own video. User-directed playback/seeking can naturally cause the site's existing media pipeline to load video data; the extension makes no network requests of its own.
-- The manifest's only permission is `storage` (for the two popup switches). It has no `host_permissions`, `optional_permissions`, or web-accessible resources. Its sole content-script match is the exact HTTPS hostname and Inspector directory. An additional runtime guard accepts only `/act/a20251028patroller/` (or its slashless form when injected), with any language query, and only the top frame. No subdomains or other page paths are enabled. The slashless URL normally redirects to the configured trailing-slash path.
+- The manifest's only permission is `storage` (for the popup settings). It has no `host_permissions`, `optional_permissions`, or web-accessible resources. Its sole content-script match is the exact HTTPS hostname and Inspector directory. An additional runtime guard accepts only `/act/a20251028patroller/` (or its slashless form when injected), with any language query, and only the top frame. No subdomains or other page paths are enabled. The slashless URL normally redirects to the configured trailing-slash path.
 - The native `.plugin_ctrl_txp_bottom` and its bottom gradient are hidden only while the replacement controls are mounted and ready. Their nodes and handlers are retained. Disabling the extension and reloading restores the original controls. The custom toolbar stays outside the footage, including in fullscreen, and the video uses `object-fit: contain` to avoid cropping it.
 - Text and icon controls reuse the host navigation's computed font family, weight, tracking, active color, and border color. On the inspected English page this is `font_en` (Refrigerator Deluxe), accent `#ca4d31`, and 1px square borders. No fonts, icons, backgrounds, or CDN resources are requested by the extension. The progress and volume tracks have thin dark backgrounds and square handles; filled sections use the host accent.
 - Every playback action remains separate, grouped into playback, seeking, frame stepping, speed, audio, and view controls. Shortcut hints are in button tooltips. Status text appears only temporarily after feedback or an error.
@@ -111,13 +112,14 @@ Font Awesome Free 6.7.2 icons are embedded locally under CC BY 4.0. See [THIRD_P
 The source is readable without a build:
 
 - `manifest.json`: narrow Manifest V3 declaration.
-- `settings.js`: mirrors the popup switches onto the page and answers the popup.
+- `settings.js`: mirrors popup switches onto the page, persists the selected player volume across Workbench videos, and answers the popup.
 - `site-ui.js`: updates the navigation labels and adds the version brand cell when Exit Inspection is absent (**Site modifications**).
 - `content.js` / `player.css`: toolbar, keyboard controls, media binding, and the video / toolbar / verdict-row layout (**Player controls**).
 - `layout.css`, `dialogs.css` / `dialogs.js`: profile and stats Overview, sidebar, navigation, and verdict dialog layouts (**Site modifications**).
 - `popup.html` / `popup.css` / `popup.js`: the toolbar popup.
+- `icons/`: locally bundled browser icon sizes; the original transparent artwork is in `assets/extension-icon-master.png`.
 
-The public repository contains source and documentation only; generated builds and test fixtures are kept out of the extension package.
+The public repository includes source, documentation, preview images, and the icon artwork. Generated builds and test fixtures are kept out of the extension package.
 
 No authenticated live case was tested. Real-site CSS, proprietary player behavior, and future site changes remain a compatibility limit.
 
