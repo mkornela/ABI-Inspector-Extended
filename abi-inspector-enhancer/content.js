@@ -62,6 +62,120 @@ function main() {
     .right { justify-self:end; display:flex; align-items:center; gap:14px; }
     .group { display:flex; align-items:center; gap:2px; }
     .label { font-size:13px; text-transform:uppercase; padding:0 6px; opacity:.8; user-select:none; }
+    #keysButton { gap:6px; }
+    .keyboard-icon {
+      fill:none;
+      stroke:currentColor;
+      stroke-width:1.5;
+      stroke-linecap:round;
+      stroke-linejoin:round;
+    }
+    #keysDialog {
+      width:min(620px,calc(100vw - 28px));
+      max-width:620px;
+      max-height:min(82vh,700px);
+      margin:auto;
+      padding:0;
+      overflow:auto;
+      border:1px solid var(--abi-border,#41494b);
+      border-top:2px solid var(--abi-accent,#c3472d);
+      border-radius:0;
+      color:var(--abi-text,#e0e3de);
+      background:#111719;
+      box-shadow:0 24px 72px #000b;
+    }
+    #keysDialog::backdrop {
+      background:#050809d9;
+      backdrop-filter:blur(2px);
+    }
+    .keys-head {
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:16px;
+      padding:17px 20px 14px;
+      border-bottom:1px solid #ffffff16;
+    }
+    .keys-head h2 {
+      margin:4px 0 0;
+      color:var(--abi-text,#e0e3de);
+      font-size:21px;
+      font-weight:700;
+      letter-spacing:.04em;
+      text-transform:uppercase;
+    }
+    .keys-close {
+      flex:0 0 34px;
+      width:34px;
+      height:34px;
+      padding:0;
+      border-color:var(--abi-border,#41494b);
+      font-size:22px;
+      line-height:1;
+    }
+    .keys-grid {
+      display:grid;
+      grid-template-columns:repeat(2,minmax(0,1fr));
+      gap:20px 26px;
+      padding:18px 20px;
+    }
+    .keys-group h3 {
+      margin:0 0 8px;
+      color:#aab1af;
+      font-size:11px;
+      letter-spacing:.1em;
+      text-transform:uppercase;
+    }
+    .keys-list { display:grid; gap:6px; margin:0; }
+    .keys-row {
+      display:grid;
+      grid-template-columns:minmax(0,1fr) auto;
+      align-items:center;
+      gap:10px;
+      min-height:24px;
+      padding-bottom:5px;
+      border-bottom:1px solid #ffffff12;
+    }
+    .keys-row:last-child { padding-bottom:0; border-bottom:0; }
+    .keys-row dt { color:#d2d8d3; font-size:13px; line-height:1.25; }
+    .keys-row dd {
+      display:flex;
+      align-items:center;
+      justify-content:flex-end;
+      gap:5px;
+      margin:0;
+      white-space:nowrap;
+    }
+    .keys-row kbd {
+      min-width:24px;
+      padding:3px 6px;
+      border:1px solid var(--abi-border,#41494b);
+      background:#192024;
+      color:#f0f1ec;
+      font:inherit;
+      font-size:11px;
+      font-weight:700;
+      line-height:1.1;
+      text-align:center;
+    }
+    .keys-separator,.keys-detail { color:#929a9b; font-size:10px; }
+    .keys-note { margin:4px 0 0; color:#929a9b; font-size:11px; line-height:1.45; }
+    .keys-note strong { color:#d2d8d3; font-weight:700; }
+    .keys-foot {
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:14px;
+      padding:12px 20px;
+      border-top:1px solid #ffffff16;
+      background:#0e1214;
+    }
+    .keys-foot p { margin:0; color:#929a9b; font-size:11px; line-height:1.4; }
+    .keys-done { flex:0 0 auto; min-width:76px; color:var(--abi-accent,#c3472d); }
+    @media(max-width:560px) {
+      .keys-grid { grid-template-columns:1fr; gap:14px; padding:16px; }
+      .keys-head,.keys-foot { padding-inline:16px; }
+    }
     @container (max-width:860px) {
       .row { grid-template-columns:1fr auto; }
       .center { grid-column:1 / -1; grid-row:2; }
@@ -151,10 +265,88 @@ function main() {
         </div>
         <div class="right">
           <div class="group" role="group" aria-label="Audio"><button id="mute" title="Mute (M)" aria-pressed="false">Mute</button><input id="volume" type="range" min="0" max="1" step="0.01" value="1" aria-label="Volume"></div>
-          <div class="group" role="group" aria-label="View"><button id="fullscreen" title="Fullscreen (F); Escape to exit" aria-pressed="false">Fullscreen</button></div>
+          <div class="group" role="group" aria-label="View">
+            <button id="keysButton" title="Show video control keys" aria-label="Show video control keys">
+              <svg class="icon keyboard-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                <rect x="2.75" y="5.25" width="18.5" height="13.5" rx="1" />
+                <path d="M6 9h.1M10 9h.1M14 9h.1M18 9h.1M6 12h.1M10 12h.1M14 12h.1M18 12h.1M8 15.5h8" />
+              </svg>
+              Keys
+            </button>
+            <button id="fullscreen" title="Fullscreen (F); Escape to exit" aria-pressed="false">Fullscreen</button>
+          </div>
         </div>
       </div>
-      <div id="status" role="status" aria-live="polite"></div>`;
+      <div id="status" role="status" aria-live="polite"></div>
+      <dialog
+        id="keysDialog"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="keysTitle"
+        aria-describedby="keysHelp"
+      >
+        <header class="keys-head">
+          <div><h2 id="keysTitle">Video control keys</h2></div>
+          <button id="keysClose" class="keys-close" type="button" aria-label="Close keyboard shortcuts" autofocus>×</button>
+        </header>
+        <div class="keys-grid">
+          <section class="keys-group" aria-labelledby="keysPlaybackTitle">
+            <h3 id="keysPlaybackTitle">Playback</h3>
+            <dl class="keys-list">
+              <div class="keys-row">
+                <dt>Play / pause</dt>
+                <dd><kbd>SPACE</kbd><span class="keys-separator">or</span><kbd>K</kbd></dd>
+              </div>
+              <div class="keys-row"><dt>Mute / unmute</dt><dd><kbd>M</kbd></dd></div>
+            </dl>
+          </section>
+          <section class="keys-group" aria-labelledby="keysReviewTitle">
+            <h3 id="keysReviewTitle">Review</h3>
+            <dl class="keys-list">
+              <div class="keys-row">
+                <dt>Back 5 seconds</dt>
+                <dd><kbd>J</kbd><span class="keys-separator">or</span><kbd>←</kbd></dd>
+              </div>
+              <div class="keys-row">
+                <dt>Forward 5 seconds</dt>
+                <dd><kbd>L</kbd><span class="keys-separator">or</span><kbd>→</kbd></dd>
+              </div>
+              <div class="keys-row"><dt>Previous frame</dt><dd><kbd>,</kbd></dd></div>
+              <div class="keys-row"><dt>Next frame</dt><dd><kbd>.</kbd></dd></div>
+            </dl>
+            <p class="keys-note">
+              <strong>Toolbar only:</strong> use −10s / +10s to skip farther.
+            </p>
+          </section>
+          <section class="keys-group" aria-labelledby="keysSpeedTitle">
+            <h3 id="keysSpeedTitle">Playback speed</h3>
+            <dl class="keys-list">
+              <div class="keys-row"><dt>Slower</dt><dd><kbd>[</kbd></dd></div>
+              <div class="keys-row"><dt>Faster</dt><dd><kbd>]</kbd></dd></div>
+              <div class="keys-row">
+                <dt>Reset to 1×</dt>
+                <dd><kbd>\\</kbd></dd>
+              </div>
+            </dl>
+          </section>
+          <section class="keys-group" aria-labelledby="keysViewTitle">
+            <h3 id="keysViewTitle">View</h3>
+            <dl class="keys-list">
+              <div class="keys-row">
+                <dt>Fullscreen</dt>
+                <dd><kbd>F</kbd><span class="keys-detail">Esc exits</span></dd>
+              </div>
+            </dl>
+          </section>
+        </div>
+        <footer class="keys-foot">
+          <p id="keysHelp">
+            Shortcuts pause while typing or focused on a control. Focus a slider
+            and use ← / → to adjust it.
+          </p>
+          <button id="keysDone" class="keys-done" type="button">Done</button>
+        </footer>
+      </dialog>`;
     shadow.append(panel);
     const ui = Object.fromEntries(
       [...panel.querySelectorAll("[id]")].map((el) => [el.id, el]),
@@ -417,6 +609,12 @@ function main() {
         }
         render();
       }
+    });
+    on(ui.keysButton, "click", () => ui.keysDialog.showModal());
+    on(ui.keysClose, "click", () => ui.keysDialog.close());
+    on(ui.keysDone, "click", () => ui.keysDialog.close());
+    on(ui.keysDialog, "click", (event) => {
+      if (event.target === ui.keysDialog) ui.keysDialog.close();
     });
     on(document, "fullscreenchange", render);
     // Stops extension button clicks from reaching any delegated page click handler.
