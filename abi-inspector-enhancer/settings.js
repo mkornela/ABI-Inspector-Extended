@@ -1,10 +1,16 @@
 (() => {
   "use strict";
   // Runs at document_start. Mirrors the popup switches onto <html>, applies
-  // saved volume to Workbench videos, and answers the popup's ping.
+  // saved volume to inspection videos, and answers the popup's ping.
   if (window.top !== window || typeof chrome === "undefined" || !chrome.storage) return;
 
-  const DEFAULTS = { controls: true, site: true, playerVolume: 100 };
+  const DEFAULTS = {
+    controls: true,
+    site: true,
+    playerVolume: 100,
+    inspectionNotes: true,
+    colorKey: true,
+  };
   const root = document.documentElement;
   let playerVolume = 100;
   let volumeReady = false;
@@ -12,7 +18,7 @@
   function applyPlayerVolume() {
     if (!volumeReady) return;
     const volume = playerVolume / 100;
-    document.querySelectorAll("#workingPlayer video").forEach((video) => {
+    document.querySelectorAll(".content.video video").forEach((video) => {
       if (Math.abs(video.volume - volume) > 0.001) {
         const previousVolume = video.volume;
         video.volume = volume;
@@ -24,6 +30,8 @@
   function apply(settings, syncVolume = false) {
     root.dataset.abiSite = settings.site ? "on" : "off";
     root.dataset.abiControls = settings.controls ? "on" : "off";
+    root.dataset.abiInspectionNotes = settings.inspectionNotes ? "on" : "off";
+    root.dataset.abiColorKey = settings.colorKey ? "on" : "off";
     const savedVolume = Number(settings.playerVolume);
     playerVolume = Number.isFinite(savedVolume)
       ? Math.max(0, Math.min(100, savedVolume))
@@ -43,7 +51,7 @@
   document.addEventListener(
     "loadedmetadata",
     (event) => {
-      if (event.target instanceof HTMLVideoElement && event.target.closest("#workingPlayer"))
+      if (event.target instanceof HTMLVideoElement && event.target.closest(".content.video"))
         applyPlayerVolume();
     },
     true,

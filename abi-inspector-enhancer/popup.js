@@ -37,9 +37,16 @@ function render(settings) {
 
   reloadBtn.hidden = !needsReload;
   statusEl.classList.toggle("attention", Boolean(needsReload));
-  if (!page) statusEl.textContent = "Not on the Inspector page. Settings are saved and apply when you open it.";
-  else if (needsReload) statusEl.textContent = "Reload the Inspector page to apply the player controls change.";
-  else statusEl.textContent = "Applied to the open Inspector page.";
+  if (!page) {
+    statusEl.dataset.state = "idle";
+    statusEl.textContent = "Not on the Inspector page. Settings are saved and apply when you open it.";
+  } else if (needsReload) {
+    statusEl.dataset.state = "attention";
+    statusEl.textContent = "Reload the Inspector page to apply the player controls change.";
+  } else {
+    statusEl.dataset.state = "ready";
+    statusEl.textContent = "Applied to the open Inspector page.";
+  }
 }
 
 async function init() {
