@@ -410,6 +410,11 @@ function main() {
       if (video) {
         video.volume = Number(ui.volume.value);
         video.muted = video.volume === 0;
+        if (typeof chrome !== "undefined" && chrome.storage) {
+          chrome.storage.local
+            .set({ playerVolume: Math.round(video.volume * 100) })
+            .catch(() => {});
+        }
         render();
       }
     });

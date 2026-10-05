@@ -22,6 +22,23 @@
         <span class="switch" aria-hidden="true"></span>
       </label>
 
+      <section class="volume-setting" aria-labelledby="playerVolumeLabel">
+        <div class="volume-heading">
+          <label id="playerVolumeLabel" for="playerVolume">Player volume</label>
+          <output id="playerVolumeValue" for="playerVolume">100%</output>
+        </div>
+        <small>Remembered for future inspection cases.</small>
+        <input
+          id="playerVolume"
+          type="range"
+          min="0"
+          max="100"
+          step="1"
+          value="100"
+          aria-label="Default player volume"
+        />
+      </section>
+
       <label class="option" for="site">
         <span class="text">
           <strong>Site modifications</strong>

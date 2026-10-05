@@ -1,5 +1,5 @@
 "use strict";
-const DEFAULTS = { controls: true, site: true };
+const DEFAULTS = { controls: true, site: true, playerVolume: 100 };
 const $ = (id) => document.getElementById(id);
 const statusEl = $("status");
 const reloadBtn = $("reload");
@@ -26,6 +26,10 @@ async function findInspectorTab() {
 function render(settings) {
   $("controls").checked = settings.controls;
   $("site").checked = settings.site;
+  const volume = Math.max(0, Math.min(100, Number(settings.playerVolume) || 0));
+  $("playerVolume").value = String(volume);
+  $("playerVolumeValue").value = `${volume}%`;
+  $("playerVolume").style.setProperty("--volume-fill", `${volume}%`);
 
   const loaded = page?.controlsLoaded; // "on" | "off" | null
   const wanted = settings.controls ? "on" : "off";
@@ -49,6 +53,13 @@ for (const key of ["controls", "site"]) {
     render(await chrome.storage.local.get(DEFAULTS));
   });
 }
+
+$("playerVolume").addEventListener("input", async (event) => {
+  const playerVolume = Number(event.target.value);
+  $("playerVolumeValue").value = `${playerVolume}%`;
+  event.target.style.setProperty("--volume-fill", `${playerVolume}%`);
+  await chrome.storage.local.set({ playerVolume });
+});
 
 reloadBtn.addEventListener("click", async () => {
   if (tabId == null) return;
