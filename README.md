@@ -33,7 +33,7 @@ All project screenshots live in [`screenshots/`](screenshots/). The Overview, Wo
 ### Settings
 
 | In-site extension settings |
-| --- | --- |
+| --- |
 | ![In-site extension settings](screenshots/insite_settings.png) |
 
 ## Features
