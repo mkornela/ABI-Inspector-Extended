@@ -93,6 +93,9 @@
 
     nav.classList.toggle("abi-has-brand", shouldShowBrand);
     updateHeaderSlot(nav);
+    updateColorKey(enabled);
+    updateInspectionNote(enabled);
+    updateInspectionTitle(enabled);
     updateOverview(enabled);
   }
 
@@ -131,6 +134,90 @@
     if (Number.isFinite(slot) && slot > 0) {
       main.style.setProperty("--abi-header-slot", `${slot}px`);
     }
+  }
+
+  function updateColorKey(enabled) {
+    const note = document.querySelector("#xcWorking .tips-content #p46_2");
+    if (!note) return;
+
+    if (!enabled) {
+      if (!note.classList.contains("abi-color-key")) return;
+      note.replaceChildren(note.dataset.abiOriginalText || "");
+      note.classList.remove("abi-color-key");
+      delete note.dataset.abiOriginalText;
+      return;
+    }
+
+    if (note.classList.contains("abi-color-key")) return;
+    note.dataset.abiOriginalText = note.textContent;
+    note.classList.add("abi-color-key");
+
+    const fragment = document.createDocumentFragment();
+    for (const [kind, label] of [
+      ["teammate", "Teammates"],
+      ["enemy", "Enemies"],
+      ["scav", "Scavs (bots)"],
+    ]) {
+      const row = document.createElement("span");
+      row.className = "abi-color-row";
+      row.dataset.kind = kind;
+      const swatch = document.createElement("span");
+      swatch.className = "abi-color-swatch";
+      swatch.setAttribute("aria-hidden", "true");
+      const name = document.createElement("span");
+      name.className = "abi-color-name";
+      name.textContent = label;
+      row.append(swatch, name);
+      fragment.append(row);
+    }
+    note.replaceChildren(fragment);
+  }
+
+  function updateInspectionNote(enabled) {
+    const note = document.querySelector("#xcWorking .tips-content #p46_1");
+    if (!note) return;
+
+    if (!enabled) {
+      if (!note.classList.contains("abi-inspection-note")) return;
+      note.replaceChildren(note.dataset.abiOriginalText || "");
+      note.classList.remove("abi-inspection-note");
+      delete note.dataset.abiOriginalText;
+      return;
+    }
+
+    if (note.classList.contains("abi-inspection-note")) return;
+    note.dataset.abiOriginalText = note.textContent;
+    note.classList.add("abi-inspection-note");
+
+    const fragment = document.createDocumentFragment();
+    fragment.append("Distance markers and character colors are ");
+    const official = document.createElement("strong");
+    official.textContent = "added by the official inspection system";
+    fragment.append(official);
+    fragment.append(" to help identify possible violations. They are ");
+    const notSuspect = document.createElement("strong");
+    notSuspect.textContent = "not effects created by the inspected player";
+    fragment.append(notSuspect);
+    fragment.append(" and do not, by themselves, indicate cheating.");
+    note.replaceChildren(fragment);
+  }
+
+  function updateInspectionTitle(enabled) {
+    const title = document.querySelector("#xcWorking .tips-title");
+    if (!title) return;
+
+    if (!enabled) {
+      if (title.dataset.abiOriginalText === undefined) return;
+      title.textContent = title.dataset.abiOriginalText;
+      delete title.dataset.abiOriginalText;
+      return;
+    }
+
+    if (title.dataset.abiOriginalText === undefined) {
+      title.dataset.abiOriginalText = title.textContent;
+    }
+    const label = title.dataset.abiOriginalText.trim().replace(/\s*:?\s*$/, "");
+    if (title.textContent !== label) title.textContent = label;
   }
 
   function restoreRewards(dialog) {
@@ -306,6 +393,32 @@
     while (list.children.length > rows.length) list.lastElementChild.remove();
   }
 
+  function createRankIcon() {
+    const icon = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+    icon.setAttribute("viewBox", "0 0 24 24");
+    icon.setAttribute("class", "abi-rank-icon");
+    icon.setAttribute("aria-hidden", "true");
+
+    const shield = document.createElementNS(
+      "http://www.w3.org/2000/svg",
+      "path",
+    );
+    shield.setAttribute(
+      "d",
+      "M12 2.5 19.5 5.4v6.1c0 4.8-3 8.3-7.5 10-4.5-1.7-7.5-5.2-7.5-10V5.4L12 2.5Z",
+    );
+    const star = document.createElementNS(
+      "http://www.w3.org/2000/svg",
+      "path",
+    );
+    star.setAttribute(
+      "d",
+      "m12 6.1 1.45 2.96 3.27.48-2.36 2.3.56 3.25L12 13.55l-2.92 1.54.56-3.25-2.36-2.3 3.27-.48L12 6.1Z",
+    );
+    icon.append(shield, star);
+    return icon;
+  }
+
   function updateOverview(enabled) {
     const overview = document.querySelector("#wxMine > .user");
     const profile = overview?.querySelector(":scope > .user-info");
@@ -337,7 +450,7 @@
       rules.className = "abi-rank-open";
       rules.setAttribute("aria-label", "Display ranks");
       rules.title = "Display ranks";
-      rules.textContent = "Display ranks";
+      rules.append(createRankIcon());
       titleRow.append(rules);
       const meter = document.createElement("div");
       meter.className = "abi-meter";
@@ -349,14 +462,21 @@
       shell.append(identity, board);
       overview.append(shell);
     }
+    shell.querySelector(":scope > .abi-overview-head")?.remove();
 
     const person = shell.querySelector(".abi-identity-person");
     const titleRow = shell.querySelector(".abi-title-row");
     const meter = shell.querySelector(".abi-meter");
+    const avatar =
+      profile.querySelector(":scope > .avatar") ||
+      person?.querySelector(":scope > .avatar");
     const username = profile.querySelector(":scope > .username") || shell.querySelector(".username");
     const userid = profile.querySelector(":scope > .userid") || shell.querySelector(".userid");
     const honor = profile.querySelector(":scope > .honor") || shell.querySelector(".honor");
     place(person, titleRow);
+    if (avatar && avatar.parentElement !== person) {
+      person.insertBefore(avatar, person.firstChild);
+    }
     if (username && username.parentElement !== person) {
       person.insertBefore(username, titleRow);
     }
@@ -371,7 +491,14 @@
     }
     if (honor && titleRow && honor.parentElement !== titleRow) titleRow.append(honor);
     const rulesButton = titleRow?.querySelector(":scope > .abi-rank-open");
-    if (rulesButton && rulesButton !== titleRow.lastElementChild) titleRow.append(rulesButton);
+    if (rulesButton) {
+      if (!rulesButton.querySelector(".abi-rank-icon")) {
+        rulesButton.replaceChildren(createRankIcon());
+      }
+      if (rulesButton !== titleRow.firstElementChild) {
+        titleRow.prepend(rulesButton);
+      }
+    }
 
     let cards = shell.querySelector(".abi-board");
     let progress = shell.querySelector(".abi-rank-progress") || profile.querySelector(".abi-rank-progress");
@@ -411,9 +538,9 @@
 
     if (cards && !cards.querySelector(".abi-stat-card")) {
       for (const [className, label] of [
+        ["abi-stat-accuracy", "Inspection accuracy"],
         ["abi-stat-volume", "Inspection volume"],
         ["abi-stat-successful", "Successful inspections"],
-        ["abi-stat-accuracy", "Recent inspection accuracy"],
         ["abi-stat-bans", "Number of bans"],
       ]) {
         const card = document.createElement("section");
@@ -426,6 +553,24 @@
         cards.append(card);
       }
     }
+
+    const orderedCards = [
+      ".abi-stat-accuracy",
+      ".abi-stat-volume",
+      ".abi-stat-successful",
+      ".abi-stat-bans",
+    ]
+      .map((selector) => cards.querySelector(selector))
+      .filter(Boolean);
+    if (
+      orderedCards.some((card, index) => cards.children[index] !== card)
+    ) {
+      cards.append(...orderedCards);
+    }
+    updateText(
+      cards.querySelector(".abi-stat-accuracy > h3"),
+      "Inspection accuracy",
+    );
 
     const renderStat = (cardClass, label, value) => {
       const card = cards.querySelector(`.${cardClass} .abi-stat-values`);
@@ -442,9 +587,9 @@
             total: "Total",
             week: "This week",
             successful: "Lifetime",
-            "recent-accuracy": "Recent",
+            "recent-accuracy": "Recent accuracy",
             bans: "Bans",
-            "overall-accuracy": "Overall",
+            "overall-accuracy": "Overall accuracy",
             "last-ban": "Last ban",
           }[label] || label;
         const number = document.createElement("strong");
@@ -524,6 +669,12 @@
       levelProgress.append(label, count, track);
       shell.querySelector(".abi-identity-rank")?.append(levelProgress);
     }
+    let levelCaption = levelProgress.querySelector(".abi-level-caption");
+    if (!levelCaption) {
+      levelCaption = document.createElement("span");
+      levelCaption.className = "abi-level-caption";
+      levelProgress.append(levelCaption);
+    }
     const levelPercent = Math.min(inspectorLevel / 35, 1) * 100;
     updateText(levelProgress.querySelector(".abi-level-label"), "Inspector level");
     const levelCount = levelProgress.querySelector(".abi-level-count");
@@ -536,6 +687,10 @@
     }
     updateText(levelCount.querySelector(".abi-level-current"), String(inspectorLevel));
     updateText(levelCount.querySelector(".abi-level-maximum"), "35");
+    updateText(
+      levelCaption,
+      `${inspectorLevel} of 35 levels completed`,
+    );
     const levelTrack = levelProgress.querySelector(".abi-level-track");
     const levelFill = levelTrack.querySelector(".abi-level-fill");
     setProgress(levelFill, levelPercent);
