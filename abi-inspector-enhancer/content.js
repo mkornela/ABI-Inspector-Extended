@@ -200,6 +200,45 @@ function main() {
   `;
   let instance = null;
   let queued = false;
+  function visible(element) {
+    if (!element) return false;
+    const css = getComputedStyle(element);
+    return (
+      element.getClientRects().length > 0 &&
+      css.visibility === "visible" &&
+      css.display !== "none" &&
+      Number(css.opacity) !== 0
+    );
+  }
+
+  function activeVideoPanel() {
+    const activeId = document.querySelector(".main .nav li.current")?.id;
+    let panel = null;
+    if (activeId === "working") {
+      panel = document.querySelector("#xcWorking > .content.video");
+    } else if (activeId === "drill") {
+      panel = document.querySelector(".content.video:has(#drillButton)");
+    }
+    if (panel) return panel;
+    return [...document.querySelectorAll(
+      "#xcWorking > .content.video, .content.video:has(#drillButton)",
+    )].find(visible) || null;
+  }
+
+  function activePlayer() {
+    const playBox = activeVideoPanel()?.querySelector(":scope > .play-box");
+    if (!playBox) return null;
+    const shell = playBox.querySelector(":scope > abi-local-player");
+    if (shell) return shell.firstElementChild;
+    const children = [...playBox.children].filter(
+      (child) =>
+        child.matches('[id$="Player"]') ||
+        child.matches("video") ||
+        child.querySelector("video"),
+    );
+    return children.find(visible) || children[0] || null;
+  }
+
   const format = (value) => {
     if (!Number.isFinite(value)) return "--:--";
     const seconds = Math.max(0, Math.floor(value));
@@ -210,10 +249,10 @@ function main() {
   function create(player) {
     const shell = document.createElement("abi-local-player");
     const host = document.createElement("abi-local-controls");
-    const tab = document.querySelector(".nav #working");
+    const tab = document.querySelector(".nav #working, .nav #drill");
     const activeTab = document.querySelector(".nav li.current");
     const idleTab = document.querySelector(".nav li:not(.current)");
-    const note = document.querySelector("#xcWorking .tips-title");
+    const note = player.closest(".content.video")?.querySelector(".tips-title");
     const nav = document.querySelector(".main .nav, .nav");
     function syncTheme() {
       const tabStyle = tab && getComputedStyle(tab);
@@ -408,15 +447,6 @@ function main() {
     };
     const finite = () =>
       video && Number.isFinite(video.duration) && video.duration > 0;
-    function visible(candidate) {
-      const css = getComputedStyle(candidate);
-      return (
-        candidate.getClientRects().length > 0 &&
-        css.visibility === "visible" &&
-        css.display !== "none" &&
-        Number(css.opacity) !== 0
-      );
-    }
     function selectVideo() {
       const candidates = [...player.querySelectorAll("video")].filter(visible);
       candidates.sort(
@@ -694,7 +724,7 @@ function main() {
 
   function reconcile() {
     queued = false;
-    const player = document.getElementById("workingPlayer");
+    const player = activePlayer();
     if (
       instance &&
       (instance.player !== player ||
@@ -720,6 +750,20 @@ function main() {
     childList: true,
     subtree: true,
   });
+  document.addEventListener(
+    "click",
+    (event) => {
+      if (event.target instanceof Element && event.target.closest(".main .nav > li")) {
+        requestAnimationFrame(() => {
+          if (!queued) {
+            queued = true;
+            requestAnimationFrame(reconcile);
+          }
+        });
+      }
+    },
+    true,
+  );
   document.addEventListener(
     "keydown",
     (event) => {

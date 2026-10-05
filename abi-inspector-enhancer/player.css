@@ -6,14 +6,14 @@ abi-local-player {
   box-sizing: border-box;
   background: transparent;
 }
-abi-local-player > #workingPlayer {
+abi-local-player > :first-child {
   width: 100% !important;
   height: auto !important;
   aspect-ratio: 16 / 9;
   margin: 0 !important;
   border: 0 !important;
 }
-abi-local-player > #workingPlayer video {
+abi-local-player > :first-child video {
   object-fit: contain !important;
 }
 abi-local-player:fullscreen {
@@ -29,7 +29,7 @@ abi-local-player:fullscreen {
   background: #000;
   overflow: hidden;
 }
-abi-local-player:fullscreen > #workingPlayer {
+abi-local-player:fullscreen > :first-child {
   width: 100% !important;
   height: 100% !important;
   min-width: 0 !important;
@@ -49,21 +49,23 @@ abi-local-controls {
 /* Hide only the native bottom controls while the replacement is mounted.
    Fail open if a future player puts a watermark inside these containers. */
 abi-local-player[data-controls-ready]
-  > #workingPlayer
+  > :first-child
   > :is(.plugin_ctrl_txp_bottom, .plugin_ctrl_txp_gradient_bottom):not(
     .watermark
   ):not(.txp-watermark):not(:has(.watermark, .txp-watermark)) {
   display: none !important;
 }
 
-/* Workbench box = fixed-height flex column: video, toolbar, verdict row.
-   Works on the site's native flex layout as well as the grid in layout.css. */
-#xcWorking > .content.video:has(abi-local-player) > .play-box {
+/* Workbench and Test Cases boxes use the same flex column: video, toolbar,
+   and the site's original verdict row. */
+:is(#xcWorking > .content.video, .content.video:has(#drillButton)):has(abi-local-player) > .play-box {
   /* Insets = gap between the content box and the painted frame lines.
      0 = flush with the site's content box; raise a value if the video covers a frame line. */
   --abi-box-top: 0rem;
   --abi-box-right: 0rem;
   --abi-box-bottom: 0rem;
+  display: flex !important;
+  flex-direction: column;
   min-width: 0;
   margin: 0 !important;
   padding: var(--abi-box-top) var(--abi-box-right) var(--abi-box-bottom) 0;
@@ -74,18 +76,18 @@ abi-local-player[data-controls-ready]
   justify-content: flex-start;
 }
 /* shell = video + toolbar, takes whatever height the verdict row leaves */
-#xcWorking > .content.video:has(abi-local-player) .play-box > abi-local-player:not(:fullscreen) {
+:is(#xcWorking > .content.video, .content.video:has(#drillButton)):has(abi-local-player) .play-box > abi-local-player:not(:fullscreen) {
   flex: 1 1 0;
   min-height: 0;
   display: flex;
   flex-direction: column;
 }
-#xcWorking > .content.video:has(abi-local-player) .play-box > abi-local-player:not(:fullscreen) > #workingPlayer {
+:is(#xcWorking > .content.video, .content.video:has(#drillButton)):has(abi-local-player) .play-box > abi-local-player:not(:fullscreen) > :first-child {
   flex: 1 1 0;
   min-height: 0 !important;
   aspect-ratio: auto;
 }
-#xcWorking > .content.video:has(abi-local-player) .play-box > .operation {
+:is(#xcWorking > .content.video, .content.video:has(#drillButton)):has(abi-local-player) .play-box > .operation {
   flex: 0 0 auto;
   width: 100%;
   margin: 0;
