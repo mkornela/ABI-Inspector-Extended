@@ -549,7 +549,7 @@
     badgesWrap.className = "abi-settings-badges";
     const aboutVersion = document.createElement("span");
     aboutVersion.className = "abi-settings-version";
-    aboutVersion.textContent = `v${chrome.runtime?.getManifest?.()?.version || "2.5.0"}`;
+    aboutVersion.textContent = `v${chrome.runtime?.getManifest?.()?.version || "2.5.1"}`;
     const statusBadge = document.createElement("span");
     statusBadge.className = "abi-settings-status-badge";
     statusBadge.textContent = "Active";
