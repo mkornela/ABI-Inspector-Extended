@@ -1,13 +1,17 @@
 "use strict";
-const DEFAULTS = { controls: true, site: true, playerVolume: 100 };
+
+const DEFAULTS = { extensionEnabled: true, controls: true };
 const $ = (id) => document.getElementById(id);
 const statusEl = $("status");
 const reloadBtn = $("reload");
+const masterInput = $("extensionEnabled");
+const masterBadge = $("masterBadge");
+const openSettingsBtn = $("openSettingsBtn");
 
 let tabId = null; // active tab, if it is the Inspector page
 let page = null; // reply from settings.js, or null when not on the Inspector page
 
-$("version").textContent = `v${chrome.runtime.getManifest().version}`;
+$("version").textContent = `v${chrome.runtime?.getManifest?.()?.version || "2.5.0"}`;
 
 async function findInspectorTab() {
   try {
@@ -19,62 +23,75 @@ async function findInspectorTab() {
       page = reply;
     }
   } catch {
-    // Not the Inspector page (no content script to answer): leave page = null.
+    // Not on Inspector page: leave page = null.
   }
 }
 
 function render(settings) {
-  $("controls").checked = settings.controls;
-  $("site").checked = settings.site;
-  const volume = Math.max(0, Math.min(100, Number(settings.playerVolume) || 0));
-  $("playerVolume").value = String(volume);
-  $("playerVolumeValue").value = `${volume}%`;
-  $("playerVolume").style.setProperty("--volume-fill", `${volume}%`);
+  const isEnabled = settings.extensionEnabled !== false;
+  masterInput.checked = isEnabled;
+
+  if (isEnabled) {
+    masterBadge.textContent = "Active";
+    masterBadge.className = "status-pill status-pill-active";
+  } else {
+    masterBadge.textContent = "Disabled";
+    masterBadge.className = "status-pill status-pill-disabled";
+  }
 
   const loaded = page?.controlsLoaded; // "on" | "off" | null
-  const wanted = settings.controls ? "on" : "off";
-  const needsReload = page && loaded && loaded !== wanted;
+  const wanted = isEnabled && settings.controls ? "on" : "off";
+  const needsReload = Boolean(page && loaded && loaded !== wanted);
 
   reloadBtn.hidden = !needsReload;
   statusEl.classList.toggle("attention", Boolean(needsReload));
+
   if (!page) {
     statusEl.dataset.state = "idle";
-    statusEl.textContent = "Not on the Inspector page. Settings are saved and apply when you open it.";
+    statusEl.textContent = "Not on Inspector page. Settings apply when you open it.";
+    openSettingsBtn.disabled = true;
+    openSettingsBtn.title = "Open the Inspector page to view on-site settings.";
   } else if (needsReload) {
     statusEl.dataset.state = "attention";
-    statusEl.textContent = "Reload the Inspector page to apply the player controls change.";
+    statusEl.textContent = "Reload the Inspector page to apply changes.";
+    openSettingsBtn.disabled = !isEnabled;
+  } else if (!isEnabled) {
+    statusEl.dataset.state = "disabled";
+    statusEl.textContent = "Extension is turned off on the Inspector page.";
+    openSettingsBtn.disabled = true;
   } else {
     statusEl.dataset.state = "ready";
-    statusEl.textContent = "Applied to the open Inspector page.";
+    statusEl.textContent = "Active on the open Inspector workbench.";
+    openSettingsBtn.disabled = false;
   }
 }
 
 async function init() {
   await findInspectorTab();
-  render(await chrome.storage.local.get(DEFAULTS));
+  const settings = await chrome.storage.local.get(DEFAULTS);
+  render(settings);
 }
 
-for (const key of ["controls", "site"]) {
-  $(key).addEventListener("change", async (event) => {
-    await chrome.storage.local.set({ [key]: event.target.checked });
-    render(await chrome.storage.local.get(DEFAULTS));
-  });
-}
+masterInput.addEventListener("change", async () => {
+  const isEnabled = masterInput.checked;
+  await chrome.storage.local.set({ extensionEnabled: isEnabled });
+  const settings = await chrome.storage.local.get(DEFAULTS);
+  render(settings);
+});
 
-$("playerVolume").addEventListener("input", async (event) => {
-  const playerVolume = Number(event.target.value);
-  $("playerVolumeValue").value = `${playerVolume}%`;
-  event.target.style.setProperty("--volume-fill", `${playerVolume}%`);
-  await chrome.storage.local.set({ playerVolume });
+openSettingsBtn.addEventListener("click", async () => {
+  if (tabId == null) return;
+  try {
+    await chrome.tabs.sendMessage(tabId, { type: "abi:open-settings" });
+  } catch {}
+  window.close();
 });
 
 reloadBtn.addEventListener("click", async () => {
   if (tabId == null) return;
   try {
     await chrome.tabs.sendMessage(tabId, { type: "abi:reload" });
-  } catch {
-    // The page is already reloading or closed.
-  }
+  } catch {}
   window.close();
 });
 

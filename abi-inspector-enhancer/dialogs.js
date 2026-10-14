@@ -9,8 +9,9 @@
     return;
 
   const root = document.documentElement;
-  // data-abi-site is maintained by settings.js ("Site modifications" switch).
-  const siteOn = () => root.dataset.abiSite !== "off";
+  // data-abi-site and data-abi-verdict-enhancements are maintained by settings.js.
+  const siteOn = () =>
+    root.dataset.abiSite !== "off" && root.dataset.abiVerdictEnhancements !== "off";
 
   // Display-only English text for placeholders the site ships in Chinese.
   // Values sent to the server are never touched, and the original text is

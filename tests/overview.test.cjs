@@ -62,18 +62,24 @@ test("Overview renders live counts and XP, updates without duplicate cards, and 
       window.eval(`${fn};window.renderOverview = updateOverview;`);
       window.renderOverview(true);
     }, { fn, summary });
-    assert.equal(await page.locator('.abi-today-count').textContent(), "3 / 20");
-    assert.equal(await page.locator('.abi-stat-accuracy [data-stat="seasonal-accuracy"] strong').textContent(), "91.28%");
-    assert.equal(await page.locator('.abi-stat-accuracy [data-stat="overall-accuracy"] strong').textContent(), "90.25%");
-    assert.equal(await page.locator('.abi-stat-accuracy [data-stat="weekly-accuracy"] strong').textContent(), "75.00%");
-    assert.equal(await page.locator('.abi-stat-weekly [data-stat="Correct"] strong').textContent(), "9");
-    assert.equal(await page.locator('.abi-stat-season [data-stat="Bans"] strong').textContent(), "108");
+    assert.equal(await page.locator('.abi-today-done').textContent(), "3");
+    assert.equal(await page.locator('.abi-today-limit').textContent(), "20");
+    assert.equal((await page.locator('.abi-today-count').textContent()).trim().replace(/\s+/g, " "), "3 of 20");
+    assert.equal(await page.locator('.abi-stat-accuracy [data-stat="seasonal-accuracy"] strong').textContent(), "91.3%");
+    assert.equal(await page.locator('.abi-stat-accuracy [data-stat="overall-accuracy"] strong').textContent(), "90.3%");
+    assert.equal(await page.locator('.abi-stat-accuracy [data-stat="weekly-accuracy"] strong').textContent(), "75.0%");
+    assert.equal(await page.locator('.abi-stat-inspections [data-period="weekly"] [data-stat="Correct"] strong').textContent(), "9");
+    assert.equal(await page.locator('.abi-stat-inspections [data-period="season"] [data-stat="Bans"] strong').textContent(), "108");
+    assert.equal(await page.locator('.abi-stat-inspections [data-period="weekly"] .abi-inspection-accuracy').textContent(), "75.0%");
+    assert.equal(await page.locator('.abi-stat-inspections [data-period="season"] .abi-inspection-accuracy').textContent(), "91.3%");
+    assert.equal(await page.locator('.abi-stat-inspections [data-period="lifetime"] .abi-inspection-accuracy').textContent(), "90.3%");
     assert.ok((await page.locator('.abi-level-caption').textContent()).includes("205 XP to level 23"));
     assert.ok((await page.locator('.abi-level-xp').textContent()).includes("2,575"));
     assert.equal(await page.locator('.abi-level-track').getAttribute("aria-valuemax"), "210");
     await page.evaluate(() => { window.__abiOverviewData.userJudgeSummary.day_judged_num = 4; window.renderOverview(true); });
-    assert.equal(await page.locator('.abi-today-count').textContent(), "4 / 20");
-    assert.equal(await page.locator('.abi-stat-card').count(), 5);
+    assert.equal(await page.locator('.abi-today-done').textContent(), "4");
+    assert.equal((await page.locator('.abi-today-count').textContent()).trim().replace(/\s+/g, " "), "4 of 20");
+    assert.equal(await page.locator('.abi-stat-card').count(), 3);
     // Match the short Overview panel in the reported screenshot, not just a tall desktop.
     await page.setViewportSize({ width: 1320, height: 650 });
     await page.locator('#wxMine').evaluate(node => { node.style.height = "640px"; });
@@ -89,6 +95,6 @@ test("Overview renders live counts and XP, updates without duplicate cards, and 
     }
     await page.evaluate(() => { window.__abiOverviewData = {}; window.renderOverview(true); });
     assert.equal(await page.locator('.abi-level-caption').textContent(), "Waiting for progression data");
-    assert.equal(await page.locator('.abi-stat-accuracy [data-stat="seasonal-accuracy"] strong').textContent(), "—");
+    assert.equal(await page.locator('.abi-stat-accuracy [data-stat="seasonal-accuracy"] strong').textContent(), "--");
   } finally { await browser?.close(); }
 });

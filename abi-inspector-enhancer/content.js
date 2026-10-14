@@ -218,17 +218,22 @@ function main() {
   }
 
   function activeVideoPanel() {
-    const activeId = document.querySelector(".main .nav li.current")?.id;
+    const activeTab = document.querySelector(".main .nav li.current, .nav li.current");
+    const isWorking = activeTab?.id === "working" || activeTab?.classList.contains("str24");
+    const isDrill = activeTab?.id === "drill" || activeTab?.classList.contains("str26");
     let panel = null;
-    if (activeId === "working") {
+    if (isWorking) {
       panel = document.querySelector("#xcWorking > .content.video");
-    } else if (activeId === "drill") {
-      panel = document.querySelector(".content.video:has(#drillButton)");
+    } else if (isDrill) {
+      panel = document.querySelector(".content.video:has(#drillButton), #drill > .content.video");
     }
     if (panel) return panel;
-    return [...document.querySelectorAll(
-      "#xcWorking > .content.video, .content.video:has(#drillButton)",
-    )].find(visible) || null;
+    const candidates = [
+      ...document.querySelectorAll(
+        "#xcWorking > .content.video, .content.video:has(#drillButton), .content.video",
+      ),
+    ];
+    return candidates.find(visible) || candidates[0] || null;
   }
 
   function activePlayer() {
@@ -383,6 +388,23 @@ function main() {
               </div>
             </dl>
           </section>
+          <section class="keys-group" aria-labelledby="keysVerdictTitle">
+            <h3 id="keysVerdictTitle">Quick Verdicts (Workbench)</h3>
+            <dl class="keys-list">
+              <div class="keys-row">
+                <dt>Violation</dt>
+                <dd><kbd>1</kbd><span class="keys-separator">or</span><kbd>G</kbd></dd>
+              </div>
+              <div class="keys-row">
+                <dt>Uncertain</dt>
+                <dd><kbd>2</kbd><span class="keys-separator">or</span><kbd>U</kbd></dd>
+              </div>
+              <div class="keys-row">
+                <dt>No violation</dt>
+                <dd><kbd>3</kbd><span class="keys-separator">or</span><kbd>I</kbd></dd>
+              </div>
+            </dl>
+          </section>
         </div>
         <footer class="keys-foot">
           <p id="keysHelp">
@@ -454,22 +476,62 @@ function main() {
     const finite = () =>
       video && Number.isFinite(video.duration) && video.duration > 0;
     function selectVideo() {
-      const candidates = [...player.querySelectorAll("video")].filter(visible);
-      candidates.sort(
+      const scope = player || shell || document;
+      const allVideos = [...scope.querySelectorAll("video")];
+      if (!allVideos.length) {
+        if (video) {
+          mediaLife?.abort();
+          video = null;
+          render();
+        }
+        return;
+      }
+      const playingVideo =
+        allVideos.find((v) => !v.paused && visible(v)) ||
+        allVideos.find((v) => !v.paused);
+      const visibleVideos = allVideos.filter(visible);
+      visibleVideos.sort(
         (a, b) =>
           (parseInt(getComputedStyle(b).zIndex, 10) || 0) -
           (parseInt(getComputedStyle(a).zIndex, 10) || 0),
       );
-      const selected = candidates[0] || null;
+      const selected = playingVideo || visibleVideos[0] || allVideos[0] || null;
       if (selected === video) return;
       mediaLife?.abort();
       video = selected;
       if (video) {
+        const rootDs = document.documentElement.dataset;
+        const initialSpeed = Number(rootDs.abiPlaybackSpeed);
+        const currentSrc = video.currentSrc || video.src || "loaded";
+        if (
+          Number.isFinite(initialSpeed) &&
+          initialSpeed > 0 &&
+          video.dataset.abiSpeedInitialized !== currentSrc
+        ) {
+          video.dataset.abiSpeedInitialized = currentSrc;
+          if (Math.abs(video.playbackRate - initialSpeed) > 0.001) {
+            video.playbackRate = initialSpeed;
+          }
+        }
+        if (rootDs.abiLoopVideo === "on") {
+          video.loop = true;
+        }
+        if (
+          rootDs.abiAutoPlay === "on" &&
+          video.paused &&
+          !video.ended &&
+          video.dataset.abiUserPaused !== "true" &&
+          video.dataset.abiAutoplayed !== currentSrc
+        ) {
+          video.dataset.abiAutoplayed = currentSrc;
+          video.play().catch(() => {});
+        }
         mediaLife = new AbortController();
         for (const name of [
           "timeupdate",
           "durationchange",
           "loadedmetadata",
+          "loadstart",
           "play",
           "pause",
           "ended",
@@ -480,7 +542,18 @@ function main() {
           "seeked",
           "error",
         ]) {
-          video.addEventListener(name, render, { signal: mediaLife.signal });
+          video.addEventListener(
+            name,
+            (event) => {
+              if (event.type === "loadstart") {
+                delete video.dataset.abiUserPaused;
+                delete video.dataset.abiAutoplayed;
+                delete video.dataset.abiSpeedInitialized;
+              }
+              render();
+            },
+            { signal: mediaLife.signal },
+          );
         }
       }
       render();
@@ -573,15 +646,22 @@ function main() {
       jump(direction / 30);
     }
     async function togglePlay() {
+      selectVideo();
       if (!video) return;
-      if (!video.paused) video.pause();
-      else {
+      if (!video.paused) {
+        video.dataset.abiUserPaused = "true";
+        try {
+          video.pause();
+        } catch {}
+      } else {
+        delete video.dataset.abiUserPaused;
         try {
           await video.play();
         } catch {
           notice("Playback unavailable — try the official player");
         }
       }
+      render();
     }
     async function fullscreen() {
       try {
@@ -598,6 +678,13 @@ function main() {
     function setSpeed(rate) {
       if (!video) return;
       video.playbackRate = rate;
+      const currentSrc = video.currentSrc || video.src || "loaded";
+      video.dataset.abiSpeedInitialized = currentSrc;
+      const rootDs = document.documentElement.dataset;
+      rootDs.abiPlaybackSpeed = String(rate);
+      if (typeof chrome !== "undefined" && chrome.storage) {
+        chrome.storage.local.set({ playbackSpeed: rate }).catch(() => {});
+      }
       render();
     }
     function stepSpeed(direction) {
@@ -629,7 +716,9 @@ function main() {
       fullscreen,
     };
     for (const [id, fn] of Object.entries(actions))
-      on(ui[id], "click", () => {
+      on(ui[id], "click", (event) => {
+        event?.preventDefault?.();
+        event?.stopPropagation?.();
         selectVideo();
         fn();
       });
@@ -653,6 +742,15 @@ function main() {
       if (event.target === ui.keysDialog) ui.keysDialog.close();
     });
     on(document, "fullscreenchange", render);
+    // Click directly on video screen to toggle play/pause
+    on(player, "click", (event) => {
+      if (
+        event.target instanceof Element &&
+        !event.target.closest("button, a, input, select, textarea, [role='button'], [role='slider']")
+      ) {
+        togglePlay();
+      }
+    });
     // Stops extension button clicks from reaching any delegated page click handler.
     on(host, "click", (event) => event.stopPropagation());
     const playerObserver = new MutationObserver(() => {
@@ -681,6 +779,28 @@ function main() {
       key(event) {
         selectVideo();
         if (!video || !visible(video)) return;
+        if (document.documentElement.dataset.abiVerdictHotkeys === "on") {
+          const k = event.key.length === 1 ? event.key.toLowerCase() : event.key;
+          let verdictTarget = null;
+          let verdictName = "";
+          if (k === "1" || k === "g") {
+            verdictTarget = document.querySelector("#patrolButton0, #drillButton0, .operation a[data-index='1']");
+            verdictName = "Violation";
+          } else if (k === "2" || k === "u") {
+            verdictTarget = document.querySelector("#patrolButton2, .operation a[data-index='2']");
+            verdictName = "Uncertain";
+          } else if (k === "3" || k === "i" || k === "c") {
+            verdictTarget = document.querySelector("#patrolButton1, #drillButton1, .operation a[data-index='0']");
+            verdictName = "No Violation";
+          }
+          if (verdictTarget && visible(verdictTarget)) {
+            event.preventDefault();
+            event.stopImmediatePropagation();
+            verdictTarget.click();
+            notice(`Verdict: ${verdictName}`);
+            return;
+          }
+        }
         const keys = {
           " ": "play",
           k: "play",
@@ -807,9 +927,10 @@ function main() {
 // "Player controls" switch (popup). Read once per page load; changing it takes
 // effect after the Inspector page is reloaded.
 if (typeof chrome !== "undefined" && chrome.storage) {
-  chrome.storage.local.get({ controls: true }, ({ controls }) => {
-    document.documentElement.dataset.abiControlsLoaded = controls ? "on" : "off";
-    if (controls) main();
+  chrome.storage.local.get({ controls: true, extensionEnabled: true }, ({ controls, extensionEnabled }) => {
+    const active = extensionEnabled !== false && controls;
+    document.documentElement.dataset.abiControlsLoaded = active ? "on" : "off";
+    if (active) main();
   });
 } else {
   main();

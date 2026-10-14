@@ -1,6 +1,6 @@
 {
   "name": "abi-inspector-extended",
-  "version": "2.0.0",
+  "version": "2.5.0",
   "private": true,
   "description": "Development metadata for ABI Inspector Extended.",
   "engines": {
@@ -10,7 +10,9 @@
     "playwright": "1.62.1"
   },
   "scripts": {
+    "test": "node --test tests/overview.test.cjs tests/player.test.cjs",
     "test:overview": "node --test tests/overview.test.cjs",
+    "test:player": "node --test tests/player.test.cjs",
     "check": "node --check abi-inspector-enhancer/content.js && node --check abi-inspector-enhancer/settings.js && node --check abi-inspector-enhancer/site-ui.js && node --check abi-inspector-enhancer/dialogs.js && node --check abi-inspector-enhancer/popup.js && node --check abi-inspector-enhancer/overview-observer.js && node --check abi-inspector-enhancer/overview-data.js"
   }
 }

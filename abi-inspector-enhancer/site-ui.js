@@ -26,6 +26,7 @@
   ];
   let queued = false;
   let settingsViewState = null;
+  let lastNavTab = null;
   document.addEventListener("abi:overview-updated", scheduleUpdate);
   document.addEventListener("keydown", (event) => {
     if (event.key !== "Escape") return;
@@ -34,6 +35,24 @@
     dialog.hidden = true;
     document.querySelector("#wxMine .abi-rank-open")?.focus();
   });
+  document.addEventListener("click", (event) => {
+    const navItem = event.target.closest(".main .nav li, .nav li, #mine, a[href*='mine']");
+    if (!navItem) return;
+    if (navItem.id === "mine" || navItem.textContent.includes("Overview") || navItem.matches(".str22")) {
+      const mineHost = document.querySelector("#wxMine");
+      if (mineHost) {
+        for (const el of mineHost.querySelectorAll("[data-abi-progress-ready]")) {
+          delete el.dataset.abiProgressReady;
+          if (el.classList.contains("abi-today-ring-fill")) {
+            el.style.strokeDashoffset = "320.44";
+          } else {
+            el.style.width = "0%";
+          }
+        }
+      }
+      scheduleUpdate();
+    }
+  }, true);
 
   function updateNavigation() {
     queued = false;
@@ -154,17 +173,6 @@
       home.textContent = "Home";
       home.addEventListener("click", () => sourceHome.click());
 
-      const anonymize = document.createElement("button");
-      anonymize.type = "button";
-      anonymize.className = "abi-account-button abi-anonymize-button";
-      anonymize.addEventListener("click", () => {
-        privacyAnonymized = !privacyAnonymized;
-        try {
-          localStorage.setItem(privacyStorageKey, String(privacyAnonymized));
-        } catch {}
-        scheduleUpdate();
-      });
-
       const logout = document.createElement("button");
       logout.type = "button";
       logout.className = "abi-account-button";
@@ -176,22 +184,13 @@
       security.textContent = "Security Center";
       security.target = "_blank";
       security.rel = "noopener noreferrer";
-      actions.append(identity, home, anonymize, logout, security);
+      actions.append(identity, home, logout, security);
       topNav.append(actions);
     }
 
     const userName = actions.querySelector(".abi-account-name-text");
     if (userName && userName.textContent !== sourceName.textContent) {
       userName.textContent = sourceName.textContent;
-    }
-    const anonymize = actions.querySelector(".abi-anonymize-button");
-    if (anonymize) {
-      anonymize.textContent = privacyAnonymized ? "Unanonymize" : "Anonymize";
-      anonymize.setAttribute("aria-pressed", String(privacyAnonymized));
-      anonymize.setAttribute(
-        "aria-label",
-        privacyAnonymized ? "Show personal information" : "Anonymize personal information",
-      );
     }
     const security = actions.querySelector(".abi-security-button");
     if (security && security.href !== sourceSecurity.href) security.href = sourceSecurity.href;
@@ -207,6 +206,14 @@
     const toolbarEnabled = loggedIn && root.dataset.abiSite !== "off";
     actions.hidden = !toolbarEnabled;
     topNav.classList.toggle("abi-account-ready", toolbarEnabled);
+    const langBtn = topNav.querySelector("#langBtn") || document.querySelector("#langBtn");
+    if (toolbarEnabled) {
+      if (langBtn && langBtn.parentElement !== actions) {
+        actions.append(langBtn);
+      }
+    } else if (langBtn && langBtn.parentElement === actions) {
+      topNav.insertBefore(langBtn, actions);
+    }
     for (const source of [
       topNav.querySelector("#login"),
       sourceHome,
@@ -242,6 +249,11 @@
       "#wxMine .abi-stat-trend",
       "#wxMine .abi-stat-sublabel",
       "#wxMine .abi-stat-item strong",
+      "#wxMine .abi-period-total strong",
+      "#wxMine .abi-legend-item",
+      "#wxMine .abi-inspection-accuracy",
+      "#wxMine .abi-inspection-bans strong",
+      "#wxMine .abi-stat-delta",
       "#wxMine .abi-rank-card h3",
       "#wxMine .abi-rank-card p",
       "#wxMine .abi-rank-bonus",
@@ -289,9 +301,15 @@
 
   const settingsDefaults = {
     controls: true,
+    site: true,
     playerVolume: 100,
+    playbackSpeed: 1,
+    autoPlay: false,
+    loopVideo: false,
     inspectionNotes: true,
     colorKey: true,
+    verdictEnhancements: true,
+    verdictHotkeys: false,
   };
 
   function createSettingsPanel() {
@@ -300,20 +318,41 @@
 
     const body = document.createElement("div");
     body.className = "abi-settings-body";
+
+    // 1. Playback Card
     const playback = document.createElement("section");
     playback.className = "abi-settings-group";
     playback.setAttribute("aria-labelledby", "abi-settings-playback-title");
+    const playbackHead = document.createElement("div");
+    playbackHead.className = "abi-settings-section-heading";
+    const playbackIndex = document.createElement("span");
+    playbackIndex.className = "abi-settings-index";
+    playbackIndex.textContent = "01";
     const playbackTitle = document.createElement("h2");
     playbackTitle.id = "abi-settings-playback-title";
     playbackTitle.textContent = "Playback";
-    playback.append(playbackTitle);
+    playbackHead.append(playbackTitle, playbackIndex);
+    playback.append(playbackHead);
 
     const controlRow = makeSettingsToggle(
       "abi-settings-controls",
       "controls",
-      "Video controls and keybinds",
-      "Show the local player toolbar and its keyboard shortcuts.",
+      "Video controls & shortcuts",
+      "Show the local player toolbar, frame-by-frame navigation, and playback shortcuts.",
     );
+    const autoPlayRow = makeSettingsToggle(
+      "abi-settings-autoplay",
+      "autoPlay",
+      "Auto-play on load",
+      "Start playback automatically when opening an inspection case.",
+    );
+    const loopRow = makeSettingsToggle(
+      "abi-settings-loop",
+      "loopVideo",
+      "Loop playback",
+      "Automatically repeat the evidence video when reaching the end.",
+    );
+
     const volumeRow = document.createElement("div");
     volumeRow.className = "abi-settings-volume";
     const volumeLabel = document.createElement("label");
@@ -325,8 +364,10 @@
     const volumeHeading = document.createElement("div");
     volumeHeading.className = "abi-settings-volume-heading";
     volumeHeading.append(volumeLabel, volumeOutput);
+
     const volumeHelp = document.createElement("p");
     volumeHelp.textContent = "Remembered for future inspection videos.";
+
     const volumeSlider = document.createElement("input");
     volumeSlider.id = volumeLabel.htmlFor;
     volumeSlider.type = "range";
@@ -341,68 +382,272 @@
     volumeSlider.addEventListener("change", () => {
       chrome.storage.local.set({ playerVolume: Number(volumeSlider.value) });
     });
-    volumeRow.append(volumeHeading, volumeHelp, volumeSlider);
-    playback.append(controlRow, volumeRow);
 
+    const volumePresets = document.createElement("div");
+    volumePresets.className = "abi-volume-presets";
+    for (const [pLabel, pVal] of [["Mute (0%)", 0], ["50%", 50], ["100%", 100]]) {
+      const chip = document.createElement("button");
+      chip.type = "button";
+      chip.className = "abi-volume-chip";
+      chip.textContent = pLabel;
+      chip.addEventListener("click", () => {
+        volumeSlider.value = String(pVal);
+        volumeOutput.value = `${pVal}%`;
+        volumeSlider.style.setProperty("--abi-volume-fill", `${pVal}%`);
+        chrome.storage.local.set({ playerVolume: pVal });
+      });
+      volumePresets.append(chip);
+    }
+
+    volumeRow.append(volumeHeading, volumeHelp, volumeSlider, volumePresets);
+
+    const speedRow = document.createElement("div");
+    speedRow.className = "abi-settings-speed";
+    const speedLabel = document.createElement("label");
+    speedLabel.textContent = "Default playback speed";
+    const speedOutput = document.createElement("output");
+    speedOutput.textContent = "1×";
+    const speedHeading = document.createElement("div");
+    speedHeading.className = "abi-settings-speed-heading";
+    speedHeading.append(speedLabel, speedOutput);
+
+    const speedHelp = document.createElement("p");
+    speedHelp.textContent = "Initial speed applied to new inspection videos.";
+
+    const speedPresets = document.createElement("div");
+    speedPresets.className = "abi-speed-presets";
+    const speedRates = [1, 1.25, 1.5, 2];
+    for (const rate of speedRates) {
+      const chip = document.createElement("button");
+      chip.type = "button";
+      chip.className = "abi-speed-chip";
+      chip.dataset.speed = String(rate);
+      chip.textContent = `${rate}×`;
+      chip.addEventListener("click", () => {
+        speedPresets.querySelectorAll(".abi-speed-chip").forEach((c) => c.classList.toggle("active", c === chip));
+        speedOutput.textContent = `${rate}×`;
+        chrome.storage.local.set({ playbackSpeed: rate });
+      });
+      speedPresets.append(chip);
+    }
+    speedRow.append(speedHeading, speedHelp, speedPresets);
+
+    playback.append(controlRow, autoPlayRow, loopRow, volumeRow, speedRow);
+
+    // 2. Interface & Overview Card
+    const interfaceGroup = document.createElement("section");
+    interfaceGroup.className = "abi-settings-group";
+    interfaceGroup.setAttribute("aria-labelledby", "abi-settings-interface-title");
+    const interfaceHead = document.createElement("div");
+    interfaceHead.className = "abi-settings-section-heading";
+    const interfaceIndex = document.createElement("span");
+    interfaceIndex.className = "abi-settings-index";
+    interfaceIndex.textContent = "02";
+    const interfaceTitle = document.createElement("h2");
+    interfaceTitle.id = "abi-settings-interface-title";
+    interfaceTitle.textContent = "Interface & Overview";
+    interfaceHead.append(interfaceTitle, interfaceIndex);
+    interfaceGroup.append(
+      interfaceHead,
+      makeSettingsToggle(
+        "abi-settings-site",
+        "site",
+        "Site modifications",
+        "Enable custom overview stats board, responsive layout, tab navigation, and verdict dialogs.",
+      ),
+    );
+
+    // Streamer / Privacy toggle
+    const privacyRow = document.createElement("label");
+    privacyRow.className = "abi-settings-toggle";
+    privacyRow.htmlFor = "abi-settings-privacy";
+    const privacyCopy = document.createElement("span");
+    privacyCopy.className = "abi-settings-copy";
+    const privacyStrong = document.createElement("strong");
+    privacyStrong.textContent = "Streamer / Privacy mode";
+    const privacyHelp = document.createElement("small");
+    privacyHelp.textContent = "Anonymize player name, ID, rank XP, and sensitive inspection data for streams or screenshots.";
+    privacyCopy.append(privacyStrong, privacyHelp);
+    const privacyInput = document.createElement("input");
+    privacyInput.id = "abi-settings-privacy";
+    privacyInput.type = "checkbox";
+    privacyInput.className = "abi-settings-checkbox";
+    privacyInput.checked = privacyAnonymized;
+    const privacySwitch = document.createElement("span");
+    privacySwitch.className = "abi-settings-switch";
+    privacySwitch.setAttribute("aria-hidden", "true");
+    privacyInput.addEventListener("change", () => {
+      privacyAnonymized = privacyInput.checked;
+      try {
+        localStorage.setItem(privacyStorageKey, String(privacyAnonymized));
+      } catch {}
+      scheduleUpdate();
+    });
+    privacyRow.append(privacyCopy, privacyInput, privacySwitch);
+    interfaceGroup.append(privacyRow);
+
+    // 3. Workbench & Verdicts Card
     const display = document.createElement("section");
     display.className = "abi-settings-group";
     display.setAttribute("aria-labelledby", "abi-settings-display-title");
+    const displayHead = document.createElement("div");
+    displayHead.className = "abi-settings-section-heading";
+    const displayIndex = document.createElement("span");
+    displayIndex.className = "abi-settings-index";
+    displayIndex.textContent = "03";
     const displayTitle = document.createElement("h2");
     displayTitle.id = "abi-settings-display-title";
-    displayTitle.textContent = "Workbench display";
+    displayTitle.textContent = "Workbench & Verdicts";
+    displayHead.append(displayTitle, displayIndex);
     display.append(
-      displayTitle,
+      displayHead,
+      makeSettingsToggle(
+        "abi-settings-verdict-enhancements",
+        "verdictEnhancements",
+        "Verdict dialog enhancements",
+        "English violation placeholders, character counters (x / 50), and 3-category limit badge.",
+      ),
+      makeSettingsToggle(
+        "abi-settings-verdict-hotkeys",
+        "verdictHotkeys",
+        "Quick verdict hotkeys",
+        "Press 1 or G (Violation), 2 or U (Uncertain), 3 or I (No Violation) on the workbench.",
+      ),
       makeSettingsToggle(
         "abi-settings-notes",
         "inspectionNotes",
-        "Inspection notes",
-        "Use the enhanced notice. Turn off to restore the site's original wording.",
+        "Enhanced inspection notice",
+        "Use the enhanced, concise notice. Turn off to restore original site wording.",
       ),
       makeSettingsToggle(
         "abi-settings-color-key",
         "colorKey",
-        "Inspection color key",
-        "Use the color key. Turn off to restore the site's original text.",
+        "Role & distance color key",
+        "Color-code markers for teammates (green), enemies (amber), and scavs/bots (blue).",
       ),
     );
 
+    // 4. About & System Card
     const about = document.createElement("section");
-    about.className = "abi-settings-about";
+    about.className = "abi-settings-group abi-settings-about";
+    about.setAttribute("aria-labelledby", "abi-settings-about-title");
+    const aboutHead = document.createElement("div");
+    aboutHead.className = "abi-settings-section-heading";
+    const aboutIndex = document.createElement("span");
+    aboutIndex.className = "abi-settings-index";
+    aboutIndex.textContent = "04";
     const aboutTitle = document.createElement("h2");
-    aboutTitle.textContent = "About";
+    aboutTitle.id = "abi-settings-about-title";
+    aboutTitle.textContent = "About & System";
+    aboutHead.append(aboutTitle, aboutIndex);
+
+    const aboutInfo = document.createElement("div");
+    aboutInfo.className = "abi-settings-about-line";
     const aboutCopy = document.createElement("p");
     aboutCopy.textContent = "ABI Inspector Extended";
+    const badgesWrap = document.createElement("div");
+    badgesWrap.className = "abi-settings-badges";
     const aboutVersion = document.createElement("span");
     aboutVersion.className = "abi-settings-version";
-    aboutVersion.textContent = `v${chrome.runtime.getManifest().version}`;
-    const aboutLine = document.createElement("div");
-    aboutLine.className = "abi-settings-about-line";
-    aboutLine.append(aboutCopy, aboutVersion);
-    about.append(aboutTitle, aboutLine);
+    aboutVersion.textContent = `v${chrome.runtime?.getManifest?.()?.version || "2.5.0"}`;
+    const statusBadge = document.createElement("span");
+    statusBadge.className = "abi-settings-status-badge";
+    statusBadge.textContent = "Active";
+    badgesWrap.append(aboutVersion, statusBadge);
+    aboutInfo.append(aboutCopy, badgesWrap);
 
-    body.append(playback, display, about);
+    const actionsRow = document.createElement("div");
+    actionsRow.className = "abi-settings-actions-row";
 
-    const footer = document.createElement("footer");
-    footer.className = "abi-settings-footer";
-    const reload = document.createElement("button");
-    reload.className = "abi-settings-reload";
-    reload.type = "button";
-    reload.textContent = "Reload page to apply";
-    reload.hidden = true;
-    reload.addEventListener("click", () => location.reload());
-    footer.hidden = true;
-    footer.append(reload);
-    panel.append(body, footer);
+    const resetBtn = document.createElement("button");
+    resetBtn.type = "button";
+    resetBtn.className = "abi-settings-btn abi-settings-btn-neutral";
+    resetBtn.textContent = "Restore Defaults";
+    resetBtn.addEventListener("click", async () => {
+      await chrome.storage.local.set(settingsDefaults);
+      privacyAnonymized = false;
+      try {
+        localStorage.setItem(privacyStorageKey, "false");
+      } catch {}
+      const setCheck = (selector, val) => {
+        const el = panel.querySelector(selector);
+        if (el) el.checked = val;
+      };
+      setCheck("#abi-settings-controls", true);
+      setCheck("#abi-settings-autoplay", false);
+      setCheck("#abi-settings-loop", false);
+      setCheck("#abi-settings-site", true);
+      setCheck("#abi-settings-privacy", false);
+      setCheck("#abi-settings-verdict-enhancements", true);
+      setCheck("#abi-settings-verdict-hotkeys", false);
+      setCheck("#abi-settings-notes", true);
+      setCheck("#abi-settings-color-key", true);
+      volumeSlider.value = "100";
+      volumeOutput.value = "100%";
+      volumeSlider.style.setProperty("--abi-volume-fill", "100%");
+      speedOutput.textContent = "1×";
+      speedPresets.querySelectorAll(".abi-speed-chip").forEach((c) => c.classList.toggle("active", c.dataset.speed === "1"));
+      scheduleUpdate();
+      const prevText = resetBtn.textContent;
+      resetBtn.textContent = "Defaults restored ✓";
+      resetBtn.disabled = true;
+      setTimeout(() => {
+        resetBtn.textContent = prevText;
+        resetBtn.disabled = false;
+      }, 1500);
+    });
+
+    const reloadBtn = document.createElement("button");
+    reloadBtn.type = "button";
+    reloadBtn.className = "abi-settings-btn abi-settings-btn-accent abi-settings-reload-btn";
+    reloadBtn.textContent = "Reload page to apply";
+    reloadBtn.hidden = true;
+    reloadBtn.addEventListener("click", () => location.reload());
+
+    actionsRow.append(resetBtn, reloadBtn);
+
+    const creditsRow = document.createElement("div");
+    creditsRow.className = "abi-settings-credits";
+    const creditsText = document.createElement("span");
+    creditsText.textContent = "Local preferences for Arena Breakout: Infinite inspection workbench. ";
+    const creditsAuthor = document.createElement("span");
+    creditsAuthor.className = "abi-settings-author";
+    creditsAuthor.innerHTML = 'Made by <a href="https://github.com/mkornela" target="_blank" rel="noopener noreferrer">deem</a>';
+    creditsRow.append(creditsText, creditsAuthor);
+
+    about.append(aboutHead, aboutInfo, actionsRow, creditsRow);
+
+    body.append(playback, interfaceGroup, display, about);
+    panel.append(body);
 
     chrome.storage.local.get(settingsDefaults, (settings) => {
-      if (!panel.isConnected) return;
-      panel.querySelector("#abi-settings-controls").checked = settings.controls;
-      panel.querySelector("#abi-settings-notes").checked = settings.inspectionNotes;
-      panel.querySelector("#abi-settings-color-key").checked = settings.colorKey;
-      volumeSlider.value = String(settings.playerVolume);
-      volumeOutput.value = `${settings.playerVolume}%`;
-      volumeSlider.style.setProperty("--abi-volume-fill", `${settings.playerVolume}%`);
-      updateSettingsStatus(panel, settings);
+      const current = settings || settingsDefaults;
+      const setCheck = (selector, val) => {
+        const el = panel.querySelector(selector);
+        if (el) el.checked = Boolean(val);
+      };
+      setCheck("#abi-settings-controls", current.controls);
+      setCheck("#abi-settings-autoplay", current.autoPlay);
+      setCheck("#abi-settings-loop", current.loopVideo);
+      setCheck("#abi-settings-site", current.site);
+      setCheck("#abi-settings-privacy", privacyAnonymized);
+      setCheck("#abi-settings-verdict-enhancements", current.verdictEnhancements);
+      setCheck("#abi-settings-verdict-hotkeys", current.verdictHotkeys);
+      setCheck("#abi-settings-notes", current.inspectionNotes);
+      setCheck("#abi-settings-color-key", current.colorKey);
+
+      const vol = current.playerVolume ?? 100;
+      volumeSlider.value = String(vol);
+      volumeOutput.value = `${vol}%`;
+      volumeSlider.style.setProperty("--abi-volume-fill", `${vol}%`);
+
+      const currentSpeed = Number(current.playbackSpeed) || 1;
+      speedOutput.textContent = `${currentSpeed}×`;
+      speedPresets.querySelectorAll(".abi-speed-chip").forEach((c) => {
+        c.classList.toggle("active", Math.abs(Number(c.dataset.speed) - currentSpeed) < 0.01);
+      });
+
+      updateSettingsStatus(panel, current);
     });
     return panel;
   }
@@ -438,9 +683,8 @@
     const loaded = root.dataset.abiControlsLoaded;
     const wanted = settings.controls ? "on" : "off";
     const needsReload = Boolean(loaded && loaded !== wanted);
-    const reload = panel.querySelector(".abi-settings-reload");
-    reload.hidden = !needsReload;
-    panel.querySelector(".abi-settings-footer").hidden = !needsReload;
+    const reload = panel.querySelector(".abi-settings-reload-btn, .abi-settings-reload");
+    if (reload) reload.hidden = !needsReload;
   }
 
   function configureSettingsNavigation(nav, brand) {
@@ -528,6 +772,10 @@
   }
 
   function setProgress(fill, percentage) {
+    if (typeof window !== "undefined" && window.setProgress && window.setProgress !== setProgress) {
+      window.setProgress(fill, percentage);
+      return;
+    }
     const target = `${Math.max(0, Math.min(percentage, 100))}%`;
     fill.dataset.abiProgressTarget = target;
     if (!fill.dataset.abiProgressReady) {
@@ -739,17 +987,27 @@
         continue;
       }
 
-      if (status) status.style.setProperty("display", "none", "important");
-
-      const countEl = status?.querySelector("#dayTotalJudgedNum, strong");
+      const countEl = status?.querySelector("#dayTotalJudgedNum, strong") || video.querySelector("#dayTotalJudgedNum");
+      const domText = countEl?.textContent?.trim();
+      const domCount = domText !== "" && domText !== undefined ? parseInt(domText, 10) : NaN;
       const summaryCount = window.__abiOverviewData?.userJudgeSummary?.day_judged_num;
-      const count = summaryCount !== undefined
-        ? Number(summaryCount)
-        : (parseInt(countEl?.textContent?.trim() || "0", 10) || 0);
+      
+      // Prefer live DOM count if valid; otherwise fallback to summaryCount.
+      let count = Number.isFinite(domCount) ? domCount : (summaryCount !== undefined ? Number(summaryCount) : 0);
+      if (summaryCount !== undefined && Number.isFinite(domCount)) {
+        count = Math.max(domCount, Number(summaryCount));
+      }
+      
+      // Keep overview data in sync with live count on workbench
+      if (window.__abiOverviewData?.userJudgeSummary && Number.isFinite(count) && count > (window.__abiOverviewData.userJudgeSummary.day_judged_num || 0)) {
+        window.__abiOverviewData.userJudgeSummary.day_judged_num = count;
+      }
 
       const max = Number(window.__abiOverviewData?.userJudgeSummary?.day_permit_num) || 20;
       const remaining = Math.max(0, max - count);
       const percent = Math.min(100, Math.max(0, (count / max) * 100));
+
+      if (status) status.style.setProperty("display", "none", "important");
 
       if (!card) {
         card = document.createElement("div");
@@ -763,16 +1021,31 @@
         userInfo.after(card);
       }
 
-      card.innerHTML = `
-        <div class="abi-status-header">
-          <div class="abi-status-title">Inspected Today</div>
-          <div class="abi-status-count"><strong class="abi-status-num">${count}</strong><span class="abi-status-slash"> / ${max}</span></div>
-        </div>
-        <div class="abi-status-track" role="progressbar" aria-valuenow="${count}" aria-valuemin="0" aria-valuemax="${max}">
-          <div class="abi-status-fill" style="width: ${percent}%;"></div>
-        </div>
-        <div class="abi-status-remaining">${remaining} cases remaining today</div>
-      `;
+      const numEl = card.querySelector(".abi-status-num");
+      const slashEl = card.querySelector(".abi-status-slash");
+      const fillEl = card.querySelector(".abi-status-fill");
+      const remEl = card.querySelector(".abi-status-remaining");
+      const trackEl = card.querySelector(".abi-status-track");
+
+      if (numEl && slashEl && fillEl && remEl && trackEl) {
+        if (numEl.textContent !== String(count)) numEl.textContent = String(count);
+        if (slashEl.textContent !== ` / ${max}`) slashEl.textContent = ` / ${max}`;
+        if (fillEl.style.width !== `${percent}%`) fillEl.style.width = `${percent}%`;
+        if (remEl.textContent !== `${remaining} cases remaining today`) remEl.textContent = `${remaining} cases remaining today`;
+        trackEl.setAttribute("aria-valuenow", String(count));
+        trackEl.setAttribute("aria-valuemax", String(max));
+      } else {
+        card.innerHTML = `
+          <div class="abi-status-header">
+            <div class="abi-status-title">Inspected Today</div>
+            <div class="abi-status-count"><strong class="abi-status-num">${count}</strong><span class="abi-status-slash"> / ${max}</span></div>
+          </div>
+          <div class="abi-status-track" role="progressbar" aria-valuenow="${count}" aria-valuemin="0" aria-valuemax="${max}">
+            <div class="abi-status-fill" style="width: ${percent}%;"></div>
+          </div>
+          <div class="abi-status-remaining">${remaining} cases remaining today</div>
+        `;
+      }
     }
   }
 
@@ -1530,8 +1803,8 @@
             node.animate([{ opacity: 0, transform: "translateY(8px)" }, { opacity: 1, transform: "translateY(0)" }],
               { duration: 340, delay: index * 35, easing: "ease-out", fill: "backwards" });
           });
-          shell.querySelectorAll(".abi-rank-fill, .abi-level-fill, .abi-today-fill").forEach((node) => {
-            if (!root.hasAttribute("data-abi-anonymized")) node.animate(
+          shell.querySelectorAll(".abi-rank-fill, .abi-level-fill").forEach((node) => {
+            if (!document.documentElement.hasAttribute("data-abi-anonymized")) node.animate(
               [{ transform: "scaleX(0)" }, { transform: "scaleX(1)" }],
               { duration: 850, delay: 100, easing: "cubic-bezier(.2,.8,.2,1)", fill: "backwards" });
           });
@@ -1641,117 +1914,46 @@
     const weekSummary = live.userWeekJudgeSummary || {};
     const growth = live.userGrowthSummary || {};
     const count = (value) => Number.isFinite(value) ? value.toLocaleString("en-US") : "—";
-    const accuracy = (value) => Number.isFinite(value) ? `${(value / 100).toFixed(2)}%` : "—";
-
-    const parseCount = (value) => Number(value.replace(/[^\d]/g, "")) || 0;
+    const parseCount = (value) => Number(String(value).replace(/[^\d]/g, "")) || 0;
+    const totalCount = parseCount(total);
     const successfulCount = parseCount(successful);
-    const overallAccuracy = accuracy(summary.life_accuracy);
+    const bansCount = parseCount(bans);
+    const recentAccuracyNum = parseFloat(recentAccuracy.replace(/[^\d.]/g, "")) || null;
+    const lifeWrong = Number.isFinite(summary.life_wrong_case_num) ? summary.life_wrong_case_num : 0;
 
-    const recordRows = stats.querySelectorAll(
-      ".record #judgePunishRecord > li:not(:first-child)",
-    );
-    const lastBan = [...recordRows]
-      .map((row) => row.querySelector("span")?.textContent.trim() || "")
-      .filter((value) => /^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}$/.test(value))
-      .sort()
-      .at(-1);
+    const calculateAccuracy = (periodKey, { correct, wrong, summaryAccuracy }) => {
+      const resolved = (correct || 0) + (wrong || 0);
+      if (resolved === 0) return null;
 
-    if (cards && !cards.querySelector(".abi-stat-card")) {
-      for (const [className, label] of [
-        ["abi-stat-accuracy", "Inspection accuracy"],
-        ["abi-stat-volume", "Lifetime"],
-      ]) {
-        const card = document.createElement("section");
-        card.className = `abi-stat-card ${className}`;
-        const heading = document.createElement("h3");
-        heading.textContent = label;
-        const values = document.createElement("div");
-        values.className = "abi-stat-values";
-        card.append(heading, values);
-        cards.append(card);
+      if (periodKey === "weekly") {
+        return (correct / resolved) * 100;
       }
-    }
-
-    const orderedCards = [
-      ".abi-stat-accuracy",
-      ".abi-stat-volume",
-    ]
-      .map((selector) => cards.querySelector(selector))
-      .filter(Boolean);
-    if (
-      orderedCards.some((card, index) => cards.children[index] !== card)
-    ) {
-      cards.append(...orderedCards);
-    }
-    updateText(
-      cards.querySelector(".abi-stat-accuracy > h3"),
-      "Inspection accuracy",
-    );
-
-    for (const [className, label] of [["abi-stat-today", "Today"], ["abi-stat-season", "This season"], ["abi-stat-weekly", "This week"]]) {
-      if (cards.querySelector(`.${className}`)) continue;
-      const card = document.createElement("section");
-      card.className = `abi-stat-card ${className}`;
-      const heading = document.createElement("h3");
-      heading.textContent = label;
-      const values = document.createElement("div");
-      values.className = "abi-stat-values";
-      card.append(heading, values);
-      cards.append(card);
-    }
-
-    const renderStat = (cardClass, label, value) => {
-      const card = cards.querySelector(`.${cardClass} .abi-stat-values`);
-      if (!card) return;
-      let valueNode = card.parentElement.querySelector(`[data-stat="${label}"]`);
-      if (!valueNode) {
-        valueNode = document.createElement("div");
-        valueNode.className = "abi-stat-item";
-        valueNode.dataset.stat = label;
-        const name = document.createElement("span");
-        name.className = "abi-stat-label";
-        name.textContent =
-          {
-            total: "Inspections",
-            week: "This week",
-            successful: "Lifetime",
-            "recent-accuracy": "Recent",
-            "weekly-accuracy": "Weekly",
-            "seasonal-accuracy": "Seasonal",
-            bans: "Bans",
-            "overall-accuracy": "Overall",
-            "last-ban": "Last ban",
-          }[label] || label;
-        const number = document.createElement("strong");
-        valueNode.append(name, number);
-        card.append(valueNode);
+      if (periodKey === "overall") {
+        return Number.isFinite(summaryAccuracy) ? summaryAccuracy / 100 : null;
       }
-      const labelText =
-        {
-          total: "Inspections",
-          week: "This week",
-          successful: "Lifetime",
-          "recent-accuracy": "Recent",
-          "weekly-accuracy": "Weekly",
-          "seasonal-accuracy": "Seasonal",
-          bans: "Bans",
-          "overall-accuracy": "Overall",
-          "last-ban": "Last ban",
-        }[label] || label;
-      const labelNode = valueNode.querySelector(".abi-stat-label");
-      if (labelNode && labelNode.textContent !== labelText) labelNode.textContent = labelText;
-      const number = valueNode.querySelector("strong");
-      if (number.textContent !== value) number.textContent = value;
+      if (periodKey === "season") {
+        return Number.isFinite(summaryAccuracy) ? summaryAccuracy / 100 : (correct > 0 ? (correct / resolved) * 100 : null);
+      }
+      return null;
     };
 
-    const recentAccuracyNum = parseFloat(recentAccuracy.replace(/[^\d.]/g, "")) || null;
-    const weeklyResolved = (weekSummary.week_right_num || 0) + (weekSummary.week_wrong_num || 0);
-    const weeklyAccuracyNum = Number.isFinite(weeklyResolved) && weeklyResolved > 0
-      ? (weekSummary.week_right_num / weeklyResolved) * 100
-      : null;
-    const weeklyAccuracyText = weeklyAccuracyNum !== null ? `${weeklyAccuracyNum.toFixed(2)}%` : "—";
-    const seasonAccuracyNum = Number.isFinite(summary.season_accuracy) ? summary.season_accuracy / 100 : null;
-    const lifeAccuracyNum = Number.isFinite(summary.life_accuracy) ? summary.life_accuracy / 100 : null;
+    const weeklyAccuracyNum = calculateAccuracy("weekly", {
+      correct: weekSummary.week_right_num,
+      wrong: weekSummary.week_wrong_num,
+    });
+    const seasonAccuracyNum = calculateAccuracy("season", {
+      correct: summary.season_right_case_num,
+      wrong: summary.season_wrong_case_num,
+      summaryAccuracy: summary.season_accuracy,
+    });
+    const lifeAccuracyNum = calculateAccuracy("overall", {
+      correct: successfulCount,
+      wrong: lifeWrong,
+      summaryAccuracy: summary.life_accuracy,
+    });
+
+    const formatAccuracy = (val) =>
+      val !== null && Number.isFinite(val) ? `${val.toFixed(1)}%` : "--";
 
     const getAccuracyTier = (val) => {
       if (val === null || !Number.isFinite(val)) return null;
@@ -1761,110 +1963,14 @@
       return "critical";
     };
 
-    const renderAccuracy = (statName, numVal, textVal) => {
-      renderStat("abi-stat-accuracy", statName, textVal);
-      const item = cards.querySelector(`.abi-stat-accuracy [data-stat="${statName}"]`);
-      if (item) {
-        const tier = getAccuracyTier(numVal);
-        if (tier) item.dataset.tier = tier;
-        else delete item.dataset.tier;
-      }
-      return item;
-    };
-
-    renderStat("abi-stat-volume", "Inspections", total);
-    renderStat("abi-stat-volume", "Correct", successful);
-    renderStat("abi-stat-volume", "Wrong", count(summary.life_wrong_case_num));
-    renderAccuracy("recent-accuracy", recentAccuracyNum, recentAccuracy);
-    renderAccuracy("weekly-accuracy", weeklyAccuracyNum, weeklyAccuracyText);
-    renderAccuracy("seasonal-accuracy", seasonAccuracyNum, accuracy(summary.season_accuracy));
-    renderAccuracy("overall-accuracy", lifeAccuracyNum, overallAccuracy);
-    renderStat("abi-stat-volume", "bans", bans);
-
-    const recentItem = cards.querySelector('.abi-stat-accuracy [data-stat="recent-accuracy"]');
-    if (recentItem) {
-      let trend = recentItem.querySelector(".abi-stat-trend");
-      if (recentAccuracyNum !== null && lifeAccuracyNum !== null) {
-        if (!trend) {
-          trend = document.createElement("span");
-          trend.className = "abi-stat-trend";
-          recentItem.append(trend);
-        }
-        const delta = recentAccuracyNum - lifeAccuracyNum;
-        const sign = delta > 0 ? "+" : "";
-        const arrow = delta > 0 ? "▲" : delta < 0 ? "▼" : "•";
-        updateText(trend, `${arrow} ${sign}${delta.toFixed(2)}% vs life`);
-        trend.dataset.direction = delta > 0 ? "up" : delta < 0 ? "down" : "flat";
-        trend.title = `Recent (${recentAccuracyNum.toFixed(2)}%) compared to Lifetime (${lifeAccuracyNum.toFixed(2)}%)`;
-      } else {
-        trend?.remove();
-      }
-    }
-
-    const todayValues = cards.querySelector(".abi-stat-today .abi-stat-values");
-    if (!todayValues.querySelector(".abi-today-count")) {
-      const todayCount = document.createElement("strong");
-      todayCount.className = "abi-today-count";
-      const done = document.createElement("span");
-      done.className = "abi-today-done";
-      const limit = document.createElement("span");
-      limit.className = "abi-today-limit";
-      todayCount.append(done, document.createTextNode(" / "), limit);
-      todayValues.append(todayCount);
-    }
-    updateText(todayValues.querySelector(".abi-today-done"), count(summary.day_judged_num));
-    updateText(todayValues.querySelector(".abi-today-limit"), count(summary.day_permit_num));
-
-    let todayTrack = todayValues.querySelector(".abi-today-track");
-    if (!todayTrack) {
-      todayTrack = document.createElement("div");
-      todayTrack.className = "abi-today-track";
-      todayTrack.setAttribute("role", "progressbar");
-      const todayFill = document.createElement("span");
-      todayFill.className = "abi-today-fill";
-      todayTrack.append(todayFill);
-      todayValues.append(todayTrack);
-    }
-
-    let todayRemaining = todayValues.querySelector(".abi-today-remaining");
-    if (!todayRemaining) {
-      todayRemaining = document.createElement("span");
-      todayRemaining.className = "abi-today-remaining";
-      todayValues.append(todayRemaining);
-    }
-
-    const dayDone = Number.isFinite(summary.day_judged_num) ? summary.day_judged_num : null;
-    const dayLimit = Number.isFinite(summary.day_permit_num) ? summary.day_permit_num : null;
-    const dayReady = dayDone !== null && dayLimit !== null;
-    const dayPercent = dayReady && dayLimit > 0 ? Math.min(100, Math.round((dayDone / dayLimit) * 100)) : 0;
-    const todayFill = todayTrack.querySelector(".abi-today-fill");
-    setProgress(todayFill, dayPercent);
-    todayTrack.setAttribute("aria-valuenow", String(dayDone ?? 0));
-    todayTrack.setAttribute("aria-valuemax", String(dayLimit ?? 100));
-    todayTrack.setAttribute("aria-label", "Today's inspection quota");
-    if (dayReady) {
-      if (dayDone >= dayLimit && dayLimit > 0) {
-        updateText(todayRemaining, "Daily quota complete ✓");
-        todayRemaining.dataset.status = "done";
-      } else {
-        const remaining = Math.max(0, dayLimit - dayDone);
-        updateText(todayRemaining, `${remaining.toLocaleString("en-US")} cases remaining`);
-        todayRemaining.dataset.status = "active";
-      }
-    } else {
-      updateText(todayRemaining, "Daily quota");
-      delete todayRemaining.dataset.status;
-    }
-
-    todayValues.querySelector(".abi-launch-working")?.remove();
-
-    for (const [label, field] of [["Inspections", "season_total_case_num"], ["Correct", "season_right_case_num"], ["Wrong", "season_wrong_case_num"], ["Bans", "season_right_punish_case_num"]]) renderStat("abi-stat-season", label, count(summary[field]));
-    for (const [label, field] of [["Inspections", "week_total_num"], ["Correct", "week_right_num"], ["Wrong", "week_wrong_num"], ["Bans", "week_right_punish_num"]]) renderStat("abi-stat-weekly", label, count(weekSummary[field]));
-    cards.querySelector('.abi-stat-accuracy [data-stat="weekly-accuracy"]').title = "Calculated from correct / (correct + wrong) this week; unresolved inspections are excluded.";
-    cards.querySelector('.abi-stat-weekly [data-stat="Inspections"] .abi-stat-sublabel')?.remove();
-    cards.querySelector('.abi-stat-weekly [data-stat="Inspections"]')?.removeAttribute("title");
-    cards.querySelector('.abi-stat-season [data-stat="Inspections"] .abi-stat-sublabel')?.remove();
-    cards.querySelector('.abi-stat-season [data-stat="Inspections"]')?.removeAttribute("title");
+    const recordRows = stats.querySelectorAll(
+      ".record #judgePunishRecord > li:not(:first-child)",
+    );
+    const lastBan = [...recordRows]
+      .map((row) => row.querySelector("span")?.textContent.trim() || "")
+      .filter((value) => /^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}$/.test(value))
+      .sort()
+      .at(-1);
 
     let daysAgo = null;
     if (lastBan) {
@@ -1885,16 +1991,477 @@
           : daysAgo === 1
             ? "1 day ago"
             : `${daysAgo} days ago`;
-    const lastBanItem = cards.querySelector('.abi-stat-volume [data-stat="bans"]');
-    if (lastBanItem) {
-      lastBanItem.title = `Last ban: ${lastBanLabel}`;
-      let sub = lastBanItem.querySelector(".abi-stat-sublabel");
-      if (!sub) {
-        sub = document.createElement("span");
-        sub.className = "abi-stat-sublabel";
-        lastBanItem.append(sub);
+    const lastBanShort = daysAgo === null ? "None" : daysAgo === 0 ? "Today" : `${daysAgo}d ago`;
+
+    cards.querySelectorAll(".abi-stat-volume, .abi-stat-season, .abi-stat-weekly").forEach((node) => node.remove());
+
+    const cardDefs = [
+      ["abi-stat-inspections", "Inspections"],
+      ["abi-stat-accuracy", "Inspection accuracy"],
+      ["abi-stat-today", "Today"],
+    ];
+
+    for (const [className, label] of cardDefs) {
+      let card = cards.querySelector(`.${className}`);
+      if (!card) {
+        card = document.createElement("section");
+        card.className = `abi-stat-card ${className}`;
+        const heading = document.createElement("h3");
+        heading.textContent = label;
+        const values = document.createElement("div");
+        values.className = "abi-stat-values";
+        card.append(heading, values);
+        cards.append(card);
       }
-      updateText(sub, daysAgo === null ? "None" : daysAgo === 0 ? "Today" : `${daysAgo}d ago`);
+    }
+
+    const orderedCards = cardDefs
+      .map(([className]) => cards.querySelector(`.${className}`))
+      .filter(Boolean);
+    if (
+      orderedCards.some((card, index) => cards.children[index] !== card)
+    ) {
+      cards.append(...orderedCards);
+    }
+    updateText(
+      cards.querySelector(".abi-stat-accuracy > h3"),
+      "Inspection accuracy",
+    );
+    updateText(
+      cards.querySelector(".abi-stat-today > h3"),
+      "Today",
+    );
+    updateText(
+      cards.querySelector(".abi-stat-inspections > h3"),
+      "Inspections",
+    );
+
+    // 1. Accuracy Card
+    const accuracyValues = cards.querySelector(".abi-stat-accuracy .abi-stat-values");
+    if (accuracyValues) {
+      let hero = accuracyValues.querySelector(".abi-accuracy-hero");
+      if (!hero) {
+        hero = document.createElement("div");
+        hero.className = "abi-accuracy-hero";
+        accuracyValues.append(hero);
+      }
+      let recentItem = hero.querySelector('[data-stat="recent-accuracy"]');
+      if (!recentItem) {
+        recentItem = document.createElement("div");
+        recentItem.className = "abi-stat-item";
+        recentItem.dataset.stat = "recent-accuracy";
+        const label = document.createElement("span");
+        label.className = "abi-stat-label";
+        label.textContent = "Recent";
+        const strong = document.createElement("strong");
+        recentItem.append(label, strong);
+        hero.append(recentItem);
+      }
+      const recentStrong = recentItem.querySelector("strong");
+      updateText(recentStrong, formatAccuracy(recentAccuracyNum));
+      const recentTier = getAccuracyTier(recentAccuracyNum);
+      if (recentTier) recentItem.dataset.tier = recentTier;
+      else delete recentItem.dataset.tier;
+
+      let trend = recentItem.querySelector(".abi-stat-trend");
+      if (recentAccuracyNum !== null && lifeAccuracyNum !== null) {
+        if (!trend) {
+          trend = document.createElement("span");
+          trend.className = "abi-stat-trend";
+          recentItem.append(trend);
+        }
+        const delta = recentAccuracyNum - lifeAccuracyNum;
+        if (delta > 0) {
+          updateText(trend, `↗ ${delta.toFixed(1)} pts above lifetime`);
+          trend.dataset.direction = "up";
+        } else if (delta < 0) {
+          updateText(trend, `↘ ${Math.abs(delta).toFixed(1)} pts below lifetime`);
+          trend.dataset.direction = "down";
+        } else {
+          updateText(trend, `• 0.0 pts vs lifetime`);
+          trend.dataset.direction = "flat";
+        }
+        trend.title = `Recent (${recentAccuracyNum.toFixed(1)}%) compared to Lifetime (${lifeAccuracyNum.toFixed(1)}%)`;
+      } else {
+        trend?.remove();
+      }
+
+      let rows = accuracyValues.querySelector(".abi-accuracy-rows");
+      if (!rows) {
+        rows = document.createElement("div");
+        rows.className = "abi-accuracy-rows";
+        accuracyValues.append(rows);
+      }
+
+      const rowsConfig = [
+        {
+          key: "weekly-accuracy",
+          label: "Weekly",
+          num: weeklyAccuracyNum,
+          tooltip: "Calculated from correct / (correct + wrong) this week; unresolved inspections are excluded.",
+          deltaType: "diff",
+        },
+        {
+          key: "seasonal-accuracy",
+          label: "Seasonal",
+          num: seasonAccuracyNum,
+          tooltip: "Calculated from season inspection data.",
+          deltaType: "diff",
+        },
+        {
+          key: "overall-accuracy",
+          label: "Overall",
+          num: lifeAccuracyNum,
+          tooltip: "Calculated from lifetime inspection data.",
+          deltaType: "none",
+        },
+      ];
+
+      for (const conf of rowsConfig) {
+        let item = rows.querySelector(`[data-stat="${conf.key}"]`);
+        if (!item) {
+          item = document.createElement("div");
+          item.className = "abi-stat-item";
+          item.dataset.stat = conf.key;
+          const label = document.createElement("span");
+          label.className = "abi-stat-label";
+          label.textContent = conf.label;
+          const right = document.createElement("div");
+          right.className = "abi-stat-right";
+          const delta = document.createElement("span");
+          delta.className = "abi-stat-delta";
+          const strong = document.createElement("strong");
+          right.append(delta, strong);
+          item.append(label, right);
+          rows.append(item);
+        } else {
+          const right = item.querySelector(".abi-stat-right");
+          const strong = right?.querySelector("strong");
+          const delta = right?.querySelector(".abi-stat-delta");
+          if (right && delta && strong && delta.nextElementSibling !== strong) {
+            right.append(delta, strong);
+          }
+        }
+        item.title = conf.tooltip;
+        const tier = getAccuracyTier(conf.num);
+        if (tier) item.dataset.tier = tier;
+        else delete item.dataset.tier;
+        updateText(item.querySelector("strong"), formatAccuracy(conf.num));
+
+        const deltaNode = item.querySelector(".abi-stat-delta");
+        if (conf.deltaType === "none" || !conf.deltaType) {
+          deltaNode.className = "abi-stat-delta";
+          updateText(deltaNode, "");
+        } else {
+          if (conf.num !== null && lifeAccuracyNum !== null) {
+            const diff = conf.num - lifeAccuracyNum;
+            const diffSign = diff > 0 ? "+" : "";
+            updateText(deltaNode, `${diffSign}${diff.toFixed(1)}%`);
+            deltaNode.className = `abi-stat-delta ${diff > 0 ? "abi-delta-positive" : diff < 0 ? "abi-delta-negative" : "abi-delta-flat"}`;
+          } else {
+            deltaNode.className = "abi-stat-delta";
+            updateText(deltaNode, "");
+          }
+        }
+      }
+    }
+
+    // 2. Today Card
+    const todayValues = cards.querySelector(".abi-stat-today .abi-stat-values");
+    if (todayValues) {
+      let wrap = todayValues.querySelector(".abi-today-wrap");
+      if (!wrap) {
+        wrap = document.createElement("div");
+        wrap.className = "abi-today-wrap";
+        const ringBox = document.createElement("div");
+        ringBox.className = "abi-today-ring-box";
+        ringBox.setAttribute("role", "progressbar");
+        ringBox.setAttribute("aria-label", "Today's inspection quota");
+
+        const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+        svg.setAttribute("class", "abi-today-ring");
+        svg.setAttribute("width", "110");
+        svg.setAttribute("height", "110");
+        svg.setAttribute("viewBox", "0 0 110 110");
+
+        const track = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+        track.setAttribute("class", "abi-today-ring-track");
+        track.setAttribute("cx", "55");
+        track.setAttribute("cy", "55");
+        track.setAttribute("r", "51");
+        track.setAttribute("fill", "none");
+        track.setAttribute("stroke-width", "8");
+
+        const fill = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+        fill.setAttribute("class", "abi-today-ring-fill abi-today-fill");
+        fill.setAttribute("cx", "55");
+        fill.setAttribute("cy", "55");
+        fill.setAttribute("r", "51");
+        fill.setAttribute("fill", "none");
+        fill.setAttribute("stroke-width", "8");
+        fill.setAttribute("stroke-linecap", "round");
+
+        svg.append(track, fill);
+
+        const center = document.createElement("div");
+        center.className = "abi-today-center abi-today-count";
+        const done = document.createElement("strong");
+        done.className = "abi-today-done";
+        const limitWrap = document.createElement("span");
+        limitWrap.className = "abi-today-limit-wrap";
+        limitWrap.append(document.createTextNode("of "), Object.assign(document.createElement("span"), { className: "abi-today-limit" }));
+        center.append(done, document.createTextNode(" "), limitWrap);
+
+        ringBox.append(svg, center);
+
+        const remaining = document.createElement("span");
+        remaining.className = "abi-today-remaining";
+
+        wrap.append(ringBox, remaining);
+        todayValues.replaceChildren(wrap);
+      }
+
+      const dayDone = Number.isFinite(summary.day_judged_num) ? summary.day_judged_num : null;
+      const dayLimit = Number.isFinite(summary.day_permit_num) ? summary.day_permit_num : null;
+      const dayReady = dayDone !== null && dayLimit !== null;
+      const dayPercent = dayReady && dayLimit > 0 ? Math.min(100, Math.round((dayDone / dayLimit) * 100)) : 0;
+
+      const ringBox = wrap.querySelector(".abi-today-ring-box");
+      const todayFill = wrap.querySelector(".abi-today-fill");
+      const todayRemaining = wrap.querySelector(".abi-today-remaining");
+      const doneNode = wrap.querySelector(".abi-today-done");
+      const limitNode = wrap.querySelector(".abi-today-limit");
+
+      updateText(doneNode, count(dayDone));
+      updateText(limitNode, count(dayLimit));
+
+      ringBox.setAttribute("aria-valuenow", String(dayDone ?? 0));
+      ringBox.setAttribute("aria-valuemax", String(dayLimit ?? 100));
+
+      const RING_RADIUS = 51;
+      const RING_CIRCUMFERENCE = +(2 * Math.PI * RING_RADIUS).toFixed(2); // 320.44
+
+      const setRingProgress = (fillNode, percentage) => {
+        const clamped = Math.max(0, Math.min(percentage, 100));
+        const target = `${clamped}%`;
+        fillNode.dataset.abiProgressTarget = target;
+        const offset = RING_CIRCUMFERENCE * (1 - clamped / 100);
+        fillNode.style.strokeDasharray = `${RING_CIRCUMFERENCE}`;
+        if (!fillNode.dataset.abiProgressReady) {
+          fillNode.dataset.abiProgressReady = "true";
+          fillNode.style.strokeDashoffset = `${RING_CIRCUMFERENCE}`;
+          requestAnimationFrame(() => {
+            if (fillNode.isConnected) fillNode.style.strokeDashoffset = `${offset}`;
+          });
+          return;
+        }
+        fillNode.style.strokeDashoffset = `${offset}`;
+      };
+
+      setRingProgress(todayFill, dayPercent);
+
+      if (dayReady) {
+        if (dayDone >= dayLimit && dayLimit > 0) {
+          updateText(todayRemaining, "Daily quota complete ✓");
+          todayRemaining.dataset.status = "done";
+          todayFill.dataset.state = "done";
+        } else {
+          const remCases = Math.max(0, dayLimit - dayDone);
+          updateText(todayRemaining, `${remCases.toLocaleString("en-US")} cases remaining`);
+          if (remCases <= 5 && remCases > 0) {
+            todayRemaining.dataset.status = "warning";
+            todayFill.dataset.state = "warning";
+          } else {
+            todayRemaining.dataset.status = "active";
+            todayFill.dataset.state = "normal";
+          }
+        }
+      } else {
+        updateText(todayRemaining, "Daily quota");
+        delete todayRemaining.dataset.status;
+        todayFill.dataset.state = "empty";
+      }
+    }
+
+    // 3. Inspections Card
+    const inspectionsValues = cards.querySelector(".abi-stat-inspections .abi-stat-values");
+    if (inspectionsValues) {
+      const rowsData = [
+        {
+          period: "lifetime",
+          label: "Lifetime",
+          inspections: totalCount,
+          correct: successfulCount,
+          wrong: lifeWrong,
+          bans: bansCount,
+          accuracy: lifeAccuracyNum,
+          lastBan: lastBanShort,
+          lastBanTitle: `Last ban: ${lastBanLabel}`,
+        },
+        {
+          period: "season",
+          label: "This season",
+          inspections: summary.season_total_case_num ?? 0,
+          correct: summary.season_right_case_num ?? 0,
+          wrong: summary.season_wrong_case_num ?? 0,
+          bans: summary.season_right_punish_case_num ?? 0,
+          accuracy: seasonAccuracyNum,
+          lastBan: null,
+          lastBanTitle: "Bans this season",
+        },
+        {
+          period: "weekly",
+          label: "This week",
+          inspections: weekSummary.week_total_num ?? 0,
+          correct: weekSummary.week_right_num ?? 0,
+          wrong: weekSummary.week_wrong_num ?? 0,
+          bans: weekSummary.week_right_punish_num ?? 0,
+          accuracy: weeklyAccuracyNum,
+          lastBan: null,
+          lastBanTitle: "Bans this week",
+        },
+      ];
+
+      const setSegmentProgress = (node, percentage) => {
+        const clamped = Math.max(0, Math.min(percentage, 100));
+        const target = `${clamped}%`;
+        node.dataset.abiProgressTarget = target;
+        if (typeof window !== "undefined" && window.setProgress && window.setProgress !== setProgress) {
+          window.setProgress(node, clamped);
+          return;
+        }
+        if (!node.dataset.abiProgressReady) {
+          node.dataset.abiProgressReady = "true";
+          node.style.width = "0%";
+          requestAnimationFrame(() => {
+            if (node.isConnected) node.style.width = node.dataset.abiProgressTarget;
+          });
+          return;
+        }
+        node.style.width = target;
+      };
+
+      for (const row of rowsData) {
+        let rowNode = inspectionsValues.querySelector(`[data-period="${row.period}"]`);
+        if (!rowNode) {
+          rowNode = document.createElement("div");
+          rowNode.className = "abi-inspection-row";
+          rowNode.dataset.period = row.period;
+
+          const periodCol = document.createElement("div");
+          periodCol.className = "abi-inspection-period";
+          const pName = document.createElement("span");
+          pName.className = "abi-period-name";
+          pName.textContent = row.label;
+          const pTotal = document.createElement("span");
+          pTotal.className = "abi-period-total";
+          pTotal.dataset.stat = "Inspections";
+          periodCol.append(pName, pTotal);
+
+          const barWrap = document.createElement("div");
+          barWrap.className = "abi-stacked-bar-wrap";
+          const bar = document.createElement("div");
+          bar.className = "abi-stacked-bar";
+          bar.setAttribute("role", "img");
+          const legend = document.createElement("div");
+          legend.className = "abi-bar-legend";
+          barWrap.append(bar, legend);
+
+          const metaCol = document.createElement("div");
+          metaCol.className = "abi-inspection-meta";
+          const accNode = document.createElement("strong");
+          accNode.className = "abi-inspection-accuracy";
+          accNode.dataset.stat = "accuracy";
+          const bansNode = document.createElement("span");
+          bansNode.className = "abi-inspection-bans";
+          bansNode.dataset.stat = "Bans";
+          metaCol.append(accNode, bansNode);
+
+          rowNode.append(periodCol, barWrap, metaCol);
+          inspectionsValues.append(rowNode);
+        }
+
+        // Update period total
+        const pTotal = rowNode.querySelector(".abi-period-total");
+        pTotal.innerHTML = `<strong>${count(row.inspections)}</strong> inspections`;
+
+        // Update stacked bar and legend
+        const bar = rowNode.querySelector(".abi-stacked-bar");
+        const legend = rowNode.querySelector(".abi-bar-legend");
+        const unresolved = Math.max(0, row.inspections - row.correct - row.wrong);
+
+        if (row.inspections === 0) {
+          bar.setAttribute("aria-label", `${row.label}: 0 inspections`);
+          bar.querySelectorAll(".abi-bar-correct, .abi-bar-wrong, .abi-bar-unresolved").forEach((n) => n.remove());
+          let emptySeg = bar.querySelector(".abi-bar-empty");
+          if (!emptySeg) {
+            emptySeg = document.createElement("div");
+            emptySeg.className = "abi-bar-segment abi-bar-empty";
+            bar.append(emptySeg);
+          }
+          emptySeg.title = `${row.label}: 0 inspections`;
+          setSegmentProgress(emptySeg, 100);
+        } else {
+          bar.querySelector(".abi-bar-empty")?.remove();
+          bar.setAttribute(
+            "aria-label",
+            `${row.label}: ${count(row.correct)} correct, ${count(row.wrong)} wrong, ${count(unresolved)} unresolved of ${count(row.inspections)} inspections`,
+          );
+          const correctPct = (row.correct / row.inspections) * 100;
+          const wrongPct = (row.wrong / row.inspections) * 100;
+          const unresolvedPct = Math.max(0, 100 - correctPct - wrongPct);
+
+          const segDefs = [
+            { key: "correct", cls: "abi-bar-correct", val: row.correct, pct: correctPct, label: "Correct" },
+            { key: "wrong", cls: "abi-bar-wrong", val: row.wrong, pct: wrongPct, label: "Wrong" },
+            { key: "unresolved", cls: "abi-bar-unresolved", val: unresolved, pct: unresolvedPct, label: "Unresolved" },
+          ];
+
+          for (const s of segDefs) {
+            let seg = bar.querySelector(`.${s.cls}`);
+            if (s.pct > 0) {
+              if (!seg) {
+                seg = document.createElement("div");
+                seg.className = `abi-bar-segment ${s.cls}`;
+                seg.dataset.stat = s.key;
+                bar.append(seg);
+              }
+              seg.title = `${s.label}: ${count(s.val)} (${s.pct.toFixed(1)}%) of ${count(row.inspections)} inspections`;
+              setSegmentProgress(seg, s.pct);
+            } else if (seg) {
+              seg.remove();
+            }
+          }
+          const orderedSegs = ["abi-bar-correct", "abi-bar-wrong", "abi-bar-unresolved"]
+            .map((c) => bar.querySelector(`.${c}`))
+            .filter(Boolean);
+          if (orderedSegs.length > 1) {
+            bar.append(...orderedSegs);
+          }
+        }
+
+        legend.innerHTML = `
+          <span class="abi-legend-item abi-legend-correct" data-stat="Correct"><strong>${count(row.correct)}</strong> correct</span>
+          <span class="abi-legend-item abi-legend-wrong" data-stat="Wrong"><strong>${count(row.wrong)}</strong> wrong</span>
+          <span class="abi-legend-item abi-legend-unresolved" data-stat="Unresolved"><strong>${count(unresolved)}</strong> unresolved</span>
+        `;
+
+        // Update accuracy
+        const accNode = rowNode.querySelector(".abi-inspection-accuracy");
+        updateText(accNode, formatAccuracy(row.accuracy));
+        const tier = getAccuracyTier(row.accuracy);
+        if (tier) accNode.dataset.tier = tier;
+        else delete accNode.dataset.tier;
+
+        // Update bans
+        const bansNode = rowNode.querySelector(".abi-inspection-bans");
+        bansNode.title = row.lastBanTitle;
+        if (row.lastBan) {
+          bansNode.innerHTML = `<strong>${count(row.bans)}</strong> bans <span class="abi-stat-sublabel">${row.lastBan}</span>`;
+        } else {
+          bansNode.innerHTML = `<strong>${count(row.bans)}</strong> bans`;
+        }
+      }
     }
 
     const levelText =
