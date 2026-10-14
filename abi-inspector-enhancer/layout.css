@@ -1536,44 +1536,64 @@ html:not([data-abi-site="off"]) {
 
   #wxMine .abi-identity {
     display: grid;
-    grid-template-columns: minmax(0, 1fr) minmax(0, 1.55fr);
-    align-items: center;
-    gap: 0.18rem;
+    grid-template-columns: minmax(0, 1.15fr) minmax(0, 0.95fr) minmax(0, 1.05fr) minmax(0, 1.05fr);
+    align-items: stretch;
+    gap: 0.12rem;
     min-width: 0;
     min-height: 0;
-    padding: 0.14rem 0.2rem;
+    padding: 0.12rem 0.14rem;
     box-sizing: border-box;
     border: 1px solid var(--abi-line);
-    border-top: 1px solid var(--abi-line);
-    background: #111719;
+    background: #101517;
+  }
+
+  #wxMine :is(.abi-identity-person, .abi-identity-honor, .abi-meter, .abi-level-progress) {
+    background: linear-gradient(145deg, rgba(22, 29, 31, 0.75), rgba(12, 17, 18, 0.85));
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 8px;
+    padding: 0.1rem 0.14rem;
+    box-sizing: border-box;
+    min-width: 0;
+    height: 100%;
+    transition: border-color 160ms ease, box-shadow 160ms ease;
+  }
+
+  #wxMine :is(.abi-identity-person, .abi-identity-honor, .abi-meter, .abi-level-progress):hover {
+    border-color: rgba(255, 255, 255, 0.14);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
   }
 
   #wxMine .abi-identity-person {
     display: grid;
-    grid-template-columns: 0.82rem minmax(0, 1fr) auto;
+    grid-template-columns: auto minmax(0, 1fr);
     grid-template-rows: auto auto;
+    grid-template-areas:
+      "avatar name"
+      "avatar id";
     align-items: center;
-    gap: 0.04rem 0.14rem;
+    align-content: center;
+    gap: 0.04rem 0.12rem;
     width: 100%;
     min-width: 0;
   }
 
   #wxMine .abi-identity-person > .avatar {
+    grid-area: avatar;
     position: static !important;
     display: block !important;
-    grid-column: 1;
-    grid-row: 1 / span 2;
-    width: 0.75rem !important;
-    height: 0.75rem !important;
-    min-width: 63px;
-    min-height: 63px;
-    max-width: 96px;
-    max-height: 96px;
+    width: clamp(42px, 3.4vw, 50px) !important;
+    height: clamp(42px, 3.4vw, 50px) !important;
+    min-width: 42px;
+    min-height: 42px;
+    max-width: 52px;
+    max-height: 52px;
     margin: 0 !important;
     overflow: hidden;
-    border: 1px solid #596365;
+    border-radius: 50%;
+    border: 1.5px solid rgba(255, 255, 255, 0.16);
     background: #0c1113;
     box-sizing: border-box;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.35);
   }
 
   #wxMine .abi-identity-person > .avatar img {
@@ -1581,21 +1601,46 @@ html:not([data-abi-site="off"]) {
     width: 100%;
     height: 100%;
     object-fit: cover;
+    border-radius: 50%;
+  }
+
+  #wxMine .abi-identity-person > .username {
+    grid-area: name;
+    position: static !important;
+    display: block !important;
+    align-self: end !important;
+    width: 100% !important;
+    height: auto !important;
+    min-width: 0;
+    margin: 0 !important;
+    padding: 0 !important;
+    float: none !important;
+    overflow: hidden;
+    color: #ffffff !important;
+    font-size: clamp(14px, 1.2vw, 17px) !important;
+    font-weight: 800 !important;
+    line-height: 1.2;
+    text-align: left !important;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    background: none !important;
   }
 
   #wxMine .abi-identity-person > .userid {
+    grid-area: id;
     position: static !important;
-    display: block !important;
-    grid-column: 2;
-    grid-row: 2;
+    display: flex !important;
+    align-items: center;
+    gap: 6px;
     align-self: start !important;
     width: 100% !important;
     height: auto !important;
     min-width: 0;
     margin: 0 !important;
     padding: 0 !important;
-    color: var(--abi-muted) !important;
-    font-size: 0.13rem !important;
+    color: #8fa09d !important;
+    font-size: 11px !important;
+    font-variant-numeric: tabular-nums;
     letter-spacing: 0.02em;
     line-height: 1.2;
     text-align: left !important;
@@ -1605,66 +1650,63 @@ html:not([data-abi-site="off"]) {
     background: none !important;
   }
 
-  #wxMine .abi-identity-rank > .grade {
-    display: none !important;
+  #wxMine .abi-copy-id {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2px 4px;
+    background: transparent;
+    border: 1px solid #ffffff22;
+    border-radius: 3px;
+    color: #798582;
+    cursor: pointer;
+    line-height: 1;
+    transition: color 0.15s, border-color 0.15s, background 0.15s;
   }
 
-  #wxMine .abi-identity-rank {
+  #wxMine .abi-copy-id:hover {
+    color: #b8d66a;
+    border-color: #b8d66a55;
+    background: #b8d66a12;
+  }
+
+  #wxMine .abi-copy-id.abi-copied {
+    color: #b8d66a;
+    border-color: #b8d66a;
+    background: #b8d66a22;
+  }
+
+  #wxMine :is(.abi-identity-honor, .abi-title-row) {
     display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-columns: minmax(0, 1fr) auto;
+    grid-template-rows: auto auto auto;
+    grid-template-areas:
+      "kicker rules"
+      "honor rules"
+      "hint hint";
+    gap: 0.03rem 0.08rem;
     align-items: center;
-    gap: 0.16rem;
     width: 100%;
     min-width: 0;
-    padding-left: 0.16rem;
-    border-left: 1px solid #ffffff14;
-    box-sizing: border-box;
-  }
-
-  #wxMine .abi-title-row {
-    display: flex;
-    flex-flow: row nowrap !important;
-    align-items: center;
-    grid-column: 3;
-    grid-row: 1 / span 2;
-    justify-content: flex-start;
-    gap: 0.08rem;
     margin: 0;
-    width: fit-content;
-    max-width: 100%;
-    min-width: 0;
     white-space: nowrap;
   }
 
-  #wxMine .abi-identity-person > .username {
-    position: static !important;
-    display: block !important;
-    flex: 0 0 auto;
-    width: auto !important;
-    height: auto !important;
-    min-width: 0;
-    align-self: end !important;
-    grid-column: 2;
-    grid-row: 1;
-    text-align: left !important;
-    max-width: 100%;
-    margin: 0 0 0.04rem !important;
-    padding: 0 !important;
-    float: none !important;
-    overflow: hidden;
-    color: var(--abi-text) !important;
-    font-size: 0.28rem !important;
-    font-weight: 800 !important;
-    line-height: 1.25;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-    background: none !important;
+  #wxMine .abi-rank-current-kicker {
+    grid-area: kicker;
+    justify-self: start;
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: #8fa09d;
+    line-height: 1;
   }
 
-  #wxMine .abi-title-row > .honor {
+  #wxMine :is(.abi-identity-honor, .abi-title-row) > .honor {
+    grid-area: honor;
     position: static !important;
     display: flex !important;
-    flex: 0 1 auto;
     align-items: center;
     justify-content: flex-start;
     min-width: 0;
@@ -1677,14 +1719,14 @@ html:not([data-abi-site="off"]) {
     background: transparent !important;
   }
 
-  #wxMine .abi-title-row > .honor > span {
+  #wxMine :is(.abi-identity-honor, .abi-title-row) > .honor > span {
     display: inline-block !important;
     height: auto !important;
     min-height: 0 !important;
     line-height: 1.25 !important;
   }
 
-  #wxMine .abi-title-row #level-text {
+  #wxMine :is(.abi-identity-honor, .abi-title-row) #level-text {
     position: static !important;
     display: block !important;
     width: auto !important;
@@ -1695,7 +1737,7 @@ html:not([data-abi-site="off"]) {
     overflow: hidden;
     color: #f0d4c9 !important;
     text-align: left;
-    font-size: 0.23rem !important;
+    font-size: clamp(14px, 1.2vw, 17px) !important;
     font-weight: 800;
     letter-spacing: 0.025em;
     line-height: 1.25 !important;
@@ -1705,9 +1747,72 @@ html:not([data-abi-site="off"]) {
     border: 0 !important;
   }
 
-  #wxMine .abi-rank-open,
+  #wxMine .abi-rank-rules-hint {
+    grid-area: hint;
+    font-size: 11px;
+    color: #8fa09d;
+    line-height: 1.2;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    cursor: pointer;
+    transition: color 140ms ease;
+  }
+
+  #wxMine .abi-rank-rules-hint:hover {
+    color: var(--abi-accent);
+  }
+
+  #wxMine .abi-rank-open {
+    grid-area: rules;
+    align-self: center;
+    justify-self: end;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    min-width: 28px;
+    height: 28px;
+    padding: 0;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 6px;
+    background: rgba(255, 255, 255, 0.04);
+    color: #aab1af;
+    cursor: pointer;
+    transition: all 140ms ease;
+  }
+
+  #wxMine .abi-rank-icon {
+    display: block;
+    width: 16px;
+    height: 16px;
+    fill: none;
+    stroke: currentColor;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    stroke-width: 1.5;
+    transition: color 140ms ease, transform 140ms ease;
+  }
+
+  #wxMine .abi-rank-open:hover {
+    border-color: var(--abi-accent);
+    color: var(--abi-accent);
+    background: rgba(195, 71, 45, 0.12);
+  }
+
+  #wxMine .abi-rank-open:hover .abi-rank-icon {
+    transform: translateY(-1px);
+  }
+
+  #wxMine .abi-rank-open:focus-visible {
+    outline: 1px solid var(--abi-accent);
+    outline-offset: 2px;
+  }
+
   #wxMine .abi-rank-close {
-    flex: 0 0 auto;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
     height: 0.4rem;
     padding: 0 0.14rem;
     border: 1px solid var(--abi-line);
@@ -1722,53 +1827,17 @@ html:not([data-abi-site="off"]) {
     cursor: pointer;
   }
 
-  #wxMine .abi-rank-open {
-    display: inline-grid;
-    place-items: center;
-    width: 0.36rem;
-    min-width: 0.36rem;
-    height: 0.36rem;
-    padding: 0;
-    border: 0;
-    background: transparent;
-    color: #aab1af;
-    cursor: pointer;
-  }
-
-  #wxMine .abi-rank-icon {
-    display: block;
-    width: 0.32rem;
-    height: 0.32rem;
-    fill: none;
-    stroke: currentColor;
-    stroke-linecap: round;
-    stroke-linejoin: round;
-    stroke-width: 1.5;
-    transition: color 140ms ease, transform 140ms ease;
-  }
-
-  #wxMine .abi-rank-open:hover {
-    background: transparent;
-    color: var(--abi-accent);
-  }
-
-  #wxMine .abi-rank-open:hover .abi-rank-icon {
-    transform: translateY(-1px);
-  }
-
-  #wxMine .abi-rank-open:focus-visible {
-    outline: 1px solid var(--abi-accent);
-    outline-offset: 2px;
-  }
-
-  #wxMine .abi-rank-close {
-    align-items: center;
-    justify-content: center;
-  }
-
   #wxMine .abi-rank-close:hover {
     border-color: #737a78;
     background: #ffffff08;
+  }
+
+  #wxMine :is(.grade, .abi-identity-rank > .grade, .abi-identity > .grade) {
+    display: none !important;
+  }
+
+  #wxMine .abi-identity-rank {
+    display: contents;
   }
 
   #wxMine .abi-meter .abi-rank-progress {
@@ -1776,10 +1845,11 @@ html:not([data-abi-site="off"]) {
     grid-template-columns: minmax(0, 1fr) auto;
     grid-template-areas:
       "kicker percent"
+      "caption percent"
       "track track"
-      "caption count";
-    grid-template-rows: auto 10px auto;
-    gap: 0.06rem 0.12rem;
+      "count count";
+    grid-template-rows: auto auto 8px auto;
+    gap: 0.03rem 0.12rem;
     align-items: center;
     width: 100%;
     margin: 0 !important;
@@ -1788,17 +1858,54 @@ html:not([data-abi-site="off"]) {
     background: none !important;
   }
 
-  #wxMine .abi-meter {
-    min-width: 0;
+  #wxMine .abi-level-progress {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    grid-template-areas:
+      "label percent"
+      "track track"
+      "count caption";
+    grid-template-rows: auto 8px auto;
+    gap: 0.04rem 0.12rem;
+    align-items: center;
+    width: 100%;
     box-sizing: border-box;
+    border-top: 0;
+  }
+
+  #wxMine .abi-rank-kicker {
+    grid-area: kicker;
+    justify-self: start;
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: #8fa09d;
+    line-height: 1;
   }
 
   #wxMine .abi-rank-caption {
     grid-area: caption;
-    overflow: hidden;
-    color: #d2d8d3;
-    font-size: 0.15rem;
+    justify-self: start;
+    color: #ffffff;
+    font-size: clamp(13px, 1.1vw, 16px);
     font-weight: 700;
+    line-height: 1.2;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  #wxMine .abi-level-label {
+    grid-area: label;
+    justify-self: start;
+    align-self: center;
+    color: #ffffff;
+    font-size: clamp(16px, 1.4vw, 20px);
+    font-weight: 800;
+    letter-spacing: 0.02em;
+    line-height: 1.15;
+    overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
   }
@@ -1806,134 +1913,98 @@ html:not([data-abi-site="off"]) {
   #wxMine .abi-rank-percent {
     grid-area: percent;
     justify-self: end;
+    align-self: center;
     color: #e66b4e;
-    font-size: 0.36rem;
+    font-size: clamp(20px, 1.8vw, 26px);
     font-variant-numeric: tabular-nums;
-    font-weight: 700;
-    line-height: 0.9;
+    font-weight: 800;
+    line-height: 1;
   }
 
-  #wxMine .abi-rank-track {
+  #wxMine .abi-level-percent {
+    grid-area: percent;
+    justify-self: end;
+    align-self: center;
+    color: #b8d66a;
+    font-size: clamp(20px, 1.8vw, 26px);
+    font-variant-numeric: tabular-nums;
+    font-weight: 800;
+    line-height: 1;
+  }
+
+  #wxMine :is(.abi-rank-track, .abi-level-track) {
     grid-area: track;
     display: block;
     position: relative;
-    height: 0.13rem;
+    height: 8px;
     min-height: 8px;
     overflow: hidden;
-    border: 1px solid #293336;
-    background: linear-gradient(180deg, #0b0f10, #1b2326);
-    box-shadow: inset 0 1px 2px #0009;
+    border-radius: 999px;
+    border: 1px solid #283437;
+    background: linear-gradient(180deg, #090e10, #141b1d);
+    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.6);
   }
 
   #wxMine .abi-rank-fill {
     display: block;
     width: 0;
     height: 100%;
+    border-radius: 999px;
     background: linear-gradient(90deg, #bd4c34, #ed7657);
-    box-shadow: 0 0 8px #e66b4e55;
+    box-shadow: 0 0 8px rgba(230, 107, 78, 0.45);
     transition: width 650ms cubic-bezier(0.2, 0.8, 0.2, 1);
-  }
-
-  #wxMine .abi-rank-count,
-  #wxMine .abi-rank-kicker,
-  #wxMine .abi-level-label,
-  #wxMine .abi-level-caption {
-    grid-area: caption;
-    justify-self: start;
-    color: #d2d8d3;
-    font-size: 0.15rem;
-    font-weight: 700;
-  }
-
-  #wxMine .abi-rank-count {
-    grid-area: count;
-    justify-self: end;
-    color: #e0e6e1;
-    font-size: 0.18rem;
-    font-variant-numeric: tabular-nums;
-    line-height: 1.3;
-    text-align: right;
-  }
-  #wxMine .abi-rank-kicker {
-    grid-area: kicker;
-    justify-self: start;
-  }
-
-  #wxMine .abi-level-progress {
-    display: grid;
-    grid-template-columns: minmax(0, 1fr) auto;
-    grid-template-areas:
-      "kicker percent"
-      "track track"
-      "caption caption";
-    grid-template-rows: auto 10px auto;
-    align-items: center;
-    gap: 0.06rem 0.12rem;
-    width: 100%;
-    min-width: 0;
-    padding: 0 0 0 0.16rem;
-    box-sizing: border-box;
-    border-top: 0;
-    border-left: 1px solid #ffffff14;
-  }
-
-  #wxMine .abi-level-label {
-    grid-area: kicker;
-  }
-
-  #wxMine .abi-level-count {
-    grid-area: percent;
-    justify-self: end;
-    color: #e66b4e;
-    font-size: 0.36rem;
-    font-variant-numeric: tabular-nums;
-    font-weight: 700;
-    line-height: 0.9;
-  }
-
-  #wxMine .abi-level-current {
-    font-size: inherit;
-  }
-
-  #wxMine .abi-level-maximum {
-    font-size: inherit;
-  }
-
-  #wxMine .abi-level-track {
-    grid-area: track;
-    display: block;
-    position: relative;
-    height: 0.12rem;
-    min-height: 7px;
-    overflow: hidden;
-    border: 1px solid #293336;
-    background: linear-gradient(180deg, #0b0f10, #1b2326);
-    box-shadow: inset 0 1px 2px #0009;
   }
 
   #wxMine .abi-level-fill {
     display: block;
     width: 0;
     height: 100%;
+    border-radius: 999px;
     background: linear-gradient(90deg, #8ba848, #c1df72);
-    box-shadow: 0 0 8px #b8d66a55;
+    box-shadow: 0 0 8px rgba(184, 214, 106, 0.45);
     transition: width 650ms cubic-bezier(0.2, 0.8, 0.2, 1);
   }
 
-  #wxMine :is(.abi-rank-track, .abi-level-track) {
-    height: 10px;
-    min-height: 10px;
-    border: 1px solid #293336;
-    background: linear-gradient(180deg, #0b0f10, #1b2326);
-    box-shadow: inset 0 1px 2px #0009;
+  #wxMine .abi-rank-count {
+    grid-area: count;
+    justify-self: start;
+    color: #c5cec9;
+    font-size: clamp(10px, 0.8vw, 12px);
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+    line-height: 1.2;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
   }
 
-  #wxMine :is(.abi-rank-fill, .abi-level-fill) {
-    display: block;
-    width: 0;
-    height: 100%;
-    box-shadow: 0 0 8px #ffffff26;
-    transition: width 650ms cubic-bezier(0.2, 0.8, 0.2, 1);
+  #wxMine .abi-level-count {
+    grid-area: count;
+    justify-self: start;
+    color: #c5cec9;
+    font-size: clamp(10px, 0.8vw, 12px);
+    font-variant-numeric: tabular-nums;
+    font-weight: 600;
+    line-height: 1.2;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  #wxMine .abi-level-caption {
+    grid-area: caption;
+    justify-self: end;
+    color: #8fa09d;
+    font-size: clamp(10px, 0.75vw, 11px);
+    font-weight: 500;
+    line-height: 1.2;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  #wxMine .abi-level-xp {
+    display: none;
   }
 
   #wxMine .abi-rank-fill {
@@ -2524,13 +2595,12 @@ html:not([data-abi-site="off"]) {
       grid-column: 1;
       grid-row: 1;
       height: auto;
-      grid-template-columns: minmax(0, 1fr) minmax(0, 1.45fr);
-      gap: 0.16rem;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 0.12rem;
     }
 
-    #wxMine .abi-identity-person,
-    #wxMine .abi-identity-rank {
-      width: auto;
+    #wxMine :is(.abi-identity-person, .abi-identity-honor, .abi-meter, .abi-level-progress) {
+      width: 100%;
       min-width: 0;
     }
 
@@ -2620,12 +2690,13 @@ html:not([data-abi-site="off"]) {
       grid-column: 1;
       grid-row: 1;
       grid-template-columns: minmax(0, 1fr);
-      padding: 0.18rem 0.16rem;
+      gap: 0.1rem;
+      padding: 0.14rem 0.14rem;
     }
 
-    #wxMine .abi-identity-person,
-    #wxMine .abi-identity-rank {
+    #wxMine :is(.abi-identity-person, .abi-identity-honor, .abi-meter, .abi-level-progress) {
       width: 100%;
+      min-width: 0;
     }
 
     #wxMine .abi-board {
@@ -2819,38 +2890,99 @@ html:not([data-abi-site="off"]) {
     text-align: center;
   }
   #wxMine .abi-stat-accuracy .abi-stat-item + .abi-stat-item { border-left: 1px solid #ffffff1c; }
-  #wxMine .abi-stat-accuracy .abi-stat-item strong,
-  #wxMine .abi-stat-accuracy .abi-stat-item[data-stat="recent-accuracy"] strong,
-  #wxMine .abi-stat-accuracy .abi-stat-item[data-stat="overall-accuracy"] strong {
+  #wxMine .abi-stat-accuracy .abi-stat-item strong {
     color: #b8d66a;
-    font-size: clamp(26px, 3.2vw, 48px);
+    font-size: clamp(24px, 3vw, 42px);
     line-height: 0.95;
   }
-  #wxMine .abi-stat-accuracy .abi-stat-item[data-stat="recent-accuracy"] strong { color: #e66b4e; }
-  #wxMine .abi-stat-accuracy .abi-stat-label { font-size: clamp(9px, 0.9vw, 13px); }
+  #wxMine .abi-stat-accuracy .abi-stat-item[data-tier="high"] strong { color: #b8d66a; }
+  #wxMine .abi-stat-accuracy .abi-stat-item[data-tier="good"] strong { color: #78b9d0; }
+  #wxMine .abi-stat-accuracy .abi-stat-item[data-tier="warning"] strong { color: #f0cf65; }
+  #wxMine .abi-stat-accuracy .abi-stat-item[data-tier="critical"] strong { color: #e66b4e; }
+  #wxMine .abi-stat-accuracy .abi-stat-label {
+    font-size: clamp(10px, 0.85vw, 12px);
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: #8fa09d;
+  }
+  #wxMine .abi-stat-trend {
+    display: inline-block;
+    margin-top: 0.04rem;
+    font-size: clamp(8px, 0.7vw, 10px);
+    font-weight: 600;
+    line-height: 1;
+    padding: 2px 5px;
+    border-radius: 3px;
+    white-space: nowrap;
+  }
+  #wxMine .abi-stat-trend[data-direction="up"] {
+    color: #b8d66a;
+    background: #b8d66a18;
+  }
+  #wxMine .abi-stat-trend[data-direction="down"] {
+    color: #e66b4e;
+    background: #e66b4e18;
+  }
+  #wxMine .abi-stat-trend[data-direction="flat"] {
+    color: #798582;
+    background: #ffffff10;
+  }
+  #wxMine .abi-stat-sublabel {
+    display: block;
+    font-size: clamp(8px, 0.68vw, 10px);
+    color: #8fa09d;
+    font-weight: 500;
+    line-height: 1;
+    margin-top: 2px;
+  }
   #wxMine .abi-stat-today .abi-stat-values {
-    display: grid;
-    grid-template-columns: 1fr;
-    justify-items: center;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
     align-items: center;
+    gap: 0.04rem;
     text-align: center;
+    min-height: 0;
+    padding: 0.06rem 0;
   }
   #wxMine .abi-today-count {
     color: #798582;
-    font-size: clamp(38px, 4vw, 62px);
+    font-size: clamp(36px, 3.8vw, 56px);
+    font-weight: 700;
     line-height: 1;
     white-space: nowrap;
   }
   #wxMine .abi-today-done { color: #b8d66a; }
-  #wxMine .abi-today-limit { color: #e66b4e; }
-  #wxMine .abi-level-progress {
-    grid-template-areas: "kicker percent" "track track" "caption caption";
-    grid-template-rows: auto 10px auto;
-    gap: 0.08rem 0.12rem;
+  #wxMine .abi-today-limit { color: #798582; }
+  #wxMine .abi-today-track {
+    width: min(180px, 85%);
+    height: 8px;
+    background: linear-gradient(180deg, #090e10, #141b1d);
+    border: 1px solid #28363a;
+    border-radius: 999px;
+    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.6);
+    overflow: hidden;
+    margin-top: 2px;
   }
-  #wxMine .abi-level-label { font-family: inherit; font-size: 0.15rem; font-weight: 700; }
-  #wxMine .abi-level-count { font-family: inherit; font-size: 0.3rem; font-weight: 700; }
-  #wxMine .abi-level-caption { font-family: inherit; font-size: 0.15rem; }
-  #wxMine .abi-level-track { height: 10px; min-height: 10px; }
-  #wxMine .abi-level-xp { display: none; }
+  #wxMine .abi-today-fill {
+    display: block;
+    height: 100%;
+    background: linear-gradient(90deg, #8ba848, #c1df72);
+    box-shadow: 0 0 10px rgba(184, 214, 106, 0.45);
+    border-radius: 999px;
+    transform-origin: left center;
+    transition: width 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+  }
+  #wxMine .abi-today-remaining {
+    font-size: clamp(11px, 0.85vw, 13px);
+    font-weight: 600;
+    color: #9cb1ad;
+    line-height: 1.2;
+    white-space: nowrap;
+    margin-top: 4px;
+  }
+  #wxMine .abi-today-remaining[data-status="done"] {
+    color: #b8d66a;
+  }
 }
