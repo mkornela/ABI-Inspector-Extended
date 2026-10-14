@@ -188,34 +188,49 @@ html:not([data-abi-site="off"]) {
       background-color 140ms ease;
   }
 
-  .main a.exit_btn2 {
-    position: absolute !important;
-    top: -1rem !important;
-    right: 0.28rem !important;
-    transform: translateY(-8px) !important;
-    display: flex !important;
-    flex: 0 0 var(--abi-header-slot) !important;
+  :is(.nav, .main) a.exit_btn2 {
+    position: static !important;
+    float: none !important;
+    margin-left: auto !important;
     width: var(--abi-header-slot) !important;
-    min-width: var(--abi-header-slot) !important;
-    max-width: var(--abi-header-slot) !important;
     height: 58px !important;
     min-height: 58px !important;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
     padding: 0 8px !important;
-    box-sizing: border-box;
-    border: 1px solid var(--abi-line) !important;
-    border-radius: 0;
-    color: #aab1af !important;
-    background-color: #101416 !important;
-    background-image: none !important;
-    font-family: inherit;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    box-sizing: border-box !important;
+    border: 1px solid rgb(65, 73, 75) !important;
+    border-radius: 0 !important;
+    background: rgb(16, 20, 22) !important;
+    color: rgb(170, 177, 175) !important;
+    font-family: inherit !important;
     font-size: 16px !important;
-    font-weight: 700;
-    letter-spacing: 0.045em;
-    line-height: 1.15;
-    white-space: nowrap;
+    font-weight: 700 !important;
+    letter-spacing: 0.72px !important;
+    text-transform: uppercase !important;
+    line-height: 1.15 !important;
+    text-align: center !important;
+    white-space: nowrap !important;
+    transform: none !important;
+    cursor: pointer !important;
+    box-shadow: none !important;
+    transition:
+      color 140ms ease,
+      border-color 140ms ease,
+      background-color 140ms ease !important;
+  }
+
+  :is(.nav, .main) a.exit_btn2:hover {
+    border-color: #737a78 !important;
+    color: #ffffff !important;
+    background: #ffffff08 !important;
+  }
+
+  :is(.nav, .main) a.exit_btn2::before,
+  :is(.nav, .main) a.exit_btn2::after {
+    display: none !important;
+    content: none !important;
   }
 
   .nav > .abi-extension-brand {
@@ -1567,10 +1582,10 @@ html:not([data-abi-site="off"]) {
     gap: 0.12rem;
     min-width: 0;
     min-height: 0;
-    padding: 0.12rem 0.14rem;
+    padding: 0;
     box-sizing: border-box;
-    border: 1px solid var(--abi-line);
-    background: #101517;
+    border: none !important;
+    background: transparent !important;
   }
 
   #wxMine :is(.abi-identity-person, .abi-identity-honor, .abi-meter, .abi-level-progress) {
@@ -2070,8 +2085,15 @@ html:not([data-abi-site="off"]) {
     margin: 0;
     padding: 0.14rem 0.16rem 0.12rem;
     box-sizing: border-box;
-    border: 1px solid var(--abi-line);
-    background: #111719;
+    background: linear-gradient(145deg, rgba(22, 29, 31, 0.75), rgba(12, 17, 18, 0.85));
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 8px;
+    transition: border-color 160ms ease, box-shadow 160ms ease;
+  }
+
+  #wxMine .abi-stat-card:hover {
+    border-color: rgba(255, 255, 255, 0.14);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
   }
 
   #wxMine .abi-stat-card h3 {
@@ -2117,7 +2139,6 @@ html:not([data-abi-site="off"]) {
     position: relative;
     grid-template-rows: auto minmax(0, 1fr);
     padding: 0.16rem 0.22rem 0.14rem;
-    background: linear-gradient(135deg, #141a1c, #101517 65%, #14191a);
   }
 
   #wxMine .abi-stat-accuracy::after {
@@ -2131,13 +2152,7 @@ html:not([data-abi-site="off"]) {
     letter-spacing: 0.07em;
   }
 
-  #wxMine .abi-stat-accuracy .abi-stat-values {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
 
-  #wxMine .abi-stat-accuracy .abi-stat-item[data-stat="overall-accuracy"] {
-    border-left: 1px solid #ffffff1c;
-  }
 
   #wxMine .abi-stat-label {
     color: #9aa3a1;
@@ -2296,10 +2311,12 @@ html:not([data-abi-site="off"]) {
   }
   :is(#xcWorking > .content.video, .content.video:has(#drillButton)) {
     display: grid !important;
-    grid-template-columns: minmax(240px, 25%) minmax(0, 1fr);
+    grid-template-columns: 310px minmax(0, 1fr) !important;
     grid-template-rows: minmax(0, 1fr);
     align-items: stretch;
-    gap: 0;
+    gap: 16px;
+    padding: 12px 16px 16px !important;
+    box-sizing: border-box;
   }
 
   /* Give the Workbench inspector profile the same framed-card treatment as
@@ -2307,16 +2324,22 @@ html:not([data-abi-site="off"]) {
   :is(#xcWorking > .content.video, .content.video:has(#drillButton)) > .info-team {
     grid-column: 1;
     grid-row: 1;
-    width: auto !important;
-    height: auto;
+    align-self: stretch !important;
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 16px !important;
+    width: 100% !important;
+    height: 100% !important;
+    min-height: 100% !important;
+    max-height: none !important;
     min-width: 0;
-    min-height: 0;
-    margin: 12px !important;
-    padding: 18px 16px;
-    box-sizing: border-box;
-    border: 1px solid var(--abi-line);
-    border-top: 2px solid var(--abi-accent);
-    background: #111719;
+    margin: 0 !important;
+    padding: 24px 20px !important;
+    box-sizing: border-box !important;
+    border: 1px solid rgba(255, 255, 255, 0.08) !important;
+    border-radius: 10px !important;
+    background: linear-gradient(180deg, rgba(20, 26, 28, 0.85) 0%, rgba(12, 16, 18, 0.95) 100%) !important;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.45) !important;
   }
 
   :is(#xcWorking > .content.video, .content.video:has(#drillButton)) > .play-box {
@@ -2327,31 +2350,37 @@ html:not([data-abi-site="off"]) {
     float: none !important;
   }
 
+  /* Box 1: Inspector Profile Card */
   :is(#xcWorking > .content.video, .content.video:has(#drillButton)) .user-info {
-    display: grid;
-    grid-template-columns: 68px minmax(0, 1fr);
-    grid-template-rows: auto auto;
-    align-items: start;
-    gap: 5px 12px;
-    height: auto;
-    min-height: 0;
-    width: 100%;
-    box-sizing: border-box;
-    padding: 0 0 14px;
-    border-bottom: 1px solid var(--abi-line);
+    display: grid !important;
+    grid-template-columns: 48px minmax(0, 1fr) !important;
+    grid-template-rows: auto auto !important;
+    align-items: center !important;
+    gap: 4px 14px !important;
+    height: auto !important;
+    min-height: 0 !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+    padding: 14px 16px !important;
+    background: rgba(14, 19, 21, 0.55) !important;
+    border: 1px solid rgba(255, 255, 255, 0.05) !important;
+    border-radius: 8px !important;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.03) !important;
   }
 
   :is(#xcWorking > .content.video, .content.video:has(#drillButton)) .avatar {
     position: static;
     grid-column: 1;
     grid-row: 1 / span 2;
-    width: 68px;
-    height: 68px;
+    width: 48px !important;
+    height: 48px !important;
     margin: 0;
     float: none;
     overflow: hidden;
-    border: 1px solid var(--abi-line);
+    border-radius: 50%;
+    border: 1.5px solid rgba(255, 255, 255, 0.16);
     background: #0b0f10;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
   }
 
   :is(#xcWorking > .content.video, .content.video:has(#drillButton)) .avatar img {
@@ -2369,44 +2398,165 @@ html:not([data-abi-site="off"]) {
   }
 
   :is(#xcWorking > .content.video, .content.video:has(#drillButton)) .username {
+    grid-column: 2;
+    grid-row: 1;
     overflow: hidden;
-    color: var(--abi-text);
-    font-size: 18px;
-    font-weight: 700;
-    letter-spacing: 0.015em;
+    color: #ffffff;
+    font-size: 17px;
+    font-weight: 800;
+    letter-spacing: 0.02em;
+    line-height: 1.2;
     text-overflow: ellipsis;
     white-space: nowrap;
   }
 
   :is(#xcWorking > .content.video, .content.video:has(#drillButton)) .userid {
+    grid-column: 2;
+    grid-row: 2;
+    display: flex !important;
+    align-items: center !important;
+    gap: 6px !important;
+    width: auto !important;
+    max-width: 100% !important;
+    overflow: visible !important;
+    text-overflow: clip !important;
+    color: #8fa09d;
+    font-size: 11px;
+    font-variant-numeric: tabular-nums;
+    line-height: 1.2;
+  }
+
+  :is(#xcWorking > .content.video, .content.video:has(#drillButton)) .abi-copy-id-btn {
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    width: 22px !important;
+    height: 22px !important;
+    min-width: 22px !important;
+    min-height: 22px !important;
+    padding: 0 !important;
+    margin: 0 0 0 4px !important;
+    border: 1px solid rgba(255, 255, 255, 0.12) !important;
+    border-radius: 4px !important;
+    background: rgba(255, 255, 255, 0.05) !important;
+    color: #8fa09d !important;
+    cursor: pointer !important;
+    flex-shrink: 0 !important;
+    line-height: 1 !important;
+    transition: all 0.15s ease !important;
+  }
+
+  :is(#xcWorking > .content.video, .content.video:has(#drillButton)) .abi-copy-id-btn:hover {
+    background: rgba(255, 255, 255, 0.12) !important;
+    border-color: rgba(255, 255, 255, 0.25) !important;
+    color: #ffffff !important;
+  }
+
+  :is(#xcWorking > .content.video, .content.video:has(#drillButton)) .abi-copy-id-btn.copied {
+    background: rgba(55, 207, 136, 0.15) !important;
+    border-color: rgba(55, 207, 136, 0.4) !important;
+    color: #37cf88 !important;
+  }
+
+  /* Completely hide official duplicate .user-status counter */
+  :is(#xcWorking > .content.video, .content.video:has(#drillButton)) .user-status {
     display: none !important;
   }
 
-  :is(#xcWorking > .content.video, .content.video:has(#drillButton)) .user-status {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 12px;
-    margin-top: 3px;
-    padding: 0;
-    border: 0;
-    background: transparent;
-    color: #aab1af;
-    font-size: 12px;
-    font-weight: 700;
-    letter-spacing: 0.045em;
-    text-transform: uppercase;
-    align-self: start;
-    text-align: left;
+  /* Box 2: Inspected Today Card */
+  :is(#xcWorking > .content.video, .content.video:has(#drillButton)) .abi-status-card {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 10px !important;
+    width: 100% !important;
+    height: auto !important;
+    margin: 12px 0 0 !important;
+    padding: 14px 16px !important;
+    border: 1px solid rgba(255, 255, 255, 0.05) !important;
+    border-radius: 8px !important;
+    background: rgba(14, 19, 21, 0.55) !important;
+    box-sizing: border-box !important;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.03) !important;
   }
 
-  :is(#xcWorking > .content.video, .content.video:has(#drillButton)) .user-status {
-    grid-column: 2 / -1;
+  :is(#xcWorking > .content.video, .content.video:has(#drillButton)) .abi-status-card * {
+    border: none !important;
+    background: transparent !important;
+    background-image: none !important;
+    height: auto !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    box-sizing: border-box !important;
+    box-shadow: none !important;
   }
+
+  :is(#xcWorking > .content.video, .content.video:has(#drillButton)) .abi-status-header {
+    display: flex !important;
+    align-items: baseline !important;
+    justify-content: space-between !important;
+    width: 100% !important;
+  }
+
+  :is(#xcWorking > .content.video, .content.video:has(#drillButton)) .abi-status-title {
+    color: #8fa09d !important;
+    font-size: 11px !important;
+    font-weight: 800 !important;
+    letter-spacing: 0.08em !important;
+    text-transform: uppercase !important;
+    line-height: 1 !important;
+  }
+
+  :is(#xcWorking > .content.video, .content.video:has(#drillButton)) .abi-status-count {
+    display: flex !important;
+    align-items: baseline !important;
+    gap: 3px !important;
+  }
+
+  :is(#xcWorking > .content.video, .content.video:has(#drillButton)) .abi-status-num {
+    color: #b8d66a !important;
+    font-size: 22px !important;
+    font-weight: 800 !important;
+    font-variant-numeric: tabular-nums !important;
+    line-height: 1 !important;
+  }
+
+  :is(#xcWorking > .content.video, .content.video:has(#drillButton)) .abi-status-slash {
+    color: #728481 !important;
+    font-size: 13px !important;
+    font-weight: 600 !important;
+  }
+
+  :is(#xcWorking > .content.video, .content.video:has(#drillButton)) .abi-status-track {
+    width: 100% !important;
+    height: 5px !important;
+    border-radius: 999px !important;
+    background: rgba(0, 0, 0, 0.5) !important;
+    border: 1px solid rgba(255, 255, 255, 0.04) !important;
+    overflow: hidden !important;
+    box-sizing: border-box !important;
+  }
+
+  :is(#xcWorking > .content.video, .content.video:has(#drillButton)) .abi-status-fill {
+    height: 100% !important;
+    border-radius: 999px !important;
+    background: linear-gradient(90deg, #8ba848, #c1df72) !important;
+    box-shadow: 0 0 8px rgba(184, 214, 106, 0.35) !important;
+    transition: width 0.3s ease !important;
+  }
+
+  :is(#xcWorking > .content.video, .content.video:has(#drillButton)) .abi-status-remaining {
+    color: #6f7f7c !important;
+    font-size: 11px !important;
+    font-weight: 500 !important;
+    line-height: 1.2 !important;
+    text-align: center !important;
+  }
+
+
 
   :is(#xcWorking > .content.video, .content.video:has(#drillButton)) .user-info:has(.drill-data) {
-    grid-template-columns: 68px repeat(2, minmax(0, 1fr));
-    grid-template-rows: auto auto;
+    grid-template-columns: 52px repeat(2, minmax(0, 1fr));
+    grid-template-rows: auto auto auto;
   }
 
   :is(#xcWorking > .content.video, .content.video:has(#drillButton)) .user-info:has(.drill-data) .username {
@@ -2414,53 +2564,52 @@ html:not([data-abi-site="off"]) {
     grid-row: 1;
   }
 
+  :is(#xcWorking > .content.video, .content.video:has(#drillButton)) .user-info:has(.drill-data) .userid {
+    grid-column: 2 / -1;
+    grid-row: 2;
+  }
+
   :is(#xcWorking > .content.video, .content.video:has(#drillButton)) .user-info:has(.drill-data) .drill-data:nth-child(4),
   :is(#xcWorking > .content.video, .content.video:has(#drillButton)) .user-info:has(.drill-data) .drill-data:nth-child(5) {
     display: flex;
-    flex-direction: row;
-    align-items: baseline;
-    justify-content: flex-start;
-    gap: 5px;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: center;
+    gap: 4px;
     min-width: 0;
-    margin-top: 3px;
-    padding: 0;
-    border: 0;
-    background: transparent;
+    margin-top: 10px;
+    padding: 8px 10px;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    border-radius: 8px;
+    background: rgba(16, 23, 26, 0.6);
     text-align: left;
   }
 
   :is(#xcWorking > .content.video, .content.video:has(#drillButton)) .user-info:has(.drill-data) .drill-data:nth-child(4) {
-    grid-column: 2;
-    grid-row: 2;
+    grid-column: 1 / span 2;
+    grid-row: 4;
   }
 
   :is(#xcWorking > .content.video, .content.video:has(#drillButton)) .user-info:has(.drill-data) .drill-data:nth-child(5) {
     grid-column: 3;
-    grid-row: 2;
+    grid-row: 4;
   }
 
   :is(#xcWorking > .content.video, .content.video:has(#drillButton)) .drill-data span {
-    color: #aab1af;
+    color: #8fa09d;
     font-size: 10px;
     font-weight: 700;
-    letter-spacing: 0.04em;
-    text-transform: none;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
     order: 2;
   }
 
   :is(#xcWorking > .content.video, .content.video:has(#drillButton)) .drill-data strong {
-    color: var(--abi-accent);
-    font-size: 21px;
+    font-size: 20px;
+    font-weight: 800;
     font-variant-numeric: tabular-nums;
-    line-height: 1.05;
+    line-height: 1;
     order: 1;
-  }
-
-  :is(#xcWorking > .content.video, .content.video:has(#drillButton)) :is(.user-status, .drill-data) strong {
-    color: var(--abi-accent);
-    font-size: 22px;
-    font-variant-numeric: tabular-nums;
-    letter-spacing: 0;
   }
 
   :is(#xcWorking > .content.video, .content.video:has(#drillButton)) .user-info:has(.drill-data) .drill-data:nth-child(4) strong {
@@ -2468,24 +2617,25 @@ html:not([data-abi-site="off"]) {
   }
 
   :is(#xcWorking > .content.video, .content.video:has(#drillButton)) .user-info:has(.drill-data) .drill-data:nth-child(5) strong {
-    color: #a9d65e;
+    color: #b8d66a;
   }
 
   :is(#xcWorking > .content.video, .content.video:has(#drillButton)) .tips-title {
     display: block;
     width: auto !important;
     height: auto !important;
-    margin: 22px 0 14px !important;
-    padding: 0 !important;
+    margin: 20px 0 10px !important;
+    padding: 0 0 0 8px !important;
     border: 0 !important;
+    border-left: 2px solid #e66b4e !important;
     background: transparent !important;
-    color: #e0e3de;
-    font-size: 14px;
-    font-weight: 700;
-    letter-spacing: 0.09em;
+    color: #c3cbc6;
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 0.08em;
     line-height: 1.4;
     text-transform: uppercase;
-    text-align: center;
+    text-align: left;
   }
 
   :is(#xcWorking > .content.video, .content.video:has(#drillButton)) .tips-title[hidden],
@@ -2500,21 +2650,19 @@ html:not([data-abi-site="off"]) {
 
   :is(#xcWorking > .content.video, .content.video:has(#drillButton)) .tips-content {
     position: static !important;
-    display: block;
+    display: flex !important;
+    flex-direction: column;
+    gap: 12px;
     width: 100% !important;
     height: auto !important;
     max-height: none !important;
     min-width: 0;
     margin: 0 !important;
-    padding: 0 !important;
+    padding: 14px 16px !important;
     overflow: visible !important;
-    border: 0 !important;
-    background: transparent !important;
-    color: #aab1af;
-    font-size: 13px;
-    line-height: 1.65;
-    white-space: normal;
-    overflow-wrap: anywhere;
+    border: 1px solid rgba(255, 255, 255, 0.05) !important;
+    border-radius: 8px !important;
+    background: rgba(14, 19, 21, 0.55) !important;
     box-sizing: border-box;
   }
 
@@ -2524,12 +2672,14 @@ html:not([data-abi-site="off"]) {
     width: 100% !important;
     height: auto !important;
     min-width: 0;
-    margin: 0 0 8px !important;
-    padding: 9px 10px !important;
+    margin: 0 !important;
+    padding: 0 !important;
     box-sizing: border-box;
-    border: 1px solid #293336;
-    border-left: 2px solid #626967;
-    background: #0d1214;
+    border: 0 !important;
+    background: transparent !important;
+    color: #aab1af;
+    font-size: 12px;
+    line-height: 1.6;
     white-space: normal !important;
     overflow-wrap: anywhere;
   }
@@ -2540,17 +2690,16 @@ html:not([data-abi-site="off"]) {
   }
 
   :is(#xcWorking > .content.video, .content.video:has(#drillButton)) .tips-content p.abi-color-key {
-    display: grid;
+    display: flex !important;
+    flex-direction: column;
     gap: 8px;
-    padding: 10px 12px !important;
-    border-left: 2px solid var(--abi-accent);
+    padding-top: 10px !important;
+    margin-top: 4px !important;
+    border-top: 1px solid rgba(255, 255, 255, 0.06) !important;
+    border-left: 0 !important;
   }
 
   :is(#xcWorking > .content.video, .content.video:has(#drillButton)) .tips-content p:is(.abi-inspection-note, .abi-practice-note) {
-    padding: 10px 12px !important;
-    border-color: #3b302c;
-    border-left: 2px solid var(--abi-accent);
-    background: #131719;
     color: #bdc3be;
   }
 
@@ -2564,13 +2713,17 @@ html:not([data-abi-site="off"]) {
     align-items: center;
     gap: 10px;
     min-height: 18px;
+    font-size: 12px;
+    font-weight: 700;
+    color: #d2d8d3;
   }
 
   :is(#xcWorking > .content.video, .content.video:has(#drillButton)) .abi-color-swatch {
-    flex: 0 0 11px;
-    width: 11px;
-    height: 11px;
-    border: 1px solid #ffffff70;
+    flex: 0 0 10px;
+    width: 10px;
+    height: 10px;
+    border-radius: 2px;
+    border: none;
     box-shadow: 0 0 6px currentColor;
   }
 
@@ -2598,6 +2751,125 @@ html:not([data-abi-site="off"]) {
   :is(#xcWorking > .content.video, .content.video:has(#drillButton)) .abi-color-name {
     color: #d2d8d3;
     font-weight: 700;
+  }
+
+  /* Workbench & Test Cases bottom verdict action buttons */
+  :is(#xcWorking, .box.drill) .operation,
+  :is(#xcWorking > .content.video, .content.video:has(#drillButton)) .operation,
+  :is(#xcWorking > .content.video, .content.video:has(#drillButton)):has(abi-local-player) .play-box > .operation {
+    display: flex !important;
+    justify-content: center !important;
+    align-items: center !important;
+    gap: 16px !important;
+    width: 100% !important;
+    max-width: none !important;
+    height: auto !important;
+    margin: 14px 0 0 !important;
+    padding: 0 16px 8px !important;
+    box-sizing: border-box !important;
+    background: transparent !important;
+  }
+
+  :is(#xcWorking, .box.drill) .operation a.btn1,
+  :is(#xcWorking > .content.video, .content.video:has(#drillButton)) .operation a.btn1 {
+    flex: 1 1 0 !important;
+    max-width: 320px !important;
+    height: 52px !important;
+    line-height: 52px !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 12px !important;
+    margin: 0 !important;
+    padding: 0 16px !important;
+    box-sizing: border-box !important;
+    border-radius: 8px !important;
+    background-image: none !important;
+    font-family: inherit !important;
+    font-size: 15px !important;
+    font-weight: 800 !important;
+    letter-spacing: 0.08em !important;
+    text-transform: uppercase !important;
+    text-decoration: none !important;
+    cursor: pointer !important;
+    transition: transform 0.15s ease, background 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease !important;
+  }
+
+  :is(#xcWorking, .box.drill) .operation a.btn1:hover {
+    transform: translateY(-2px) !important;
+  }
+
+  :is(#xcWorking, .box.drill) .operation a.btn1:active {
+    transform: translateY(0) !important;
+  }
+
+  /* 1. Violation (Crimson Red) */
+  :is(#xcWorking, .box.drill) .operation a:is(#patrolButton0, #drillButton0, [data-index="1"]) {
+    background: linear-gradient(135deg, rgba(195, 71, 45, 0.22), rgba(140, 35, 18, 0.35)) !important;
+    border: 1.5px solid #d95338 !important;
+    color: #ffffff !important;
+    box-shadow: 0 4px 16px rgba(195, 71, 45, 0.28) !important;
+  }
+
+  :is(#xcWorking, .box.drill) .operation a:is(#patrolButton0, #drillButton0, [data-index="1"]):hover {
+    background: linear-gradient(135deg, rgba(220, 78, 48, 0.35), rgba(160, 40, 20, 0.5)) !important;
+    border-color: #ff684a !important;
+    box-shadow: 0 6px 20px rgba(195, 71, 45, 0.45) !important;
+  }
+
+  :is(#xcWorking, .box.drill) .operation a:is(#patrolButton0, #drillButton0, [data-index="1"])::before {
+    content: "";
+    width: 18px;
+    height: 18px;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23ff7a61' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='12' cy='12' r='10'/%3E%3Cline x1='4.93' y1='4.93' x2='19.07' y2='19.07'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-size: contain;
+  }
+
+  /* 2. No Violation (Emerald Green) */
+  :is(#xcWorking, .box.drill) .operation a:is(#patrolButton1, #drillButton1, [data-index="0"]) {
+    background: linear-gradient(135deg, rgba(46, 133, 76, 0.22), rgba(28, 92, 51, 0.35)) !important;
+    border: 1.5px solid #38b865 !important;
+    color: #ffffff !important;
+    box-shadow: 0 4px 16px rgba(56, 184, 101, 0.25) !important;
+  }
+
+  :is(#xcWorking, .box.drill) .operation a:is(#patrolButton1, #drillButton1, [data-index="0"]):hover {
+    background: linear-gradient(135deg, rgba(56, 184, 101, 0.35), rgba(35, 115, 64, 0.5)) !important;
+    border-color: #4ee080 !important;
+    box-shadow: 0 6px 20px rgba(56, 184, 101, 0.4) !important;
+  }
+
+  :is(#xcWorking, .box.drill) .operation a:is(#patrolButton1, #drillButton1, [data-index="0"])::before {
+    content: "";
+    width: 18px;
+    height: 18px;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2354e687' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z'/%3E%3Cpath d='m9 12 2 2 4-4'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-size: contain;
+  }
+
+  /* 3. Uncertain (Amber / Gold) */
+  :is(#xcWorking, .box.drill) .operation a:is(#patrolButton2, [data-index="2"]) {
+    background: linear-gradient(135deg, rgba(186, 137, 43, 0.2), rgba(130, 94, 25, 0.32)) !important;
+    border: 1.5px solid #d9a438 !important;
+    color: #ffffff !important;
+    box-shadow: 0 4px 16px rgba(217, 164, 56, 0.22) !important;
+  }
+
+  :is(#xcWorking, .box.drill) .operation a:is(#patrolButton2, [data-index="2"]):hover {
+    background: linear-gradient(135deg, rgba(217, 164, 56, 0.32), rgba(155, 112, 30, 0.48)) !important;
+    border-color: #f7bd48 !important;
+    box-shadow: 0 6px 20px rgba(217, 164, 56, 0.38) !important;
+  }
+
+  :is(#xcWorking, .box.drill) .operation a:is(#patrolButton2, [data-index="2"])::before {
+    content: "";
+    width: 18px;
+    height: 18px;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23f2cb74' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='12' cy='12' r='10'/%3E%3Cpath d='M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3'/%3E%3Ccircle cx='12' cy='17' r='.5' fill='%23f2cb74'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-size: contain;
   }
 
   @media (max-width: 820px) {
@@ -2647,8 +2919,6 @@ html:not([data-abi-site="off"]) {
     :is(#xcWorking > .content.video, .content.video:has(#drillButton)) > .info-team {
       grid-column: 1;
       grid-row: 2;
-      border-top: 1px solid var(--abi-line);
-      border-right: 0;
     }
 
     :is(#xcWorking > .content.video, .content.video:has(#drillButton)) > .play-box {
@@ -2702,7 +2972,9 @@ html:not([data-abi-site="off"]) {
       grid-row: 1;
       grid-template-columns: minmax(0, 1fr);
       gap: 0.1rem;
-      padding: 0.14rem 0.14rem;
+      padding: 0;
+      border: none !important;
+      background: transparent !important;
     }
 
     #wxMine :is(.abi-identity-person, .abi-identity-honor, .abi-meter, .abi-level-progress) {
@@ -2713,28 +2985,34 @@ html:not([data-abi-site="off"]) {
     #wxMine .abi-board {
       grid-column: 1;
       grid-row: 2;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      grid-template-rows: repeat(3, minmax(1rem, auto));
+      grid-template-columns: 1fr;
+      grid-template-rows: auto;
       height: auto;
-      min-height: 4.4rem;
+      min-height: 0;
+      gap: 0.12rem;
     }
 
     #wxMine .abi-stat-accuracy {
-      grid-column: 1 / -1;
-      min-height: 2rem;
+      grid-column: 1;
+      min-height: auto;
     }
 
-    #wxMine .abi-stat-accuracy .abi-stat-item[data-stat="recent-accuracy"] strong {
-      font-size: clamp(42px, 9vw, 72px);
+    #wxMine .abi-stat-accuracy::after {
+      display: none;
     }
 
-    #wxMine .abi-stat-accuracy .abi-stat-item[data-stat="overall-accuracy"] strong {
-      font-size: clamp(36px, 7vw, 54px);
+    #wxMine .abi-stat-accuracy .abi-stat-values {
+      grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+      row-gap: 12px;
+    }
+
+    #wxMine .abi-stat-accuracy .abi-stat-item + .abi-stat-item {
+      border-left: 0 !important;
     }
 
     #wxMine .abi-stat-card {
-      min-height: 1.3rem;
-      padding: 0.16rem;
+      min-height: auto;
+      padding: 0.14rem;
     }
 
     #wxMine .abi-stat-item strong {
@@ -2865,15 +3143,17 @@ html:not([data-abi-site="off"]) {
 
 /* Overview data cards: keep the established page shell and fit new stats into its original two-row board. */
 html:not([data-abi-site="off"]) {
-  #wxMine .abi-board {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-    grid-template-rows: minmax(0, 1.1fr) minmax(0, 0.9fr);
+  @media (min-width: 681px) {
+    #wxMine .abi-board {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      grid-template-rows: minmax(0, 1.1fr) minmax(0, 0.9fr);
+    }
+    #wxMine .abi-stat-accuracy { grid-column: 1 / span 2; grid-row: 1; }
+    #wxMine .abi-stat-today { grid-column: 3; grid-row: 1; }
+    #wxMine .abi-stat-volume { grid-column: 1; grid-row: 2; }
+    #wxMine .abi-stat-season { grid-column: 2; grid-row: 2; }
+    #wxMine .abi-stat-weekly { grid-column: 3; grid-row: 2; }
   }
-  #wxMine .abi-stat-accuracy { grid-column: 1 / span 2; grid-row: 1; }
-  #wxMine .abi-stat-today { grid-column: 3; grid-row: 1; }
-  #wxMine .abi-stat-volume { grid-column: 1; grid-row: 2; }
-  #wxMine .abi-stat-season { grid-column: 2; grid-row: 2; }
-  #wxMine .abi-stat-weekly { grid-column: 3; grid-row: 2; }
   #wxMine :is(.abi-stat-volume, .abi-stat-season, .abi-stat-weekly) {
     grid-template-rows: auto minmax(0, 1fr);
     min-height: 0;

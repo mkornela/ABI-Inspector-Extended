@@ -118,6 +118,9 @@
     updateGuidelines(enabled);
     updateFaq(enabled);
     updateDrillCounters(enabled);
+    updateWorkbenchStatus(enabled);
+    updateInspectorProfile(enabled);
+    updateExitButton(enabled);
     updateChallengeRewards(enabled);
     updateChallengeProgressLabels(enabled);
     updateOverview(enabled);
@@ -652,6 +655,141 @@
           : null;
       if (!label) continue;
       if (span.textContent !== label) span.textContent = label;
+    }
+  }
+
+  function updateWorkbenchStatus(enabled) {
+    for (const video of document.querySelectorAll(
+      ":is(#xcWorking, .content.video)",
+    )) {
+      const userInfo = video.querySelector(".user-info");
+      const status = video.querySelector(".user-status");
+      let card = video.querySelector(".abi-status-card");
+
+      if (!enabled) {
+        card?.remove();
+        if (status) status.style.display = "";
+        const span = status?.querySelector(".str73");
+        if (span) span.style.display = "";
+        const strong = status?.querySelector("#dayTotalJudgedNum, strong");
+        if (strong) strong.style.display = "";
+        continue;
+      }
+
+      if (status) status.style.setProperty("display", "none", "important");
+
+      const countEl = status?.querySelector("#dayTotalJudgedNum, strong");
+      const summaryCount = window.__abiOverviewData?.userJudgeSummary?.day_judged_num;
+      const count = summaryCount !== undefined
+        ? Number(summaryCount)
+        : (parseInt(countEl?.textContent?.trim() || "0", 10) || 0);
+
+      const max = Number(window.__abiOverviewData?.userJudgeSummary?.day_permit_num) || 20;
+      const remaining = Math.max(0, max - count);
+      const percent = Math.min(100, Math.max(0, (count / max) * 100));
+
+      if (!card) {
+        card = document.createElement("div");
+        card.className = "abi-status-card";
+        if (userInfo) {
+          userInfo.after(card);
+        } else if (status) {
+          status.after(card);
+        }
+      } else if (userInfo && userInfo.nextElementSibling !== card) {
+        userInfo.after(card);
+      }
+
+      card.innerHTML = `
+        <div class="abi-status-header">
+          <div class="abi-status-title">Inspected Today</div>
+          <div class="abi-status-count"><strong class="abi-status-num">${count}</strong><span class="abi-status-slash"> / ${max}</span></div>
+        </div>
+        <div class="abi-status-track" role="progressbar" aria-valuenow="${count}" aria-valuemin="0" aria-valuemax="${max}">
+          <div class="abi-status-fill" style="width: ${percent}%;"></div>
+        </div>
+        <div class="abi-status-remaining">${remaining} cases remaining today</div>
+      `;
+    }
+  }
+
+  function updateInspectorProfile(enabled) {
+    for (const userid of document.querySelectorAll(
+      ":is(#xcWorking, .content.video) .userid",
+    )) {
+      let copyBtn = userid.querySelector(".abi-copy-id-btn");
+      if (!enabled) {
+        copyBtn?.remove();
+        userid.style.width = "";
+        userid.style.maxWidth = "";
+        userid.style.overflow = "";
+        continue;
+      }
+
+      userid.style.setProperty("width", "auto", "important");
+      userid.style.setProperty("max-width", "100%", "important");
+      userid.style.setProperty("overflow", "visible", "important");
+
+      if (!copyBtn) {
+        copyBtn = document.createElement("button");
+        copyBtn.type = "button";
+        copyBtn.className = "abi-copy-id-btn";
+        copyBtn.title = "Copy User ID";
+        copyBtn.setAttribute("aria-label", "Copy User ID");
+
+        const copySvg = `<svg class="abi-copy-icon" viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"></path><rect x="8" y="2" width="8" height="4" rx="1" ry="1"></rect></svg>`;
+        const checkSvg = `<svg class="abi-copy-check" viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="#37cf88" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>`;
+
+        copyBtn.innerHTML = copySvg;
+
+        copyBtn.addEventListener("click", (e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          const idSpan = userid.querySelector("[id^='roleOpenid']");
+          const text = idSpan?.textContent?.trim() || "";
+          if (!text) return;
+          const setCopied = () => {
+            copyBtn.innerHTML = checkSvg;
+            copyBtn.classList.add("copied");
+            setTimeout(() => {
+              copyBtn.innerHTML = copySvg;
+              copyBtn.classList.remove("copied");
+            }, 1500);
+          };
+          if (navigator.clipboard?.writeText) {
+            navigator.clipboard.writeText(text).then(setCopied).catch(setCopied);
+          } else {
+            const ta = document.createElement("textarea");
+            ta.value = text;
+            ta.style.position = "fixed";
+            ta.style.opacity = "0";
+            document.body.append(ta);
+            ta.select();
+            document.execCommand("copy");
+            ta.remove();
+            setCopied();
+          }
+        });
+        userid.append(copyBtn);
+      }
+    }
+  }
+
+  function updateExitButton(enabled) {
+    const nav = document.querySelector(".main .nav");
+    const exitBtn = document.querySelector(".exit_btn2");
+    if (!nav || !exitBtn) return;
+    if (!enabled) {
+      const operation = document.querySelector(
+        ":is(#xcWorking, .content.video) .operation",
+      );
+      if (operation && exitBtn.parentElement === nav) {
+        operation.append(exitBtn);
+      }
+      return;
+    }
+    if (exitBtn.parentElement !== nav) {
+      nav.append(exitBtn);
     }
   }
 

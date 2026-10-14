@@ -81,6 +81,11 @@ abi-local-player[data-controls-ready]
   min-height: 0;
   display: flex;
   flex-direction: column;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 10px 32px rgba(0, 0, 0, 0.45);
+  background: #000;
 }
 :is(#xcWorking > .content.video, .content.video:has(#drillButton)):has(abi-local-player) .play-box > abi-local-player:not(:fullscreen) > :first-child {
   flex: 1 1 0;
@@ -90,9 +95,11 @@ abi-local-player[data-controls-ready]
 :is(#xcWorking > .content.video, .content.video:has(#drillButton)):has(abi-local-player) .play-box > .operation {
   flex: 0 0 auto;
   width: 100%;
-  margin: 0;
-  padding: 0.12rem 0.3rem;
+  margin: 14px 0 0;
+  padding: 0 16px 8px;
   box-sizing: border-box;
-  justify-content: space-between; /* buttons keep the site's native size */
+  display: flex !important;
+  justify-content: center !important;
+  gap: 16px;
   background: transparent;
 }
