@@ -143,3 +143,5 @@ tests/*.png
 
 # Release archives
 *.zip
+
+abi-network-reader

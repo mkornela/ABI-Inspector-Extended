@@ -26,6 +26,7 @@
   ];
   let queued = false;
   let settingsViewState = null;
+  document.addEventListener("abi:overview-updated", scheduleUpdate);
   document.addEventListener("keydown", (event) => {
     if (event.key !== "Escape") return;
     const dialog = document.querySelector("#wxMine > .abi-rank-dialog");
@@ -231,6 +232,9 @@
       "#wxMine .abi-level-current",
       "#wxMine .abi-level-maximum",
       "#wxMine .abi-level-caption",
+      "#wxMine .abi-level-label",
+      "#wxMine .abi-level-xp",
+      "#wxMine .abi-today-count",
       "#wxMine .abi-stat-item strong",
       "#wxMine .abi-rank-card h3",
       "#wxMine .abi-rank-card p",
@@ -1281,6 +1285,24 @@
       board.setAttribute("aria-label", "Inspection statistics");
       shell.append(identity, board);
       overview.append(shell);
+      let wasVisible = false;
+      const entrance = new IntersectionObserver(([entry]) => {
+        if (!shell.isConnected) { entrance.disconnect(); return; }
+        const visible = entry.isIntersecting;
+        if (visible && !wasVisible && !matchMedia("(prefers-reduced-motion: reduce)").matches) {
+          shell.querySelectorAll(".abi-identity, .abi-stat-card").forEach((node, index) => {
+            node.animate([{ opacity: 0, transform: "translateY(8px)" }, { opacity: 1, transform: "translateY(0)" }],
+              { duration: 340, delay: index * 35, easing: "ease-out", fill: "backwards" });
+          });
+          shell.querySelectorAll(".abi-rank-fill, .abi-level-fill").forEach((node) => {
+            if (!root.hasAttribute("data-abi-anonymized")) node.animate(
+              [{ transform: "scaleX(0)" }, { transform: "scaleX(1)" }],
+              { duration: 850, delay: 100, easing: "cubic-bezier(.2,.8,.2,1)", fill: "backwards" });
+          });
+        }
+        wasVisible = visible;
+      });
+      entrance.observe(shell);
     }
     shell.querySelector(":scope > .abi-overview-head")?.remove();
 
@@ -1335,17 +1357,19 @@
     const readValue = (index) =>
       statValues[index]?.querySelector("strong")?.textContent.trim() || "—";
     const total = readValue(0);
-    const weekly = readValue(1);
     const successful = readValue(2);
     const recentAccuracy = readValue(3);
     const bans = readValue(4);
+    const live = window.__abiOverviewData || {};
+    const summary = live.userJudgeSummary || {};
+    const weekSummary = live.userWeekJudgeSummary || {};
+    const growth = live.userGrowthSummary || {};
+    const count = (value) => Number.isFinite(value) ? value.toLocaleString("en-US") : "—";
+    const accuracy = (value) => Number.isFinite(value) ? `${(value / 100).toFixed(2)}%` : "—";
 
     const parseCount = (value) => Number(value.replace(/[^\d]/g, "")) || 0;
-    const totalCount = parseCount(total);
     const successfulCount = parseCount(successful);
-    const overallAccuracy = totalCount
-      ? `${((successfulCount / totalCount) * 100).toFixed(2)}%`
-      : "—";
+    const overallAccuracy = accuracy(summary.life_accuracy);
 
     const recordRows = stats.querySelectorAll(
       ".record #judgePunishRecord > li:not(:first-child)",
@@ -1359,9 +1383,7 @@
     if (cards && !cards.querySelector(".abi-stat-card")) {
       for (const [className, label] of [
         ["abi-stat-accuracy", "Inspection accuracy"],
-        ["abi-stat-volume", "Inspection volume"],
-        ["abi-stat-successful", "Successful inspections"],
-        ["abi-stat-bans", "Number of bans"],
+        ["abi-stat-volume", "Lifetime"],
       ]) {
         const card = document.createElement("section");
         card.className = `abi-stat-card ${className}`;
@@ -1377,8 +1399,6 @@
     const orderedCards = [
       ".abi-stat-accuracy",
       ".abi-stat-volume",
-      ".abi-stat-successful",
-      ".abi-stat-bans",
     ]
       .map((selector) => cards.querySelector(selector))
       .filter(Boolean);
@@ -1392,10 +1412,22 @@
       "Inspection accuracy",
     );
 
+    for (const [className, label] of [["abi-stat-today", "Today"], ["abi-stat-season", "This season"], ["abi-stat-weekly", "This week"]]) {
+      if (cards.querySelector(`.${className}`)) continue;
+      const card = document.createElement("section");
+      card.className = `abi-stat-card ${className}`;
+      const heading = document.createElement("h3");
+      heading.textContent = label;
+      const values = document.createElement("div");
+      values.className = "abi-stat-values";
+      card.append(heading, values);
+      cards.append(card);
+    }
+
     const renderStat = (cardClass, label, value) => {
       const card = cards.querySelector(`.${cardClass} .abi-stat-values`);
       if (!card) return;
-      let valueNode = card.querySelector(`[data-stat="${label}"]`);
+      let valueNode = card.parentElement.querySelector(`[data-stat="${label}"]`);
       if (!valueNode) {
         valueNode = document.createElement("div");
         valueNode.className = "abi-stat-item";
@@ -1404,10 +1436,12 @@
         name.className = "abi-stat-label";
         name.textContent =
           {
-            total: "Total",
+            total: "Inspections",
             week: "This week",
             successful: "Lifetime",
             "recent-accuracy": "Recent accuracy",
+            "weekly-accuracy": "Weekly accuracy",
+            "seasonal-accuracy": "Seasonal accuracy",
             bans: "Bans",
             "overall-accuracy": "Overall accuracy",
             "last-ban": "Last ban",
@@ -1420,12 +1454,30 @@
       if (number.textContent !== value) number.textContent = value;
     };
 
-    renderStat("abi-stat-volume", "total", total);
-    renderStat("abi-stat-volume", "week", weekly);
-    renderStat("abi-stat-successful", "successful", successful);
+    renderStat("abi-stat-volume", "Inspections", total);
+    renderStat("abi-stat-volume", "Correct", successful);
+    renderStat("abi-stat-volume", "Wrong", count(summary.life_wrong_case_num));
     renderStat("abi-stat-accuracy", "recent-accuracy", recentAccuracy);
+    renderStat("abi-stat-accuracy", "weekly-accuracy", Number.isFinite(weekSummary.week_right_num + weekSummary.week_wrong_num) && weekSummary.week_right_num + weekSummary.week_wrong_num > 0 ? `${(weekSummary.week_right_num / (weekSummary.week_right_num + weekSummary.week_wrong_num) * 100).toFixed(2)}%` : "—");
+    renderStat("abi-stat-accuracy", "seasonal-accuracy", accuracy(summary.season_accuracy));
     renderStat("abi-stat-accuracy", "overall-accuracy", overallAccuracy);
-    renderStat("abi-stat-bans", "bans", bans);
+    renderStat("abi-stat-volume", "bans", bans);
+    const todayValues = cards.querySelector(".abi-stat-today .abi-stat-values");
+    if (!todayValues.querySelector(".abi-today-count")) {
+      const todayCount = document.createElement("strong");
+      todayCount.className = "abi-today-count";
+      const done = document.createElement("span");
+      done.className = "abi-today-done";
+      const limit = document.createElement("span");
+      limit.className = "abi-today-limit";
+      todayCount.append(done, document.createTextNode(" / "), limit);
+      todayValues.append(todayCount);
+    }
+    updateText(todayValues.querySelector(".abi-today-done"), count(summary.day_judged_num));
+    updateText(todayValues.querySelector(".abi-today-limit"), count(summary.day_permit_num));
+    for (const [label, field] of [["Inspections", "season_total_case_num"], ["Correct", "season_right_case_num"], ["Wrong", "season_wrong_case_num"], ["Bans", "season_right_punish_case_num"]]) renderStat("abi-stat-season", label, count(summary[field]));
+    for (const [label, field] of [["Inspections", "week_total_num"], ["Correct", "week_right_num"], ["Wrong", "week_wrong_num"], ["Bans", "week_right_punish_num"]]) renderStat("abi-stat-weekly", label, count(weekSummary[field]));
+    cards.querySelector('.abi-stat-accuracy [data-stat="weekly-accuracy"]').title = "Calculated from correct / (correct + wrong) this week; unresolved inspections are excluded.";
 
     let daysAgo = null;
     if (lastBan) {
@@ -1446,20 +1498,19 @@
           : daysAgo === 1
             ? "1 day ago"
             : `${daysAgo} days ago`;
-    renderStat("abi-stat-bans", "last-ban", lastBanLabel);
-    const lastBanValue = cards.querySelector('[data-stat="last-ban"] strong');
-    if (lastBanValue && lastBan) lastBanValue.title = lastBan;
+    const lastBanValue = cards.querySelector('[data-stat="bans"]');
+    if (lastBanValue) lastBanValue.title = `Last ban: ${lastBanLabel}`;
 
     const levelText =
       profile.querySelector("#level-text")?.textContent.trim() ||
       shell.querySelector("#level-text")?.textContent.trim() ||
       "";
-    const inspectorLevel = Number(
+    const inspectorLevel = growth.ret_exp_level ?? (Number(
       (
         profile.querySelector("#exp_level") ||
         shell.querySelector("#exp_level")
       )?.textContent.replace(/[^\d]/g, ""),
-    ) || 0;
+    ) || 0);
     const currentIndex = ranks.findIndex((rank) =>
       levelText.toLowerCase().includes(rank.title.toLowerCase()),
     );
@@ -1495,8 +1546,9 @@
       levelCaption.className = "abi-level-caption";
       levelProgress.append(levelCaption);
     }
-    const levelPercent = Math.min(inspectorLevel / 35, 1) * 100;
-    updateText(levelProgress.querySelector(".abi-level-label"), "Inspector level");
+    const xpReady = Number.isFinite(growth.level_got_exp) && Number.isFinite(growth.exp_step) && growth.exp_step > 0;
+    const levelPercent = xpReady ? Math.min(growth.level_got_exp / growth.exp_step, 1) * 100 : 0;
+    updateText(levelProgress.querySelector(".abi-level-label"), `Level ${inspectorLevel}`);
     const levelCount = levelProgress.querySelector(".abi-level-count");
     if (!levelCount.querySelector(".abi-level-current")) {
       const current = document.createElement("span");
@@ -1505,23 +1557,32 @@
       maximum.className = "abi-level-maximum";
       levelCount.replaceChildren(current, document.createTextNode(" / "), maximum);
     }
-    updateText(levelCount.querySelector(".abi-level-current"), String(inspectorLevel));
-    updateText(levelCount.querySelector(".abi-level-maximum"), "35");
+    updateText(levelCount.querySelector(".abi-level-current"), xpReady ? count(growth.level_got_exp) : "—");
+    updateText(levelCount.querySelector(".abi-level-maximum"), xpReady ? `${count(growth.exp_step)} XP` : "— XP");
     updateText(
       levelCaption,
-      `${inspectorLevel} of 35 levels completed`,
+      xpReady ? `${count(Math.max(0, growth.exp_step - growth.level_got_exp))} XP to level ${inspectorLevel + 1}` : "Waiting for progression data",
     );
+    let xpDetails = levelProgress.querySelector(".abi-level-xp");
+    if (!xpDetails) {
+      xpDetails = document.createElement("span");
+      xpDetails.className = "abi-level-xp";
+      levelProgress.append(xpDetails);
+    }
+    updateText(xpDetails, `Total XP: ${count(growth.total_exp)}`);
+    levelProgress.title = xpDetails.textContent;
     const levelTrack = levelProgress.querySelector(".abi-level-track");
     const levelFill = levelTrack.querySelector(".abi-level-fill");
     setProgress(levelFill, levelPercent);
     levelTrack.setAttribute("role", "progressbar");
     levelTrack.setAttribute("aria-valuemin", "0");
-    levelTrack.setAttribute("aria-valuemax", "35");
-    levelTrack.setAttribute("aria-valuenow", String(inspectorLevel));
+    levelTrack.setAttribute("aria-valuemax", String(xpReady ? growth.exp_step : 100));
+    levelTrack.setAttribute("aria-valuenow", String(xpReady ? Math.min(growth.level_got_exp, growth.exp_step) : 0));
     levelTrack.setAttribute(
       "aria-label",
-      `Inspector level ${inspectorLevel} of 35`,
+      `XP toward level ${inspectorLevel + 1}`,
     );
+    levelTrack.setAttribute("aria-valuetext", levelCaption.textContent);
 
     const ensureChild = (className, tag) => {
       let node = progress.querySelector(`:scope > .${className}`);

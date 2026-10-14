@@ -1790,7 +1790,6 @@ html:not([data-abi-site="off"]) {
 
   #wxMine .abi-meter {
     min-width: 0;
-    padding-right: 0.16rem;
     box-sizing: border-box;
   }
 
@@ -1806,6 +1805,7 @@ html:not([data-abi-site="off"]) {
 
   #wxMine .abi-rank-percent {
     grid-area: percent;
+    justify-self: end;
     color: #e66b4e;
     font-size: 0.36rem;
     font-variant-numeric: tabular-nums;
@@ -1845,7 +1845,15 @@ html:not([data-abi-site="off"]) {
     font-weight: 700;
   }
 
-  #wxMine .abi-rank-count { grid-area: count; }
+  #wxMine .abi-rank-count {
+    grid-area: count;
+    justify-self: end;
+    color: #e0e6e1;
+    font-size: 0.18rem;
+    font-variant-numeric: tabular-nums;
+    line-height: 1.3;
+    text-align: right;
+  }
   #wxMine .abi-rank-kicker {
     grid-area: kicker;
     justify-self: start;
@@ -2754,4 +2762,95 @@ html:not([data-abi-site="off"]) {
       padding: 16px;
     }
   }
+}
+
+/* Overview data cards: keep the established page shell and fit new stats into its original two-row board. */
+html:not([data-abi-site="off"]) {
+  #wxMine .abi-board {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    grid-template-rows: minmax(0, 1.1fr) minmax(0, 0.9fr);
+  }
+  #wxMine .abi-stat-accuracy { grid-column: 1 / span 2; grid-row: 1; }
+  #wxMine .abi-stat-today { grid-column: 3; grid-row: 1; }
+  #wxMine .abi-stat-volume { grid-column: 1; grid-row: 2; }
+  #wxMine .abi-stat-season { grid-column: 2; grid-row: 2; }
+  #wxMine .abi-stat-weekly { grid-column: 3; grid-row: 2; }
+  #wxMine :is(.abi-stat-volume, .abi-stat-season, .abi-stat-weekly) {
+    grid-template-rows: auto minmax(0, 1fr);
+    min-height: 0;
+    min-width: 0;
+  }
+  #wxMine :is(.abi-stat-volume, .abi-stat-season, .abi-stat-weekly) .abi-stat-values {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-rows: repeat(2, minmax(0, 1fr));
+    align-items: stretch;
+    min-height: 0;
+    min-width: 0;
+    overflow: hidden;
+  }
+  #wxMine :is(.abi-stat-volume, .abi-stat-season, .abi-stat-weekly) .abi-stat-item {
+    gap: 0.02rem;
+    padding: 0;
+    min-height: 0;
+    min-width: 0;
+    overflow: hidden;
+    justify-content: center;
+  }
+  #wxMine :is(.abi-stat-volume, .abi-stat-season, .abi-stat-weekly) .abi-stat-item strong {
+    font-size: clamp(24px, 2.3vw, 34px);
+    line-height: 1;
+  }
+  #wxMine :is(.abi-stat-volume, .abi-stat-season, .abi-stat-weekly) .abi-stat-label {
+    font-size: clamp(10px, 0.78vw, 12px);
+    line-height: 1.2;
+    white-space: normal;
+  }
+  #wxMine :is(.abi-stat-volume, .abi-stat-season, .abi-stat-weekly) [data-stat="Wrong"] strong { color: #e66b4e; }
+  #wxMine :is(.abi-stat-volume, .abi-stat-season, .abi-stat-weekly) [data-stat="Correct"] strong { color: #b8d66a; }
+  #wxMine :is(.abi-stat-volume, .abi-stat-season, .abi-stat-weekly) [data-stat="Inspections"] strong { color: #78b9d0; }
+  #wxMine :is(.abi-stat-volume, .abi-stat-season, .abi-stat-weekly) [data-stat="Bans"] strong { color: #f0cf65; }
+  #wxMine .abi-stat-accuracy .abi-stat-values {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    grid-template-rows: minmax(0, 1fr);
+  }
+  #wxMine .abi-stat-accuracy .abi-stat-item {
+    grid-column: auto;
+    justify-content: center;
+    text-align: center;
+  }
+  #wxMine .abi-stat-accuracy .abi-stat-item + .abi-stat-item { border-left: 1px solid #ffffff1c; }
+  #wxMine .abi-stat-accuracy .abi-stat-item strong,
+  #wxMine .abi-stat-accuracy .abi-stat-item[data-stat="recent-accuracy"] strong,
+  #wxMine .abi-stat-accuracy .abi-stat-item[data-stat="overall-accuracy"] strong {
+    color: #b8d66a;
+    font-size: clamp(26px, 3.2vw, 48px);
+    line-height: 0.95;
+  }
+  #wxMine .abi-stat-accuracy .abi-stat-item[data-stat="recent-accuracy"] strong { color: #e66b4e; }
+  #wxMine .abi-stat-accuracy .abi-stat-label { font-size: clamp(9px, 0.9vw, 13px); }
+  #wxMine .abi-stat-today .abi-stat-values {
+    display: grid;
+    grid-template-columns: 1fr;
+    justify-items: center;
+    align-items: center;
+    text-align: center;
+  }
+  #wxMine .abi-today-count {
+    color: #798582;
+    font-size: clamp(38px, 4vw, 62px);
+    line-height: 1;
+    white-space: nowrap;
+  }
+  #wxMine .abi-today-done { color: #b8d66a; }
+  #wxMine .abi-today-limit { color: #e66b4e; }
+  #wxMine .abi-level-progress {
+    grid-template-areas: "kicker percent" "track track" "caption caption";
+    grid-template-rows: auto 10px auto;
+    gap: 0.08rem 0.12rem;
+  }
+  #wxMine .abi-level-label { font-family: inherit; font-size: 0.15rem; font-weight: 700; }
+  #wxMine .abi-level-count { font-family: inherit; font-size: 0.3rem; font-weight: 700; }
+  #wxMine .abi-level-caption { font-family: inherit; font-size: 0.15rem; }
+  #wxMine .abi-level-track { height: 10px; min-height: 10px; }
+  #wxMine .abi-level-xp { display: none; }
 }

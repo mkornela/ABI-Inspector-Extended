@@ -39,6 +39,7 @@ All project screenshots live in [`screenshots/`](screenshots/). The Overview, Wo
 ## Features
 
 - **Accuracy Board overview:** profile, rank and level progress, inspection accuracy, volume, successful inspections, and ban statistics.
+- **Detailed Overview:** seasonal and weekly inspections, correct/wrong counts and punishment counts; today's inspections and daily allowance; current-level XP, XP remaining, total XP, and a progress bar. These update from existing Inspector responses; no extra API requests are sent. Missing values show `—` until the page receives summary data.
 - **Screenshot anonymization:** the account toolbar can replace names, IDs, rank and level values, and statistics with `***` across tabs. **Unanonymize** restores the original values. The preference is remembered in this browser.
 - **Workbench and Test Cases:** shared player controls and styling, official inspection notes, and the teammate, enemy, and Scav color key. Test Cases keeps its Inspections and Valid counters and native verdict buttons.
 - **Challenges:** weekly and exclusive tasks in a single scrollable list, with progress, rewards, and the site’s existing claim and completion actions.
@@ -63,6 +64,8 @@ The extension is scoped to the official Inspector page:
 [`https://www.arenabreakoutinfinite.com/act/a20251028patroller/`](https://www.arenabreakoutinfinite.com/act/a20251028patroller/)
 
 ## Settings
+
+For optional read-only API research, load the separate [ABI Network Reader](abi-network-reader/README.md) extension. It adds a DevTools capture panel with local, redacted JSON export without changing this extension or intercepting traffic.
 
 Open the extension popup from the browser toolbar. **Player controls** and **Site modifications** can be toggled independently. Set the default player volume there; the value is remembered between cases and page reloads. Some layout changes require a page reload, and the popup offers a reload action when needed.
 
@@ -92,10 +95,13 @@ The controls require the official working player; training and drill players are
 
 ## Source map
 
+Overview checks: install development dependencies, then run `npm run check` and `npm run test:overview`. The browser test uses installed Edge on Windows, or Playwright Chromium elsewhere; set `ABI_TEST_BROWSER` to override. Reload the main Inspector extension and refresh the Inspector page after updating so the summary listener runs from page startup. The separate Network Reader is not required for the Overview features.
+
 - `abi-inspector-enhancer/manifest.json` — extension configuration and page scope.
 - `abi-inspector-enhancer/settings.js` and `popup.*` — preferences and popup interface.
 - `abi-inspector-enhancer/content.js` and `player.css` — video controls and player layout.
 - `abi-inspector-enhancer/layout.css` and `site-ui.js` — Overview, Workbench, Challenges, News, anonymization, and navigation styling.
+- `abi-inspector-enhancer/overview-observer.js` and `overview-data.js` — read existing summary responses and relay only numeric statistics to Overview, without changing network traffic.
 - `abi-inspector-enhancer/dialogs.js` and `dialogs.css` — verdict-dialog presentation.
 - `abi-inspector-enhancer/icons/` and `assets/` — browser icons and source artwork.
 - `screenshots/` — current UI captures for the Overview, Workbench, Challenges, Test Cases, News, and settings.
