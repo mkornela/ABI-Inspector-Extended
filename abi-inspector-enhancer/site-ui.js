@@ -78,15 +78,14 @@
       }
     }
 
-    const exitVisible = [...document.querySelectorAll(".main .exit_btn2")].some(
-      (exit) => {
-        const style = getComputedStyle(exit);
-        return (
-          style.display !== "none" && exit.getBoundingClientRect().width > 0
-        );
-      },
+    const activeTab = nav.querySelector("li.current");
+    const isInspectionTab = Boolean(
+      activeTab?.id === "working" ||
+      activeTab?.id === "drill" ||
+      activeTab?.classList.contains("str24") ||
+      activeTab?.classList.contains("str26"),
     );
-    const shouldShowBrand = enabled && !exitVisible;
+    const shouldShowBrand = enabled && !isInspectionTab;
     let brand = nav.querySelector(":scope > .abi-extension-brand");
 
     if (shouldShowBrand && !brand) {
@@ -636,31 +635,95 @@
   }
 
   function updateDrillCounters(enabled) {
-    for (const span of document.querySelectorAll(
-      ".content.video:has(#drillButton) .user-info .drill-data span",
+    for (const video of document.querySelectorAll(
+      ":is(.box.drill, #wxDrill) .content.video, .content.video:has(#drillButton)",
     )) {
+      const userInfo = video.querySelector(".user-info");
+      let drillCard = video.querySelector(".abi-drill-card");
+      const drillDataList = video.querySelectorAll(".drill-data");
+
       if (!enabled) {
-        if (span.dataset.abiOriginalText === undefined) continue;
-        span.textContent = span.dataset.abiOriginalText;
-        delete span.dataset.abiOriginalText;
+        if (drillCard) {
+          if (userInfo) {
+            for (const item of drillDataList) {
+              userInfo.appendChild(item);
+            }
+          }
+          drillCard.remove();
+        }
+        for (const item of drillDataList) {
+          const span = item.querySelector("span");
+          if (span && span.dataset.abiOriginalText !== undefined) {
+            span.textContent = span.dataset.abiOriginalText;
+            delete span.dataset.abiOriginalText;
+          }
+        }
         continue;
       }
-      if (span.dataset.abiOriginalText === undefined) {
-        span.dataset.abiOriginalText = span.textContent;
+
+      for (const item of drillDataList) {
+        const span = item.querySelector("span");
+        if (!span) continue;
+        if (span.dataset.abiOriginalText === undefined) {
+          span.dataset.abiOriginalText = span.textContent;
+        }
+        const label = span.classList.contains("str140")
+          ? "Inspections"
+          : span.classList.contains("str141")
+            ? "Valid"
+            : null;
+        if (label && span.textContent !== label) span.textContent = label;
       }
-      const label = span.classList.contains("str140")
-        ? "Inspections"
-        : span.classList.contains("str141")
-          ? "Valid"
-          : null;
-      if (!label) continue;
-      if (span.textContent !== label) span.textContent = label;
+
+      if (!drillCard) {
+        drillCard = document.createElement("div");
+        drillCard.className = "abi-drill-card";
+        const header = document.createElement("div");
+        header.className = "abi-status-header";
+        const title = document.createElement("div");
+        title.className = "abi-status-title";
+        title.textContent = "Practice Cases";
+        header.appendChild(title);
+        drillCard.appendChild(header);
+
+        const grid = document.createElement("div");
+        grid.className = "abi-drill-grid";
+        for (const item of drillDataList) {
+          grid.appendChild(item);
+        }
+        drillCard.appendChild(grid);
+
+        if (userInfo) {
+          userInfo.after(drillCard);
+        } else {
+          video.prepend(drillCard);
+        }
+      } else {
+        if (userInfo && userInfo.nextElementSibling !== drillCard) {
+          userInfo.after(drillCard);
+        }
+        let grid = drillCard.querySelector(".abi-drill-grid");
+        if (!grid) {
+          grid = document.createElement("div");
+          grid.className = "abi-drill-grid";
+          drillCard.appendChild(grid);
+        }
+        for (const item of drillDataList) {
+          if (item.parentElement !== grid) grid.appendChild(item);
+        }
+      }
     }
   }
 
   function updateWorkbenchStatus(enabled) {
+    for (const rogue of document.querySelectorAll(
+      ".box.drill .abi-status-card, #wxDrill .abi-status-card, .content.video:has(#drillButton) .abi-status-card",
+    )) {
+      rogue.remove();
+    }
+
     for (const video of document.querySelectorAll(
-      ":is(#xcWorking, .content.video)",
+      "#xcWorking > .content.video, #xcWorking.content.video",
     )) {
       const userInfo = video.querySelector(".user-info");
       const status = video.querySelector(".user-status");
@@ -780,6 +843,7 @@
     const exitBtn = document.querySelector(".exit_btn2");
     if (!nav || !exitBtn) return;
     if (!enabled) {
+      exitBtn.style.setProperty("display", "none", "important");
       const operation = document.querySelector(
         ":is(#xcWorking, .content.video) .operation",
       );
@@ -788,8 +852,20 @@
       }
       return;
     }
+    const activeTab = nav.querySelector("li.current");
+    const isInspectionTab = Boolean(
+      activeTab?.id === "working" ||
+      activeTab?.id === "drill" ||
+      activeTab?.classList.contains("str24") ||
+      activeTab?.classList.contains("str26"),
+    );
     if (exitBtn.parentElement !== nav) {
       nav.append(exitBtn);
+    }
+    if (isInspectionTab) {
+      exitBtn.style.setProperty("display", "inline-flex", "important");
+    } else {
+      exitBtn.style.setProperty("display", "none", "important");
     }
   }
 
@@ -837,11 +913,22 @@
     }
   }
 
-  function updateChallengeProgressLabels() {
+  function updateChallengeProgressLabels(enabled) {
     for (const row of document.querySelectorAll("#wxPatrol .taks-list > ul > li")) {
       const button = row.querySelector("a.taks-btn2");
       if (button?.dataset.abiProgressDisplay) {
         delete button.dataset.abiProgressDisplay;
+      }
+      const info = row.querySelector(".taks-info");
+      const prog = row.querySelector(".task-progress");
+      if (!enabled) {
+        if (prog && info && prog.parentElement !== info) {
+          info.appendChild(prog);
+        }
+        continue;
+      }
+      if (prog && info && prog.parentElement === info) {
+        row.appendChild(prog);
       }
     }
   }
@@ -892,8 +979,15 @@
   }
 
   function updateInspectionTitle(enabled) {
-    for (const title of document.querySelectorAll(".content.video .tips-title")) {
+    for (const video of document.querySelectorAll(":is(#xcWorking, .content.video)")) {
+      const title = video.querySelector(".tips-title");
+      const content = video.querySelector(".tips-content");
+      if (!title) continue;
+
       if (!enabled) {
+        if (content && title.parentElement === content) {
+          content.before(title);
+        }
         if (title.dataset.abiOriginalText !== undefined) {
           title.textContent = title.dataset.abiOriginalText;
         }
@@ -903,10 +997,14 @@
       if (title.dataset.abiOriginalText === undefined) {
         title.dataset.abiOriginalText = title.textContent;
       }
-      const label = title.closest(".content.video")?.querySelector("#drillButton")
+      const label = video.querySelector("#drillButton")
         ? "Official Inspection Notes"
         : title.dataset.abiOriginalText.trim().replace(/\s*:?\s*$/, "");
       if (title.textContent !== label) title.textContent = label;
+
+      if (content && title.parentElement !== content) {
+        content.prepend(title);
+      }
     }
   }
 
@@ -1414,10 +1512,7 @@
       rules.setAttribute("aria-label", "Display ranks");
       rules.title = "Display ranks";
       rules.append(createRankIcon());
-      const hint = document.createElement("span");
-      hint.className = "abi-rank-rules-hint";
-      hint.textContent = "Rules & rewards";
-      titleRow.append(kicker, rules, hint);
+      titleRow.append(kicker, rules);
       const meter = document.createElement("div");
       meter.className = "abi-meter";
       identity.append(person, titleRow, meter);
@@ -1519,27 +1614,9 @@
       rulesButton.replaceChildren(createRankIcon());
     }
     if (honor && titleRow && honor.parentElement !== titleRow) {
-      const hintNode = titleRow.querySelector(".abi-rank-rules-hint");
-      if (hintNode) titleRow.insertBefore(honor, hintNode);
-      else titleRow.append(honor);
+      titleRow.append(honor);
     }
-    let rulesHint = titleRow?.querySelector(".abi-rank-rules-hint");
-    if (!rulesHint && titleRow) {
-      rulesHint = document.createElement("span");
-      rulesHint.className = "abi-rank-rules-hint";
-      rulesHint.textContent = "Rules & rewards";
-      titleRow.append(rulesHint);
-    }
-    if (rulesHint && !rulesHint.dataset.abiBound) {
-      rulesHint.dataset.abiBound = "1";
-      rulesHint.addEventListener("click", () => {
-        const dialog = document.querySelector("#wxMine > .abi-rank-dialog");
-        if (dialog) {
-          dialog.hidden = false;
-          dialog.querySelector(".abi-rank-close")?.focus();
-        }
-      });
-    }
+    titleRow?.querySelector(".abi-rank-rules-hint")?.remove();
 
     let cards = shell.querySelector(".abi-board");
     let progress = shell.querySelector(".abi-rank-progress") || profile.querySelector(".abi-rank-progress");

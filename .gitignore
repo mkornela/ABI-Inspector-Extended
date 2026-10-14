@@ -145,3 +145,4 @@ tests/*.png
 *.zip
 
 abi-network-reader
+test.txt

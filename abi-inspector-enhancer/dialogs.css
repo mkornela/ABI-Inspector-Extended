@@ -2,95 +2,278 @@
    Presentation only: original nodes, IDs, values and handlers are untouched.
    Gated by data-abi-site="off" on <html> (see settings.js); needs Chrome/Edge 120+. */
 html:not([data-abi-site="off"]) {
-  /* ---- shared ---- */
+  /* ---- shared variables ---- */
   #illegalPopup, #drillResult1, #drillResult2 {
     --abi-accent: #ca4d31;
-    --abi-line: #414343;
+    --abi-line: rgba(255, 255, 255, 0.08);
     --abi-text: #d2dbd3;
-    --abi-muted: #8b9190;
+    --abi-muted: #8fa09d;
   }
-  #illegalPopup h4, #drillResult2 h4 {
-    padding: 0.22rem 0.4rem 0.08rem;
-    font-size: 0.2rem;
-    line-height: 1.45;
-    color: var(--abi-muted);
+
+  /* ---- tactical modal frame styling ---- */
+  :is(#illegalPopup, #drillResult1, #drillResult2).popup.patrol-popup {
+    background: rgba(14, 19, 21, 0.96) !important;
+    background-image: none !important;
+    border: 1px solid rgba(255, 255, 255, 0.08) !important;
+    border-radius: 8px !important;
+    box-shadow:
+      0 20px 60px rgba(0, 0, 0, 0.8),
+      0 0 0 1px rgba(255, 255, 255, 0.04),
+      inset 0 1px 0 rgba(255, 255, 255, 0.05) !important;
+    padding: 24px 28px !important;
+    box-sizing: border-box !important;
+    backdrop-filter: blur(12px) !important;
+    color: #c3cbc6 !important;
   }
-  #illegalPopup h4 br, #drillResult2 h4 br { display: none; }
+
+  #_popMaskMF_ {
+    background: rgba(4, 6, 8, 0.8) !important;
+    backdrop-filter: blur(4px) !important;
+  }
+
+  /* ---- close button ---- */
+  :is(#illegalPopup, #drillResult1, #drillResult2) .close-btn {
+    position: absolute !important;
+    top: 16px !important;
+    right: 16px !important;
+    width: 32px !important;
+    height: 32px !important;
+    border-radius: 4px !important;
+    border: 1px solid rgba(255, 255, 255, 0.08) !important;
+    background: rgba(255, 255, 255, 0.04) !important;
+    color: #8fa09d !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    font-size: 0 !important;
+    cursor: pointer !important;
+    transition: all 0.15s ease !important;
+    text-decoration: none !important;
+  }
+
+  :is(#illegalPopup, #drillResult1, #drillResult2) .close-btn::after {
+    content: "×" !important;
+    font-size: 20px !important;
+    line-height: 1 !important;
+    color: #8fa09d !important;
+  }
+
+  :is(#illegalPopup, #drillResult1, #drillResult2) .close-btn:hover {
+    background: rgba(255, 255, 255, 0.1) !important;
+    border-color: rgba(255, 255, 255, 0.25) !important;
+  }
+
+  :is(#illegalPopup, #drillResult1, #drillResult2) .close-btn:hover::after {
+    color: #ffffff !important;
+  }
+
+  /* ---- header h3 ---- */
+  :is(#illegalPopup, #drillResult1, #drillResult2) h3 {
+    display: flex !important;
+    align-items: center !important;
+    gap: 10px !important;
+    margin: 0 0 16px !important;
+    padding: 0 0 12px !important;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08) !important;
+    font-size: 18px !important;
+    font-weight: 800 !important;
+    letter-spacing: 0.06em !important;
+    text-transform: uppercase !important;
+    line-height: 1.2 !important;
+  }
+
+  #illegalPopup h3 {
+    color: #ff6b4a !important;
+  }
+
+  #illegalPopup h3::before {
+    content: "";
+    display: inline-block;
+    width: 4px;
+    height: 18px;
+    background: #e66b4e;
+    border-radius: 2px;
+  }
+
+  #drillResult1 h3 {
+    color: #4ade80 !important;
+  }
+
+  #drillResult1 h3::before {
+    content: "";
+    display: inline-block;
+    width: 4px;
+    height: 18px;
+    background: #37cf88;
+    border-radius: 2px;
+  }
+
+  #drillResult2 h3 {
+    color: #fbbf24 !important;
+  }
+
+  #drillResult2 h3::before {
+    content: "";
+    display: inline-block;
+    width: 4px;
+    height: 18px;
+    background: #e0a838;
+    border-radius: 2px;
+  }
+
+  /* ---- subheader h4 ---- */
+  :is(#illegalPopup, #drillResult2) h4 {
+    padding: 0 0 8px !important;
+    margin: 0 !important;
+    font-size: 13px !important;
+    font-weight: 600 !important;
+    line-height: 1.45 !important;
+    color: var(--abi-muted) !important;
+  }
+
+  #illegalPopup h4 br, #drillResult2 h4 br {
+    display: none;
+  }
+
+  /* ---- category tag + counter ---- */
+  #illegalPopup .tag-box {
+    display: flex !important;
+    gap: 8px !important;
+    margin: 0 0 10px !important;
+    padding: 0 !important;
+  }
+
+  #illegalPopup .tag-box li {
+    margin: 0 !important;
+    padding: 4px 12px !important;
+    border-radius: 4px !important;
+    font-size: 12px !important;
+    font-weight: 700 !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.04em !important;
+    border: 1px solid rgba(230, 107, 78, 0.4) !important;
+    background: rgba(230, 107, 78, 0.12) !important;
+    color: #ff7d61 !important;
+    list-style: none !important;
+  }
+
+  .abi-counter {
+    margin: 0 0 8px !important;
+    text-align: right !important;
+    font-size: 12px !important;
+    letter-spacing: 0.02em !important;
+    color: var(--abi-muted) !important;
+    font-variant-numeric: tabular-nums !important;
+  }
+
+  .abi-counter.abi-max {
+    color: var(--abi-accent);
+  }
 
   /* ---- option lists → selectable chips ---- */
   #courtMenu.popup-checkbox, #notSure.popup-checkbox {
-    display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-    gap: 0.12rem;
-    width: auto;
-    margin: 0.1rem 0.4rem 0.2rem;
+    display: grid !important;
+    grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+    gap: 8px !important;
+    width: auto !important;
+    margin: 0 0 14px !important;
+    padding: 0 !important;
+    list-style: none !important;
   }
-  #notSure.popup-checkbox { grid-template-columns: repeat(3, minmax(0, 1fr)); }
 
   #courtMenu.popup-checkbox li, #notSure.popup-checkbox li {
-    position: relative;
-    min-width: 0;
-    width: auto;
-    height: auto;
-    min-height: 0.64rem;
-    padding: 0.08rem 0.16rem 0.08rem 0.56rem;   /* room for the check box */
-    box-sizing: border-box;
-    display: flex;
-    align-items: center;
-    font-size: 0.21rem;
-    line-height: 1.15;
-    color: #b9c0bb;
-    background: rgba(255, 255, 255, 0.035);
-    border: 1px solid var(--abi-line);
-    cursor: pointer;
-    transition: background 0.12s, border-color 0.12s, color 0.12s;
-  }
-  #notSure.popup-checkbox li:last-child { padding-bottom: 0.08rem; }
-  #courtMenu.popup-checkbox li:hover, #notSure.popup-checkbox li:hover {
-    background: rgba(255, 255, 255, 0.07);
-    border-color: #5b5f5f;
+    position: relative !important;
+    min-width: 0 !important;
+    width: auto !important;
+    height: auto !important;
+    min-height: 42px !important;
+    padding: 8px 12px 8px 36px !important;
+    box-sizing: border-box !important;
+    display: flex !important;
+    align-items: center !important;
+    font-size: 13px !important;
+    line-height: 1.2 !important;
+    color: #b9c0bb !important;
+    background: rgba(255, 255, 255, 0.03) !important;
+    border: 1px solid rgba(255, 255, 255, 0.08) !important;
+    border-radius: 6px !important;
+    cursor: pointer !important;
+    transition: background 0.12s, border-color 0.12s, color 0.12s !important;
   }
 
-  /* check box drawn on the li; the real input stretches over the whole chip
-     (invisible) so a click anywhere on the chip hits the genuine checkbox */
+  #courtMenu.popup-checkbox li:hover, #notSure.popup-checkbox li:hover {
+    background: rgba(255, 255, 255, 0.07) !important;
+    border-color: rgba(255, 255, 255, 0.18) !important;
+  }
+
   #courtMenu.popup-checkbox li::before, #notSure.popup-checkbox li::before {
     content: "";
     position: absolute;
-    left: 0.16rem;
+    left: 12px;
     top: 50%;
-    width: 0.22rem;
-    height: 0.22rem;
+    width: 16px;
+    height: 16px;
     box-sizing: border-box;
     transform: translateY(-50%);
-    border: 1px solid #6a6f6e;
-    background: rgba(0, 0, 0, 0.35);
+    border-radius: 3px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    background: rgba(0, 0, 0, 0.4);
     pointer-events: none;
   }
-  #courtMenu.popup-checkbox li:has(input:checked), #notSure.popup-checkbox li:has(input:checked) {
-    color: #fff;
-    background: rgba(202, 77, 49, 0.16);
-    border-color: var(--abi-accent);
+
+  #courtMenu.popup-checkbox li:has(input:checked) {
+    color: #ffffff !important;
+    background: rgba(202, 77, 49, 0.18) !important;
+    border-color: #ca4d31 !important;
   }
-  #courtMenu.popup-checkbox li:has(input:checked)::before, #notSure.popup-checkbox li:has(input:checked)::before {
-    background: var(--abi-accent);
-    border-color: var(--abi-accent);
+
+  #courtMenu.popup-checkbox li:has(input:checked)::before {
+    background: #ca4d31 !important;
+    border-color: #ca4d31 !important;
   }
-  #courtMenu.popup-checkbox li:has(input:checked)::after, #notSure.popup-checkbox li:has(input:checked)::after {
+
+  #courtMenu.popup-checkbox li:has(input:checked)::after {
     content: "";
     position: absolute;
-    left: calc(0.16rem + 0.075rem);
+    left: 17px;
     top: 50%;
-    width: 0.06rem;
-    height: 0.12rem;
-    border: solid #fff;
+    width: 5px;
+    height: 9px;
+    border: solid #ffffff;
     border-width: 0 2px 2px 0;
     transform: translateY(-62%) rotate(45deg);
     pointer-events: none;
   }
+
+  #notSure.popup-checkbox li:has(input:checked) {
+    color: #ffffff !important;
+    background: rgba(224, 168, 56, 0.18) !important;
+    border-color: #e0a838 !important;
+  }
+
+  #notSure.popup-checkbox li:has(input:checked)::before {
+    background: #e0a838 !important;
+    border-color: #e0a838 !important;
+  }
+
+  #notSure.popup-checkbox li:has(input:checked)::after {
+    content: "";
+    position: absolute;
+    left: 17px;
+    top: 50%;
+    width: 5px;
+    height: 9px;
+    border: solid #ffffff;
+    border-width: 0 2px 2px 0;
+    transform: translateY(-62%) rotate(45deg);
+    pointer-events: none;
+  }
+
   #courtMenu.popup-checkbox li:has(input:focus-visible), #notSure.popup-checkbox li:has(input:focus-visible) {
     outline: 2px solid var(--abi-accent);
     outline-offset: 2px;
   }
+
   #courtMenu.popup-checkbox input[type="checkbox"], #notSure.popup-checkbox input[type="checkbox"] {
     position: absolute;
     inset: 0;
@@ -103,68 +286,149 @@ html:not([data-abi-site="off"]) {
     background: none;
   }
 
-  /* "Select up to 3": dim the rest once three are chosen (set by content script) */
-  #courtMenu.abi-full li:not(:has(input:checked)) { opacity: 0.45; }
-
-  /* ---- category tag + counter ---- */
-  #illegalPopup .tag-box { padding: 0.04rem 0.4rem 0; }
-  #illegalPopup .tag-box li { margin: 0.08rem 0 0; }
-  .abi-counter {
-    margin: 0.16rem 0.4rem 0;
-    text-align: right;
-    font-size: 0.17rem;
-    letter-spacing: 0.02em;
-    color: var(--abi-muted);
-    font-variant-numeric: tabular-nums;
+  #courtMenu.abi-full li:not(:has(input:checked)) {
+    opacity: 0.45;
   }
-  .abi-counter.abi-max { color: var(--abi-accent); }
 
   /* ---- description box ---- */
   #guiltyDetail, #notSureReason {
-    display: block;
-    width: calc(100% - 0.8rem);
-    height: 1.1rem;
-    margin: 0 0.4rem;
-    padding: 0.12rem 0.16rem;
-    box-sizing: border-box;
-    resize: none;
-    font-size: 0.21rem;
-    line-height: 1.4;
-    color: var(--abi-text);
-    background: rgba(0, 0, 0, 0.3);
-    border: 1px solid var(--abi-line);
-    transition: border-color 0.12s;
+    display: block !important;
+    width: 100% !important;
+    height: 80px !important;
+    margin: 0 !important;
+    padding: 10px 14px !important;
+    box-sizing: border-box !important;
+    border-radius: 6px !important;
+    resize: none !important;
+    font-size: 13px !important;
+    line-height: 1.4 !important;
+    color: var(--abi-text) !important;
+    background: rgba(0, 0, 0, 0.35) !important;
+    border: 1px solid rgba(255, 255, 255, 0.1) !important;
+    transition: border-color 0.12s, box-shadow 0.12s !important;
   }
-  #guiltyDetail:focus, #notSureReason:focus { border-color: var(--abi-accent); }
-  #guiltyDetail::placeholder, #notSureReason::placeholder { color: #6f7675; }
+
+  #guiltyDetail:focus {
+    border-color: #ca4d31 !important;
+    outline: none !important;
+    box-shadow: 0 0 0 1px #ca4d31 !important;
+  }
+
+  #notSureReason:focus {
+    border-color: #e0a838 !important;
+    outline: none !important;
+    box-shadow: 0 0 0 1px #e0a838 !important;
+  }
+
+  #guiltyDetail::placeholder, #notSureReason::placeholder {
+    color: #6f7675 !important;
+  }
+
   .abi-textcount {
-    margin: 0.05rem 0.4rem 0;
-    text-align: right;
-    font-size: 0.16rem;
-    color: var(--abi-muted);
-    font-variant-numeric: tabular-nums;
+    margin: 4px 0 0 !important;
+    text-align: right !important;
+    font-size: 11px !important;
+    color: #6f7675 !important;
+    font-variant-numeric: tabular-nums !important;
   }
 
   /* ---- No Violation confirmation ---- */
   #drillResult1 .popup-content {
-    min-height: 0;
-    padding: 0.5rem 0.3rem 0.35rem;
-    font-size: 0.21rem;
-    line-height: 1.55;
-    color: #b9c0bb;
+    min-height: 0 !important;
+    padding: 16px 0 !important;
+    font-size: 14px !important;
+    line-height: 1.6 !important;
+    color: #b9c0bb !important;
   }
-  #drillResult1 .popup-content p { text-wrap: balance; }
+
+  #drillResult1 .popup-content p {
+    text-wrap: balance;
+    margin: 0 !important;
+  }
+
   #drillResult1 .popup-content p::before {
-    content: "";
-    display: block;
-    width: 0.5rem;
-    height: 0.02rem;
-    margin: 0 auto 0.28rem;
-    background: var(--abi-accent);
+    display: none !important;
   }
 
   /* ---- buttons row ---- */
-  #illegalPopup .popup-btn-box, #drillResult1 .popup-btn-box, #drillResult2 .popup-btn-box {
-    padding: 0.26rem 0.4rem 0.1rem;
+  :is(#illegalPopup, #drillResult1, #drillResult2) .popup-btn-box {
+    display: flex !important;
+    justify-content: flex-end !important;
+    align-items: center !important;
+    gap: 12px !important;
+    margin-top: 18px !important;
+    padding: 16px 0 0 !important;
+    border-top: 1px solid rgba(255, 255, 255, 0.06) !important;
+  }
+
+  :is(#illegalPopup, #drillResult1, #drillResult2) .popup-btn-box a {
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    min-width: 120px !important;
+    height: 42px !important;
+    padding: 0 20px !important;
+    box-sizing: border-box !important;
+    border-radius: 4px !important;
+    font-size: 13px !important;
+    font-weight: 700 !important;
+    letter-spacing: 0.04em !important;
+    text-transform: uppercase !important;
+    text-decoration: none !important;
+    cursor: pointer !important;
+    transition: all 0.15s ease !important;
+    line-height: 1 !important;
+  }
+
+  :is(#illegalPopup, #drillResult1, #drillResult2) .popup-btn-box a.btn4 {
+    background: rgba(255, 255, 255, 0.06) !important;
+    background-image: none !important;
+    border: 1px solid rgba(255, 255, 255, 0.12) !important;
+    color: #aab1af !important;
+  }
+
+  :is(#illegalPopup, #drillResult1, #drillResult2) .popup-btn-box a.btn4:hover {
+    background: rgba(255, 255, 255, 0.12) !important;
+    color: #ffffff !important;
+    border-color: rgba(255, 255, 255, 0.25) !important;
+  }
+
+  #illegalPopup #patrolSubmit {
+    background: #c3472d !important;
+    background-image: none !important;
+    border: 1px solid #e66b4e !important;
+    color: #ffffff !important;
+    box-shadow: 0 2px 8px rgba(195, 71, 45, 0.35) !important;
+  }
+
+  #illegalPopup #patrolSubmit:hover {
+    background: #d45035 !important;
+    border-color: #ff7d61 !important;
+  }
+
+  #drillResult1 #patrolConfirm1 {
+    background: #2b7a4b !important;
+    background-image: none !important;
+    border: 1px solid #37cf88 !important;
+    color: #ffffff !important;
+    box-shadow: 0 2px 8px rgba(55, 207, 136, 0.3) !important;
+  }
+
+  #drillResult1 #patrolConfirm1:hover {
+    background: #338d57 !important;
+    border-color: #4ade80 !important;
+  }
+
+  #drillResult2 #patrolConfirm2 {
+    background: #9a6d1e !important;
+    background-image: none !important;
+    border: 1px solid #e0a838 !important;
+    color: #ffffff !important;
+    box-shadow: 0 2px 8px rgba(224, 168, 56, 0.3) !important;
+  }
+
+  #drillResult2 #patrolConfirm2:hover {
+    background: #ad7c23 !important;
+    border-color: #fbbf24 !important;
   }
 }

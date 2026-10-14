@@ -196,7 +196,7 @@ html:not([data-abi-site="off"]) {
     height: 58px !important;
     min-height: 58px !important;
     padding: 0 8px !important;
-    display: inline-flex !important;
+    display: none !important;
     align-items: center !important;
     justify-content: center !important;
     box-sizing: border-box !important;
@@ -219,6 +219,16 @@ html:not([data-abi-site="off"]) {
       color 140ms ease,
       border-color 140ms ease,
       background-color 140ms ease !important;
+  }
+
+  /* Show exit_btn2 ONLY on workbench and test cases tabs */
+  .nav:has(#working.current, #drill.current, .str24.current, .str26.current) a.exit_btn2 {
+    display: inline-flex !important;
+  }
+
+  /* Hide extension brand tab on workbench and test cases tabs */
+  .nav:has(#working.current, #drill.current, .str24.current, .str26.current) > .abi-extension-brand {
+    display: none !important;
   }
 
   :is(.nav, .main) a.exit_btn2:hover {
@@ -617,31 +627,27 @@ html:not([data-abi-site="off"]) {
 
   #wxPatrol .taks-list > h4 {
     position: static !important;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    min-height: 24px;
-    margin: 0 0 12px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    min-height: 28px;
+    margin: 10px 0 16px !important;
     padding: 0 !important;
     border: 0 !important;
     background: transparent !important;
     color: #e0e3de !important;
-    font-size: 13px;
-    font-weight: 800;
-    letter-spacing: 0.1em;
-    line-height: 1.2;
-    text-align: left;
-    text-transform: uppercase;
+    font-size: 16px !important;
+    font-weight: 800 !important;
+    letter-spacing: 0.12em !important;
+    line-height: 1.2 !important;
+    text-align: center !important;
+    text-transform: uppercase !important;
   }
 
-  #wxPatrol .taks-list > h4::before {
-    content: "" !important;
-    display: inline-block !important;
-    flex-shrink: 0;
-    width: 3px;
-    height: 14px;
-    border-radius: 2px;
-    background: var(--abi-accent);
+  #wxPatrol .taks-list > h4::before,
+  #wxPatrol .taks-list > h4::after {
+    display: none !important;
+    content: none !important;
   }
 
   #wxPatrol .taks-list > ul {
@@ -662,10 +668,10 @@ html:not([data-abi-site="off"]) {
   #wxPatrol .taks-list > ul > li {
     position: static !important;
     display: grid !important;
-    grid-template-columns: minmax(0, 1fr) auto auto auto 128px;
+    grid-template-columns: minmax(0, 1fr) auto auto 128px;
     grid-template-rows: auto 6px;
     align-items: center;
-    column-gap: 12px;
+    column-gap: 14px;
     row-gap: 10px;
     width: 100% !important;
     min-width: 0;
@@ -673,7 +679,7 @@ html:not([data-abi-site="off"]) {
     height: auto !important;
     min-height: 0;
     margin: 0 !important;
-    padding: 14px 16px;
+    padding: 14px 18px;
     box-sizing: border-box;
     border: 1px solid #2a3234 !important;
     border-left: 3px solid #46504e !important;
@@ -700,38 +706,36 @@ html:not([data-abi-site="off"]) {
 
   #wxPatrol .taks-info {
     position: static !important;
-    display: contents !important;
+    grid-column: 1;
+    grid-row: 1;
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: center !important;
+    align-items: flex-start !important;
+    gap: 4px !important;
+    min-width: 0 !important;
   }
 
   #wxPatrol .taks-info > p {
     position: static !important;
-    grid-column: 1;
-    grid-row: 1;
-    align-self: center;
-    min-width: 0;
     margin: 0 !important;
     padding: 0;
     color: #dde2de;
     font-size: 14px;
     font-weight: 700;
-    line-height: 1.3;
+    line-height: 1.25;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
   }
 
-  /* Counter (10/10): display:contents puts span as a direct grid child.
-     With 5 cols [title | counter | gift1 | gift2 | button], counter = col 2. */
   #wxPatrol .taks-info > span {
     position: static !important;
-    grid-column: 2;
-    grid-row: 1;
-    justify-self: end;
-    align-self: center;
     margin: 0 !important;
-    color: #7a8e8a;
-    font-size: 13px;
-    font-weight: 700;
+    color: #8fa09d;
+    font-size: 12px;
+    font-weight: 600;
+    line-height: 1.2;
     font-variant-numeric: tabular-nums;
     white-space: nowrap;
     letter-spacing: 0.02em;
@@ -782,7 +786,7 @@ html:not([data-abi-site="off"]) {
     justify-content: center !important;
     gap: 6px;
     flex: none;
-    grid-column: 4;
+    grid-column: 3;
     grid-row: 1;
     height: 34px;
     min-width: 0;
@@ -799,15 +803,15 @@ html:not([data-abi-site="off"]) {
     white-space: nowrap;
   }
 
-  /* When 2 gifts: first sits in col 3, second sits in col 4.
-     When 1 gift: it gets default col 4 (flush against button in col 5). */
+  /* When 2 gifts: first sits in col 2, second sits in col 3.
+     When 1 gift: it gets default col 3 (flush against button in col 4). */
   #wxPatrol .taks-gift:has(+ .taks-gift) {
-    grid-column: 3;
+    grid-column: 2;
     grid-row: 1;
   }
 
   #wxPatrol .taks-gift + .taks-gift {
-    grid-column: 4;
+    grid-column: 3;
     grid-row: 1;
   }
 
@@ -855,7 +859,7 @@ html:not([data-abi-site="off"]) {
   /* Action button */
   #wxPatrol a.taks-btn2,
   #wxPatrol a.taks-finish {
-    grid-column: 5;
+    grid-column: 4;
     grid-row: 1;
     position: static !important;
     display: inline-flex !important;
@@ -1720,12 +1724,11 @@ html:not([data-abi-site="off"]) {
   #wxMine :is(.abi-identity-honor, .abi-title-row) {
     display: grid;
     grid-template-columns: minmax(0, 1fr) auto;
-    grid-template-rows: auto auto auto;
+    grid-template-rows: auto auto;
     grid-template-areas:
       "kicker rules"
-      "honor rules"
-      "hint hint";
-    gap: 0.03rem 0.08rem;
+      "honor rules";
+    gap: 2px 14px;
     align-items: center;
     width: 100%;
     min-width: 0;
@@ -1788,22 +1791,6 @@ html:not([data-abi-site="off"]) {
     border: 0 !important;
   }
 
-  #wxMine .abi-rank-rules-hint {
-    grid-area: hint;
-    font-size: 11px;
-    color: #8fa09d;
-    line-height: 1.2;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    cursor: pointer;
-    transition: color 140ms ease;
-  }
-
-  #wxMine .abi-rank-rules-hint:hover {
-    color: var(--abi-accent);
-  }
-
   #wxMine .abi-rank-open {
     grid-area: rules;
     align-self: center;
@@ -1811,13 +1798,13 @@ html:not([data-abi-site="off"]) {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    width: 28px;
-    min-width: 28px;
-    height: 28px;
+    width: 44px;
+    min-width: 44px;
+    height: 44px;
     padding: 0;
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    border-radius: 6px;
-    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 8px;
+    background: rgba(255, 255, 255, 0.05);
     color: #aab1af;
     cursor: pointer;
     transition: all 140ms ease;
@@ -1825,13 +1812,13 @@ html:not([data-abi-site="off"]) {
 
   #wxMine .abi-rank-icon {
     display: block;
-    width: 16px;
-    height: 16px;
+    width: 24px;
+    height: 24px;
     fill: none;
     stroke: currentColor;
     stroke-linecap: round;
     stroke-linejoin: round;
-    stroke-width: 1.5;
+    stroke-width: 1.8;
     transition: color 140ms ease, transform 140ms ease;
   }
 
@@ -2463,8 +2450,12 @@ html:not([data-abi-site="off"]) {
     display: none !important;
   }
 
-  /* Box 2: Inspected Today Card */
-  :is(#xcWorking > .content.video, .content.video:has(#drillButton)) .abi-status-card {
+  /* Box 2 (Workbench): Inspected Today Card */
+  :is(.box.drill, #wxDrill, .content.video:has(#drillButton)) .abi-status-card {
+    display: none !important;
+  }
+
+  #xcWorking > .content.video .abi-status-card {
     display: flex !important;
     flex-direction: column !important;
     gap: 10px !important;
@@ -2479,7 +2470,7 @@ html:not([data-abi-site="off"]) {
     box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.03) !important;
   }
 
-  :is(#xcWorking > .content.video, .content.video:has(#drillButton)) .abi-status-card * {
+  #xcWorking > .content.video .abi-status-card * {
     border: none !important;
     background: transparent !important;
     background-image: none !important;
@@ -2490,14 +2481,14 @@ html:not([data-abi-site="off"]) {
     box-shadow: none !important;
   }
 
-  :is(#xcWorking > .content.video, .content.video:has(#drillButton)) .abi-status-header {
+  #xcWorking > .content.video .abi-status-header {
     display: flex !important;
     align-items: baseline !important;
     justify-content: space-between !important;
     width: 100% !important;
   }
 
-  :is(#xcWorking > .content.video, .content.video:has(#drillButton)) .abi-status-title {
+  #xcWorking > .content.video .abi-status-title {
     color: #8fa09d !important;
     font-size: 11px !important;
     font-weight: 800 !important;
@@ -2506,13 +2497,13 @@ html:not([data-abi-site="off"]) {
     line-height: 1 !important;
   }
 
-  :is(#xcWorking > .content.video, .content.video:has(#drillButton)) .abi-status-count {
+  #xcWorking > .content.video .abi-status-count {
     display: flex !important;
     align-items: baseline !important;
     gap: 3px !important;
   }
 
-  :is(#xcWorking > .content.video, .content.video:has(#drillButton)) .abi-status-num {
+  #xcWorking > .content.video .abi-status-num {
     color: #b8d66a !important;
     font-size: 22px !important;
     font-weight: 800 !important;
@@ -2520,13 +2511,13 @@ html:not([data-abi-site="off"]) {
     line-height: 1 !important;
   }
 
-  :is(#xcWorking > .content.video, .content.video:has(#drillButton)) .abi-status-slash {
+  #xcWorking > .content.video .abi-status-slash {
     color: #728481 !important;
     font-size: 13px !important;
     font-weight: 600 !important;
   }
 
-  :is(#xcWorking > .content.video, .content.video:has(#drillButton)) .abi-status-track {
+  #xcWorking > .content.video .abi-status-track {
     width: 100% !important;
     height: 5px !important;
     border-radius: 999px !important;
@@ -2536,7 +2527,7 @@ html:not([data-abi-site="off"]) {
     box-sizing: border-box !important;
   }
 
-  :is(#xcWorking > .content.video, .content.video:has(#drillButton)) .abi-status-fill {
+  #xcWorking > .content.video .abi-status-fill {
     height: 100% !important;
     border-radius: 999px !important;
     background: linear-gradient(90deg, #8ba848, #c1df72) !important;
@@ -2544,7 +2535,7 @@ html:not([data-abi-site="off"]) {
     transition: width 0.3s ease !important;
   }
 
-  :is(#xcWorking > .content.video, .content.video:has(#drillButton)) .abi-status-remaining {
+  #xcWorking > .content.video .abi-status-remaining {
     color: #6f7f7c !important;
     font-size: 11px !important;
     font-weight: 500 !important;
@@ -2552,90 +2543,101 @@ html:not([data-abi-site="off"]) {
     text-align: center !important;
   }
 
-
-
-  :is(#xcWorking > .content.video, .content.video:has(#drillButton)) .user-info:has(.drill-data) {
-    grid-template-columns: 52px repeat(2, minmax(0, 1fr));
-    grid-template-rows: auto auto auto;
+  /* Box 2 (Test Cases): Practice Test Record Card */
+  #xcWorking > .content.video .abi-drill-card {
+    display: none !important;
   }
 
-  :is(#xcWorking > .content.video, .content.video:has(#drillButton)) .user-info:has(.drill-data) .username {
-    grid-column: 2 / -1;
-    grid-row: 1;
+  :is(.box.drill .content.video, .content.video:has(#drillButton)) .abi-drill-card {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 10px !important;
+    width: 100% !important;
+    height: auto !important;
+    margin: 12px 0 0 !important;
+    padding: 14px 16px !important;
+    border: 1px solid rgba(255, 255, 255, 0.05) !important;
+    border-radius: 8px !important;
+    background: rgba(14, 19, 21, 0.55) !important;
+    box-sizing: border-box !important;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.03) !important;
   }
 
-  :is(#xcWorking > .content.video, .content.video:has(#drillButton)) .user-info:has(.drill-data) .userid {
-    grid-column: 2 / -1;
-    grid-row: 2;
+  :is(.box.drill .content.video, .content.video:has(#drillButton)) .abi-drill-card * {
+    box-sizing: border-box !important;
   }
 
-  :is(#xcWorking > .content.video, .content.video:has(#drillButton)) .user-info:has(.drill-data) .drill-data:nth-child(4),
-  :is(#xcWorking > .content.video, .content.video:has(#drillButton)) .user-info:has(.drill-data) .drill-data:nth-child(5) {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    justify-content: center;
-    gap: 4px;
-    min-width: 0;
-    margin-top: 10px;
-    padding: 8px 10px;
-    border: 1px solid rgba(255, 255, 255, 0.05);
-    border-radius: 8px;
-    background: rgba(16, 23, 26, 0.6);
-    text-align: left;
+  :is(.box.drill .content.video, .content.video:has(#drillButton)) .abi-drill-grid {
+    display: grid !important;
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    gap: 10px !important;
+    width: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
   }
 
-  :is(#xcWorking > .content.video, .content.video:has(#drillButton)) .user-info:has(.drill-data) .drill-data:nth-child(4) {
-    grid-column: 1 / span 2;
-    grid-row: 4;
+  :is(.box.drill .content.video, .content.video:has(#drillButton)) .abi-drill-card .drill-data {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    justify-content: center !important;
+    gap: 4px !important;
+    min-width: 0 !important;
+    margin: 0 !important;
+    padding: 10px 12px !important;
+    border: 1px solid rgba(255, 255, 255, 0.05) !important;
+    border-radius: 6px !important;
+    background: rgba(16, 23, 26, 0.6) !important;
+    text-align: left !important;
   }
 
-  :is(#xcWorking > .content.video, .content.video:has(#drillButton)) .user-info:has(.drill-data) .drill-data:nth-child(5) {
-    grid-column: 3;
-    grid-row: 4;
+  :is(.box.drill .content.video, .content.video:has(#drillButton)) .abi-drill-card .drill-data span {
+    color: #8fa09d !important;
+    font-size: 11px !important;
+    font-weight: 700 !important;
+    letter-spacing: 0.06em !important;
+    text-transform: uppercase !important;
+    line-height: 1 !important;
+    order: 2 !important;
   }
 
-  :is(#xcWorking > .content.video, .content.video:has(#drillButton)) .drill-data span {
-    color: #8fa09d;
-    font-size: 10px;
-    font-weight: 700;
-    letter-spacing: 0.06em;
-    text-transform: uppercase;
-    order: 2;
+  :is(.box.drill .content.video, .content.video:has(#drillButton)) .abi-drill-card .drill-data strong {
+    font-size: 22px !important;
+    font-weight: 800 !important;
+    font-variant-numeric: tabular-nums !important;
+    line-height: 1 !important;
+    order: 1 !important;
   }
 
-  :is(#xcWorking > .content.video, .content.video:has(#drillButton)) .drill-data strong {
-    font-size: 20px;
-    font-weight: 800;
-    font-variant-numeric: tabular-nums;
-    line-height: 1;
-    order: 1;
+  :is(.box.drill .content.video, .content.video:has(#drillButton)) .abi-drill-card .drill-data:first-child strong {
+    color: #e66b4e !important;
   }
 
-  :is(#xcWorking > .content.video, .content.video:has(#drillButton)) .user-info:has(.drill-data) .drill-data:nth-child(4) strong {
-    color: #e66b4e;
+  :is(.box.drill .content.video, .content.video:has(#drillButton)) .abi-drill-card .drill-data:last-child strong {
+    color: #b8d66a !important;
   }
 
-  :is(#xcWorking > .content.video, .content.video:has(#drillButton)) .user-info:has(.drill-data) .drill-data:nth-child(5) strong {
-    color: #b8d66a;
-  }
-
-  :is(#xcWorking > .content.video, .content.video:has(#drillButton)) .tips-title {
-    display: block;
+  :is(#xcWorking > .content.video, .content.video:has(#drillButton)) .tips-content .tips-title {
+    display: flex !important;
+    align-items: center !important;
     width: auto !important;
     height: auto !important;
-    margin: 20px 0 10px !important;
+    margin: 0 0 4px !important;
     padding: 0 0 0 8px !important;
     border: 0 !important;
     border-left: 2px solid #e66b4e !important;
     background: transparent !important;
-    color: #c3cbc6;
-    font-size: 11px;
-    font-weight: 800;
-    letter-spacing: 0.08em;
-    line-height: 1.4;
-    text-transform: uppercase;
-    text-align: left;
+    color: #c3cbc6 !important;
+    font-size: 11px !important;
+    font-weight: 800 !important;
+    letter-spacing: 0.08em !important;
+    line-height: 1.4 !important;
+    text-transform: uppercase !important;
+    text-align: left !important;
+  }
+
+  :is(#xcWorking > .content.video, .content.video:has(#drillButton)) > .info-team > .tips-title {
+    display: none !important;
   }
 
   :is(#xcWorking > .content.video, .content.video:has(#drillButton)) .tips-title[hidden],
