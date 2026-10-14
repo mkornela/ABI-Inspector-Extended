@@ -699,17 +699,11 @@
     }
   }
 
-  function updateChallengeProgressLabels(enabled) {
+  function updateChallengeProgressLabels() {
     for (const row of document.querySelectorAll("#wxPatrol .taks-list > ul > li")) {
       const button = row.querySelector("a.taks-btn2");
-      if (!button) continue;
-      if (!enabled) {
+      if (button?.dataset.abiProgressDisplay) {
         delete button.dataset.abiProgressDisplay;
-        continue;
-      }
-      const progress = row.querySelector(".taks-info > span")?.textContent.trim();
-      if (progress && button.dataset.abiProgressDisplay !== progress) {
-        button.dataset.abiProgressDisplay = progress;
       }
     }
   }

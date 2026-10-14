@@ -523,68 +523,56 @@ html:not([data-abi-site="off"]) {
 
   /* Challenges: stack the weekly and exclusive sections, then show every
      challenge as a full-width row with its live progress, rewards, and action. */
-  #wxPatrol.content.patrol {
+  #wxPatrol.patrol,
+  #wxPatrol.content.patrol,
+  #wxPatrol.box.content.patrol {
     width: 100% !important;
     max-width: 100% !important;
     height: calc(100% - 106px) !important;
-    max-height: none !important;
+    max-height: calc(100% - 106px) !important;
     min-height: 0;
-    padding: 0;
+    margin: 0 !important;
+    padding: 0 !important;
     box-sizing: border-box !important;
-    overflow: auto !important;
+    overflow-x: hidden !important;
+    overflow-y: auto !important;
     overscroll-behavior: contain;
     background: transparent !important;
     background-image: none !important;
-    scrollbar-color: #c3472d #0d1214;
-    scrollbar-width: auto;
+    scrollbar-color: #c3472d #0e1214;
+    scrollbar-width: thin;
   }
 
   #wxPatrol::-webkit-scrollbar {
-    width: 14px;
+    width: 8px;
   }
 
   #wxPatrol::-webkit-scrollbar-track {
-    border-left: 1px solid #394143;
-    background: repeating-linear-gradient(
-      180deg,
-      #101618 0 12px,
-      #12191b 12px 24px
-    );
+    background: #0e1214;
+    border-left: 1px solid rgba(255, 255, 255, 0.05);
   }
 
   #wxPatrol::-webkit-scrollbar-thumb {
     min-height: 36px;
-    border: 3px solid #0d1214;
-    background: repeating-linear-gradient(
-      135deg,
-      #f18460 0 3px,
-      #c3472d 3px 8px
-    );
+    border-radius: 4px;
+    background: #c3472d;
   }
 
   #wxPatrol::-webkit-scrollbar-thumb:hover {
-    background: repeating-linear-gradient(
-      135deg,
-      #ffab7f 0 3px,
-      #e15b3b 3px 8px
-    );
-  }
-
-  #wxPatrol::-webkit-scrollbar-corner {
-    background: #0d1214;
+    background: #ed704e;
   }
 
   #wxPatrol .content.task {
     display: flex !important;
     flex-direction: column;
     align-items: stretch;
-    gap: clamp(22px, 3vw, 36px);
+    gap: clamp(18px, 2.2vw, 28px);
     width: 100% !important;
     min-width: 0 !important;
     max-width: 100% !important;
     height: auto !important;
     margin: 0 !important;
-    padding: clamp(14px, 2vw, 28px);
+    padding: clamp(14px, 2vw, 24px) clamp(14px, 2vw, 28px) 36px;
     box-sizing: border-box;
     overflow: visible !important;
   }
@@ -616,19 +604,29 @@ html:not([data-abi-site="off"]) {
     position: static !important;
     display: flex;
     align-items: center;
-    justify-content: center;
+    gap: 10px;
     min-height: 24px;
-    margin: 0 0 6px !important;
+    margin: 0 0 12px !important;
     padding: 0 !important;
     border: 0 !important;
     background: transparent !important;
     color: #e0e3de !important;
-    font-size: 19px;
-    font-weight: 700;
-    letter-spacing: 0.08em;
+    font-size: 13px;
+    font-weight: 800;
+    letter-spacing: 0.1em;
     line-height: 1.2;
-    text-align: center;
+    text-align: left;
     text-transform: uppercase;
+  }
+
+  #wxPatrol .taks-list > h4::before {
+    content: "" !important;
+    display: inline-block !important;
+    flex-shrink: 0;
+    width: 3px;
+    height: 14px;
+    border-radius: 2px;
+    background: var(--abi-accent);
   }
 
   #wxPatrol .taks-list > ul {
@@ -647,30 +645,42 @@ html:not([data-abi-site="off"]) {
   }
 
   #wxPatrol .taks-list > ul > li {
-    position: relative !important;
+    position: static !important;
     display: grid !important;
-    grid-template-columns: minmax(0, 1fr) 4.5rem repeat(2, minmax(96px, 112px)) 138px;
+    grid-template-columns: minmax(0, 1fr) auto auto auto 128px;
+    grid-template-rows: auto 6px;
     align-items: center;
     column-gap: 12px;
-    row-gap: 8px;
+    row-gap: 10px;
     width: 100% !important;
     min-width: 0;
     max-width: 100% !important;
     height: auto !important;
-    min-height: 92px;
+    min-height: 0;
     margin: 0 !important;
-    padding: 14px 18px 32px;
+    padding: 14px 16px;
     box-sizing: border-box;
-    border: 1px solid #30393b !important;
-    border-left: 2px solid #46504e !important;
+    border: 1px solid #2a3234 !important;
+    border-left: 3px solid #46504e !important;
+    border-radius: 6px;
     background: linear-gradient(110deg, #141a1c, #101517 70%);
     transition: border-color 150ms ease, background-color 150ms ease;
   }
 
+  #wxPatrol .taks-list > ul > li:has(.task-progress.finish),
+  #wxPatrol .taks-list > ul > li:has(a.taks-finish) {
+    border-left-color: #5a7a2e !important;
+  }
+
   #wxPatrol .taks-list > ul > li:hover {
-    border-color: #56615e !important;
+    border-color: #46545a !important;
     border-left-color: var(--abi-accent) !important;
-    background-color: #151b1d;
+    background-color: #151c1f;
+  }
+
+  #wxPatrol .taks-list > ul > li:has(.task-progress.finish):hover,
+  #wxPatrol .taks-list > ul > li:has(a.taks-finish):hover {
+    border-left-color: #7ab03c !important;
   }
 
   #wxPatrol .taks-info {
@@ -686,39 +696,47 @@ html:not([data-abi-site="off"]) {
     min-width: 0;
     margin: 0 !important;
     padding: 0;
-    color: #e0e3de;
-    font-size: 16px;
+    color: #dde2de;
+    font-size: 14px;
     font-weight: 700;
     line-height: 1.3;
-    overflow-wrap: anywhere;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
 
+  /* Counter (10/10): display:contents puts span as a direct grid child.
+     With 5 cols [title | counter | gift1 | gift2 | button], counter = col 2. */
   #wxPatrol .taks-info > span {
     position: static !important;
     grid-column: 2;
     grid-row: 1;
-    justify-self: center;
+    justify-self: end;
+    align-self: center;
     margin: 0 !important;
-    color: #aeb7b1;
-    font-size: 18px;
+    color: #7a8e8a;
+    font-size: 13px;
     font-weight: 700;
     font-variant-numeric: tabular-nums;
     white-space: nowrap;
+    letter-spacing: 0.02em;
   }
 
+  /* Progress bar: row 2, spans all 5 columns */
   #wxPatrol .task-progress {
-    position: absolute !important;
-    right: 18px;
-    bottom: 13px;
-    left: 18px;
+    grid-column: 1 / -1;
+    grid-row: 2;
+    position: static !important;
     display: block !important;
-    width: auto !important;
-    height: 7px !important;
+    width: 100% !important;
+    height: 6px !important;
     margin: 0 !important;
     padding: 0 !important;
     overflow: hidden;
-    border: 1px solid #313a3c;
-    background: #0b1011 !important;
+    border-radius: 999px;
+    border: 0;
+    background: #0f1618 !important;
+    box-shadow: inset 0 1px 2px rgba(0,0,0,0.5);
     box-sizing: border-box;
   }
 
@@ -729,52 +747,60 @@ html:not([data-abi-site="off"]) {
     min-height: 0;
     margin: 0 !important;
     border: 0;
+    border-radius: 999px;
     background: linear-gradient(90deg, #bd452e, #f06b4c);
-    box-shadow: 0 0 10px #e66b4e55;
+    box-shadow: 0 0 8px #e66b4e44;
     transition: width 500ms cubic-bezier(0.2, 0.75, 0.25, 1);
   }
 
   #wxPatrol .task-progress.finish > div {
     background: linear-gradient(90deg, #8aaf45, #b7d965);
-    box-shadow: 0 0 10px #a9d65e45;
+    box-shadow: 0 0 8px #a9d65e44;
   }
 
+  /* Reward pills: horizontal inline-flex, not vertical column */
   #wxPatrol .taks-gift {
     position: static !important;
-    display: flex !important;
-    flex-direction: column;
-    align-items: center;
-    justify-content: flex-start;
-    gap: 4px;
+    display: inline-flex !important;
+    flex-direction: row !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 6px;
     flex: none;
+    grid-column: 4;
+    grid-row: 1;
+    height: 34px;
     min-width: 0;
-    max-width: 100%;
-    width: 100% !important;
-    height: auto !important;
-    margin: -5px 0 0 !important;
-    padding: 0;
-    color: #d5dbd5;
-    font-size: 13px;
+    margin: 0 !important;
+    padding: 0 10px !important;
+    box-sizing: border-box;
+    border-radius: 5px;
+    border: 1px solid rgba(255,255,255,0.07);
+    background: rgba(255,255,255,0.04);
+    color: #c8d0c8;
+    font-size: 12px;
     font-weight: 700;
-    line-height: 1.25;
-    text-align: center;
+    line-height: 1;
+    white-space: nowrap;
   }
 
-  #wxPatrol .taks-list > ul > li > .taks-gift:nth-child(2) {
+  /* When 2 gifts: first sits in col 3, second sits in col 4.
+     When 1 gift: it gets default col 4 (flush against button in col 5). */
+  #wxPatrol .taks-gift:has(+ .taks-gift) {
     grid-column: 3;
     grid-row: 1;
   }
 
-  #wxPatrol .taks-list > ul > li > .taks-gift:nth-child(3) {
+  #wxPatrol .taks-gift + .taks-gift {
     grid-column: 4;
     grid-row: 1;
   }
 
   #wxPatrol .taks-gift > img {
     display: block;
-    flex: 0 0 30px;
-    width: 30px !important;
-    height: 30px !important;
+    flex: 0 0 18px;
+    width: 18px !important;
+    height: 18px !important;
     object-fit: contain;
     image-rendering: auto;
   }
@@ -784,14 +810,12 @@ html:not([data-abi-site="off"]) {
     display: inline;
     width: auto !important;
     min-width: 0;
-    max-width: 100%;
-    height: auto !important;
     margin: 0 !important;
-    color: #d5dbd5;
-    font-size: 13px;
-    line-height: 1.35;
-    overflow-wrap: anywhere;
-    text-align: center;
+    color: #c8d0c8;
+    font-size: 12px;
+    font-weight: 700;
+    line-height: 1;
+    white-space: nowrap;
   }
 
   #wxPatrol .taks-gift > span.abi-compact-reward {
@@ -801,86 +825,79 @@ html:not([data-abi-site="off"]) {
   #wxPatrol .taks-gift > span.abi-compact-reward::before {
     content: attr(data-abi-reward-display);
     display: inline;
-    color: #e0e3de;
-    font-size: 13px;
+    color: #c8d0c8;
+    font-size: 12px;
     font-weight: 700;
-    line-height: 1.35;
-    overflow-wrap: anywhere;
+    line-height: 1;
+    white-space: nowrap;
   }
 
   #wxPatrol .taks-gift em {
-    color: #aeb7b1;
+    color: #8fa09d;
     font-style: normal;
   }
 
+  /* Action button */
   #wxPatrol a.taks-btn2,
   #wxPatrol a.taks-finish {
+    grid-column: 5;
+    grid-row: 1;
     position: static !important;
     display: inline-flex !important;
     align-items: center;
     justify-content: center;
-    flex: none;
-    min-width: 0;
-    max-width: 100%;
     width: 100% !important;
-    height: 40px !important;
+    height: 34px !important;
     margin: 0 !important;
-    padding: 0 12px !important;
+    padding: 0 10px !important;
     box-sizing: border-box;
-    border: 1px solid var(--abi-accent) !important;
-    border-radius: 0;
-    color: #f1eee8 !important;
-    background: #c3472d24 !important;
-    font-size: 12px;
-    font-weight: 700;
-    letter-spacing: 0.055em;
+    border-radius: 5px;
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 0.07em;
     line-height: 1.1;
     text-align: center;
     text-decoration: none;
     text-transform: uppercase;
-    transition: color 140ms ease, border-color 140ms ease, background-color 140ms ease;
+    transition: color 140ms ease, border-color 140ms ease, background-color 140ms ease, box-shadow 140ms ease;
   }
 
-  #wxPatrol a.taks-btn2 {
-    grid-column: 5;
-    grid-row: 1;
-    justify-self: stretch;
-  }
-
-  #wxPatrol a.taks-finish {
-    grid-column: 5;
-    grid-row: 1;
-    justify-self: stretch;
-  }
-
-  #wxPatrol a.taks-btn2[data-abi-progress-display] {
-    flex-direction: column;
-    gap: 2px;
-    height: 48px !important;
-  }
-
-  #wxPatrol a.taks-btn2[data-abi-progress-display]::before {
-    content: attr(data-abi-progress-display);
-    color: #f07859;
-    font-size: 15px;
-    font-variant-numeric: tabular-nums;
-    line-height: 1;
-  }
-
-  #wxPatrol .taks-list > ul > li:has(a.taks-btn2[data-abi-progress-display]) .taks-info > span {
-    visibility: hidden;
+  #wxPatrol a.taks-btn2,
+  #wxPatrol a.taks-btn2:link,
+  #wxPatrol a.taks-btn2:visited {
+    border: 1px solid var(--abi-accent) !important;
+    color: #f1eee8 !important;
+    background: rgba(195, 71, 45, 0.18) !important;
+    cursor: pointer;
   }
 
   #wxPatrol a.taks-btn2:hover {
     border-color: #f07859 !important;
     color: #fff !important;
-    background: #c3472d55 !important;
+    background: rgba(195, 71, 45, 0.38) !important;
+    box-shadow: 0 0 10px rgba(195, 71, 45, 0.3);
   }
 
-  #wxPatrol a.taks-finish {
-    border-color: #45503d !important;
+  /* When challenge is completed and ready to claim, make button prominent */
+  #wxPatrol .taks-list > ul > li:has(.task-progress.finish) a.taks-btn2 {
+    border-color: #f07859 !important;
+    color: #ffffff !important;
+    background: #c3472d !important;
+    box-shadow: 0 0 12px rgba(195, 71, 45, 0.4);
+  }
+
+  #wxPatrol .taks-list > ul > li:has(.task-progress.finish) a.taks-btn2:hover {
+    background: #d85438 !important;
+    border-color: #ff8e72 !important;
+    box-shadow: 0 0 16px rgba(230, 107, 78, 0.55);
+  }
+
+  #wxPatrol a.taks-finish,
+  #wxPatrol a.taks-finish:link,
+  #wxPatrol a.taks-finish:visited {
+    border: 1px solid rgba(90, 122, 46, 0.5) !important;
     color: #a9d65e !important;
-    background: #a9d65e0d !important;
+    background: rgba(169, 214, 94, 0.07) !important;
     cursor: default;
     pointer-events: none;
   }
@@ -894,9 +911,18 @@ html:not([data-abi-site="off"]) {
   }
 
   #wxPatrol .forbidden-tips {
-    margin: 16px 0 0 !important;
-    color: #e66b4e;
+    margin: 20px 0 0 !important;
+    padding: 0 !important;
+    color: #8fa09d;
+    font-size: 13px !important;
+    line-height: 1.5;
     text-align: center;
+  }
+
+  #wxPatrol .forbidden-tips p {
+    margin: 0 !important;
+    font-size: 13px !important;
+    color: inherit;
   }
 
   /* News: replace the vertical section selector with a full-width tab row,
@@ -2630,44 +2656,29 @@ html:not([data-abi-site="off"]) {
       grid-row: 1;
     }
 
-    #wxPatrol.content.patrol {
+    #wxPatrol.patrol,
+    #wxPatrol.content.patrol,
+    #wxPatrol.box.content.patrol {
       height: calc(100% - 106px) !important;
-      max-height: none !important;
+      max-height: calc(100% - 106px) !important;
       min-height: 0;
+      overflow-x: hidden !important;
+      overflow-y: auto !important;
     }
 
     #wxPatrol .content.task {
-      padding: 14px;
+      padding: 14px 14px 30px;
     }
 
     #wxPatrol .taks-list > ul > li {
-      grid-template-columns: minmax(0, 1fr) 4rem repeat(2, minmax(88px, 1fr));
-      column-gap: 10px;
-      padding: 12px 14px 30px;
+      grid-template-columns: minmax(0, 1fr) auto auto auto 110px;
+      column-gap: 8px;
+      padding: 12px 14px;
     }
 
     #wxPatrol .taks-gift {
-      width: 100% !important;
-      min-width: 0;
-    }
-
-    #wxPatrol a.taks-btn2 {
-      grid-column: 1 / -1;
-      grid-row: 2;
-      justify-self: end;
-      width: min(138px, 100%) !important;
-    }
-
-    #wxPatrol a.taks-finish {
-      grid-column: 1 / -1;
-      grid-row: 2;
-      justify-self: end;
-      width: min(138px, 100%) !important;
-    }
-
-    #wxPatrol a.taks-btn2,
-    #wxPatrol a.taks-finish {
-      margin-left: auto !important;
+      padding: 0 8px !important;
+      font-size: 11px;
     }
   }
 
@@ -2752,13 +2763,20 @@ html:not([data-abi-site="off"]) {
       font-size: 13px;
     }
 
-    #wxPatrol.content.patrol {
-      padding: 0;
+    #wxPatrol.patrol,
+    #wxPatrol.content.patrol,
+    #wxPatrol.box.content.patrol {
+      height: calc(100% - 106px) !important;
+      max-height: calc(100% - 106px) !important;
+      min-height: 0;
+      padding: 0 !important;
+      overflow-x: hidden !important;
+      overflow-y: auto !important;
     }
 
     #wxPatrol .content.task {
-      gap: 22px;
-      padding: 14px 10px;
+      gap: 16px;
+      padding: 12px 10px 30px;
     }
 
     #wxPatrol .taks-list > h4 {
@@ -2768,65 +2786,75 @@ html:not([data-abi-site="off"]) {
     }
 
     #wxPatrol .taks-list > ul > li {
-      grid-template-columns: minmax(0, 1fr) 4rem;
-      column-gap: 8px;
-      padding: 12px 12px 29px;
+      grid-template-columns: minmax(0, 1fr) auto;
+      grid-template-rows: auto 6px auto auto;
+      column-gap: 10px;
+      row-gap: 8px;
+      padding: 12px 14px;
     }
 
     #wxPatrol .taks-info > p {
       grid-column: 1;
+      grid-row: 1;
+      font-size: 14px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
 
     #wxPatrol .taks-info > span {
       grid-column: 2;
-    }
-
-    #wxPatrol .taks-info > p {
-      font-size: 14px;
-    }
-
-    #wxPatrol .taks-gift {
-      min-width: 0;
-      font-size: 12px;
-    }
-
-    #wxPatrol .taks-list > ul > li > .taks-gift:nth-child(2) {
-      grid-column: 1;
-      grid-row: 2;
-    }
-
-    #wxPatrol .taks-list > ul > li > .taks-gift:nth-child(3) {
-      grid-column: 2;
-      grid-row: 2;
+      grid-row: 1;
+      justify-self: end;
+      align-self: center;
+      font-size: 13px;
     }
 
     #wxPatrol .task-progress {
-      right: 12px;
-      bottom: 12px;
-      left: 12px;
+      grid-column: 1 / -1;
+      grid-row: 2;
+      height: 6px !important;
+    }
+
+    #wxPatrol .taks-gift {
+      grid-column: 1 / -1 !important;
+      grid-row: 3 !important;
+      justify-self: start !important;
+      min-width: 0;
+      height: 30px;
+      padding: 0 8px !important;
+      font-size: 11px;
+      gap: 6px;
+    }
+
+    #wxPatrol .taks-gift:has(+ .taks-gift) {
+      grid-column: 1 !important;
+      grid-row: 3 !important;
+      justify-self: start !important;
+    }
+
+    #wxPatrol .taks-gift + .taks-gift {
+      grid-column: 2 !important;
+      grid-row: 3 !important;
+      justify-self: end !important;
     }
 
     #wxPatrol .taks-gift > img {
-      flex-basis: 26px;
-      width: 26px !important;
-      height: 26px !important;
-    }
-
-    #wxPatrol .taks-gift > span {
-      font-size: 12px;
+      width: 16px !important;
+      height: 16px !important;
+      flex: 0 0 16px;
     }
 
     #wxPatrol a.taks-btn2,
     #wxPatrol a.taks-finish {
       grid-column: 1 / -1;
-      grid-row: 3;
-      justify-self: end;
-      width: min(124px, 100%) !important;
-      height: 36px !important;
-    }
-
-    #wxPatrol a.taks-btn2[data-abi-progress-display] {
-      height: 44px !important;
+      grid-row: 4;
+      justify-self: stretch;
+      width: 100% !important;
+      height: 34px !important;
+      margin-top: 2px !important;
+      padding: 0 10px !important;
+      font-size: 12px;
     }
 
     :is(#xcWorking > .content.video, .content.video:has(#drillButton)) > .info-team {
