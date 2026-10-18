@@ -769,6 +769,7 @@ function main() {
     let video = null;
     let noticeTimer;
     let bookmarks = [];
+    let wasPlayingBeforeBackground = false;
     const on = (el, name, fn) =>
       el.addEventListener(name, fn, { signal: life.signal });
     const notice = (message) => {
@@ -956,6 +957,8 @@ function main() {
                 delete video.dataset.abiUserPlayed;
                 delete video.dataset.abiAutoplayed;
                 delete video.dataset.abiSpeedInitialized;
+                delete video.dataset.abiBackgroundPaused;
+                wasPlayingBeforeBackground = false;
                 bookmarks = [];
                 renderPins();
                 shell.resetExpiryTimer?.();
@@ -1190,6 +1193,41 @@ function main() {
       if (event.target === ui.keysDialog) ui.keysDialog.close();
     });
     on(document, "fullscreenchange", render);
+
+    const onHide = () => {
+      if (document.documentElement.dataset.abiBackgroundPause === "off") return;
+      if (!video) return;
+      if (!video.paused && !video.ended) {
+        wasPlayingBeforeBackground = true;
+        video.dataset.abiBackgroundPaused = "true";
+        video.pause();
+      }
+    };
+
+    const onShow = () => {
+      if (document.documentElement.dataset.abiBackgroundPause === "off") return;
+      if (!video) return;
+      if (wasPlayingBeforeBackground || video.dataset.abiBackgroundPaused === "true") {
+        wasPlayingBeforeBackground = false;
+        delete video.dataset.abiBackgroundPaused;
+        if (video.paused && !video.ended) {
+          video.play().catch(() => {});
+        }
+      }
+    };
+
+    on(document, "visibilitychange", () => {
+      if (document.hidden) onHide();
+      else onShow();
+    });
+    on(window, "pagehide", onHide);
+    on(window, "pageshow", onShow);
+    on(window, "blur", () => {
+      if (document.hidden) onHide();
+    });
+    on(window, "focus", () => {
+      if (!document.hidden) onShow();
+    });
     const isVideoArea = (target) =>
       target instanceof Element &&
       !target.closest(

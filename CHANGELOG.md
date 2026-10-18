@@ -7,6 +7,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [2.6.10] - 2026-10-18
+
+### Added
+- **Background Tab Auto-Pause & Resume:**
+  - Automatically pauses video playback when switching tabs or minimizing the browser window (`document.visibilitychange` / `window.blur` / `pagehide`).
+  - Automatically and seamlessly resumes playback when returning to the tab.
+  - Intelligently preserves manual user pauses — if a user deliberately paused playback before switching tabs, returning to the tab preserves the paused state without unsolicited playback.
+  - Fully toggleable via `data-abi-background-pause="off"` setting attribute.
+
+---
+
 ## [2.6.9] - 2026-10-18
 
 ### Added

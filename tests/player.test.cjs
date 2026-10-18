@@ -1279,6 +1279,178 @@ test("Double-Click or F for Fullscreen Video: toggles fullscreen via F key and d
   }
 });
 
+test("Background Tab Auto-Pause: automatically pauses when tab is hidden and resumes when returning, preserving manual pause state", async (t) => {
+  let playwright;
+  try {
+    playwright = require("playwright");
+  } catch {
+    if (t && typeof t.skip === "function") {
+      t.skip("playwright module is not installed");
+      return;
+    }
+  }
+
+  const browser = await playwright.chromium.launch({
+    headless: true,
+    channel: process.env.ABI_TEST_BROWSER || (process.platform === "win32" ? "msedge" : "chromium"),
+  });
+
+  try {
+    const page = await browser.newPage({ viewport: { width: 1200, height: 800 } });
+
+    const mockHtml = `
+      <html data-abi-site="on" data-abi-auto-play="on">
+      <head>
+        <style>
+          .content.video { width: 800px; height: 500px; }
+          .play-box { width: 100%; height: 100%; }
+          #workingPlayer { width: 100%; height: 100%; }
+          video { width: 100%; height: 100%; }
+        </style>
+      </head>
+      <body>
+        <div class="main">
+          <ul class="nav">
+            <li id="working" class="current"><span>Workbench</span></li>
+          </ul>
+        </div>
+        <div id="xcWorking">
+          <div class="content video">
+            <div class="play-box">
+              <div id="workingPlayer">
+                <video src="https://example.com/test.mp4" preload="auto"></video>
+              </div>
+            </div>
+          </div>
+        </div>
+      </body>
+      </html>
+    `;
+
+    await page.route("https://www.arenabreakoutinfinite.com/act/a20251028patroller/*", (route) => {
+      route.fulfill({
+        status: 200,
+        contentType: "text/html",
+        body: mockHtml,
+      });
+    });
+
+    await page.goto("https://www.arenabreakoutinfinite.com/act/a20251028patroller/");
+
+    await page.evaluate(() => {
+      const v = document.querySelector("video");
+      let _paused = true;
+      Object.defineProperty(v, "paused", {
+        get: () => _paused,
+        set: (val) => { _paused = val; },
+        configurable: true,
+      });
+      v.play = async () => { _paused = false; v.dispatchEvent(new Event("play")); };
+      v.pause = () => { _paused = true; v.dispatchEvent(new Event("pause")); };
+    });
+
+    await page.addScriptTag({ path: path.join(__dirname, "..", "abi-inspector-enhancer", "settings.js") });
+    await page.addScriptTag({ path: path.join(__dirname, "..", "abi-inspector-enhancer", "content.js") });
+
+    await page.waitForSelector("abi-local-player", { state: "attached" });
+    await page.waitForSelector("abi-local-controls", { state: "attached" });
+
+    // 1. Initial state: video autoplays on load
+    let isPaused = await page.evaluate(() => document.querySelector("video").paused);
+    assert.equal(isPaused, false, "Video is playing initially");
+
+    // 2. Tab is hidden (user switches to another tab or minimizes browser)
+    await page.evaluate(() => {
+      Object.defineProperty(document, "hidden", { value: true, configurable: true });
+      document.dispatchEvent(new Event("visibilitychange"));
+    });
+
+    let stateAfterHide = await page.evaluate(() => {
+      const v = document.querySelector("video");
+      return {
+        paused: v.paused,
+        bgPaused: v.dataset.abiBackgroundPaused,
+      };
+    });
+    assert.equal(stateAfterHide.paused, true, "Video automatically pauses when tab is hidden");
+    assert.equal(stateAfterHide.bgPaused, "true", "Marks abiBackgroundPaused as true");
+
+    // 3. User returns to the tab (tab becomes visible)
+    await page.evaluate(() => {
+      Object.defineProperty(document, "hidden", { value: false, configurable: true });
+      document.dispatchEvent(new Event("visibilitychange"));
+    });
+
+    let stateAfterShow = await page.evaluate(() => {
+      const v = document.querySelector("video");
+      return {
+        paused: v.paused,
+        bgPaused: v.dataset.abiBackgroundPaused,
+      };
+    });
+    assert.equal(stateAfterShow.paused, false, "Video automatically resumes playing when returning to tab");
+    assert.equal(stateAfterShow.bgPaused, undefined, "Clears abiBackgroundPaused mark");
+
+    // 4. User manually pauses video before switching tabs
+    await page.evaluate(() => {
+      const controls = document.querySelector("abi-local-controls");
+      const playBtn = controls.shadowRoot.querySelector("button#play");
+      playBtn.click();
+    });
+
+    isPaused = await page.evaluate(() => document.querySelector("video").paused);
+    assert.equal(isPaused, true, "Video is manually paused by user");
+
+    // 5. Tab is hidden while video was already paused by user
+    await page.evaluate(() => {
+      Object.defineProperty(document, "hidden", { value: true, configurable: true });
+      document.dispatchEvent(new Event("visibilitychange"));
+    });
+
+    let stateAfterManualHide = await page.evaluate(() => {
+      const v = document.querySelector("video");
+      return {
+        paused: v.paused,
+        bgPaused: v.dataset.abiBackgroundPaused,
+      };
+    });
+    assert.equal(stateAfterManualHide.paused, true, "Video remains paused");
+    assert.equal(stateAfterManualHide.bgPaused, undefined, "Does not mark abiBackgroundPaused if already manually paused");
+
+    // 6. User returns to tab: manual pause state MUST be preserved!
+    await page.evaluate(() => {
+      Object.defineProperty(document, "hidden", { value: false, configurable: true });
+      document.dispatchEvent(new Event("visibilitychange"));
+    });
+
+    let stateAfterManualReturn = await page.evaluate(() => document.querySelector("video").paused);
+    assert.equal(stateAfterManualReturn, true, "Manual pause is preserved when returning to tab");
+
+    // 7. When data-abi-background-pause='off', auto-pause is disabled
+    await page.evaluate(() => {
+      const controls = document.querySelector("abi-local-controls");
+      const playBtn = controls.shadowRoot.querySelector("button#play");
+      playBtn.click(); // resume play
+      document.documentElement.dataset.abiBackgroundPause = "off";
+    });
+
+    isPaused = await page.evaluate(() => document.querySelector("video").paused);
+    assert.equal(isPaused, false, "Video is playing");
+
+    await page.evaluate(() => {
+      Object.defineProperty(document, "hidden", { value: true, configurable: true });
+      document.dispatchEvent(new Event("visibilitychange"));
+    });
+
+    let stateWithSettingOff = await page.evaluate(() => document.querySelector("video").paused);
+    assert.equal(stateWithSettingOff, false, "Video does not auto-pause when abiBackgroundPause is off");
+
+  } finally {
+    await browser?.close();
+  }
+});
+
+
 
 
 
