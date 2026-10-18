@@ -94,6 +94,41 @@ function main() {
       color:#fbbf24;
       border-color:rgba(245,158,11,0.4);
     }
+    .hover-badge {
+      position: absolute;
+      bottom: calc(100% + 6px);
+      left: 0;
+      transform: translateX(-50%);
+      background: #111719;
+      color: #e0e3de;
+      border: 1px solid var(--abi-border, #41494b);
+      border-radius: 4px;
+      padding: 2px 6px;
+      font-size: 11px;
+      font-weight: 700;
+      font-variant-numeric: tabular-nums;
+      pointer-events: none;
+      white-space: nowrap;
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity .12s ease, visibility .12s ease;
+      z-index: 10;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.6);
+    }
+    .hover-badge::after {
+      content: "";
+      position: absolute;
+      top: 100%;
+      left: 50%;
+      transform: translateX(-50%);
+      border-width: 4px;
+      border-style: solid;
+      border-color: #41494b transparent transparent transparent;
+    }
+    .hover-badge.visible {
+      opacity: 1;
+      visibility: visible;
+    }
     .time { font-size:13px; font-variant-numeric:tabular-nums; white-space:nowrap; min-width:90px; text-align:right; color:#8fa09d; font-weight:700; letter-spacing:0.02em; }
     .panel { container-type:inline-size; }
     .row { display:grid; grid-template-columns:1fr auto 1fr; align-items:center; column-gap:14px; row-gap:8px; }
@@ -356,6 +391,7 @@ function main() {
         <div class="timeline-bar">
           <input id="seek" type="range" min="0" max="1" step="0.01" value="0" aria-label="Video position">
           <div id="timelinePins" class="timeline-pins"></div>
+          <div id="hoverBadge" class="hover-badge" aria-hidden="true">00:00</div>
         </div>
         <button id="pinButton" title="Drop moment bookmark (M)" aria-label="Drop moment bookmark (M)">Bookmark</button>
         <span class="time" id="time">00:00 / --:--</span>
@@ -908,6 +944,24 @@ function main() {
           selectVideo();
           fn();
         });
+    function updateHoverBadge(e) {
+      if (!finite() || !ui.hoverBadge) return;
+      const rect = ui.seek.getBoundingClientRect();
+      if (rect.width <= 0) return;
+      const clampX = Math.max(0, Math.min(e.clientX - rect.left, rect.width));
+      const ratio = clampX / rect.width;
+      const hoverTime = ratio * video.duration;
+      ui.hoverBadge.textContent = format(hoverTime);
+      ui.hoverBadge.style.left = `${ratio * 100}%`;
+      ui.hoverBadge.classList.add("visible");
+    }
+    function hideHoverBadge() {
+      ui.hoverBadge?.classList.remove("visible");
+    }
+    on(ui.seek, "pointermove", updateHoverBadge);
+    on(ui.seek, "pointerenter", updateHoverBadge);
+    on(ui.seek, "pointerleave", hideHoverBadge);
+    on(ui.seek, "pointerdown", updateHoverBadge);
     on(ui.seek, "input", () => seek(Number(ui.seek.value)));
     on(ui.volume, "input", () => {
       if (video) {

@@ -634,5 +634,187 @@ test("Reload Player Button: reloads video source in-place, preserves currentTime
   }
 });
 
+test("Timeline Scrubber Hover-Time Badge: floating timestamp badge follows cursor movement over scrubber", async (t) => {
+  let playwright;
+  try {
+    playwright = require("playwright");
+  } catch {
+    if (t && typeof t.skip === "function") {
+      t.skip("playwright module is not installed");
+      return;
+    }
+  }
+  const { chromium } = playwright;
+  let browser;
+  try {
+    browser = await chromium.launch({
+      headless: true,
+      channel: process.env.ABI_TEST_BROWSER || (process.platform === "win32" ? "msedge" : "chromium"),
+    });
+    const context = await browser.newContext();
+    const page = await context.newPage();
+
+    const mockHtml = `
+      <!DOCTYPE html>
+      <html data-abi-site="on" data-abi-auto-play="on">
+      <head>
+        <style>
+          .content.video { width: 800px; height: 500px; }
+          .play-box { width: 100%; height: 100%; }
+          #workingPlayer { width: 100%; height: 100%; }
+          video { width: 100%; height: 100%; }
+        </style>
+      </head>
+      <body>
+        <div class="main">
+          <ul class="nav">
+            <li id="working" class="current"><span>Workbench</span></li>
+          </ul>
+        </div>
+        <div id="xcWorking">
+          <div class="content video">
+            <div class="play-box">
+              <div id="workingPlayer">
+                <video src="https://example.com/test.mp4" preload="auto"></video>
+              </div>
+            </div>
+          </div>
+        </div>
+      </body>
+      </html>
+    `;
+
+    await page.route("https://www.arenabreakoutinfinite.com/act/a20251028patroller/*", (route) => {
+      route.fulfill({
+        status: 200,
+        contentType: "text/html",
+        body: mockHtml,
+      });
+    });
+
+    await page.goto("https://www.arenabreakoutinfinite.com/act/a20251028patroller/");
+
+    await page.evaluate(() => {
+      const v = document.querySelector("video");
+      let _paused = true;
+      let _currentTime = 10;
+      let _duration = 120;
+      Object.defineProperty(v, "paused", {
+        get: () => _paused,
+        set: (val) => { _paused = val; },
+        configurable: true,
+      });
+      Object.defineProperty(v, "currentTime", {
+        get: () => _currentTime,
+        set: (val) => {
+          _currentTime = val;
+          v.dispatchEvent(new Event("timeupdate"));
+        },
+        configurable: true,
+      });
+      Object.defineProperty(v, "duration", {
+        get: () => _duration,
+        set: (val) => { _duration = val; },
+        configurable: true,
+      });
+      v.play = async () => {
+        _paused = false;
+        v.dispatchEvent(new Event("play"));
+      };
+      v.pause = () => {
+        _paused = true;
+        v.dispatchEvent(new Event("pause"));
+      };
+    });
+
+    await page.addScriptTag({ path: path.join(__dirname, "..", "abi-inspector-enhancer", "settings.js") });
+    await page.addScriptTag({ path: path.join(__dirname, "..", "abi-inspector-enhancer", "content.js") });
+
+    await page.waitForSelector("abi-local-player", { state: "attached" });
+    await page.waitForSelector("abi-local-controls", { state: "attached" });
+
+    // Verify hover badge element exists inside shadow DOM
+    const badgeExists = await page.evaluate(() => {
+      const controls = document.querySelector("abi-local-controls");
+      const badge = controls.shadowRoot.querySelector("#hoverBadge");
+      return Boolean(badge);
+    });
+    assert.equal(badgeExists, true, "Hover-time badge exists in timeline-bar");
+
+    // Simulate pointermove over scrubber at 25% of its width
+    await page.evaluate(() => {
+      const controls = document.querySelector("abi-local-controls");
+      const seek = controls.shadowRoot.querySelector("#seek");
+      const rect = seek.getBoundingClientRect();
+      const clientX = rect.left + rect.width * 0.25;
+      const clientY = rect.top + rect.height * 0.5;
+      seek.dispatchEvent(new PointerEvent("pointermove", {
+        clientX,
+        clientY,
+        bubbles: true,
+      }));
+    });
+
+    const badgeState25 = await page.evaluate(() => {
+      const controls = document.querySelector("abi-local-controls");
+      const badge = controls.shadowRoot.querySelector("#hoverBadge");
+      return {
+        visible: badge.classList.contains("visible"),
+        text: badge.textContent.trim(),
+        left: badge.style.left,
+      };
+    });
+
+    assert.equal(badgeState25.visible, true, "Badge becomes visible on pointer movement");
+    assert.equal(badgeState25.text, "00:30", "At 25% of 120s video, preview time should be 00:30");
+    assert.equal(badgeState25.left, "25%", "Badge style.left should be 25%");
+
+    // Simulate pointermove over scrubber at 75% of its width
+    await page.evaluate(() => {
+      const controls = document.querySelector("abi-local-controls");
+      const seek = controls.shadowRoot.querySelector("#seek");
+      const rect = seek.getBoundingClientRect();
+      const clientX = rect.left + rect.width * 0.75;
+      const clientY = rect.top + rect.height * 0.5;
+      seek.dispatchEvent(new PointerEvent("pointermove", {
+        clientX,
+        clientY,
+        bubbles: true,
+      }));
+    });
+
+    const badgeState75 = await page.evaluate(() => {
+      const controls = document.querySelector("abi-local-controls");
+      const badge = controls.shadowRoot.querySelector("#hoverBadge");
+      return {
+        text: badge.textContent.trim(),
+        left: badge.style.left,
+      };
+    });
+
+    assert.equal(badgeState75.text, "01:30", "At 75% of 120s video, preview time should be 01:30");
+    assert.equal(badgeState75.left, "75%", "Badge style.left should be 75%");
+
+    // Simulate pointerleave
+    await page.evaluate(() => {
+      const controls = document.querySelector("abi-local-controls");
+      const seek = controls.shadowRoot.querySelector("#seek");
+      seek.dispatchEvent(new PointerEvent("pointerleave", { bubbles: true }));
+    });
+
+    const isVisibleAfterLeave = await page.evaluate(() => {
+      const controls = document.querySelector("abi-local-controls");
+      const badge = controls.shadowRoot.querySelector("#hoverBadge");
+      return badge.classList.contains("visible");
+    });
+
+    assert.equal(isVisibleAfterLeave, false, "Badge hides on pointerleave");
+
+  } finally {
+    await browser?.close();
+  }
+});
+
+
 
 

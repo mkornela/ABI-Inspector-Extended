@@ -7,6 +7,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [2.6.7] - 2026-10-18
+
+### Added
+- **Timeline Scrubber Hover-Time Badge (`#hoverBadge`):**
+  - Added a floating tactical timestamp badge above the timeline scrubber track (`.timeline-bar`).
+  - Precisely follows pointer movement (`pointermove`, `pointerenter`, `pointerdown`) along the scrubber width with smooth fade transitions.
+  - Displays dynamic preview time (`MM:SS`) for the exact frame under the cursor prior to seeking.
+  - Automatically hides (`pointerleave`) when moving off the timeline scrubber.
+
+---
+
 ## [2.6.6] - 2026-10-18
 
 ### Added
