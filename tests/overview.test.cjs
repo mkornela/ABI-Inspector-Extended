@@ -332,7 +332,7 @@ test("Overview renders live counts and XP, updates without duplicate cards, and 
       return logs;
     }, siteUiSource.slice(siteUiSource.indexOf("  function logExtensionBanner()"), siteUiSource.indexOf("  const HAS_CJK =")));
     assert.ok(
-      loggedMessages.some((m) => m.includes("ABI INSPECTOR EXTENDED") && m.includes("v2.6.17") && m.includes("deem") && m.includes("ACTIVE")),
+      loggedMessages.some((m) => m.includes("ABI INSPECTOR EXTENDED") && m.includes("v2.6.18") && m.includes("deem") && m.includes("ACTIVE")),
       "Console banner is logged with extension name, version, author, and active status"
     );
 
@@ -1143,6 +1143,94 @@ test("Daily Server Reset Countdown Clock: displays live countdown until daily 20
         : null;
     });
     assert.match(result, /^\d{2}:\d{2}:\d{2}$/, "Countdown helper returns valid HH:MM:SS");
+
+  } finally {
+    await browser?.close();
+  }
+});
+
+test("Accidental Tab Close & Leave Guard: prompts beforeunload during active case inspections and respects settings and clean exits", async () => {
+  let browser;
+  try {
+    const { chromium } = require("playwright");
+    browser = await chromium.launch({
+      headless: true,
+      channel: process.env.ABI_TEST_BROWSER || (process.platform === "win32" ? "msedge" : "chromium"),
+    });
+    const page = await browser.newPage({ viewport: { width: 1280, height: 900 } });
+
+    await page.setContent(`<!DOCTYPE html><html data-abi-site="on"><head></head><body>
+      <div class="main">
+        <ul class="nav">
+          <li id="mine" class="current">Overview</li>
+          <li id="working">Workbench</li>
+        </ul>
+        <button class="exit_btn2">Exit</button>
+      </div>
+      <div id="wxMine" class="content mine"></div>
+      <div id="wxWorking" class="content video" style="display: none;">
+        <video src="evidence.mp4"></video>
+        <textarea id="caseNote"></textarea>
+      </div>
+    </body></html>`);
+
+    await page.addStyleTag({ path: path.join(root, "layout.css") });
+
+    const siteUiSource = fs.readFileSync(path.join(root, "site-ui.js"), "utf8");
+    await page.evaluate((src) => {
+      window.eval(src);
+    }, siteUiSource);
+
+    // 1. On Overview tab with no active video/case: should NOT be active
+    const idleCheck = await page.evaluate(() => window.__abiIsInspectionActive());
+    assert.equal(idleCheck, false, "Leave guard is inactive on idle Overview screen");
+
+    // 2. Switch to Workbench with active video: should BE active
+    await page.evaluate(() => {
+      document.querySelector("#mine").classList.remove("current");
+      document.querySelector("#working").classList.add("current");
+      const videoBox = document.querySelector("#wxWorking");
+      videoBox.style.display = "block";
+      const video = videoBox.querySelector("video");
+      Object.defineProperty(video, "duration", { value: 60, configurable: true });
+      Object.defineProperty(video, "readyState", { value: 4, configurable: true });
+    });
+
+    const activeCheck = await page.evaluate(() => window.__abiIsInspectionActive());
+    assert.equal(activeCheck, true, "Leave guard is active when video inspection is in progress");
+
+    // 3. Test beforeunload event handling: defaultPrevented
+    const eventResult = await page.evaluate(() => {
+      const evt = new Event("beforeunload", { cancelable: true });
+      window.dispatchEvent(evt);
+      return { defaultPrevented: evt.defaultPrevented };
+    });
+    assert.equal(eventResult.defaultPrevented, true, "beforeunload event is cancelled during active review");
+
+    // 4. Test when user enters draft note without video
+    await page.evaluate(() => {
+      const video = document.querySelector("video");
+      video.removeAttribute("src");
+      Object.defineProperty(video, "duration", { value: 0, configurable: true });
+      document.querySelector("#caseNote").value = "Suspicious recoil pattern at 0:14";
+    });
+    const draftNoteCheck = await page.evaluate(() => window.__abiIsInspectionActive());
+    assert.equal(draftNoteCheck, true, "Leave guard is active when draft notes are entered");
+
+    // 5. Test when user clicks clean exit button
+    await page.evaluate(() => {
+      document.querySelector(".exit_btn2").click();
+    });
+    const exitCleanCheck = await page.evaluate(() => window.__abiIsInspectionActive());
+    assert.equal(exitCleanCheck, false, "Leave guard allows clean departure when exit button is clicked");
+
+    // 6. Test setting disable: data-abi-leave-guard="off"
+    await page.evaluate(() => {
+      window.__abiIsExitingCleanly = false;
+      document.documentElement.dataset.abiLeaveGuard = "off";
+    });
+    const disabledSettingCheck = await page.evaluate(() => window.__abiIsInspectionActive());
+    assert.equal(disabledSettingCheck, false, "Leave guard respects user setting toggle when disabled");
 
   } finally {
     await browser?.close();

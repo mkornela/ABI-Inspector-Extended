@@ -88,6 +88,8 @@
       accentGreen: "Green",
       accentBlue: "Blue",
       accentCrimson: "Crimson",
+      leaveGuardLabel: "Accidental leave guard",
+      leaveGuardDesc: "Prompt confirmation before closing or reloading the tab during an active case inspection so you don't lose progress",
     },
     de: {
       overview: "Datenübersicht",
@@ -175,6 +177,8 @@
       accentGreen: "Grün",
       accentBlue: "Blau",
       accentCrimson: "Karmesin",
+      leaveGuardLabel: "Schutz vor versehentlichem Schließen",
+      leaveGuardDesc: "Vor dem Schließen oder Neuladen des Tabs während einer aktiven Fallprüfung um Bestätigung bitten",
     },
     ru: {
       overview: "Обзор данных",
@@ -262,6 +266,8 @@
       accentGreen: "Зеленый",
       accentBlue: "Синий",
       accentCrimson: "Багровый",
+      leaveGuardLabel: "Защита от случайного закрытия",
+      leaveGuardDesc: "Запрашивать подтверждение перед закрытием или обновлением вкладки во время активного расследования",
     },
     fr: {
       overview: "Aperçu des données",
@@ -349,6 +355,8 @@
       accentGreen: "Vert",
       accentBlue: "Bleu",
       accentCrimson: "Cramoisi",
+      leaveGuardLabel: "Protection contre fermeture accidentelle",
+      leaveGuardDesc: "Demander confirmation avant de fermer ou recharger l'onglet pendant une inspection active",
     },
     es: {
       overview: "Resumen de datos",
@@ -436,6 +444,8 @@
       accentGreen: "Verde",
       accentBlue: "Azul",
       accentCrimson: "Carmesí",
+      leaveGuardLabel: "Protección contra cierre accidental",
+      leaveGuardDesc: "Pedir confirmación antes de cerrar o recargar la pestaña durante una inspección activa",
     },
     ja: {
       overview: "データの概要",
@@ -523,6 +533,8 @@
       accentGreen: "グリーン",
       accentBlue: "ブルー",
       accentCrimson: "クリムゾン",
+      leaveGuardLabel: "タブ誤閉じ・離脱防止ガード",
+      leaveGuardDesc: "アクティブなケース調査中にタブを閉じたり再読み込みする前に確認を表示します",
     },
     "pt-BR": {
       overview: "Visão Geral dos Dados",
@@ -610,6 +622,8 @@
       accentGreen: "Verde",
       accentBlue: "Azul",
       accentCrimson: "Carmesim",
+      leaveGuardLabel: "Proteção contra fechamento acidental",
+      leaveGuardDesc: "Solicitar confirmação antes de fechar ou recarregar a guia durante uma inspeção ativa",
     },
     "zh-Hant": {
       overview: "數據總覽",
@@ -697,6 +711,8 @@
       accentGreen: "夜視綠",
       accentBlue: "賽博藍",
       accentCrimson: "戰鬥紅",
+      leaveGuardLabel: "防止誤關防離開保護",
+      leaveGuardDesc: "在正在審核案件時，關閉或刷新頁面前提示確認，防止意外丟失進度",
     },
     cn: {
       overview: "数据总览",
@@ -784,6 +800,8 @@
       accentGreen: "夜视绿",
       accentBlue: "赛博蓝",
       accentCrimson: "战斗红",
+      leaveGuardLabel: "防止误关防离开保护",
+      leaveGuardDesc: "在正在审核案件时，关闭或刷新页面前提示确认，防止意外丢失进度",
     },
   };
 
@@ -1054,7 +1072,7 @@
 
   const WATERMARK = `
 ================================================================================
-  ABI INSPECTOR EXTENDED \u2014 v2.6.17
+  ABI INSPECTOR EXTENDED \u2014 v2.6.18
   Enhanced Patroller Interface & Local Playback Controls
   Author: deem (https://github.com/mkornela)
   Status: Extension Loaded & Active
@@ -1100,7 +1118,7 @@
     window.__abiExtendedBannerLogged = true;
     try {
       console.log(
-        "%c ABI INSPECTOR EXTENDED %c v2.6.17 %c deem %c ACTIVE \n%cEnhanced Patroller Interface & Local Playback Controls (https://github.com/mkornela)",
+        "%c ABI INSPECTOR EXTENDED %c v2.6.18 %c deem %c ACTIVE \n%cEnhanced Patroller Interface & Local Playback Controls (https://github.com/mkornela)",
         "background: #d49a37; color: #0b0f11; font-weight: bold; font-family: monospace; border-radius: 3px 0 0 3px; padding: 3px 8px; font-size: 11px;",
         "background: #182226; color: #d49a37; font-weight: bold; font-family: monospace; padding: 3px 8px; font-size: 11px; border-left: 1px solid #2a373c;",
         "background: #222f35; color: #c4d0d0; font-family: monospace; padding: 3px 8px; font-size: 11px; border-left: 1px solid #2a373c;",
@@ -2599,15 +2617,16 @@
     verdictEnhancements: true,
     verdictHotkeys: false,
     hudAccent: "amber",
+    leaveGuard: true,
   };
 
   function getExtensionVersion() {
     try {
       if (typeof chrome !== "undefined" && chrome?.runtime?.getManifest) {
-        return chrome.runtime.getManifest()?.version || "2.6.17";
+        return chrome.runtime.getManifest()?.version || "2.6.18";
       }
     } catch {}
-    return "2.6.17";
+    return "2.6.18";
   }
 
   function safeStorageGet(defaults) {
@@ -3093,25 +3112,38 @@
       showToast,
     );
 
+    const leaveGuardRow = makeSettingsToggle(
+      "abi-settings-leave-guard",
+      "leaveGuard",
+      safeT("leaveGuardLabel", "Accidental leave guard"),
+      safeT("leaveGuardDesc", "Prompt confirmation before closing or reloading the tab during an active case inspection so you don't lose progress."),
+      "leave close unload reload refresh exit guard confirm warning active case prevent loss",
+      null,
+      showToast,
+    );
+
     const verdictsHead = makeSectionHeading("Verdicts", async () => {
       const verdictsDefaults = {
         verdictEnhancements: true,
         verdictHotkeys: false,
         inspectionNotes: true,
         colorKey: true,
+        leaveGuard: true,
       };
       await safeStorageSet(verdictsDefaults);
       panel.querySelector("#abi-settings-verdict-enhancements").checked = true;
       panel.querySelector("#abi-settings-verdict-hotkeys").checked = false;
       panel.querySelector("#abi-settings-notes").checked = true;
       panel.querySelector("#abi-settings-color-key").checked = true;
+      panel.querySelector("#abi-settings-leave-guard").checked = true;
+      delete document.documentElement.dataset.abiLeaveGuard;
       updateDependencies(panel);
       updateSettingsStatus(panel, await safeStorageGet(settingsDefaults));
       showToast("Verdicts reset ✓");
     });
     verdictsHead.querySelector("h2").id = "abi-settings-verdicts-title";
 
-    verdictsGroup.append(verdictsHead, verdictEnhancementsRow, verdictHotkeysRow, notesRow, colorKeyRow);
+    verdictsGroup.append(verdictsHead, verdictEnhancementsRow, verdictHotkeysRow, notesRow, colorKeyRow, leaveGuardRow);
 
     // 4. Privacy Card
     const privacyGroup = document.createElement("section");
@@ -3246,6 +3278,8 @@
       setCheck("#abi-settings-verdict-hotkeys", false);
       setCheck("#abi-settings-notes", true);
       setCheck("#abi-settings-color-key", true);
+      setCheck("#abi-settings-leave-guard", true);
+      delete document.documentElement.dataset.abiLeaveGuard;
       updatePrivacyPreviewState(false);
       updateDependencies(panel);
       volumeSlider.value = "100";
@@ -3376,6 +3410,7 @@
       setCheck("#abi-settings-verdict-hotkeys", current.verdictHotkeys);
       setCheck("#abi-settings-notes", current.inspectionNotes);
       setCheck("#abi-settings-color-key", current.colorKey);
+      setCheck("#abi-settings-leave-guard", current.leaveGuard !== false);
 
       const vol = current.playerVolume ?? 100;
       volumeSlider.value = String(vol);
@@ -3450,6 +3485,10 @@
 
     input.addEventListener("change", async () => {
       await safeStorageSet({ [key]: input.checked });
+      if (key === "leaveGuard") {
+        if (input.checked) delete document.documentElement.dataset.abiLeaveGuard;
+        else document.documentElement.dataset.abiLeaveGuard = "off";
+      }
       if (typeof onSaved === "function") onSaved("Saved ✓");
       const panel = input.closest(".abi-extension-settings");
       if (panel) {
@@ -5147,6 +5186,8 @@
         accentGreen: "Green",
         accentBlue: "Blue",
         accentCrimson: "Crimson",
+        leaveGuardLabel: "Accidental leave guard",
+        leaveGuardDesc: "Prompt confirmation before closing or reloading the tab during an active case inspection so you don't lose progress",
       };
       return FALLBACKS[key] || key;
     };
@@ -6425,6 +6466,108 @@
     }, true);
   }
 
+  function isInspectionActive() {
+    if (document.documentElement.dataset.abiLeaveGuard === "off") return false;
+    if (document.documentElement.dataset.abiExtension === "off") return false;
+    if (window.__abiIsExitingCleanly) return false;
+
+    // Check if review was finished or completed
+    const completionPopup = document.querySelector(
+      "#resultRight, #resultWrong, [id^='drillResult'], .grade-popup:not([hidden])"
+    );
+    if (
+      completionPopup &&
+      completionPopup.offsetParent !== null &&
+      completionPopup.style.display !== "none"
+    ) {
+      return false;
+    }
+
+    // Video content workbench
+    const videoContent = document.querySelector(".content.video");
+    const isVideoVisible =
+      videoContent &&
+      videoContent.style.display !== "none" &&
+      videoContent.offsetParent !== null &&
+      !videoContent.hasAttribute("hidden");
+
+    // Inspection / drill navigation tab
+    const activeTab = document.querySelector(
+      ".nav li.current, .nav #working.current, .nav #drill.current"
+    );
+    const isWorkingTab =
+      activeTab &&
+      (activeTab.id === "working" ||
+        activeTab.id === "drill" ||
+        (activeTab.textContent &&
+          (activeTab.textContent.includes("巡查") ||
+            activeTab.textContent.toLowerCase().includes("patrol") ||
+            activeTab.textContent.toLowerCase().includes("inspect"))));
+
+    // Video element with active media
+    const video = document.querySelector(
+      ".content.video video, abi-local-player video, video"
+    );
+    const hasActiveVideo =
+      video &&
+      (video.src || video.currentSrc) &&
+      (video.duration > 0 || video.readyState > 0 || video.currentTime > 0);
+
+    // Notes draft text
+    const noteInputs = document.querySelectorAll(
+      "#caseNote, #opinion, .tips-title textarea, textarea.abi-note-input, .content.video textarea"
+    );
+    let hasDraftNote = false;
+    for (const input of noteInputs) {
+      if (input.value && input.value.trim().length > 0) {
+        hasDraftNote = true;
+        break;
+      }
+    }
+
+    // Active expiry timer
+    const expiryBadge = document.querySelector(".abi-case-expiry-badge");
+    const hasActiveExpiry =
+      expiryBadge &&
+      expiryBadge.isConnected &&
+      !expiryBadge.hasAttribute("hidden") &&
+      expiryBadge.style.display !== "none";
+
+    return Boolean(
+      (isVideoVisible || isWorkingTab) &&
+        (hasActiveVideo || hasDraftNote || hasActiveExpiry)
+    );
+  }
+
+  function setupLeaveGuard() {
+    if (window.__abiLeaveGuardInstalled) return;
+    window.__abiLeaveGuardInstalled = true;
+
+    window.addEventListener("beforeunload", (e) => {
+      if (!isInspectionActive()) return;
+      e.preventDefault();
+      e.returnValue = "";
+      return "";
+    });
+
+    window.addEventListener(
+      "click",
+      (e) => {
+        const target = e.target;
+        if (
+          target instanceof Element &&
+          target.closest(".exit_btn2, #btnQuit, #btnExit, .abi-clean-exit")
+        ) {
+          window.__abiIsExitingCleanly = true;
+          setTimeout(() => {
+            window.__abiIsExitingCleanly = false;
+          }, 3000);
+        }
+      },
+      true
+    );
+  }
+
   if (typeof window !== "undefined") {
     window.__abiGetCaseLog = getCaseLog;
     window.__abiSaveCaseLog = saveCaseLog;
@@ -6434,11 +6577,14 @@
     window.__abiRenderFilteredCases = renderFilteredCases;
     window.ensureCaseLogDialog = ensureCaseLogDialog;
     window.syncCaseLogDialog = syncCaseLogDialog;
+    window.__abiIsInspectionActive = isInspectionActive;
+    window.__abiSetupLeaveGuard = setupLeaveGuard;
   }
 
   insertWatermark();
   logExtensionBanner();
   removeChineseComments(document);
   initVerdictLogging();
+  setupLeaveGuard();
   updateNavigation();
 })();

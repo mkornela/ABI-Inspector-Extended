@@ -7,6 +7,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [2.6.18] - 2026-10-19
+
+### Added
+- **Accidental Tab Close & Leave Guard (`beforeunload`):**
+  - Prevents accidental loss of active inspection progress and draft notes by prompting browser-native confirmation before closing, refreshing, or leaving the tab while an active case inspection is underway.
+  - Monitors workbench presence, active evidence video playback, draft case notes, and inspection countdown timers.
+  - Distinguishes intentional exits via the official exit button (`.exit_btn2`) and finalized verdicts, allowing clean departure without nuisance prompts.
+  - Configurable toggle in Extension Settings under the Verdicts section with full multi-language localization across all 9 supported languages.
+  - Automated unit test suite verifying active review detection, draft notes, clean exits, and settings persistence.
+
+---
+
 ## [2.6.17] - 2026-10-19
 
 ### Added

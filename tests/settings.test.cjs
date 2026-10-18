@@ -40,10 +40,11 @@ test("Settings panel redesign: DOM structure, search, dependencies, key chips, a
         verdictEnhancements: true,
         verdictHotkeys: false,
         hudAccent: "amber",
+        leaveGuard: true,
       };
       window.chrome = {
         runtime: {
-          getManifest: () => ({ version: "2.6.17" }),
+          getManifest: () => ({ version: "2.6.18" }),
         },
         storage: {
           local: {
@@ -107,6 +108,8 @@ test("Settings panel redesign: DOM structure, search, dependencies, key chips, a
     const verdictChips = page.locator("#abi-section-verdicts .abi-key-chip");
     assert.equal(await verdictChips.count(), 3, "3 key chips present under verdict hotkeys");
     assert.ok((await verdictChips.first().textContent()).includes("1 or V"), "1 or V hotkey chip present");
+    assert.equal(await page.locator("#abi-settings-leave-guard").count(), 1, "Accidental leave guard toggle exists");
+    assert.equal(await page.locator("#abi-settings-leave-guard").isChecked(), true, "Accidental leave guard toggle is checked by default");
 
     // 5. Verify Streamer / Privacy Mode Live Preview
     const preview = page.locator("#abi-section-privacy .abi-privacy-preview-box");
