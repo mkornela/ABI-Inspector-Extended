@@ -7,6 +7,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [2.6.4] - 2026-10-18
+
+### Added
+- **Tactical Case Log Modal (`.abi-case-log-dialog`):**
+  - Transformed the "Inspected Today" card (`#wxMine .abi-stat-today .abi-today-wrap`) into an interactive tactical button with keyboard access (`role="button"`, `tabindex="0"`, `Enter`/`Space` handlers) and a `.abi-today-log-hint` badge.
+  - Clicking the card opens a dark tactical modal dialog displaying a complete log of cases inspected locally.
+  - Top summary bar displays 5 live metrics: Total Reviewed, Violations count & percentage, No Violation count & percentage, Uncertain count & percentage, and Average Review Duration in seconds.
+  - Interactive toolbar with live multi-criteria search (matching case ID, verdict, notes, or reason tags), filter tabs (`All`, `Violation`, `No Violation`, `Uncertain`), Export to CSV button (`abi-case-log-YYYYMMDD.csv`), and Clear Log with confirmation.
+  - Cards render with case ID badge, color-coded verdict pills, timestamp, review duration, violation reason chips, and inspection notes.
+  - Fully integrated verdict logger capturing submissions across `#patrolButton1` (No Violation), `#patrolButton2` (Uncertain), and `#illegalPopup` submit button (`#patrolSubmit` / `.btn3`).
+  - Full localization support across all 9 supported languages (English, German, Russian, French, Spanish, Japanese, Brazilian Portuguese, Traditional Chinese, and Simplified Chinese).
+
+---
+
 ## [2.6.3] - 2026-10-18
 
 ### Added

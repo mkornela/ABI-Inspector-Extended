@@ -68,6 +68,18 @@
       inspectionsLabel: "Inspections",
       validLabel: "Valid",
       officialInspectionNotes: "Official Inspection Notes",
+      viewCaseLog: "View Case Log",
+      caseLogTitle: "Case Inspection Log",
+      exportCsv: "Export CSV",
+      clearLog: "Clear Log",
+      noCasesRecorded: "No inspection cases recorded yet",
+      filterAll: "All",
+      filterViolation: "Violation",
+      filterNoViolation: "No Violation",
+      filterUncertain: "Uncertain",
+      avgDuration: "Avg Duration",
+      totalCases: "Total Reviewed",
+      searchCasesPlaceholder: "Search by ID, reason, or note...",
     },
     de: {
       overview: "Datenübersicht",
@@ -135,6 +147,18 @@
       inspectionsLabel: "Inspektionen",
       validLabel: "Gültig",
       officialInspectionNotes: "Offizielle Überprüfungshinweise",
+      viewCaseLog: "Fallprotokoll anzeigen",
+      caseLogTitle: "Fall-Überprüfungsprotokoll",
+      exportCsv: "CSV exportieren",
+      clearLog: "Protokoll löschen",
+      noCasesRecorded: "Noch keine überprüften Fälle aufgezeichnet",
+      filterAll: "Alle",
+      filterViolation: "Verstoß",
+      filterNoViolation: "Kein Verstoß",
+      filterUncertain: "Unsicher",
+      avgDuration: "Durchschn. Dauer",
+      totalCases: "Gesamt geprüft",
+      searchCasesPlaceholder: "Suche nach ID, Grund oder Notiz...",
     },
     ru: {
       overview: "Обзор данных",
@@ -202,6 +226,18 @@
       inspectionsLabel: "Проверок",
       validLabel: "Действительно",
       officialInspectionNotes: "Официальные примечания",
+      viewCaseLog: "Просмотр журнала дел",
+      caseLogTitle: "Журнал проверок дел",
+      exportCsv: "Экспорт в CSV",
+      clearLog: "Очистить журнал",
+      noCasesRecorded: "Проверенные дела ещё не записаны",
+      filterAll: "Все",
+      filterViolation: "Нарушение",
+      filterNoViolation: "Нет нарушения",
+      filterUncertain: "Не уверены",
+      avgDuration: "Сред. время",
+      totalCases: "Всего проверено",
+      searchCasesPlaceholder: "Поиск по ID, причине или заметке...",
     },
     fr: {
       overview: "Aperçu des données",
@@ -269,6 +305,18 @@
       inspectionsLabel: "Inspections",
       validLabel: "Valides",
       officialInspectionNotes: "Notes d'inspection officielles",
+      viewCaseLog: "Voir le journal des cas",
+      caseLogTitle: "Journal d'inspection des cas",
+      exportCsv: "Exporter en CSV",
+      clearLog: "Effacer le journal",
+      noCasesRecorded: "Aucun cas d'inspection enregistré pour le moment",
+      filterAll: "Tous",
+      filterViolation: "Infraction",
+      filterNoViolation: "Aucune infraction",
+      filterUncertain: "Incertain",
+      avgDuration: "Durée moy.",
+      totalCases: "Total inspecté",
+      searchCasesPlaceholder: "Recherche par ID, motif ou note...",
     },
     es: {
       overview: "Resumen de datos",
@@ -336,6 +384,18 @@
       inspectionsLabel: "Inspecciones",
       validLabel: "Válidas",
       officialInspectionNotes: "Notas oficiales de inspección",
+      viewCaseLog: "Ver registro de casos",
+      caseLogTitle: "Registro de inspección de casos",
+      exportCsv: "Exportar CSV",
+      clearLog: "Borrar registro",
+      noCasesRecorded: "Aún no se han registrado casos de inspección",
+      filterAll: "Todos",
+      filterViolation: "Infracción",
+      filterNoViolation: "Sin infracción",
+      filterUncertain: "Incierto",
+      avgDuration: "Duración media",
+      totalCases: "Total revisados",
+      searchCasesPlaceholder: "Buscar por ID, motivo o nota...",
     },
     ja: {
       overview: "データの概要",
@@ -403,6 +463,18 @@
       inspectionsLabel: "検査数",
       validLabel: "有効数",
       officialInspectionNotes: "公式検査の注意事項",
+      viewCaseLog: "ケース履歴を表示",
+      caseLogTitle: "ケース巡回検査記録",
+      exportCsv: "CSVエクスポート",
+      clearLog: "ログを消去",
+      noCasesRecorded: "記録された検査ケースはまだありません",
+      filterAll: "すべて",
+      filterViolation: "違反あり",
+      filterNoViolation: "違反なし",
+      filterUncertain: "判断不能",
+      avgDuration: "平均所要時間",
+      totalCases: "総レビュー数",
+      searchCasesPlaceholder: "ID、理由、メモで検索...",
     },
     "pt-BR": {
       overview: "Visão Geral dos Dados",
@@ -470,6 +542,18 @@
       inspectionsLabel: "Inspeções",
       validLabel: "Válidas",
       officialInspectionNotes: "Notas Oficiais da Inspeção",
+      viewCaseLog: "Ver Registro de Casos",
+      caseLogTitle: "Registro de Inspeção de Casos",
+      exportCsv: "Exportar CSV",
+      clearLog: "Limpar Registro",
+      noCasesRecorded: "Nenhum caso de inspeção registrado ainda",
+      filterAll: "Todos",
+      filterViolation: "Violação",
+      filterNoViolation: "Sem Violação",
+      filterUncertain: "Incerto",
+      avgDuration: "Duração Média",
+      totalCases: "Total Revisado",
+      searchCasesPlaceholder: "Buscar por ID, motivo ou nota...",
     },
     "zh-Hant": {
       overview: "數據總覽",
@@ -537,6 +621,18 @@
       inspectionsLabel: "演練量",
       validLabel: "正確量",
       officialInspectionNotes: "官方巡查說明",
+      viewCaseLog: "檢視巡查紀錄",
+      caseLogTitle: "巡查案例紀錄",
+      exportCsv: "匯出 CSV",
+      clearLog: "清除紀錄",
+      noCasesRecorded: "尚未記錄任何巡查案例",
+      filterAll: "全部",
+      filterViolation: "違規",
+      filterNoViolation: "無違規",
+      filterUncertain: "不確定",
+      avgDuration: "平均耗時",
+      totalCases: "總審查數",
+      searchCasesPlaceholder: "依編號、原因或備註搜尋...",
     },
     cn: {
       overview: "数据总览",
@@ -604,6 +700,18 @@
       inspectionsLabel: "演练量",
       validLabel: "正确量",
       officialInspectionNotes: "官方巡查说明",
+      viewCaseLog: "查看巡查记录",
+      caseLogTitle: "巡查案例记录",
+      exportCsv: "导出 CSV",
+      clearLog: "清除记录",
+      noCasesRecorded: "暂无记录的巡查案例",
+      filterAll: "全部",
+      filterViolation: "违规",
+      filterNoViolation: "无违规",
+      filterUncertain: "不确定",
+      avgDuration: "平均耗时",
+      totalCases: "总审查数",
+      searchCasesPlaceholder: "按编号、原因或备注搜索...",
     },
   };
 
@@ -874,7 +982,7 @@
 
   const WATERMARK = `
 ================================================================================
-  ABI INSPECTOR EXTENDED \u2014 v2.6.3
+  ABI INSPECTOR EXTENDED \u2014 v2.6.4
   Enhanced Patroller Interface & Local Playback Controls
   Author: deem (https://github.com/mkornela)
   Status: Extension Loaded & Active
@@ -920,7 +1028,7 @@
     window.__abiExtendedBannerLogged = true;
     try {
       console.log(
-        "%c ABI INSPECTOR EXTENDED %c v2.6.3 %c deem %c ACTIVE \n%cEnhanced Patroller Interface & Local Playback Controls (https://github.com/mkornela)",
+        "%c ABI INSPECTOR EXTENDED %c v2.6.4 %c deem %c ACTIVE \n%cEnhanced Patroller Interface & Local Playback Controls (https://github.com/mkornela)",
         "background: #d49a37; color: #0b0f11; font-weight: bold; font-family: monospace; border-radius: 3px 0 0 3px; padding: 3px 8px; font-size: 11px;",
         "background: #182226; color: #d49a37; font-weight: bold; font-family: monospace; padding: 3px 8px; font-size: 11px; border-left: 1px solid #2a373c;",
         "background: #222f35; color: #c4d0d0; font-family: monospace; padding: 3px 8px; font-size: 11px; border-left: 1px solid #2a373c;",
@@ -2423,10 +2531,10 @@
   function getExtensionVersion() {
     try {
       if (typeof chrome !== "undefined" && chrome?.runtime?.getManifest) {
-        return chrome.runtime.getManifest()?.version || "2.6.3";
+        return chrome.runtime.getManifest()?.version || "2.6.4";
       }
     } catch {}
-    return "2.6.3";
+    return "2.6.4";
   }
 
   function safeStorageGet(defaults) {
@@ -4264,6 +4372,7 @@
       ?.querySelector(":scope > .abi-overview-cards")
       ?.remove();
     dialog?.remove();
+    document.querySelector(".abi-case-log-dialog")?.remove();
   }
 
   function ensureDialog(host) {
@@ -4417,6 +4526,412 @@
     return icon;
   }
 
+  const CASE_LOG_STORAGE_KEY = "abi_case_log";
+  const MAX_CASE_LOG_ENTRIES = 500;
+  let _caseLogCache = null;
+
+  function getCaseLog() {
+    return new Promise((resolve) => {
+      if (Array.isArray(_caseLogCache)) {
+        resolve([..._caseLogCache]);
+        return;
+      }
+      safeStorageGet({ [CASE_LOG_STORAGE_KEY]: [] }).then((data) => {
+        const list = data[CASE_LOG_STORAGE_KEY];
+        if (Array.isArray(list) && list.length > 0) {
+          _caseLogCache = [...list];
+          resolve([...list]);
+          return;
+        }
+        try {
+          const raw = localStorage.getItem(CASE_LOG_STORAGE_KEY);
+          if (raw) {
+            const parsed = JSON.parse(raw);
+            if (Array.isArray(parsed) && parsed.length > 0) {
+              _caseLogCache = [...parsed];
+              resolve([...parsed]);
+              return;
+            }
+          }
+        } catch {}
+        _caseLogCache = Array.isArray(list) ? [...list] : [];
+        resolve([..._caseLogCache]);
+      }).catch(() => {
+        try {
+          const raw = localStorage.getItem(CASE_LOG_STORAGE_KEY);
+          if (raw) {
+            const parsed = JSON.parse(raw);
+            if (Array.isArray(parsed) && parsed.length > 0) {
+              _caseLogCache = [...parsed];
+              resolve([...parsed]);
+              return;
+            }
+          }
+        } catch {}
+        _caseLogCache = [];
+        resolve([]);
+      });
+    });
+  }
+
+  function saveCaseLog(entries) {
+    return new Promise((resolve) => {
+      const list = Array.isArray(entries) ? entries.slice(0, MAX_CASE_LOG_ENTRIES) : [];
+      _caseLogCache = [...list];
+      safeStorageSet({ [CASE_LOG_STORAGE_KEY]: list }).finally(() => {
+        try {
+          localStorage.setItem(CASE_LOG_STORAGE_KEY, JSON.stringify(list));
+        } catch {}
+        const dlg = document.querySelector(".abi-case-log-dialog");
+        if (dlg && !dlg.hidden) {
+          const activeFilter = dlg.querySelector(".abi-case-log-tab.active")?.dataset.filter || "all";
+          const query = dlg.querySelector(".abi-case-log-search")?.value || "";
+          renderFilteredCases(dlg, list, activeFilter, query);
+        }
+        resolve(true);
+      });
+    });
+  }
+
+  function logCaseVerdict(entry) {
+    return getCaseLog().then((entries) => {
+      const now = new Date();
+      const pad = (n) => String(n).padStart(2, "0");
+      const dateStr = `${now.getFullYear()}-${pad(now.getMonth() + 1)}-${pad(now.getDate())} ${pad(now.getHours())}:${pad(now.getMinutes())}:${pad(now.getSeconds())}`;
+      
+      const newEntry = {
+        id: entry.id || `CASE-${Date.now().toString(36).toUpperCase()}`,
+        timestamp: entry.timestamp || Date.now(),
+        dateStr: entry.dateStr || dateStr,
+        verdict: entry.verdict || "uncertain",
+        verdictLabel: entry.verdictLabel || (entry.verdict === "violation" ? "Violation" : entry.verdict === "no_violation" ? "No Violation" : "Uncertain"),
+        reasons: Array.isArray(entry.reasons) ? entry.reasons : [],
+        note: typeof entry.note === "string" ? entry.note.trim() : "",
+        durationSeconds: Number.isFinite(entry.durationSeconds) ? Math.max(0, Math.round(entry.durationSeconds)) : 0,
+      };
+
+      entries.unshift(newEntry);
+      return saveCaseLog(entries).then(() => newEntry);
+    });
+  }
+
+  function clearCaseLog() {
+    _caseLogCache = [];
+    return saveCaseLog([]);
+  }
+
+  function exportCaseLogCsv(entries) {
+    if (!Array.isArray(entries) || entries.length === 0) return;
+    const headers = ["Timestamp", "Case ID", "Verdict", "Reasons", "Review Duration (s)", "Note"];
+    const rows = entries.map((e) => [
+      `"${(e.dateStr || "").replace(/"/g, '""')}"`,
+      `"${(e.id || "").replace(/"/g, '""')}"`,
+      `"${(e.verdictLabel || e.verdict || "").replace(/"/g, '""')}"`,
+      `"${(Array.isArray(e.reasons) ? e.reasons.join("; ") : "").replace(/"/g, '""')}"`,
+      e.durationSeconds ?? 0,
+      `"${(e.note || "").replace(/"/g, '""')}"`,
+    ]);
+    const csvContent = "data:text/csv;charset=utf-8,\uFEFF" + [headers.join(","), ...rows.map((r) => r.join(","))].join("\r\n");
+    const encodedUri = encodeURI(csvContent);
+    const link = document.createElement("a");
+    const now = new Date();
+    const pad = (n) => String(n).padStart(2, "0");
+    const fileDate = `${now.getFullYear()}${pad(now.getMonth() + 1)}${pad(now.getDate())}`;
+    link.setAttribute("href", encodedUri);
+    link.setAttribute("download", `abi-case-log-${fileDate}.csv`);
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+  }
+
+  function renderFilteredCases(dialog, entries, filter, searchQuery) {
+    if (!dialog) return;
+    const all = Array.isArray(entries) ? entries : [];
+    
+    // Summary metrics
+    const totalCount = all.length;
+    const vioCount = all.filter((e) => e.verdict === "violation").length;
+    const noVioCount = all.filter((e) => e.verdict === "no_violation").length;
+    const uncertainCount = all.filter((e) => e.verdict === "uncertain").length;
+    const totalDuration = all.reduce((acc, e) => acc + (Number(e.durationSeconds) || 0), 0);
+    const avgDurationVal = totalCount > 0 ? Math.round(totalDuration / totalCount) : 0;
+
+    const setMetric = (metric, count, pct) => {
+      const el = dialog.querySelector(`.abi-log-metric[data-metric="${metric}"]`);
+      if (!el) return;
+      const valNode = el.querySelector(".abi-log-metric-val");
+      if (valNode) valNode.textContent = metric === "avg_duration" ? `${count}s` : String(count);
+      let pctNode = el.querySelector(".abi-log-metric-pct");
+      if (pct !== undefined) {
+        if (!pctNode) {
+          pctNode = document.createElement("span");
+          pctNode.className = "abi-log-metric-pct";
+          el.append(pctNode);
+        }
+        pctNode.textContent = `(${pct}%)`;
+      }
+    };
+
+    setMetric("total", totalCount);
+    setMetric("violation", vioCount, totalCount > 0 ? Math.round((vioCount / totalCount) * 100) : 0);
+    setMetric("no_violation", noVioCount, totalCount > 0 ? Math.round((noVioCount / totalCount) * 100) : 0);
+    setMetric("uncertain", uncertainCount, totalCount > 0 ? Math.round((uncertainCount / totalCount) * 100) : 0);
+    setMetric("avg_duration", avgDurationVal);
+
+    // Filter items
+    const query = (searchQuery || "").trim().toLowerCase();
+    const filtered = all.filter((entry) => {
+      if (filter && filter !== "all" && entry.verdict !== filter) return false;
+      if (query) {
+        const idMatch = (entry.id || "").toLowerCase().includes(query);
+        const verdictMatch = (entry.verdictLabel || entry.verdict || "").toLowerCase().includes(query);
+        const noteMatch = (entry.note || "").toLowerCase().includes(query);
+        const reasonsMatch = Array.isArray(entry.reasons) && entry.reasons.some((r) => r.toLowerCase().includes(query));
+        if (!idMatch && !verdictMatch && !noteMatch && !reasonsMatch) return false;
+      }
+      return true;
+    });
+
+    const listNode = dialog.querySelector(".abi-case-log-list");
+    if (!listNode) return;
+
+    if (filtered.length === 0) {
+      listNode.innerHTML = `
+        <div class="abi-case-log-empty">
+          <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+            <polyline points="14 2 14 8 20 8"></polyline>
+            <line x1="9" y1="15" x2="15" y2="15"></line>
+          </svg>
+          <strong>${t("noCasesRecorded") || "No inspection cases recorded yet"}</strong>
+          <p>Cases you inspect will appear here with timestamps, verdicts, and duration.</p>
+        </div>
+      `;
+      return;
+    }
+
+    listNode.innerHTML = "";
+    filtered.forEach((entry) => {
+      const item = document.createElement("article");
+      item.className = "abi-case-log-item";
+
+      const header = document.createElement("div");
+      header.className = "abi-case-log-item-header";
+
+      const left = document.createElement("div");
+      left.className = "abi-case-log-item-left";
+
+      const idBadge = document.createElement("span");
+      idBadge.className = "abi-case-id-badge";
+      idBadge.textContent = entry.id || "CASE";
+
+      const verdictBadge = document.createElement("span");
+      verdictBadge.className = "abi-verdict-badge";
+      verdictBadge.dataset.verdict = entry.verdict || "uncertain";
+      verdictBadge.textContent = entry.verdictLabel || entry.verdict || "Uncertain";
+
+      left.append(idBadge, verdictBadge);
+
+      const right = document.createElement("div");
+      right.className = "abi-case-log-item-right";
+
+      const durationNode = document.createElement("span");
+      durationNode.className = "abi-case-duration";
+      durationNode.textContent = `⏱ ${entry.durationSeconds ?? 0}s`;
+
+      const timeNode = document.createElement("span");
+      timeNode.className = "abi-case-time";
+      timeNode.textContent = entry.dateStr || "";
+
+      right.append(durationNode, timeNode);
+      header.append(left, right);
+      item.append(header);
+
+      if (Array.isArray(entry.reasons) && entry.reasons.length > 0) {
+        const reasonsWrap = document.createElement("div");
+        reasonsWrap.className = "abi-case-reasons-wrap";
+        entry.reasons.forEach((r) => {
+          const tag = document.createElement("span");
+          tag.className = "abi-case-reason-tag";
+          tag.textContent = r;
+          reasonsWrap.append(tag);
+        });
+        item.append(reasonsWrap);
+      }
+
+      if (entry.note) {
+        const noteNode = document.createElement("div");
+        noteNode.className = "abi-case-note";
+        noteNode.textContent = `“${entry.note}”`;
+        item.append(noteNode);
+      }
+
+      listNode.append(item);
+    });
+  }
+
+  function ensureCaseLogDialog(host) {
+    let dialog = host?.querySelector(":scope > .abi-case-log-dialog") || document.querySelector(".abi-case-log-dialog");
+    if (dialog) return dialog;
+    dialog = document.createElement("div");
+    dialog.className = "abi-case-log-dialog";
+    dialog.hidden = true;
+
+    const panel = document.createElement("div");
+    panel.className = "abi-case-log-panel";
+    panel.setAttribute("role", "dialog");
+    panel.setAttribute("aria-modal", "true");
+    panel.setAttribute("aria-labelledby", "abi-case-log-title");
+
+    // Header
+    const header = document.createElement("header");
+    header.className = "abi-case-log-head";
+    const titleWrap = document.createElement("div");
+    titleWrap.className = "abi-case-log-title-wrap";
+    const title = document.createElement("h2");
+    title.id = "abi-case-log-title";
+    title.textContent = t("caseLogTitle") || "Case Inspection Log";
+    const tag = document.createElement("span");
+    tag.className = "abi-case-log-tag";
+    tag.textContent = "RECORDED LOCALLY";
+    titleWrap.append(title, tag);
+
+    const close = document.createElement("button");
+    close.type = "button";
+    close.className = "abi-case-log-close";
+    close.setAttribute("aria-label", t("close") || "Close");
+    close.innerHTML = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>`;
+    header.append(titleWrap, close);
+
+    // Summary Metrics
+    const summary = document.createElement("div");
+    summary.className = "abi-case-log-summary";
+    summary.innerHTML = `
+      <div class="abi-log-metric" data-metric="total">
+        <span class="abi-log-metric-label">${t("totalCases") || "Total Reviewed"}</span>
+        <strong class="abi-log-metric-val">0</strong>
+      </div>
+      <div class="abi-log-metric" data-metric="violation">
+        <span class="abi-log-metric-label">${t("filterViolation") || "Violations"}</span>
+        <strong class="abi-log-metric-val">0</strong>
+      </div>
+      <div class="abi-log-metric" data-metric="no_violation">
+        <span class="abi-log-metric-label">${t("filterNoViolation") || "No Violation"}</span>
+        <strong class="abi-log-metric-val">0</strong>
+      </div>
+      <div class="abi-log-metric" data-metric="uncertain">
+        <span class="abi-log-metric-label">${t("filterUncertain") || "Uncertain"}</span>
+        <strong class="abi-log-metric-val">0</strong>
+      </div>
+      <div class="abi-log-metric" data-metric="avg_duration">
+        <span class="abi-log-metric-label">${t("avgDuration") || "Avg Duration"}</span>
+        <strong class="abi-log-metric-val">0s</strong>
+      </div>
+    `;
+
+    // Toolbar
+    const toolbar = document.createElement("div");
+    toolbar.className = "abi-case-log-toolbar";
+    toolbar.innerHTML = `
+      <div class="abi-case-log-search-wrap">
+        <svg class="abi-search-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+        <input type="text" class="abi-case-log-search" placeholder="${t("searchCasesPlaceholder") || "Search by ID, reason, or note..."}" />
+      </div>
+      <div class="abi-case-log-tabs" role="tablist">
+        <button type="button" class="abi-case-log-tab active" data-filter="all">${t("filterAll") || "All"}</button>
+        <button type="button" class="abi-case-log-tab" data-filter="violation">${t("filterViolation") || "Violation"}</button>
+        <button type="button" class="abi-case-log-tab" data-filter="no_violation">${t("filterNoViolation") || "No Violation"}</button>
+        <button type="button" class="abi-case-log-tab" data-filter="uncertain">${t("filterUncertain") || "Uncertain"}</button>
+      </div>
+      <div class="abi-case-log-actions">
+        <button type="button" class="abi-btn-action abi-case-log-export" title="Export as CSV">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+          ${t("exportCsv") || "Export CSV"}
+        </button>
+        <button type="button" class="abi-btn-action abi-btn-danger abi-case-log-clear" title="Clear All Log Entries">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
+          ${t("clearLog") || "Clear Log"}
+        </button>
+      </div>
+    `;
+
+    // List
+    const list = document.createElement("div");
+    list.className = "abi-case-log-list";
+
+    panel.append(header, summary, toolbar, list);
+    dialog.append(panel);
+
+    // Event handlers
+    dialog.addEventListener("click", (event) => {
+      if (event.target === dialog) dialog.hidden = true;
+    });
+    close.addEventListener("click", () => {
+      dialog.hidden = true;
+      document.querySelector("#wxMine .abi-today-wrap")?.focus();
+    });
+
+    const searchInput = toolbar.querySelector(".abi-case-log-search");
+    const tabBtns = toolbar.querySelectorAll(".abi-case-log-tab");
+    let activeFilter = "all";
+
+    const refreshList = () => {
+      getCaseLog().then((entries) => {
+        renderFilteredCases(dialog, entries, activeFilter, searchInput.value);
+      });
+    };
+
+    searchInput.addEventListener("input", refreshList);
+
+    tabBtns.forEach((tab) => {
+      tab.addEventListener("click", () => {
+        tabBtns.forEach((b) => b.classList.remove("active"));
+        tab.classList.add("active");
+        activeFilter = tab.dataset.filter || "all";
+        refreshList();
+      });
+    });
+
+    const exportBtn = toolbar.querySelector(".abi-case-log-export");
+    exportBtn.addEventListener("click", () => {
+      getCaseLog().then((entries) => {
+        exportCaseLogCsv(entries);
+      });
+    });
+
+    const clearBtn = toolbar.querySelector(".abi-case-log-clear");
+    clearBtn.addEventListener("click", () => {
+      if (typeof confirm === "function" ? confirm("Are you sure you want to clear all locally recorded inspection cases?") : true) {
+        clearCaseLog().then(() => {
+          refreshList();
+        });
+      }
+    });
+
+    const container = host || document.querySelector("#wxMine") || document.body;
+    container.append(dialog);
+    return dialog;
+  }
+
+  function syncCaseLogDialog(host) {
+    const dialog = document.querySelector(".abi-case-log-dialog");
+    if (!dialog) return;
+    const title = dialog.querySelector("#abi-case-log-title");
+    if (title) title.textContent = t("caseLogTitle") || "Case Inspection Log";
+    const closeBtn = dialog.querySelector(".abi-case-log-close");
+    if (closeBtn) closeBtn.setAttribute("aria-label", t("close") || "Close");
+    const exportBtn = dialog.querySelector(".abi-case-log-export");
+    if (exportBtn) {
+      const svg = exportBtn.querySelector("svg");
+      exportBtn.replaceChildren(svg || "", ` ${t("exportCsv") || "Export CSV"}`);
+    }
+    const clearBtn = dialog.querySelector(".abi-case-log-clear");
+    if (clearBtn) {
+      const svg = clearBtn.querySelector("svg");
+      clearBtn.replaceChildren(svg || "", ` ${t("clearLog") || "Clear Log"}`);
+    }
+  }
+
   function updateOverview(enabled) {
     const overview = document.querySelector("#wxMine > .user");
     const profile = overview?.querySelector(":scope > .user-info");
@@ -4478,6 +4993,18 @@
         recentAccuracy: "recent accuracy",
         successfulInspections: "successful inspections",
         exitInspection: "Exit Inspection",
+        viewCaseLog: "View Case Log",
+        caseLogTitle: "Case Inspection Log",
+        exportCsv: "Export CSV",
+        clearLog: "Clear Log",
+        noCasesRecorded: "No inspection cases recorded yet",
+        filterAll: "All",
+        filterViolation: "Violation",
+        filterNoViolation: "No Violation",
+        filterUncertain: "Uncertain",
+        avgDuration: "Avg Duration",
+        totalCases: "Total Reviewed",
+        searchCasesPlaceholder: "Search by ID, reason, or note...",
       };
       return FALLBACKS[key] || key;
     };
@@ -4906,6 +5433,10 @@
       if (!wrap) {
         wrap = document.createElement("div");
         wrap.className = "abi-today-wrap";
+        wrap.setAttribute("role", "button");
+        wrap.setAttribute("tabindex", "0");
+        wrap.setAttribute("aria-label", _t("viewCaseLog") || "View Case Log");
+        wrap.title = _t("viewCaseLog") || "Click to view inspection log";
         const ringBox = document.createElement("div");
         ringBox.className = "abi-today-ring-box";
         ringBox.setAttribute("role", "progressbar");
@@ -4950,8 +5481,62 @@
         const remaining = document.createElement("span");
         remaining.className = "abi-today-remaining";
 
-        wrap.append(ringBox, remaining);
+        const logHint = document.createElement("span");
+        logHint.className = "abi-today-log-hint";
+        logHint.innerHTML = `<svg class="abi-log-icon" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line></svg> <span>${_t("viewCaseLog") || "View Case Log"}</span>`;
+
+        wrap.append(ringBox, remaining, logHint);
         todayValues.replaceChildren(wrap);
+      } else {
+        wrap.setAttribute("role", "button");
+        wrap.setAttribute("tabindex", "0");
+        wrap.setAttribute("aria-label", _t("viewCaseLog") || "View Case Log");
+        wrap.title = _t("viewCaseLog") || "Click to view inspection log";
+        let logHint = wrap.querySelector(".abi-today-log-hint");
+        if (!logHint) {
+          logHint = document.createElement("span");
+          logHint.className = "abi-today-log-hint";
+          logHint.innerHTML = `<svg class="abi-log-icon" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line></svg> <span>${_t("viewCaseLog") || "View Case Log"}</span>`;
+          wrap.append(logHint);
+        } else {
+          const hintSpan = logHint.querySelector("span");
+          if (hintSpan) updateText(hintSpan, _t("viewCaseLog") || "View Case Log");
+        }
+      }
+
+      if (!wrap.dataset.abiBound) {
+        wrap.dataset.abiBound = "1";
+        const openLog = () => {
+          const fn = typeof ensureCaseLogDialog === "function" ? ensureCaseLogDialog : (typeof window !== "undefined" ? window.ensureCaseLogDialog : null);
+          if (!fn) return;
+          const host = document.querySelector("#wxMine") || document.body;
+          const dialog = fn(host);
+          if (!dialog) return;
+          dialog.hidden = false;
+          const getLogFn = typeof getCaseLog === "function" ? getCaseLog : (typeof window !== "undefined" ? window.__abiGetCaseLog : null);
+          if (getLogFn) {
+            getLogFn().then((entries) => {
+              const renderFn = typeof renderFilteredCases === "function" ? renderFilteredCases : (typeof window !== "undefined" ? window.__abiRenderFilteredCases : null);
+              if (renderFn) {
+                const activeFilter = dialog.querySelector(".abi-case-log-tab.active")?.dataset.filter || "all";
+                const query = dialog.querySelector(".abi-case-log-search")?.value || "";
+                renderFn(dialog, entries, activeFilter, query);
+              }
+            });
+          }
+          dialog.querySelector(".abi-case-log-close")?.focus();
+        };
+        wrap.addEventListener("click", (e) => {
+          e.stopPropagation();
+          openLog();
+        });
+        wrap.addEventListener("keydown", (e) => {
+          if (e.key === "Enter" || e.key === " ") {
+            e.preventDefault();
+            e.stopPropagation();
+            openLog();
+          }
+        });
       }
 
       const limitWrapNode = wrap.querySelector(".abi-today-limit-wrap");
@@ -5463,6 +6048,12 @@
         dialog.querySelector(".abi-rank-close")?.focus();
       });
     }
+
+    if (typeof syncCaseLogDialog === "function") {
+      syncCaseLogDialog(cards);
+    } else if (typeof window !== "undefined" && typeof window.syncCaseLogDialog === "function") {
+      window.syncCaseLogDialog(cards);
+    }
   }
 
   function scheduleUpdate() {
@@ -5492,7 +6083,7 @@
   const observer = new MutationObserver((records) => {
     const hasExternal = records.some((r) => {
       const el = r.target.nodeType === Node.ELEMENT_NODE ? r.target : r.target.parentElement;
-      return !el || !el.closest(".abi-overview, .abi-extension-settings, .abi-settings-modal, .abi-reason-chips");
+      return !el || !el.closest(".abi-overview, .abi-extension-settings, .abi-settings-modal, .abi-reason-chips, .abi-case-log-dialog");
     });
     if (hasExternal) {
       scheduleUpdate();
@@ -5500,8 +6091,118 @@
   });
   observer.observe(document.documentElement, observerConfig);
 
+  function initVerdictLogging() {
+    if (typeof document === "undefined" || document.__abiVerdictLoggingInit) return;
+    document.__abiVerdictLoggingInit = true;
+
+    let inspectionStartTime = Date.now();
+
+    const resetStartTime = () => {
+      inspectionStartTime = Date.now();
+    };
+
+    document.addEventListener("play", (e) => {
+      if (e.target && e.target.tagName === "VIDEO") {
+        inspectionStartTime = Date.now();
+      }
+    }, true);
+
+    const getActiveCaseId = () => {
+      const explicit = document.querySelector(".case-id, #caseId, .case_num, [data-case-id], #caseNumber")?.textContent?.trim();
+      if (explicit) return explicit;
+      const match = (typeof location !== "undefined" && location.hash) ? location.hash.match(/case[_-]?([a-zA-Z0-9]+)/i) : null;
+      if (match) return `CASE-${match[1]}`;
+      const video = document.querySelector("video");
+      if (video?.src) {
+        try {
+          const u = new URL(video.src);
+          const p = u.searchParams.get("case_id") || u.searchParams.get("id");
+          if (p) return `CASE-${p}`;
+          const lastSeg = u.pathname.split("/").pop()?.replace(/\.[^.]+$/, "");
+          if (lastSeg && lastSeg.length >= 4 && lastSeg.length <= 16) return `CASE-${lastSeg.toUpperCase()}`;
+        } catch {}
+      }
+      return `CASE-${Date.now().toString(36).toUpperCase()}`;
+    };
+
+    document.addEventListener("click", (e) => {
+      // 1. No Violation
+      const noViolationBtn = e.target.closest("#patrolButton1, #drillButton1, .operation a[data-index='0']");
+      if (noViolationBtn) {
+        const durationSeconds = Math.max(1, Math.round((Date.now() - inspectionStartTime) / 1000));
+        logCaseVerdict({
+          id: getActiveCaseId(),
+          verdict: "no_violation",
+          verdictLabel: "No Violation",
+          reasons: [],
+          note: "",
+          durationSeconds,
+        });
+        resetStartTime();
+        return;
+      }
+
+      // 2. Uncertain
+      const uncertainBtn = e.target.closest("#patrolButton2, .operation a[data-index='2']");
+      if (uncertainBtn) {
+        const notSureInput = document.getElementById("notSureReason");
+        const note = notSureInput?.value?.trim() || "";
+        const durationSeconds = Math.max(1, Math.round((Date.now() - inspectionStartTime) / 1000));
+        logCaseVerdict({
+          id: getActiveCaseId(),
+          verdict: "uncertain",
+          verdictLabel: "Uncertain",
+          reasons: [],
+          note,
+          durationSeconds,
+        });
+        resetStartTime();
+        return;
+      }
+
+      // 3. Violation Submit
+      const violationSubmitBtn = e.target.closest("#patrolSubmit, #illegalPopup .btn3, #illegalPopup .submit-btn");
+      if (violationSubmitBtn) {
+        const popup = document.getElementById("illegalPopup") || document;
+        const reasons = [];
+        popup.querySelectorAll("#courtMenu input[type='checkbox']:checked").forEach((cb) => {
+          const label = cb.closest("li")?.textContent?.trim() || cb.value;
+          if (label) reasons.push(label);
+        });
+        popup.querySelectorAll(".abi-reason-chips .abi-chip-btn.active").forEach((btn) => {
+          const text = btn.textContent.trim().replace(/^✓\s*/, "");
+          if (text && !reasons.includes(text)) reasons.push(text);
+        });
+        const note = popup.querySelector("#guiltyDetail")?.value?.trim() || "";
+        const durationSeconds = Math.max(1, Math.round((Date.now() - inspectionStartTime) / 1000));
+        logCaseVerdict({
+          id: getActiveCaseId(),
+          verdict: "violation",
+          verdictLabel: "Violation",
+          reasons,
+          note,
+          durationSeconds,
+        });
+        resetStartTime();
+        return;
+      }
+    }, true);
+  }
+
+  if (typeof window !== "undefined") {
+    window.__abiGetCaseLog = getCaseLog;
+    window.__abiSaveCaseLog = saveCaseLog;
+    window.__abiLogCaseVerdict = logCaseVerdict;
+    window.__abiClearCaseLog = clearCaseLog;
+    window.__abiExportCaseLogCsv = exportCaseLogCsv;
+    window.__abiRenderFilteredCases = renderFilteredCases;
+    window.ensureCaseLogDialog = ensureCaseLogDialog;
+    window.syncCaseLogDialog = syncCaseLogDialog;
+  }
+
   insertWatermark();
   logExtensionBanner();
   removeChineseComments(document);
+  initVerdictLogging();
   updateNavigation();
 })();
