@@ -3132,8 +3132,8 @@ html:not([data-abi-site="off"]) {
   :is(#xcWorking > .content.video, .content.video:has(#drillButton)) {
     display: grid !important;
     grid-template-columns: 310px minmax(0, 1fr) !important;
-    grid-template-rows: auto !important;
-    align-items: start;
+    grid-template-rows: minmax(0, 1fr) !important;
+    align-items: stretch !important;
     gap: 16px;
     padding: 12px 16px 16px !important;
     box-sizing: border-box;
@@ -3144,22 +3144,25 @@ html:not([data-abi-site="off"]) {
   :is(#xcWorking > .content.video, .content.video:has(#drillButton)) > .info-team {
     grid-column: 1;
     grid-row: 1;
-    align-self: start !important;
+    align-self: stretch !important;
     display: flex !important;
     flex-direction: column !important;
-    gap: 12px !important;
+    gap: 10px !important;
     width: 100% !important;
-    height: auto !important;
-    min-height: 100% !important;
+    height: 100% !important;
+    min-height: 0 !important;
     max-height: none !important;
     min-width: 0;
     margin: 0 !important;
-    padding: 18px 16px !important;
+    padding: 16px 14px !important;
     box-sizing: border-box !important;
     border: 1px solid rgba(255, 255, 255, 0.08) !important;
     border-radius: 10px !important;
     background: linear-gradient(180deg, rgba(20, 26, 28, 0.85) 0%, rgba(12, 16, 18, 0.95) 100%) !important;
     box-shadow: 0 8px 32px rgba(0, 0, 0, 0.45) !important;
+    overflow-y: auto !important;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(255, 255, 255, 0.15) transparent;
   }
 
   :is(#xcWorking > .content.video, .content.video:has(#drillButton)) > .info-team > * {
@@ -3170,6 +3173,8 @@ html:not([data-abi-site="off"]) {
     grid-column: 2;
     grid-row: 1;
     width: 100% !important;
+    height: 100% !important;
+    min-height: 0;
     max-width: none;
     float: none !important;
   }
