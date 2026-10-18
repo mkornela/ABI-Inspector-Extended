@@ -7,6 +7,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [2.6.9] - 2026-10-18
+
+### Added
+- **Double-Click or `F` for Fullscreen Video:**
+  - Double-clicking anywhere on the video area toggles seamless native fullscreen on and off without affecting buttons or controls.
+  - Pressing `F` key toggles native fullscreen instantly; `Escape` or second press exits.
+  - Documented shortcut in the Video Control Keys dialog (`#keysDialog`).
+
+### Fixed
+- **Volume Slider Thumb Dot Alignment & Size (`#volume`):**
+  - Restored custom slider thumb rule for `#volume` with centered vertical alignment on the 3px track (`margin-top: -2.5px`).
+  - Reduced thumb diameter to 8px with a crisp white border and subtle green tactical glow for a cleaner appearance.
+
+---
+
 ## [2.6.8] - 2026-10-18
 
 ### Added

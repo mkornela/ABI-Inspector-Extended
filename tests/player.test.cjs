@@ -1096,6 +1096,190 @@ test("Case Expiry Countdown Timer & Under-60s Amber Pulse: active case countdown
   }
 });
 
+test("Double-Click or F for Fullscreen Video: toggles fullscreen via F key and double-click on video area", async (t) => {
+  let playwright;
+  try {
+    playwright = require("playwright");
+  } catch {
+    if (t && typeof t.skip === "function") {
+      t.skip("playwright module is not installed");
+      return;
+    }
+  }
+
+  const browser = await playwright.chromium.launch({
+    headless: true,
+    channel: process.env.ABI_TEST_BROWSER || (process.platform === "win32" ? "msedge" : "chromium"),
+  });
+
+  try {
+    const page = await browser.newPage({ viewport: { width: 1200, height: 800 } });
+
+    const mockHtml = `
+      <html data-abi-site="on">
+      <head>
+        <style>
+          .content.video { width: 800px; height: 500px; }
+          .play-box { width: 100%; height: 100%; }
+          #workingPlayer { width: 100%; height: 100%; }
+          video { width: 100%; height: 100%; }
+        </style>
+      </head>
+      <body>
+        <div class="main">
+          <ul class="nav">
+            <li id="working" class="current"><span>Workbench</span></li>
+          </ul>
+        </div>
+        <div id="xcWorking">
+          <div class="content video">
+            <div class="play-box">
+              <div id="workingPlayer">
+                <video src="https://example.com/test.mp4" preload="auto"></video>
+              </div>
+            </div>
+          </div>
+        </div>
+      </body>
+      </html>
+    `;
+
+    await page.route("https://www.arenabreakoutinfinite.com/act/a20251028patroller/*", (route) => {
+      route.fulfill({
+        status: 200,
+        contentType: "text/html",
+        body: mockHtml,
+      });
+    });
+
+    await page.goto("https://www.arenabreakoutinfinite.com/act/a20251028patroller/");
+
+    // Setup fullscreen mock before scripts load
+    await page.evaluate(() => {
+      const v = document.querySelector("video");
+      let _paused = true;
+      Object.defineProperty(v, "paused", {
+        get: () => _paused,
+        set: (val) => { _paused = val; },
+        configurable: true,
+      });
+      v.play = async () => { _paused = false; v.dispatchEvent(new Event("play")); };
+      v.pause = () => { _paused = true; v.dispatchEvent(new Event("pause")); };
+
+      let _fsEl = null;
+      Object.defineProperty(document, "fullscreenElement", {
+        get: () => _fsEl,
+        configurable: true,
+      });
+      HTMLElement.prototype.requestFullscreen = async function () {
+        _fsEl = this;
+        document.dispatchEvent(new Event("fullscreenchange"));
+      };
+      document.exitFullscreen = async function () {
+        _fsEl = null;
+        document.dispatchEvent(new Event("fullscreenchange"));
+      };
+    });
+
+    await page.addScriptTag({ path: path.join(__dirname, "..", "abi-inspector-enhancer", "settings.js") });
+    await page.addScriptTag({ path: path.join(__dirname, "..", "abi-inspector-enhancer", "content.js") });
+
+    await page.waitForSelector("abi-local-player", { state: "attached" });
+    await page.waitForSelector("abi-local-controls", { state: "attached" });
+
+    // Initial state: not in fullscreen
+    let fsState = await page.evaluate(() => {
+      const shell = document.querySelector("abi-local-player");
+      const controls = document.querySelector("abi-local-controls");
+      const fsBtn = controls.shadowRoot.querySelector("#fullscreen");
+      return {
+        isFullscreen: document.fullscreenElement === shell,
+        ariaPressed: fsBtn.getAttribute("aria-pressed"),
+      };
+    });
+    assert.equal(fsState.isFullscreen, false, "Initially not fullscreen");
+    assert.equal(fsState.ariaPressed, "false", "Fullscreen button aria-pressed is initially false");
+
+    // 1. Press 'F' key to toggle fullscreen ON
+    await page.keyboard.press("KeyF");
+
+    fsState = await page.evaluate(() => {
+      const shell = document.querySelector("abi-local-player");
+      const controls = document.querySelector("abi-local-controls");
+      const fsBtn = controls.shadowRoot.querySelector("#fullscreen");
+      return {
+        isFullscreen: document.fullscreenElement === shell,
+        ariaPressed: fsBtn.getAttribute("aria-pressed"),
+      };
+    });
+    assert.equal(fsState.isFullscreen, true, "Pressing F key enters fullscreen");
+    assert.equal(fsState.ariaPressed, "true", "Fullscreen button aria-pressed updates to true");
+
+    // 2. Press 'F' key again to toggle fullscreen OFF
+    await page.keyboard.press("KeyF");
+
+    fsState = await page.evaluate(() => {
+      const shell = document.querySelector("abi-local-player");
+      const controls = document.querySelector("abi-local-controls");
+      const fsBtn = controls.shadowRoot.querySelector("#fullscreen");
+      return {
+        isFullscreen: document.fullscreenElement === shell,
+        ariaPressed: fsBtn.getAttribute("aria-pressed"),
+      };
+    });
+    assert.equal(fsState.isFullscreen, false, "Pressing F key again exits fullscreen");
+    assert.equal(fsState.ariaPressed, "false", "Fullscreen button aria-pressed updates to false");
+
+    // 3. Double-click anywhere on the video area to toggle fullscreen ON
+    await page.evaluate(() => {
+      const player = document.querySelector("#workingPlayer");
+      player.dispatchEvent(new MouseEvent("dblclick", { bubbles: true, cancelable: true }));
+    });
+
+    fsState = await page.evaluate(() => {
+      const shell = document.querySelector("abi-local-player");
+      const controls = document.querySelector("abi-local-controls");
+      const fsBtn = controls.shadowRoot.querySelector("#fullscreen");
+      return {
+        isFullscreen: document.fullscreenElement === shell,
+        ariaPressed: fsBtn.getAttribute("aria-pressed"),
+      };
+    });
+    assert.equal(fsState.isFullscreen, true, "Double-clicking video area enters fullscreen");
+    assert.equal(fsState.ariaPressed, "true", "Fullscreen button aria-pressed is true after dblclick");
+
+    // 4. Double-click on video area again to toggle fullscreen OFF
+    await page.evaluate(() => {
+      const player = document.querySelector("#workingPlayer");
+      player.dispatchEvent(new MouseEvent("dblclick", { bubbles: true, cancelable: true }));
+    });
+
+    fsState = await page.evaluate(() => {
+      const shell = document.querySelector("abi-local-player");
+      const controls = document.querySelector("abi-local-controls");
+      const fsBtn = controls.shadowRoot.querySelector("#fullscreen");
+      return {
+        isFullscreen: document.fullscreenElement === shell,
+        ariaPressed: fsBtn.getAttribute("aria-pressed"),
+      };
+    });
+    assert.equal(fsState.isFullscreen, false, "Double-clicking video area again exits fullscreen");
+    assert.equal(fsState.ariaPressed, "false", "Fullscreen button aria-pressed is false after second dblclick");
+
+    // 5. Volume slider thumb styling check
+    const volumeStyles = await page.evaluate(() => {
+      const controls = document.querySelector("abi-local-controls");
+      const style = controls.shadowRoot.querySelector("style")?.textContent;
+      return style || "";
+    });
+    assert.match(volumeStyles, /#volume::-webkit-slider-thumb\s*\{[^}]*width:\s*8px/, "Volume thumb is styled with 8px diameter and vertically centered on track");
+
+  } finally {
+    await browser?.close();
+  }
+});
+
+
 
 
 

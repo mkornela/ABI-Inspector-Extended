@@ -285,6 +285,8 @@ function main() {
     #seek:hover::-webkit-slider-thumb { transform:scale(1.25); }
     #volume { width:55px; }
     #volume::-webkit-slider-runnable-track { height:3px; border:0; border-radius:999px; background:linear-gradient(to right,#b8d66a 0 var(--fill,100%),rgba(255,255,255,0.1) var(--fill,100%) 100%); }
+    #volume::-webkit-slider-thumb { appearance:none; -webkit-appearance:none; width:8px; height:8px; margin-top:-2.5px; border:1px solid #ffffff; border-radius:50%; background:#b8d66a; box-shadow:0 0 5px rgba(184,214,106,0.7); transition:transform .1s ease; }
+    #volume:hover::-webkit-slider-thumb { transform:scale(1.25); }
     #status {
       position: absolute;
       bottom: calc(100% + 14px);
@@ -512,7 +514,7 @@ function main() {
             <dl class="keys-list">
               <div class="keys-row">
                 <dt>Fullscreen</dt>
-                <dd><kbd>F</kbd><span class="keys-detail">Esc exits</span></dd>
+                <dd><kbd>F</kbd><span class="keys-separator">or</span><span class="keys-detail">Double-click</span></dd>
               </div>
               <div class="keys-row">
                 <dt>Reload player</dt>
@@ -1188,15 +1190,28 @@ function main() {
       if (event.target === ui.keysDialog) ui.keysDialog.close();
     });
     on(document, "fullscreenchange", render);
+    const isVideoArea = (target) =>
+      target instanceof Element &&
+      !target.closest(
+        "button, a, input, select, textarea, [role='button'], [role='slider'], abi-local-controls, .abi-case-expiry-badge",
+      );
+
     // Click directly on video screen to toggle play/pause
     on(player, "click", (event) => {
-      if (
-        event.target instanceof Element &&
-        !event.target.closest("button, a, input, select, textarea, [role='button'], [role='slider']")
-      ) {
+      if (isVideoArea(event.target)) {
         togglePlay();
       }
     });
+
+    // Double-click anywhere on the video area toggles fullscreen
+    on(shell, "dblclick", (event) => {
+      if (isVideoArea(event.target)) {
+        event.preventDefault();
+        event.stopPropagation();
+        actions.fullscreen();
+      }
+    });
+    shell.toggleFullscreen = actions.fullscreen;
     // Stops extension button clicks from reaching any delegated page click handler.
     on(host, "click", (event) => event.stopPropagation());
     const playerObserver = new MutationObserver(() => {
