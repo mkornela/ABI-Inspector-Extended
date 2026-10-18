@@ -7,6 +7,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [2.6.15] - 2026-10-18
+
+### Added
+- **Daily Server Reset Countdown Clock:**
+  - Live timer on the Overview card (`#wxMine .abi-stat-today`) displaying a real-time countdown clock until the daily 20-case quota resets (based on the official 05:00 UTC server reset hour).
+  - Clean tactical clock badge (`.abi-today-reset-clock`) with SVG clock icon, tabular digits, and informative hover tooltip.
+  - Fully localized across all 9 supported extension languages.
+  - Added comprehensive automated unit test suite.
+
+---
+
 ## [2.6.14] - 2026-10-18
 
 ### Added

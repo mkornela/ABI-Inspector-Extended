@@ -332,7 +332,7 @@ test("Overview renders live counts and XP, updates without duplicate cards, and 
       return logs;
     }, siteUiSource.slice(siteUiSource.indexOf("  function logExtensionBanner()"), siteUiSource.indexOf("  const HAS_CJK =")));
     assert.ok(
-      loggedMessages.some((m) => m.includes("ABI INSPECTOR EXTENDED") && m.includes("v2.6.14") && m.includes("deem") && m.includes("ACTIVE")),
+      loggedMessages.some((m) => m.includes("ABI INSPECTOR EXTENDED") && m.includes("v2.6.15") && m.includes("deem") && m.includes("ACTIVE")),
       "Console banner is logged with extension name, version, author, and active status"
     );
 
@@ -1059,6 +1059,96 @@ test("Case Log Modal: Today card interaction, dialog opening, verdict logging, f
     await browser?.close();
   }
 });
+
+test("Daily Server Reset Countdown Clock: displays live countdown until daily 20-case quota reset at 05:00 UTC", async (t) => {
+  let playwright;
+  try {
+    playwright = require("playwright");
+  } catch {
+    if (t && typeof t.skip === "function") {
+      t.skip("playwright module is not installed");
+      return;
+    }
+  }
+
+  const browser = await playwright.chromium.launch({
+    headless: true,
+    channel: process.env.ABI_TEST_BROWSER || (process.platform === "win32" ? "msedge" : "chromium"),
+  });
+
+  try {
+    const page = await browser.newPage({ viewport: { width: 1280, height: 900 } });
+
+    await page.setContent(`<!DOCTYPE html><html data-abi-site="on"><head></head><body>
+      <div class="top-nav">
+        <span id="s3_1">Patroller</span>
+        <a id="a3_1">退出登录</a>
+      </div>
+      <div class="main">
+        <ul class="nav">
+          <li id="mine" class="current">数据总览</li>
+          <li id="working">巡查工作台</li>
+          <li id="patrol">巡查挑战</li>
+          <li id="drill">演练</li>
+          <li id="notice">公告</li>
+        </ul>
+      </div>
+      <div id="wxMine" class="content mine">
+        <div class="user">
+          <div class="user-info">
+            <div class="username">Patroller</div>
+            <div class="userid"><span>ID: 998877</span></div>
+            <div class="honor"><span id="level-text">Senior Inspector</span></div>
+            <div class="grade"><span id="exp_level">20</span></div>
+          </div>
+          <div class="user-data">
+            <ul class="statistics">${[500, 30, 420, "88%", 150].map((v) => `<li><strong>${v}</strong></li>`).join("")}</ul>
+          </div>
+        </div>
+      </div>
+    </body></html>`);
+
+    await page.addStyleTag({ path: path.join(root, "layout.css") });
+
+    const siteUiSource = fs.readFileSync(path.join(root, "site-ui.js"), "utf8");
+    await page.evaluate((src) => {
+      window.eval(src);
+    }, siteUiSource);
+
+    await page.waitForTimeout(100);
+
+    // 1. Verify reset clock element presence in Today card
+    const clock = page.locator("#wxMine .abi-today-reset-clock");
+    assert.equal(await clock.count(), 1, "Countdown clock element exists inside Today card");
+
+    // 2. Verify clock icon exists
+    const icon = clock.locator(".abi-reset-clock-icon");
+    assert.equal(await icon.count(), 1, "Clock icon is present inside reset clock");
+
+    // 3. Verify timer text and format
+    const timer = clock.locator(".abi-today-reset-timer");
+    assert.equal(await timer.count(), 1, "Timer text span is present");
+    const timerText = await timer.textContent();
+    assert.ok(timerText.includes("Resets in"), "Timer text starts with 'Resets in'");
+    assert.match(timerText, /Resets in \d{2}:\d{2}:\d{2}/, "Timer format matches 'Resets in HH:MM:SS'");
+
+    // 4. Verify title attribute describes 05:00 UTC daily reset
+    const clockTitle = await clock.getAttribute("title");
+    assert.ok(clockTitle.includes("05:00 UTC"), "Clock title tooltip references 05:00 UTC server reset");
+
+    // 5. Test formatServerResetCountdown math directly via helper
+    const result = await page.evaluate(() => {
+      return typeof window.__abiFormatServerResetCountdown === "function"
+        ? window.__abiFormatServerResetCountdown()
+        : null;
+    });
+    assert.match(result, /^\d{2}:\d{2}:\d{2}$/, "Countdown helper returns valid HH:MM:SS");
+
+  } finally {
+    await browser?.close();
+  }
+});
+
 
 
 

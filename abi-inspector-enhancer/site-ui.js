@@ -80,6 +80,8 @@
       avgDuration: "Avg Duration",
       totalCases: "Total Reviewed",
       searchCasesPlaceholder: "Search by ID, reason, or note...",
+      resetsIn: "Resets in",
+      serverResetTooltip: "Daily quota resets every day at 05:00 UTC",
     },
     de: {
       overview: "Datenübersicht",
@@ -159,6 +161,8 @@
       avgDuration: "Durchschn. Dauer",
       totalCases: "Gesamt geprüft",
       searchCasesPlaceholder: "Suche nach ID, Grund oder Notiz...",
+      resetsIn: "Zurücksetzung in",
+      serverResetTooltip: "Tägliche Quote wird täglich um 05:00 UTC zurückgesetzt",
     },
     ru: {
       overview: "Обзор данных",
@@ -238,6 +242,8 @@
       avgDuration: "Сред. время",
       totalCases: "Всего проверено",
       searchCasesPlaceholder: "Поиск по ID, причине или заметке...",
+      resetsIn: "Сброс через",
+      serverResetTooltip: "Ежедневная квота сбрасывается каждый день в 05:00 UTC",
     },
     fr: {
       overview: "Aperçu des données",
@@ -317,6 +323,8 @@
       avgDuration: "Durée moy.",
       totalCases: "Total inspecté",
       searchCasesPlaceholder: "Recherche par ID, motif ou note...",
+      resetsIn: "Réinitialisation dans",
+      serverResetTooltip: "Le quota quotidien est réinitialisé chaque jour à 05:00 UTC",
     },
     es: {
       overview: "Resumen de datos",
@@ -396,6 +404,8 @@
       avgDuration: "Duración media",
       totalCases: "Total revisados",
       searchCasesPlaceholder: "Buscar por ID, motivo o nota...",
+      resetsIn: "Reinicio en",
+      serverResetTooltip: "La cuota diaria se reinicia todos los días a las 05:00 UTC",
     },
     ja: {
       overview: "データの概要",
@@ -475,6 +485,8 @@
       avgDuration: "平均所要時間",
       totalCases: "総レビュー数",
       searchCasesPlaceholder: "ID、理由、メモで検索...",
+      resetsIn: "リセットまで",
+      serverResetTooltip: "毎日の割当は毎日05:00 UTCにリセットされます",
     },
     "pt-BR": {
       overview: "Visão Geral dos Dados",
@@ -554,6 +566,8 @@
       avgDuration: "Duração Média",
       totalCases: "Total Revisado",
       searchCasesPlaceholder: "Buscar por ID, motivo ou nota...",
+      resetsIn: "Reinicia em",
+      serverResetTooltip: "A cota diária é redefinida diariamente às 05:00 UTC",
     },
     "zh-Hant": {
       overview: "數據總覽",
@@ -633,6 +647,8 @@
       avgDuration: "平均耗時",
       totalCases: "總審查數",
       searchCasesPlaceholder: "依編號、原因或備註搜尋...",
+      resetsIn: "距每日重置",
+      serverResetTooltip: "每日審核配額於每日 05:00 UTC 重置",
     },
     cn: {
       overview: "数据总览",
@@ -712,6 +728,8 @@
       avgDuration: "平均耗时",
       totalCases: "总审查数",
       searchCasesPlaceholder: "按编号、原因或备注搜索...",
+      resetsIn: "距每日重置",
+      serverResetTooltip: "每日巡查配额于每日 05:00 UTC 重置",
     },
   };
 
@@ -982,7 +1000,7 @@
 
   const WATERMARK = `
 ================================================================================
-  ABI INSPECTOR EXTENDED \u2014 v2.6.14
+  ABI INSPECTOR EXTENDED \u2014 v2.6.15
   Enhanced Patroller Interface & Local Playback Controls
   Author: deem (https://github.com/mkornela)
   Status: Extension Loaded & Active
@@ -1028,7 +1046,7 @@
     window.__abiExtendedBannerLogged = true;
     try {
       console.log(
-        "%c ABI INSPECTOR EXTENDED %c v2.6.14 %c deem %c ACTIVE \n%cEnhanced Patroller Interface & Local Playback Controls (https://github.com/mkornela)",
+        "%c ABI INSPECTOR EXTENDED %c v2.6.15 %c deem %c ACTIVE \n%cEnhanced Patroller Interface & Local Playback Controls (https://github.com/mkornela)",
         "background: #d49a37; color: #0b0f11; font-weight: bold; font-family: monospace; border-radius: 3px 0 0 3px; padding: 3px 8px; font-size: 11px;",
         "background: #182226; color: #d49a37; font-weight: bold; font-family: monospace; padding: 3px 8px; font-size: 11px; border-left: 1px solid #2a373c;",
         "background: #222f35; color: #c4d0d0; font-family: monospace; padding: 3px 8px; font-size: 11px; border-left: 1px solid #2a373c;",
@@ -2531,10 +2549,10 @@
   function getExtensionVersion() {
     try {
       if (typeof chrome !== "undefined" && chrome?.runtime?.getManifest) {
-        return chrome.runtime.getManifest()?.version || "2.6.14";
+        return chrome.runtime.getManifest()?.version || "2.6.15";
       }
     } catch {}
-    return "2.6.14";
+    return "2.6.15";
   }
 
   function safeStorageGet(defaults) {
@@ -5005,6 +5023,8 @@
         avgDuration: "Avg Duration",
         totalCases: "Total Reviewed",
         searchCasesPlaceholder: "Search by ID, reason, or note...",
+        resetsIn: "Resets in",
+        serverResetTooltip: "Daily quota resets every day at 05:00 UTC",
       };
       return FALLBACKS[key] || key;
     };
@@ -5218,6 +5238,28 @@
       if (val >= 70) return "warning";
       return "critical";
     };
+
+    const formatServerResetCountdown = () => {
+      const now = new Date();
+      const reset = new Date(Date.UTC(
+        now.getUTCFullYear(),
+        now.getUTCMonth(),
+        now.getUTCDate(),
+        5, 0, 0, 0
+      ));
+      if (now.getTime() >= reset.getTime()) {
+        reset.setUTCDate(reset.getUTCDate() + 1);
+      }
+      const diffMs = Math.max(0, reset.getTime() - now.getTime());
+      const diffSec = Math.floor(diffMs / 1000);
+      const h = String(Math.floor(diffSec / 3600)).padStart(2, "0");
+      const m = String(Math.floor((diffSec % 3600) / 60)).padStart(2, "0");
+      const s = String(diffSec % 60).padStart(2, "0");
+      return `${h}:${m}:${s}`;
+    };
+    if (typeof window !== "undefined") {
+      window.__abiFormatServerResetCountdown = formatServerResetCountdown;
+    }
 
     const recordRows = stats.querySelectorAll(
       ".record #judgePunishRecord > li:not(:first-child)",
@@ -5481,11 +5523,33 @@
         const remaining = document.createElement("span");
         remaining.className = "abi-today-remaining";
 
+        const resetClock = document.createElement("div");
+        resetClock.className = "abi-today-reset-clock";
+        resetClock.title = _t("serverResetTooltip") || "Daily quota resets every day at 05:00 UTC";
+        resetClock.setAttribute("aria-label", "Time until daily quota reset");
+
+        const resetIcon = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+        resetIcon.setAttribute("class", "abi-reset-clock-icon");
+        resetIcon.setAttribute("width", "12");
+        resetIcon.setAttribute("height", "12");
+        resetIcon.setAttribute("viewBox", "0 0 24 24");
+        resetIcon.setAttribute("fill", "none");
+        resetIcon.setAttribute("stroke", "currentColor");
+        resetIcon.setAttribute("stroke-width", "2");
+        resetIcon.setAttribute("stroke-linecap", "round");
+        resetIcon.setAttribute("stroke-linejoin", "round");
+        resetIcon.innerHTML = `<circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline>`;
+
+        const resetTimer = document.createElement("span");
+        resetTimer.className = "abi-today-reset-timer";
+        resetTimer.textContent = `${_t("resetsIn") || "Resets in"} ${formatServerResetCountdown()}`;
+        resetClock.append(resetIcon, resetTimer);
+
         const logHint = document.createElement("span");
         logHint.className = "abi-today-log-hint";
         logHint.innerHTML = `<svg class="abi-log-icon" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line></svg> <span>${_t("viewCaseLog") || "View Case Log"}</span>`;
 
-        wrap.append(ringBox, remaining, logHint);
+        wrap.append(ringBox, remaining, resetClock, logHint);
         todayValues.replaceChildren(wrap);
       } else {
         wrap.setAttribute("role", "button");
@@ -5502,6 +5566,56 @@
           const hintSpan = logHint.querySelector("span");
           if (hintSpan) updateText(hintSpan, _t("viewCaseLog") || "View Case Log");
         }
+        let resetClock = wrap.querySelector(".abi-today-reset-clock");
+        if (!resetClock) {
+          resetClock = document.createElement("div");
+          resetClock.className = "abi-today-reset-clock";
+          resetClock.title = _t("serverResetTooltip") || "Daily quota resets every day at 05:00 UTC";
+          resetClock.setAttribute("aria-label", "Time until daily quota reset");
+
+          const resetIcon = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+          resetIcon.setAttribute("class", "abi-reset-clock-icon");
+          resetIcon.setAttribute("width", "12");
+          resetIcon.setAttribute("height", "12");
+          resetIcon.setAttribute("viewBox", "0 0 24 24");
+          resetIcon.setAttribute("fill", "none");
+          resetIcon.setAttribute("stroke", "currentColor");
+          resetIcon.setAttribute("stroke-width", "2");
+          resetIcon.setAttribute("stroke-linecap", "round");
+          resetIcon.setAttribute("stroke-linejoin", "round");
+          resetIcon.innerHTML = `<circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline>`;
+
+          const resetTimer = document.createElement("span");
+          resetTimer.className = "abi-today-reset-timer";
+          resetTimer.textContent = `${_t("resetsIn") || "Resets in"} ${formatServerResetCountdown()}`;
+          resetClock.append(resetIcon, resetTimer);
+
+          if (logHint) wrap.insertBefore(resetClock, logHint);
+          else wrap.append(resetClock);
+        } else {
+          resetClock.title = _t("serverResetTooltip") || "Daily quota resets every day at 05:00 UTC";
+          const timerSpan = resetClock.querySelector(".abi-today-reset-timer");
+          if (timerSpan) updateText(timerSpan, `${_t("resetsIn") || "Resets in"} ${formatServerResetCountdown()}`);
+        }
+      }
+
+      if (!wrap.dataset.abiResetTimerBound) {
+        wrap.dataset.abiResetTimerBound = "1";
+        const tick = () => {
+          if (!wrap.isConnected) {
+            if (wrap.__abiResetInterval) {
+              clearInterval(wrap.__abiResetInterval);
+              delete wrap.__abiResetInterval;
+            }
+            return;
+          }
+          const timerNode = wrap.querySelector(".abi-today-reset-timer");
+          if (timerNode) {
+            const text = `${_t("resetsIn") || "Resets in"} ${formatServerResetCountdown()}`;
+            if (timerNode.textContent !== text) timerNode.textContent = text;
+          }
+        };
+        wrap.__abiResetInterval = setInterval(tick, 1000);
       }
 
       if (!wrap.dataset.abiBound) {

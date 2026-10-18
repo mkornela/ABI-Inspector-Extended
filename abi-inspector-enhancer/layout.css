@@ -4461,6 +4461,32 @@ html:not([data-abi-site="off"]) {
   #wxMine .abi-today-remaining[data-status="warning"] {
     color: #f0cf65;
   }
+  #wxMine .abi-today-reset-clock {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    margin-top: 4px;
+    font-size: 11px;
+    font-weight: 500;
+    font-variant-numeric: tabular-nums;
+    color: #798582;
+    line-height: 1.2;
+    white-space: nowrap;
+    transition: color 0.18s ease;
+  }
+  #wxMine .abi-today-reset-clock .abi-reset-clock-icon {
+    width: 12px;
+    height: 12px;
+    color: #798582;
+    flex-shrink: 0;
+    transition: color 0.18s ease;
+  }
+  #wxMine .abi-today-wrap:hover .abi-today-reset-clock {
+    color: #a4b3b0;
+  }
+  #wxMine .abi-today-wrap:hover .abi-today-reset-clock .abi-reset-clock-icon {
+    color: #d49a37;
+  }
 
   /* 3. Inspections card (merged) */
   #wxMine .abi-stat-inspections {
