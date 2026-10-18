@@ -7,6 +7,25 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [2.6.5] - 2026-10-18
+
+### Added
+- **Suspect Moment Bookmarks & Timeline Pin Drop (`M` / `B` key):**
+  - Press `M` (or `B` / click `#pinButton` on the timeline control bar) to drop a visual pin on the video timeline at the current playhead position.
+  - Pins render directly on the timeline scrubber track (`.timeline-bar`) as high-contrast amber markers (`.timeline-pin`) positioned precisely by percentage (`(time / duration) * 100%`).
+  - Pin interaction:
+    - Hover preview displays formatted timestamp: `Bookmark at MM:SS (Click to seek, right-click to remove)`.
+    - Clicking any pin seeks playback directly to that exact moment and displays a status toast.
+    - Right-clicking (contextmenu) on a pin removes it from the timeline.
+    - Pressing `M` or `B` again while near an existing bookmark (< 0.5s) toggles and removes it.
+  - Controls & Keyboard layout:
+    - Added dedicated bookmark icon button (`#pinButton`) with SVG icon on the timeline bar next to the duration display.
+    - Added `Drop bookmark / pin` shortcuts documentation (`M` or `B`) to the Video Control Keys modal (`#keysDialog`).
+    - Audio mute remains accessible via the toolbar button (`#mute`) and `Shift+M` keyboard shortcut.
+    - Automatically cleans up bookmark pins when a new video or inspection case loads.
+
+---
+
 ## [2.6.4] - 2026-10-18
 
 ### Added

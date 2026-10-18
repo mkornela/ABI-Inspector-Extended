@@ -44,6 +44,10 @@ function main() {
       viewBox: "0 0 448 512",
       d: "M160 64c0-17.7-14.3-32-32-32s-32 14.3-32 32l0 64-64 0c-17.7 0-32 14.3-32 32s14.3 32 32 32l96 0c17.7 0 32-14.3 32-32l0-96zM32 320c-17.7 0-32 14.3-32 32s14.3 32 32 32l64 0 0 64c0 17.7 14.3 32 32 32s32-14.3 32-32l0-96c0-17.7-14.3-32-32-32l-96 0zM352 64c0-17.7-14.3-32-32-32s-32 14.3-32 32l0 96c0 17.7 14.3 32 32 32l96 0c17.7 0 32-14.3 32-32s-14.3-32-32-32l-64 0 0-64zM320 320c-17.7 0-32 14.3-32 32l0 96c0 17.7 14.3 32 32 32s32-14.3 32-32l0-64 64 0c17.7 0 32-14.3 32-32s-14.3-32-32-32l-96 0z",
     },
+    bookmark: {
+      viewBox: "0 0 384 512",
+      d: "M0 48C0 21.5 21.5 0 48 0l288 0c26.5 0 48 21.5 48 48l0 440c0 9-5 17.2-13 21.3s-17.6 3.4-24.9-1.8L192 397.5 37.9 507.5c-7.3 5.2-16.9 5.9-24.9 1.8S0 497 0 488L0 48z",
+    },
   };
   const styles = `
     :host { display:block; color:var(--abi-text,#e0e3de); font-family:var(--abi-font,"Arial Narrow",sans-serif); font-weight:var(--abi-weight,700); letter-spacing:var(--abi-tracking,0px); color-scheme:dark; }
@@ -53,7 +57,39 @@ function main() {
     button { display:inline-flex; align-items:center; justify-content:center; gap:7px; }
     #mute { width:34px; padding:0; }
     .panel { padding:0 16px 12px; background:linear-gradient(180deg,#13191c 0%,#0d1113 100%); border:1px solid rgba(255,255,255,0.08); border-top:0; border-radius:0 0 10px 10px; box-shadow:0 8px 24px rgba(0,0,0,0.4); }
-    .timeline { display:flex; align-items:center; gap:16px; height:38px; }
+    .timeline { display:flex; align-items:center; gap:12px; height:38px; }
+    .timeline-bar { position:relative; flex:1 1 0; display:flex; align-items:center; height:100%; min-width:0; }
+    .timeline-pins { position:absolute; inset:0; pointer-events:none; }
+    .timeline-pin {
+      position:absolute;
+      top:50%;
+      transform:translate(-50%, -50%);
+      width:6px;
+      height:14px;
+      background:#f59e0b;
+      border:1px solid #ffffff;
+      border-radius:2px;
+      cursor:pointer;
+      pointer-events:auto;
+      z-index:3;
+      box-shadow:0 0 4px rgba(245,158,11,0.8);
+      transition:transform .1s ease, background .15s ease;
+    }
+    .timeline-pin:hover {
+      transform:translate(-50%, -50%) scale(1.3);
+      background:#fbbf24;
+      box-shadow:0 0 8px rgba(251,191,36,1);
+    }
+    #pinButton {
+      width:30px;
+      height:30px;
+      padding:0;
+      color:#f59e0b;
+    }
+    #pinButton:hover {
+      color:#fbbf24;
+      border-color:rgba(245,158,11,0.4);
+    }
     .time { font-size:13px; font-variant-numeric:tabular-nums; white-space:nowrap; min-width:90px; text-align:right; color:#8fa09d; font-weight:700; letter-spacing:0.02em; }
     .panel { container-type:inline-size; }
     .row { display:grid; grid-template-columns:1fr auto 1fr; align-items:center; column-gap:14px; row-gap:8px; }
@@ -305,7 +341,14 @@ function main() {
     panel.setAttribute("aria-label", "ABI local video controls");
     // Static extension-owned markup only. Never copy page content or media URLs.
     panel.innerHTML = `
-      <div class="timeline"><input id="seek" type="range" min="0" max="1" step="0.01" value="0" aria-label="Video position"><span class="time" id="time">00:00 / --:--</span></div>
+      <div class="timeline">
+        <div class="timeline-bar">
+          <input id="seek" type="range" min="0" max="1" step="0.01" value="0" aria-label="Video position">
+          <div id="timelinePins" class="timeline-pins"></div>
+        </div>
+        <button id="pinButton" title="Drop moment bookmark (M)" aria-label="Drop moment bookmark (M)">Bookmark</button>
+        <span class="time" id="time">00:00 / --:--</span>
+      </div>
       <div class="row">
         <div class="left"><div class="group" role="group" aria-label="Playback"><button id="play" class="primary" title="Play / Pause (Space or K)">Play</button></div></div>
         <div class="center">
@@ -314,7 +357,7 @@ function main() {
           <div class="group" role="group" aria-label="Playback speed"><span class="label" aria-hidden="true">Speed</span><button id="slower" title="Slower ([)" aria-label="Slower playback ([)">−</button><button id="speedval" title="Reset to 1× (\)" aria-label="Playback speed. Click to reset to 1×">1×</button><button id="faster" title="Faster (])" aria-label="Faster playback (])">+</button></div>
         </div>
         <div class="right">
-          <div class="group" role="group" aria-label="Audio"><button id="mute" title="Mute (M)" aria-pressed="false">Mute</button><input id="volume" type="range" min="0" max="1" step="0.01" value="1" aria-label="Volume"></div>
+          <div class="group" role="group" aria-label="Audio"><button id="mute" title="Mute (Shift+M or icon)" aria-pressed="false">Mute</button><input id="volume" type="range" min="0" max="1" step="0.01" value="1" aria-label="Volume"></div>
           <div class="group" role="group" aria-label="View">
             <button id="keysButton" title="Show video control keys" aria-label="Show video control keys">
               <svg class="icon keyboard-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
@@ -347,12 +390,16 @@ function main() {
                 <dt>Play / pause</dt>
                 <dd><kbd>SPACE</kbd><span class="keys-separator">or</span><kbd>K</kbd></dd>
               </div>
-              <div class="keys-row"><dt>Mute / unmute</dt><dd><kbd>M</kbd></dd></div>
+              <div class="keys-row"><dt>Mute / unmute</dt><dd><kbd>Shift+M</kbd><span class="keys-detail">or icon</span></dd></div>
             </dl>
           </section>
           <section class="keys-group" aria-labelledby="keysReviewTitle">
             <h3 id="keysReviewTitle">Review</h3>
             <dl class="keys-list">
+              <div class="keys-row">
+                <dt>Drop bookmark / pin</dt>
+                <dd><kbd>M</kbd><span class="keys-separator">or</span><kbd>B</kbd></dd>
+              </div>
               <div class="keys-row">
                 <dt>Back 5 seconds</dt>
                 <dd><kbd>J</kbd><span class="keys-separator">or</span><kbd>←</kbd></dd>
@@ -452,7 +499,8 @@ function main() {
       "",
       "Next approximate frame (period)",
     );
-    decorate(ui.mute, "volume-high", "", "Mute (M)");
+    decorate(ui.mute, "volume-high", "", "Mute (Shift+M or icon)");
+    decorate(ui.pinButton, "bookmark", "", "Drop moment bookmark (M)");
     player.before(shell);
     // Keep the complete original subtree together, including all overlays.
     // Modern Chromium supports a state-preserving DOM move.
@@ -464,6 +512,7 @@ function main() {
     let mediaLife = null;
     let video = null;
     let noticeTimer;
+    let bookmarks = [];
     const on = (el, name, fn) =>
       el.addEventListener(name, fn, { signal: life.signal });
     const notice = (message) => {
@@ -475,6 +524,57 @@ function main() {
     };
     const finite = () =>
       video && Number.isFinite(video.duration) && video.duration > 0;
+    function renderPins() {
+      if (!ui.timelinePins) return;
+      ui.timelinePins.replaceChildren();
+      if (!finite()) return;
+      const duration = video.duration;
+      for (const time of bookmarks) {
+        const percent = Math.max(0, Math.min(100, (time / duration) * 100));
+        const pin = document.createElement("div");
+        pin.className = "timeline-pin";
+        pin.style.left = `${percent}%`;
+        pin.title = `Bookmark at ${format(time)} (Click to seek, right-click to remove)`;
+        pin.setAttribute("role", "button");
+        pin.setAttribute("tabindex", "0");
+        pin.setAttribute("aria-label", `Bookmark at ${format(time)}`);
+        pin.dataset.time = String(time);
+        pin.addEventListener("click", (e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          seek(time);
+          notice(`Jumped to bookmark at ${format(time)}`);
+        });
+        pin.addEventListener("contextmenu", (e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          const idx = bookmarks.indexOf(time);
+          if (idx !== -1) {
+            bookmarks.splice(idx, 1);
+            notice(`Removed bookmark at ${format(time)}`);
+            renderPins();
+          }
+        });
+        ui.timelinePins.append(pin);
+      }
+    }
+    function toggleBookmark() {
+      if (!finite()) {
+        notice("Seeking unavailable until the video is ready");
+        return;
+      }
+      const current = Number((video?.currentTime || 0).toFixed(2));
+      const existingIndex = bookmarks.findIndex((t) => Math.abs(t - current) < 0.5);
+      if (existingIndex !== -1) {
+        const removed = bookmarks.splice(existingIndex, 1)[0];
+        notice(`Removed bookmark at ${format(removed)}`);
+      } else {
+        bookmarks.push(current);
+        bookmarks.sort((a, b) => a - b);
+        notice(`Bookmark dropped at ${format(current)} (M)`);
+      }
+      renderPins();
+    }
     function selectVideo() {
       const scope = player || shell || document;
       const allVideos = [...scope.querySelectorAll("video")];
@@ -556,6 +656,11 @@ function main() {
                 delete video.dataset.abiUserPlayed;
                 delete video.dataset.abiAutoplayed;
                 delete video.dataset.abiSpeedInitialized;
+                bookmarks = [];
+                renderPins();
+              }
+              if (event.type === "durationchange") {
+                renderPins();
               }
               if (
                 event.type === "play" &&
@@ -574,10 +679,11 @@ function main() {
     }
     function render() {
       const ready = finite();
-      for (const id of ["play", "slower", "speedval", "faster", "mute", "volume"])
-        ui[id].disabled = !video;
+      for (const id of ["play", "slower", "speedval", "faster", "mute", "volume", "pinButton"])
+        if (ui[id]) ui[id].disabled = !video;
       for (const id of [
         "seek",
+        "pinButton",
         "back10",
         "back5",
         "forward5",
@@ -585,7 +691,7 @@ function main() {
         "previous",
         "next",
       ])
-        ui[id].disabled = !ready;
+        if (ui[id]) ui[id].disabled = !ready;
       const paused = !video || video.paused;
       decorate(
         ui.play,
@@ -618,7 +724,7 @@ function main() {
           ui.mute,
           video.muted || video.volume === 0 ? "volume-xmark" : "volume-high",
           "",
-          `${video.muted ? "Unmute" : "Mute"} (M)`,
+          `${video.muted ? "Unmute" : "Mute"} (Shift+M or icon)`,
         );
         ui.mute.setAttribute("aria-pressed", String(video.muted));
         const rate = video.playbackRate;
@@ -731,15 +837,17 @@ function main() {
           render();
         }
       },
+      pinButton: toggleBookmark,
       fullscreen,
     };
     for (const [id, fn] of Object.entries(actions))
-      on(ui[id], "click", (event) => {
-        event?.preventDefault?.();
-        event?.stopPropagation?.();
-        selectVideo();
-        fn();
-      });
+      if (ui[id])
+        on(ui[id], "click", (event) => {
+          event?.preventDefault?.();
+          event?.stopPropagation?.();
+          selectVideo();
+          fn();
+        });
     on(ui.seek, "input", () => seek(Number(ui.seek.value)));
     on(ui.volume, "input", () => {
       if (video) {
@@ -821,6 +929,24 @@ function main() {
             return;
           }
         }
+        if (event.key.toLowerCase() === "m") {
+          if (event.shiftKey) {
+            event.preventDefault();
+            event.stopImmediatePropagation();
+            actions.mute();
+            return;
+          }
+          event.preventDefault();
+          event.stopImmediatePropagation();
+          toggleBookmark();
+          return;
+        }
+        if (event.key.toLowerCase() === "b") {
+          event.preventDefault();
+          event.stopImmediatePropagation();
+          toggleBookmark();
+          return;
+        }
         const keys = {
           " ": "play",
           k: "play",
@@ -830,7 +956,6 @@ function main() {
           ArrowRight: "forward5",
           ",": "previous",
           ".": "next",
-          m: "mute",
           f: "fullscreen",
           "[": "slower",
           "]": "faster",

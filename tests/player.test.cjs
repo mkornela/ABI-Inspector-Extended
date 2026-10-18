@@ -299,3 +299,190 @@ test("Video does not auto-play when autoPlay setting is off", async (t) => {
   }
 });
 
+test("Suspect Moment Bookmarks / Pin Drop: drops pin with M key, renders on timeline, seeks on click, and removes on right-click", async (t) => {
+  let playwright;
+  try {
+    playwright = require("playwright");
+  } catch {
+    if (t && typeof t.skip === "function") {
+      t.skip("playwright module is not installed");
+      return;
+    }
+  }
+  const { chromium } = playwright;
+  let browser;
+  try {
+    browser = await chromium.launch({
+      headless: true,
+      channel: process.env.ABI_TEST_BROWSER || (process.platform === "win32" ? "msedge" : "chromium"),
+    });
+    const context = await browser.newContext();
+    const page = await context.newPage();
+
+    const mockHtml = `
+      <!DOCTYPE html>
+      <html data-abi-site="on" data-abi-auto-play="off">
+      <head>
+        <style>
+          .content.video { width: 800px; height: 500px; }
+          .play-box { width: 100%; height: 100%; }
+          #workingPlayer { width: 100%; height: 100%; }
+          video { width: 100%; height: 100%; }
+        </style>
+      </head>
+      <body>
+        <div class="main">
+          <ul class="nav">
+            <li id="working" class="current"><span>Workbench</span></li>
+          </ul>
+        </div>
+        <div id="xcWorking">
+          <div class="content video">
+            <div class="play-box">
+              <div id="workingPlayer">
+                <video src="https://example.com/test.mp4" preload="auto"></video>
+              </div>
+            </div>
+          </div>
+        </div>
+      </body>
+      </html>
+    `;
+
+    await page.route("https://www.arenabreakoutinfinite.com/act/a20251028patroller/*", (route) => {
+      route.fulfill({
+        status: 200,
+        contentType: "text/html",
+        body: mockHtml,
+      });
+    });
+
+    await page.goto("https://www.arenabreakoutinfinite.com/act/a20251028patroller/");
+
+    await page.evaluate(() => {
+      const v = document.querySelector("video");
+      let _paused = true;
+      let _currentTime = 15;
+      let _duration = 60;
+      Object.defineProperty(v, "paused", {
+        get: () => _paused,
+        set: (val) => { _paused = val; },
+        configurable: true,
+      });
+      Object.defineProperty(v, "currentTime", {
+        get: () => _currentTime,
+        set: (val) => {
+          _currentTime = val;
+          v.dispatchEvent(new Event("timeupdate"));
+        },
+        configurable: true,
+      });
+      Object.defineProperty(v, "duration", {
+        get: () => _duration,
+        set: (val) => { _duration = val; },
+        configurable: true,
+      });
+      v.play = async () => {
+        _paused = false;
+        v.dispatchEvent(new Event("play"));
+      };
+      v.pause = () => {
+        _paused = true;
+        v.dispatchEvent(new Event("pause"));
+      };
+    });
+
+    await page.addScriptTag({ path: path.join(__dirname, "..", "abi-inspector-enhancer", "settings.js") });
+    await page.addScriptTag({ path: path.join(__dirname, "..", "abi-inspector-enhancer", "content.js") });
+
+    await page.waitForSelector("abi-local-player", { state: "attached" });
+    await page.waitForSelector("abi-local-controls", { state: "attached" });
+
+    // 1. Drop pin at currentTime = 15s using M key
+    await page.keyboard.press("m");
+
+    let pinData = await page.evaluate(() => {
+      const controls = document.querySelector("abi-local-controls");
+      const pins = controls.shadowRoot.querySelectorAll(".timeline-pin");
+      return Array.from(pins).map((pin) => ({
+        left: pin.style.left,
+        title: pin.title,
+        time: pin.dataset.time,
+      }));
+    });
+
+    assert.equal(pinData.length, 1, "Should have dropped 1 bookmark pin");
+    assert.equal(pinData[0].left, "25%", "Pin at 15s in a 60s video should be at 25%");
+    assert.match(pinData[0].title, /00:15/, "Pin title should contain timestamp 00:15");
+
+    // 2. Advance time to 30s and drop another pin using the toolbar pin button
+    await page.evaluate(() => {
+      const v = document.querySelector("video");
+      v.currentTime = 30;
+      const controls = document.querySelector("abi-local-controls");
+      controls.shadowRoot.querySelector("#pinButton").click();
+    });
+
+    pinData = await page.evaluate(() => {
+      const controls = document.querySelector("abi-local-controls");
+      const pins = controls.shadowRoot.querySelectorAll(".timeline-pin");
+      return Array.from(pins).map((pin) => ({
+        left: pin.style.left,
+        title: pin.title,
+        time: pin.dataset.time,
+      }));
+    });
+
+    assert.equal(pinData.length, 2, "Should have 2 pins after clicking #pinButton");
+    assert.equal(pinData[1].left, "50%", "Pin at 30s in a 60s video should be at 50%");
+
+    // 3. Click the first pin to seek back to 15s
+    await page.evaluate(() => {
+      const v = document.querySelector("video");
+      v.currentTime = 45; // Move playhead elsewhere
+      const controls = document.querySelector("abi-local-controls");
+      const firstPin = controls.shadowRoot.querySelector(".timeline-pin");
+      firstPin.click();
+    });
+
+    const currentTimeAfterPinClick = await page.evaluate(() => document.querySelector("video").currentTime);
+    assert.equal(currentTimeAfterPinClick, 15, "Clicking pin seeks playhead directly to 15s");
+
+    // 4. Right-click the first pin to remove it
+    await page.evaluate(() => {
+      const controls = document.querySelector("abi-local-controls");
+      const firstPin = controls.shadowRoot.querySelector(".timeline-pin");
+      firstPin.dispatchEvent(new MouseEvent("contextmenu", { bubbles: true, cancelable: true }));
+    });
+
+    pinData = await page.evaluate(() => {
+      const controls = document.querySelector("abi-local-controls");
+      const pins = controls.shadowRoot.querySelectorAll(".timeline-pin");
+      return Array.from(pins).map((pin) => ({
+        left: pin.style.left,
+        time: pin.dataset.time,
+      }));
+    });
+
+    assert.equal(pinData.length, 1, "Should have 1 pin remaining after right-click removal");
+    assert.equal(pinData[0].time, "30", "Remaining pin should be the 30s pin");
+
+    // 5. Press M while at 30s to toggle/remove it
+    await page.evaluate(() => {
+      const v = document.querySelector("video");
+      v.currentTime = 30;
+    });
+    await page.keyboard.press("m");
+
+    const finalPinCount = await page.evaluate(() => {
+      const controls = document.querySelector("abi-local-controls");
+      return controls.shadowRoot.querySelectorAll(".timeline-pin").length;
+    });
+    assert.equal(finalPinCount, 0, "Pressing M near bookmark toggles it off");
+
+  } finally {
+    await browser?.close();
+  }
+});
+
+
