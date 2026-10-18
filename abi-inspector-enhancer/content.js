@@ -68,45 +68,60 @@ function main() {
     :host(.abi-hud-hidden) { opacity:0 !important; pointer-events:none !important; cursor:none !important; transition:opacity 0.35s ease !important; }
     :host(.abi-hud-hidden) * { cursor:none !important; }
     .icon { width:14px; height:14px; fill:currentColor; flex:none; pointer-events:none; }
-    button { display:inline-flex; align-items:center; justify-content:center; gap:7px; }
-    #mute { width:34px; padding:0; }
-    .panel { position:relative; padding:0 16px 12px; background:linear-gradient(180deg,#13191c 0%,#0d1113 100%); border:1px solid rgba(255,255,255,0.08); border-top:0; border-radius:0 0 10px 10px; box-shadow:0 8px 24px rgba(0,0,0,0.4); }
-    .timeline { display:flex; align-items:center; gap:12px; height:38px; }
-    .timeline-bar { position:relative; flex:1 1 0; display:flex; align-items:center; height:100%; min-width:0; }
-    .timeline-pins { position:absolute; inset:0; pointer-events:none; }
+    button { display:inline-flex; align-items:center; justify-content:center; gap:6px; }
+
+    /* Single Row Panel with Top-Edge Scrubber */
+    .panel {
+      position: relative;
+      padding: 0 14px 10px;
+      background: linear-gradient(180deg,#13191c 0%,#0d1113 100%);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-top: 0;
+      border-radius: 0 0 10px 10px;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.4);
+      container-type: inline-size;
+    }
+
+    /* Top-Edge Sleek Scrubber */
+    .timeline {
+      display: flex;
+      align-items: center;
+      height: 22px;
+      margin-bottom: 4px;
+      position: relative;
+    }
+    .timeline-bar {
+      position: relative;
+      flex: 1 1 0;
+      display: flex;
+      align-items: center;
+      height: 100%;
+      min-width: 0;
+    }
+    .timeline-pins { position: absolute; inset: 0; pointer-events: none; }
     .timeline-pin {
-      position:absolute;
-      top:50%;
-      transform:translate(-50%, -50%);
-      width:6px;
-      height:14px;
-      background:var(--abi-pin-color,#f59e0b);
-      border:1px solid #ffffff;
-      border-radius:2px;
-      cursor:pointer;
-      pointer-events:auto;
-      z-index:3;
-      box-shadow:0 0 4px var(--abi-pin-glow,rgba(245,158,11,0.8));
-      transition:transform .1s ease, background .15s ease;
+      position: absolute;
+      top: 50%;
+      transform: translate(-50%, -50%);
+      width: 6px;
+      height: 14px;
+      background: var(--abi-pin-color,#f59e0b);
+      border: 1px solid #ffffff;
+      border-radius: 2px;
+      cursor: pointer;
+      pointer-events: auto;
+      z-index: 3;
+      box-shadow: 0 0 4px var(--abi-pin-glow,rgba(245,158,11,0.8));
+      transition: transform .1s ease, background .15s ease;
     }
     .timeline-pin:hover {
-      transform:translate(-50%, -50%) scale(1.3);
-      background:var(--abi-accent,#fbbf24);
-      box-shadow:0 0 8px var(--abi-accent-glow,rgba(251,191,36,1));
-    }
-    #pinButton {
-      width:30px;
-      height:30px;
-      padding:0;
-      color:var(--abi-pin-color,#f59e0b);
-    }
-    #pinButton:hover {
-      color:var(--abi-accent,#fbbf24);
-      border-color:var(--abi-accent-glow,rgba(245,158,11,0.4));
+      transform: translate(-50%, -50%) scale(1.3);
+      background: var(--abi-accent,#fbbf24);
+      box-shadow: 0 0 8px var(--abi-accent-glow,rgba(251,191,36,1));
     }
     .hover-badge {
       position: absolute;
-      bottom: calc(100% + 6px);
+      bottom: calc(100% + 4px);
       left: 0;
       transform: translateX(-50%);
       background: #111719;
@@ -139,146 +154,281 @@ function main() {
       opacity: 1;
       visibility: visible;
     }
-    .time { font-size:13px; font-variant-numeric:tabular-nums; white-space:nowrap; min-width:96px; text-align:right; color:#8fa09d; font-weight:700; letter-spacing:0.02em; cursor:pointer; user-select:none; padding:2px 4px; border-radius:4px; transition:color .15s ease, background .15s ease; }
-    .time:hover { color:#ffffff; background:rgba(255,255,255,0.06); }
-    .time:focus-visible { outline:1px solid #e66b4e; outline-offset:2px; }
-    .panel { container-type:inline-size; }
-    .row { display:grid; grid-template-columns:1fr auto 1fr; align-items:center; column-gap:14px; row-gap:8px; }
-    .left { justify-self:start; display:flex; align-items:center; }
-    .center { display:flex; align-items:center; justify-content:center; flex-wrap:wrap; gap:6px 18px; }
-    .right { justify-self:end; display:flex; align-items:center; gap:12px; }
-    .group { display:flex; align-items:center; gap:4px; }
-    .label { font-size:11px; font-weight:800; letter-spacing:0.08em; text-transform:uppercase; padding:0 4px; color:#8fa09d; user-select:none; }
+
+    /* Single Controls Row */
+    .row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      width: 100%;
+    }
+    .left {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      flex: 0 0 auto;
+    }
+    .center {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      flex: 0 1 auto;
+    }
+    .right {
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      gap: 7px;
+      flex: 0 0 auto;
+    }
+    .group {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    /* Timecode Display */
+    .time {
+      font-size: 13px;
+      font-variant-numeric: tabular-nums;
+      white-space: nowrap;
+      color: #8fa09d;
+      font-weight: 700;
+      letter-spacing: 0.02em;
+      cursor: pointer;
+      user-select: none;
+      padding: 3px 6px;
+      border-radius: 4px;
+      border: 1px solid transparent;
+      transition: color .15s ease, background .15s ease, border-color .15s ease;
+    }
+    .time:hover {
+      color: #ffffff;
+      background: rgba(255,255,255,0.06);
+      border-color: rgba(255,255,255,0.1);
+    }
+    .time:focus-visible { outline: 1px solid #e66b4e; outline-offset: 2px; }
+
+    /* Center Frames Control */
+    .frames-control {
+      display: inline-flex;
+      align-items: center;
+      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 5px;
+      padding: 1px;
+      gap: 1px;
+    }
+    .frames-control button {
+      width: 26px;
+      height: 26px;
+      padding: 0;
+      border: 0;
+      background: transparent;
+      border-radius: 4px;
+      color: #a0adaa;
+    }
+    .frames-control button:hover {
+      background: rgba(255,255,255,0.1);
+      color: #ffffff;
+      transform: none;
+    }
+    .frames-badge {
+      font-size: 10.5px;
+      font-weight: 800;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      padding: 0 6px;
+      color: #8fa09d;
+      user-select: none;
+    }
+
+    /* Button Styles */
+    button {
+      font: inherit;
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.03em;
+      text-transform: uppercase;
+      height: 30px;
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 4px;
+      color: #c5cec9;
+      background: rgba(255,255,255,0.04);
+      padding: 0 8px;
+      cursor: pointer;
+      white-space: nowrap;
+      box-shadow: none;
+      transition: all .15s ease;
+    }
+    button:hover {
+      border-color: rgba(255,255,255,0.22);
+      background: rgba(255,255,255,0.09);
+      color: #ffffff;
+      transform: translateY(-1px);
+    }
+    button:active { transform: translateY(0); }
+    button[aria-pressed=true] {
+      color: var(--abi-accent,#e66b4e);
+      border-color: var(--abi-accent,#e66b4e);
+      background: rgba(var(--abi-accent-rgb,230,107,78),0.12);
+    }
+
+    .primary {
+      width: 38px;
+      height: 32px;
+      padding: 0;
+      color: #ffffff;
+      border: 1.5px solid var(--abi-accent,#d95338);
+      background: linear-gradient(135deg,rgba(var(--abi-accent-rgb,217,83,56),0.3),rgba(var(--abi-accent-rgb,160,42,22),0.45));
+      border-radius: 6px;
+      box-shadow: 0 2px 10px var(--abi-accent-glow,rgba(195,71,45,0.35));
+    }
+    .primary:hover {
+      border-color: var(--abi-accent-hover,#ff684a);
+      background: linear-gradient(135deg,rgba(var(--abi-accent-rgb,230,107,78),0.45),rgba(var(--abi-accent-rgb,195,71,45),0.6));
+      box-shadow: 0 4px 14px var(--abi-accent-glow,rgba(195,71,45,0.5));
+    }
+
+    #back10, #back5, #forward5, #forward10 {
+      padding: 0 7px;
+      font-size: 11px;
+      font-variant-numeric: tabular-nums;
+    }
+
+    /* Remade Speed Control & Popup Menu */
+    .speed-control-wrap {
+      position: relative;
+    }
+    #speedval {
+      min-width: 46px;
+      padding: 0 8px;
+      text-transform: none;
+      background: rgba(255,255,255,0.06);
+      border-color: rgba(255,255,255,0.12);
+      color: #e0e3de;
+      font-weight: 800;
+      font-variant-numeric: tabular-nums;
+      border-radius: 5px;
+    }
+    #speedval:hover {
+      border-color: rgba(255,255,255,0.25);
+      background: rgba(255,255,255,0.1);
+    }
+    #speedval.changed {
+      color: var(--abi-accent, #b8d66a);
+      border-color: var(--abi-accent, #b8d66a);
+      background: rgba(var(--abi-accent-rgb, 184,214,106), 0.14);
+      box-shadow: 0 0 8px var(--abi-accent-glow, rgba(184,214,106,0.3));
+    }
+
+    .speed-menu {
+      position: absolute;
+      bottom: calc(100% + 8px);
+      right: 0;
+      background: #111719;
+      border: 1px solid var(--abi-border, rgba(255,255,255,0.16));
+      border-radius: 8px;
+      padding: 10px;
+      box-shadow: 0 12px 36px rgba(0,0,0,0.85);
+      z-index: 60;
+      min-width: 176px;
+      backdrop-filter: blur(8px);
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      animation: abi-fade-in .15s ease-out;
+    }
+    .speed-menu[hidden] {
+      display: none !important;
+    }
+    @keyframes abi-fade-in {
+      from { opacity: 0; transform: translateY(4px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .speed-menu-title {
+      font-size: 11px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: #8fa09d;
+      margin-bottom: 2px;
+      padding-inline: 2px;
+    }
+    .speed-menu-presets {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 4px;
+    }
+    .speed-menu-opt {
+      height: 26px;
+      padding: 0 4px;
+      font-size: 11px;
+      font-weight: 700;
+      font-variant-numeric: tabular-nums;
+      text-transform: none;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 4px;
+      color: #c5cec9;
+    }
+    .speed-menu-opt:hover {
+      background: rgba(255,255,255,0.12);
+      border-color: rgba(255,255,255,0.22);
+      color: #ffffff;
+      transform: none;
+    }
+    .speed-menu-opt.active {
+      color: #ffffff;
+      background: rgba(var(--abi-accent-rgb, 217, 83, 56), 0.25);
+      border-color: var(--abi-accent, #d95338);
+      font-weight: 800;
+      box-shadow: 0 0 6px var(--abi-accent-glow, rgba(217,83,56,0.4));
+    }
+    .speed-menu-stepper {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 6px;
+      padding-top: 6px;
+      border-top: 1px solid rgba(255,255,255,0.08);
+    }
+    .speed-step-btn {
+      flex: 1 1 0;
+      height: 26px;
+      padding: 0;
+      font-size: 13px;
+      font-weight: 800;
+    }
+    .speed-step-label {
+      font-size: 10px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: #6d7d7b;
+      white-space: nowrap;
+    }
+
+    /* Right Group Action Buttons */
+    #mute, #fullscreen, #reload, #previous, #next, #pinButton, #gamma {
+      width: 30px;
+      height: 30px;
+      padding: 0;
+    }
+    #pinButton {
+      color: var(--abi-pin-color,#f59e0b);
+    }
+    #pinButton:hover {
+      color: var(--abi-accent,#fbbf24);
+      border-color: var(--abi-accent-glow,rgba(245,158,11,0.4));
+    }
     #gamma.active {
-      color:#fbbf24;
-      border-color:rgba(245,158,11,0.5);
-      background:rgba(245,158,11,0.15);
+      color: #fbbf24;
+      border-color: rgba(245,158,11,0.5);
+      background: rgba(245,158,11,0.15);
     }
-    #keysButton { gap:6px; }
-    .keyboard-icon {
-      fill:none;
-      stroke:currentColor;
-      stroke-width:1.5;
-      stroke-linecap:round;
-      stroke-linejoin:round;
-    }
-    #keysDialog {
-      width:min(620px,calc(100vw - 28px));
-      max-width:620px;
-      max-height:min(82vh,700px);
-      margin:auto;
-      padding:0;
-      overflow:auto;
-      border:1px solid var(--abi-border,#41494b);
-      border-top:2px solid var(--abi-accent,#c3472d);
-      border-radius:0;
-      color:var(--abi-text,#e0e3de);
-      background:#111719;
-      box-shadow:0 24px 72px #000b;
-    }
-    #keysDialog::backdrop {
-      background:#050809d9;
-      backdrop-filter:blur(2px);
-    }
-    .keys-head {
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      gap:16px;
-      padding:17px 20px 14px;
-      border-bottom:1px solid #ffffff16;
-    }
-    .keys-head h2 {
-      margin:4px 0 0;
-      color:var(--abi-text,#e0e3de);
-      font-size:21px;
-      font-weight:700;
-      letter-spacing:.04em;
-      text-transform:uppercase;
-    }
-    .keys-close {
-      flex:0 0 34px;
-      width:34px;
-      height:34px;
-      padding:0;
-      border-color:var(--abi-border,#41494b);
-      font-size:22px;
-      line-height:1;
-    }
-    .keys-grid {
-      display:grid;
-      grid-template-columns:repeat(2,minmax(0,1fr));
-      gap:20px 26px;
-      padding:18px 20px;
-    }
-    .keys-group h3 {
-      margin:0 0 8px;
-      color:#aab1af;
-      font-size:11px;
-      letter-spacing:.1em;
-      text-transform:uppercase;
-    }
-    .keys-list { display:grid; gap:6px; margin:0; }
-    .keys-row {
-      display:grid;
-      grid-template-columns:minmax(0,1fr) auto;
-      align-items:center;
-      gap:10px;
-      min-height:24px;
-      padding-bottom:5px;
-      border-bottom:1px solid #ffffff12;
-    }
-    .keys-row:last-child { padding-bottom:0; border-bottom:0; }
-    .keys-row dt { color:#d2d8d3; font-size:13px; line-height:1.25; }
-    .keys-row dd {
-      display:flex;
-      align-items:center;
-      justify-content:flex-end;
-      gap:5px;
-      margin:0;
-      white-space:nowrap;
-    }
-    .keys-row kbd {
-      min-width:24px;
-      padding:3px 6px;
-      border:1px solid var(--abi-border,#41494b);
-      background:#192024;
-      color:#f0f1ec;
-      font:inherit;
-      font-size:11px;
-      font-weight:700;
-      line-height:1.1;
-      text-align:center;
-    }
-    .keys-separator,.keys-detail { color:#929a9b; font-size:10px; }
-    .keys-note { margin:4px 0 0; color:#929a9b; font-size:11px; line-height:1.45; }
-    .keys-note strong { color:#d2d8d3; font-weight:700; }
-    .keys-foot {
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      gap:14px;
-      padding:12px 20px;
-      border-top:1px solid #ffffff16;
-      background:#0e1214;
-    }
-    .keys-foot p { margin:0; color:#929a9b; font-size:11px; line-height:1.4; }
-    .keys-done { flex:0 0 auto; min-width:76px; color:var(--abi-accent,#c3472d); }
-    @media(max-width:560px) {
-      .keys-grid { grid-template-columns:1fr; gap:14px; padding:16px; }
-      .keys-head,.keys-foot { padding-inline:16px; }
-    }
-    @container (max-width:860px) {
-      .row { grid-template-columns:1fr auto; }
-      .center { grid-column:1 / -1; grid-row:2; }
-    }
-    button { font:inherit; font-size:12px; font-weight:700; letter-spacing:0.04em; text-transform:uppercase; height:30px; border:1px solid rgba(255,255,255,0.08); border-radius:4px; color:#c5cec9; background:rgba(255,255,255,0.04); padding:0 9px; cursor:pointer; white-space:nowrap; box-shadow:none; transition:all .15s ease; }
-    button:hover { border-color:rgba(255,255,255,0.22); background:rgba(255,255,255,0.09); color:#ffffff; transform:translateY(-1px); }
-    button:active { transform:translateY(0); }
-    button[aria-pressed=true] { color:var(--abi-accent,#e66b4e); border-color:var(--abi-accent,#e66b4e); background:rgba(var(--abi-accent-rgb,230,107,78),0.12); }
-    .primary { width:36px; height:32px; padding:0; color:#ffffff; border:1.5px solid var(--abi-accent,#d95338); background:linear-gradient(135deg,rgba(var(--abi-accent-rgb,217,83,56),0.3),rgba(var(--abi-accent-rgb,160,42,22),0.45)); border-radius:6px; box-shadow:0 2px 10px var(--abi-accent-glow,rgba(195,71,45,0.35)); }
-    .primary:hover { border-color:var(--abi-accent-hover,#ff684a); background:linear-gradient(135deg,rgba(var(--abi-accent-rgb,230,107,78),0.45),rgba(var(--abi-accent-rgb,195,71,45),0.6)); box-shadow:0 4px 14px var(--abi-accent-glow,rgba(195,71,45,0.5)); }
-    #previous,#next,#fullscreen,#slower,#faster,#reload { width:30px; height:30px; padding:0; }
     #reload.spinning .icon {
       animation: abi-reload-spin .6s cubic-bezier(0.4, 0, 0.2, 1);
     }
@@ -286,9 +436,7 @@ function main() {
       from { transform: rotate(0deg); }
       to { transform: rotate(360deg); }
     }
-    #mute { width:32px; height:30px; padding:0; }
-    #speedval { min-width:44px; padding:0 6px; text-transform:none; background:rgba(255,255,255,0.06); border-color:rgba(255,255,255,0.12); color:#e0e3de; font-weight:800; }
-    #speedval.changed { color:#b8d66a; border-color:#b8d66a; background:rgba(184,214,106,0.14); box-shadow:0 0 8px rgba(184,214,106,0.3); }
+
     button:disabled,input:disabled { opacity:.35; cursor:default; }
     :focus-visible { outline:1px solid var(--abi-text,#e0e3de); outline-offset:2px; }
     input[type=range] { appearance:none; -webkit-appearance:none; height:18px; margin:0; padding:0; border:0; background:transparent; cursor:pointer; min-width:0; border-radius:0; }
@@ -296,10 +444,11 @@ function main() {
     #seek::-webkit-slider-runnable-track { height:4px; border:0; border-radius:999px; background:linear-gradient(to right,var(--abi-track-fill,#e66b4e) 0 var(--fill,0%),rgba(255,255,255,0.08) var(--fill,0%) 100%); box-shadow:0 0 6px var(--abi-track-glow,rgba(230,107,78,0.3)); }
     #seek::-webkit-slider-thumb { appearance:none; -webkit-appearance:none; width:12px; height:12px; margin-top:-4px; border:2px solid #ffffff; border-radius:50%; background:var(--abi-track-fill,#e66b4e); box-shadow:0 0 8px var(--abi-track-glow,rgba(230,107,78,0.8)); transition:transform .1s ease; }
     #seek:hover::-webkit-slider-thumb { transform:scale(1.25); }
-    #volume { width:55px; }
+    #volume { width:52px; }
     #volume::-webkit-slider-runnable-track { height:3px; border:0; border-radius:999px; background:linear-gradient(to right,#b8d66a 0 var(--fill,100%),rgba(255,255,255,0.1) var(--fill,100%) 100%); }
     #volume::-webkit-slider-thumb { appearance:none; -webkit-appearance:none; width:8px; height:8px; margin-top:-2.5px; border:1px solid #ffffff; border-radius:50%; background:#b8d66a; box-shadow:0 0 5px rgba(184,214,106,0.7); transition:transform .1s ease; }
     #volume:hover::-webkit-slider-thumb { transform:scale(1.25); }
+
     #status {
       position: absolute;
       bottom: calc(100% + 14px);
@@ -332,7 +481,22 @@ function main() {
       transform: translateX(-50%) translateY(-2px);
     }
     #status:empty { display: none; }
-    @media(max-width:600px) { .panel { padding-inline:8px; } button { padding-inline:6px; font-size:14px; } .group { padding-inline:6px; } }
+
+    @container (max-width: 820px) {
+      .row { gap: 6px; }
+      #back10, #forward10 { display: none; }
+      #volume { width: 40px; }
+    }
+    @container (max-width: 650px) {
+      .center { gap: 6px; }
+      .frames-badge { display: none; }
+      #volume { display: none; }
+    }
+    @media(max-width:600px) {
+      .panel { padding-inline:8px; }
+      button { padding-inline:6px; font-size:11px; }
+      .group { padding-inline:2px; }
+    }
   `;
   let instance = null;
   let queued = false;
@@ -513,139 +677,51 @@ function main() {
           <div id="timelinePins" class="timeline-pins"></div>
           <div id="hoverBadge" class="hover-badge" aria-hidden="true">00:00</div>
         </div>
-        <button id="pinButton" title="Drop moment bookmark (M)" aria-label="Drop moment bookmark (M)">Bookmark</button>
-        <span class="time" id="time" role="button" tabindex="0" title="Click to toggle millisecond precision">00:00 / --:--</span>
       </div>
       <div class="row">
-        <div class="left"><div class="group" role="group" aria-label="Playback"><button id="play" class="primary" title="Play / Pause (Space or K)">Play</button></div></div>
+        <div class="left">
+          <div class="group" role="group" aria-label="Playback"><button id="play" class="primary" title="Play / Pause (Space or K)">Play</button></div>
+          <div class="group seek-group" role="group" aria-label="Seek"><button id="back10" title="Back 10 seconds">−10s</button><button id="back5" title="Back 5 seconds (J or Left)">−5s</button><button id="forward5" title="Forward 5 seconds (L or Right)">+5s</button><button id="forward10" title="Forward 10 seconds">+10s</button></div>
+        </div>
         <div class="center">
-          <div class="group" role="group" aria-label="Seek"><button id="back10" title="Back 10 seconds">−10s</button><button id="back5" title="Back 5 seconds (J or Left)">−5s</button><button id="forward5" title="Forward 5 seconds (L or Right)">+5s</button><button id="forward10" title="Forward 10 seconds">+10s</button></div>
-          <div class="group" role="group" aria-label="Frame stepping"><button id="previous" title="Previous approximate frame (comma)">Previous frame</button><span class="label" aria-hidden="true">Frames</span><button id="next" title="Next approximate frame (period)">Next frame</button></div>
-          <div class="group" role="group" aria-label="Playback speed"><span class="label" aria-hidden="true">Speed</span><button id="slower" title="Slower ([)" aria-label="Slower playback ([)">−</button><button id="speedval" title="Reset to 1× (\)" aria-label="Playback speed. Click to reset to 1×">1×</button><button id="faster" title="Faster (])" aria-label="Faster playback (])">+</button></div>
+          <span class="time" id="time" role="button" tabindex="0" title="Click to toggle millisecond precision">00:00 / --:--</span>
+          <div class="frames-control" role="group" aria-label="Frame stepping">
+            <button id="previous" title="Previous frame (,)" aria-label="Previous frame (comma)"></button>
+            <span class="frames-badge" aria-hidden="true">Frames</span>
+            <button id="next" title="Next frame (.)" aria-label="Next frame (period)"></button>
+          </div>
         </div>
         <div class="right">
-          <div class="group" role="group" aria-label="Audio"><button id="mute" title="Mute (Shift+M or icon)" aria-pressed="false">Mute</button><input id="volume" type="range" min="0" max="1" step="0.01" value="1" aria-label="Volume"></div>
-          <div class="group" role="group" aria-label="View">
+          <div class="speed-control-wrap" id="speedControlWrap">
+            <button id="speedval" class="speed-pill" title="Playback speed (click for presets, \\ to reset)" aria-label="Playback speed" aria-haspopup="true" aria-expanded="false">1×</button>
+            <div id="speedMenu" class="speed-menu" role="menu" aria-label="Playback speed presets" hidden>
+              <div class="speed-menu-title">Playback Speed</div>
+              <div class="speed-menu-presets">
+                <button type="button" class="speed-menu-opt" data-speed="0.25">0.25×</button>
+                <button type="button" class="speed-menu-opt" data-speed="0.5">0.5×</button>
+                <button type="button" class="speed-menu-opt" data-speed="0.75">0.75×</button>
+                <button type="button" class="speed-menu-opt" data-speed="1">1.0×</button>
+                <button type="button" class="speed-menu-opt" data-speed="1.25">1.25×</button>
+                <button type="button" class="speed-menu-opt" data-speed="1.5">1.5×</button>
+                <button type="button" class="speed-menu-opt" data-speed="2">2.0×</button>
+              </div>
+              <div class="speed-menu-stepper">
+                <button id="slower" class="speed-step-btn" title="Slower ([)" aria-label="Slower playback ([)">−</button>
+                <span class="speed-step-label">Fine Tune</span>
+                <button id="faster" class="speed-step-btn" title="Faster (])" aria-label="Faster playback (])">+</button>
+              </div>
+            </div>
+          </div>
+          <div class="group volume-group" role="group" aria-label="Audio"><button id="mute" title="Mute (Shift+M or icon)" aria-pressed="false">Mute</button><input id="volume" type="range" min="0" max="1" step="0.01" value="1" aria-label="Volume"></div>
+          <div class="group tool-group" role="group" aria-label="Tools">
+            <button id="pinButton" title="Drop moment bookmark (M)" aria-label="Drop moment bookmark (M)">Bookmark</button>
             <button id="gamma" title="Shadow & Gamma Boost (G)" aria-label="Shadow & Gamma Boost (G)">Gamma</button>
             <button id="reload" title="Reload player" aria-label="Reload player">Reload</button>
-            <button id="keysButton" title="Show video control keys" aria-label="Show video control keys">
-              <svg class="icon keyboard-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
-                <rect x="2.75" y="5.25" width="18.5" height="13.5" rx="1" />
-                <path d="M6 9h.1M10 9h.1M14 9h.1M18 9h.1M6 12h.1M10 12h.1M14 12h.1M18 12h.1M8 15.5h8" />
-              </svg>
-              Keys
-            </button>
             <button id="fullscreen" title="Fullscreen (F); Escape to exit" aria-pressed="false">Fullscreen</button>
           </div>
         </div>
       </div>
-      <div id="status" role="status" aria-live="polite"></div>
-      <dialog
-        id="keysDialog"
-        role="dialog"
-        aria-modal="true"
-        aria-labelledby="keysTitle"
-        aria-describedby="keysHelp"
-      >
-        <header class="keys-head">
-          <div><h2 id="keysTitle">Video control keys</h2></div>
-          <button id="keysClose" class="keys-close" type="button" aria-label="Close keyboard shortcuts" autofocus>×</button>
-        </header>
-        <div class="keys-grid">
-          <section class="keys-group" aria-labelledby="keysPlaybackTitle">
-            <h3 id="keysPlaybackTitle">Playback</h3>
-            <dl class="keys-list">
-              <div class="keys-row">
-                <dt>Play / pause</dt>
-                <dd><kbd>SPACE</kbd><span class="keys-separator">or</span><kbd>K</kbd></dd>
-              </div>
-              <div class="keys-row"><dt>Mute / unmute</dt><dd><kbd>Shift+M</kbd><span class="keys-detail">or icon</span></dd></div>
-            </dl>
-          </section>
-          <section class="keys-group" aria-labelledby="keysReviewTitle">
-            <h3 id="keysReviewTitle">Review</h3>
-            <dl class="keys-list">
-              <div class="keys-row">
-                <dt>Drop bookmark / pin</dt>
-                <dd><kbd>M</kbd><span class="keys-separator">or</span><kbd>B</kbd></dd>
-              </div>
-              <div class="keys-row">
-                <dt>Back 5 seconds</dt>
-                <dd><kbd>J</kbd><span class="keys-separator">or</span><kbd>←</kbd></dd>
-              </div>
-              <div class="keys-row">
-                <dt>Forward 5 seconds</dt>
-                <dd><kbd>L</kbd><span class="keys-separator">or</span><kbd>→</kbd></dd>
-              </div>
-              <div class="keys-row"><dt>Previous frame</dt><dd><kbd>,</kbd></dd></div>
-              <div class="keys-row"><dt>Next frame</dt><dd><kbd>.</kbd></dd></div>
-            </dl>
-            <p class="keys-note">
-              <strong>Toolbar only:</strong> use −10s / +10s to skip farther.
-            </p>
-          </section>
-          <section class="keys-group" aria-labelledby="keysSpeedTitle">
-            <h3 id="keysSpeedTitle">Playback speed</h3>
-            <dl class="keys-list">
-              <div class="keys-row"><dt>Slower</dt><dd><kbd>[</kbd></dd></div>
-              <div class="keys-row"><dt>Faster</dt><dd><kbd>]</kbd></dd></div>
-              <div class="keys-row">
-                <dt>Reset to 1×</dt>
-                <dd><kbd>\\</kbd></dd>
-              </div>
-            </dl>
-          </section>
-          <section class="keys-group" aria-labelledby="keysViewTitle">
-            <h3 id="keysViewTitle">View</h3>
-            <dl class="keys-list">
-              <div class="keys-row">
-                <dt>Tactical loupe (2.5× zoom)</dt>
-                <dd><kbd>Hold Z</kbd><span class="keys-separator">or</span><span class="keys-detail">Right-click hold</span></dd>
-              </div>
-              <div class="keys-row">
-                <dt>Shadow & Gamma Boost</dt>
-                <dd><kbd>G</kbd><span class="keys-separator">or</span><span class="keys-detail">Toolbar button</span></dd>
-              </div>
-              <div class="keys-row">
-                <dt>Fullscreen</dt>
-                <dd><kbd>F</kbd><span class="keys-separator">or</span><span class="keys-detail">Double-click</span></dd>
-              </div>
-              <div class="keys-row">
-                <dt>Reload player</dt>
-                <dd><span class="keys-detail">Toolbar button</span></dd>
-              </div>
-              <div class="keys-row">
-                <dt>Toggle milliseconds</dt>
-                <dd><span class="keys-detail">Click time display</span></dd>
-              </div>
-            </dl>
-          </section>
-          <section class="keys-group" aria-labelledby="keysVerdictTitle">
-            <h3 id="keysVerdictTitle">Quick Verdicts (Workbench)</h3>
-            <dl class="keys-list">
-              <div class="keys-row">
-                <dt>Violation</dt>
-                <dd><kbd>1</kbd><span class="keys-separator">or</span><kbd>V</kbd></dd>
-              </div>
-              <div class="keys-row">
-                <dt>Uncertain</dt>
-                <dd><kbd>2</kbd><span class="keys-separator">or</span><kbd>U</kbd></dd>
-              </div>
-              <div class="keys-row">
-                <dt>No violation</dt>
-                <dd><kbd>3</kbd><span class="keys-separator">or</span><kbd>I</kbd></dd>
-              </div>
-            </dl>
-          </section>
-        </div>
-        <footer class="keys-foot">
-          <p id="keysHelp">
-            Shortcuts pause while typing or focused on a control. Focus a slider
-            and use ← / → to adjust it.
-          </p>
-          <button id="keysDone" class="keys-done" type="button">Done</button>
-        </footer>
-      </dialog>`;
+      <div id="status" role="status" aria-live="polite"></div>`;
     shadow.append(panel);
     const ui = Object.fromEntries(
       [...panel.querySelectorAll("[id]")].map((el) => [el.id, el]),
@@ -1078,7 +1154,7 @@ function main() {
       if (
         t instanceof Element &&
         t.closest(
-          ".popup, .dialog, .modal, .patrol-popup, [id*='Popup'], [id*='popup'], ._close-btn, .close-btn, .btn1, .btn2, .btn3, .btn4, #btn1, #btn2, #btn3, [data-dismiss='modal'], .abi-today-wrap, #keysButton, #keysClose, #keysDone"
+          ".popup, .dialog, .modal, .patrol-popup, [id*='Popup'], [id*='popup'], ._close-btn, .close-btn, .btn1, .btn2, .btn3, .btn4, #btn1, #btn2, #btn3, [data-dismiss='modal'], .abi-today-wrap"
         )
       ) {
         modalTransitionUntil = Date.now() + 2000;
@@ -1670,7 +1746,8 @@ function main() {
       reload: reloadVideo,
       fullscreen,
     };
-    for (const [id, fn] of Object.entries(actions))
+    for (const [id, fn] of Object.entries(actions)) {
+      if (id === "speedval") continue;
       if (ui[id])
         on(ui[id], "click", (event) => {
           event?.preventDefault?.();
@@ -1678,6 +1755,7 @@ function main() {
           selectVideo();
           fn();
         });
+    }
     function updateHoverBadge(e) {
       if (!finite() || !ui.hoverBadge) return;
       const rect = ui.seek.getBoundingClientRect();
@@ -1747,11 +1825,64 @@ function main() {
         render();
       }
     });
-    on(ui.keysButton, "click", () => ui.keysDialog.showModal());
-    on(ui.keysClose, "click", () => ui.keysDialog.close());
-    on(ui.keysDone, "click", () => ui.keysDialog.close());
-    on(ui.keysDialog, "click", (event) => {
-      if (event.target === ui.keysDialog) ui.keysDialog.close();
+    function toggleSpeedMenu(force) {
+      if (!ui.speedMenu) return;
+      const willOpen = typeof force === "boolean" ? force : ui.speedMenu.hidden;
+      ui.speedMenu.hidden = !willOpen;
+      ui.speedval?.setAttribute("aria-expanded", String(willOpen));
+      if (willOpen) {
+        updateSpeedMenuSelection();
+      }
+    }
+
+    function updateSpeedMenuSelection() {
+      if (!ui.speedMenu) return;
+      const currentRate = video ? Number(video.playbackRate.toFixed(2)) : 1;
+      ui.speedMenu.querySelectorAll(".speed-menu-opt").forEach((opt) => {
+        const rate = Number(opt.dataset.speed);
+        opt.classList.toggle("active", Math.abs(rate - currentRate) < 0.01);
+      });
+    }
+
+    if (ui.speedval) {
+      on(ui.speedval, "click", (e) => {
+        e?.preventDefault?.();
+        e?.stopPropagation?.();
+        toggleSpeedMenu();
+      });
+    }
+
+    if (ui.speedMenu) {
+      ui.speedMenu.querySelectorAll(".speed-menu-opt").forEach((opt) => {
+        on(opt, "click", (e) => {
+          e?.preventDefault?.();
+          e?.stopPropagation?.();
+          const rate = Number(opt.dataset.speed);
+          if (Number.isFinite(rate) && rate > 0) {
+            setSpeed(rate);
+            notice(`Speed: ${rate}×`);
+            toggleSpeedMenu(false);
+          }
+        });
+      });
+    }
+
+    on(host, "click", (e) => {
+      if (ui.speedMenu && !ui.speedMenu.hidden && !ui.speedControlWrap?.contains(e.target)) {
+        toggleSpeedMenu(false);
+      }
+    });
+
+    on(window, "click", () => {
+      if (ui.speedMenu && !ui.speedMenu.hidden) {
+        toggleSpeedMenu(false);
+      }
+    });
+
+    on(window, "keydown", (e) => {
+      if (e.key === "Escape" && ui.speedMenu && !ui.speedMenu.hidden) {
+        toggleSpeedMenu(false);
+      }
     });
 
     const togglePrecision = (event) => {

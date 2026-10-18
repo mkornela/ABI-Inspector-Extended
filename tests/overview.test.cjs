@@ -332,7 +332,7 @@ test("Overview renders live counts and XP, updates without duplicate cards, and 
       return logs;
     }, siteUiSource.slice(siteUiSource.indexOf("  function logExtensionBanner()"), siteUiSource.indexOf("  const HAS_CJK =")));
     assert.ok(
-      loggedMessages.some((m) => m.includes("ABI INSPECTOR EXTENDED") && m.includes("v2.6.19") && m.includes("deem") && m.includes("ACTIVE")),
+      loggedMessages.some((m) => m.includes("ABI INSPECTOR EXTENDED") && m.includes("v3.0.0") && m.includes("deem") && m.includes("ACTIVE")),
       "Console banner is logged with extension name, version, author, and active status"
     );
 
@@ -1052,7 +1052,46 @@ test("Case Log Modal: Today card interaction, dialog opening, verdict logging, f
     assert.equal(await page.locator(".abi-case-log-empty").count(), 1, "Empty state displayed after clearing log");
     assert.equal(await page.locator(".abi-log-metric[data-metric='total'] .abi-log-metric-val").textContent(), "0", "Total count reset to 0");
 
-    // 9. Close dialog
+    // 9. Verify button clicks do NOT log a case until the daily done count increments
+    await page.evaluate(() => {
+      window.__abiNotifyDailyDoneCount(5);
+      const btn1 = document.createElement("button");
+      btn1.id = "patrolButton1";
+      document.body.appendChild(btn1);
+      btn1.click();
+    });
+    let currentLog = await page.evaluate(async () => await window.__abiGetCaseLog());
+    assert.equal(currentLog.length, 0, "No case logged on button click while daily count is unchanged");
+    assert.equal(await page.evaluate(() => window.__abiGetPendingCaseVerdict()?.verdict), "no_violation");
+
+    // Click Uncertain button on the same inspection
+    await page.evaluate(() => {
+      const btn2 = document.createElement("button");
+      btn2.id = "patrolButton2";
+      document.body.appendChild(btn2);
+      btn2.click();
+    });
+    currentLog = await page.evaluate(async () => await window.__abiGetCaseLog());
+    assert.equal(currentLog.length, 0, "Still no case logged after switching verdict button");
+    assert.equal(await page.evaluate(() => window.__abiGetPendingCaseVerdict()?.verdict), "uncertain");
+
+    // Daily count goes up from 5 to 6
+    await page.evaluate(() => {
+      window.__abiNotifyDailyDoneCount(6);
+    });
+    currentLog = await page.evaluate(async () => await window.__abiGetCaseLog());
+    assert.equal(currentLog.length, 1, "Exactly 1 case logged when daily done count goes up");
+    assert.equal(currentLog[0].verdict, "uncertain", "Logged case has the final pending verdict");
+    assert.equal(await page.evaluate(() => window.__abiGetPendingCaseVerdict()), null, "Pending verdict cleared after logging");
+
+    // Calling again with same count does not create duplicate
+    await page.evaluate(() => {
+      window.__abiNotifyDailyDoneCount(6);
+    });
+    currentLog = await page.evaluate(async () => await window.__abiGetCaseLog());
+    assert.equal(currentLog.length, 1, "No duplicate case logged when count stays the same");
+
+    // 10. Close dialog
     await page.locator(".abi-case-log-close").click();
     assert.equal(await dialog.getAttribute("hidden"), "", "Dialog hidden after clicking close button");
   } finally {
@@ -1060,7 +1099,7 @@ test("Case Log Modal: Today card interaction, dialog opening, verdict logging, f
   }
 });
 
-test("Daily Server Reset Countdown Clock: displays live countdown until daily 20-case quota reset at 05:00 UTC", async (t) => {
+test("Daily Server Reset Countdown Clock: displays live countdown until daily 20-case quota reset at 00:00 UTC", async (t) => {
   let playwright;
   try {
     playwright = require("playwright");
@@ -1132,9 +1171,9 @@ test("Daily Server Reset Countdown Clock: displays live countdown until daily 20
     assert.ok(timerText.includes("Resets in"), "Timer text starts with 'Resets in'");
     assert.match(timerText, /Resets in \d{2}:\d{2}:\d{2}/, "Timer format matches 'Resets in HH:MM:SS'");
 
-    // 4. Verify title attribute describes 05:00 UTC daily reset
+    // 4. Verify title attribute describes 00:00 UTC daily reset
     const clockTitle = await clock.getAttribute("title");
-    assert.ok(clockTitle.includes("05:00 UTC"), "Clock title tooltip references 05:00 UTC server reset");
+    assert.ok(clockTitle.includes("00:00 UTC"), "Clock title tooltip references 00:00 UTC server reset");
 
     // 5. Test formatServerResetCountdown math directly via helper
     const result = await page.evaluate(() => {

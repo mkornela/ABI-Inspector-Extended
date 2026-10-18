@@ -81,7 +81,7 @@
       totalCases: "Total Reviewed",
       searchCasesPlaceholder: "Search by ID, reason, or note...",
       resetsIn: "Resets in",
-      serverResetTooltip: "Daily quota resets every day at 05:00 UTC",
+      serverResetTooltip: "Daily quota resets every day at 00:00 UTC",
       hudAccentColor: "HUD Accent Color",
       hudAccentDesc: "Tactical color theme for player controls, progress bars, and pins",
       accentAmber: "Amber",
@@ -92,6 +92,13 @@
       leaveGuardDesc: "Prompt confirmation before closing or reloading the tab during an active case inspection so you don't lose progress",
       autoHideHudLabel: "Fullscreen auto-hide clean HUD",
       autoHideHudDesc: "Fade out controls and cursor during fullscreen playback after 2.5s of inactivity. Wakes instantly on mouse movement",
+      keybinds: "Keybinds",
+      keybindsHeading: "Keybinds & Shortcuts",
+      keybindsDesc: "Quick tactical hotkeys for rapid video analysis, review navigation, and case verdicts",
+      playbackKeys: "Playback & Speed",
+      navigationKeys: "Timeline & Review Navigation",
+      investigationKeys: "Investigation & View Tools",
+      verdictKeys: "Quick Verdicts (Workbench)",
     },
     de: {
       overview: "Datenübersicht",
@@ -172,7 +179,7 @@
       totalCases: "Gesamt geprüft",
       searchCasesPlaceholder: "Suche nach ID, Grund oder Notiz...",
       resetsIn: "Zurücksetzung in",
-      serverResetTooltip: "Tägliche Quote wird täglich um 05:00 UTC zurückgesetzt",
+      serverResetTooltip: "Tägliche Quote wird täglich um 00:00 UTC zurückgesetzt",
       hudAccentColor: "HUD-Akzentfarbe",
       hudAccentDesc: "Taktisches Farbthema für Steuerung, Fortschrittsbalken und Pins",
       accentAmber: "Bernstein",
@@ -183,6 +190,13 @@
       leaveGuardDesc: "Vor dem Schließen oder Neuladen des Tabs während einer aktiven Fallprüfung um Bestätigung bitten",
       autoHideHudLabel: "Sauberes Vollbild-HUD mit automatischem Ausblenden",
       autoHideHudDesc: "Steuerelemente und Mauszeiger bei Vollbildwiedergabe nach 2,5 s Inaktivität ausblenden. Erscheint bei Mausbewegung sofort wieder",
+      keybinds: "Tastenbelegung",
+      keybindsHeading: "Tastaturkürzel & Tastenbelegung",
+      keybindsDesc: "Schnelle taktische Hotkeys für Videoanalyse, Überprüfungsnavigation und Urteile",
+      playbackKeys: "Wiedergabe & Geschwindigkeit",
+      navigationKeys: "Zeitleiste & Navigation",
+      investigationKeys: "Ermittlungs- & Anzeigetools",
+      verdictKeys: "Schnellurteile (Werkbank)",
     },
     ru: {
       overview: "Обзор данных",
@@ -263,7 +277,7 @@
       totalCases: "Всего проверено",
       searchCasesPlaceholder: "Поиск по ID, причине или заметке...",
       resetsIn: "Сброс через",
-      serverResetTooltip: "Ежедневная квота сбрасывается каждый день в 05:00 UTC",
+      serverResetTooltip: "Ежедневная квота сбрасывается каждый день в 00:00 UTC",
       hudAccentColor: "Цвет акцента HUD",
       hudAccentDesc: "Тактическая цветовая схема элементов управления, шкал и меток",
       accentAmber: "Янтарь",
@@ -274,6 +288,13 @@
       leaveGuardDesc: "Запрашивать подтверждение перед закрытием или обновлением вкладки во время активного расследования",
       autoHideHudLabel: "Автоскрытие HUD в полноэкранном режиме",
       autoHideHudDesc: "Скрывать элементы управления и курсор во время полноэкранного воспроизведения через 2,5 сек бездействия. Мгновенно пробуждается при движении мыши",
+      keybinds: "Горячие клавиши",
+      keybindsHeading: "Горячие клавиши и управление",
+      keybindsDesc: "Быстрые тактические клавиши для анализа видео, навигации и вердиктов",
+      playbackKeys: "Воспроизведение и скорость",
+      navigationKeys: "Таймлайн и навигация",
+      investigationKeys: "Инструменты расследования и обзора",
+      verdictKeys: "Быстрые вердикты (Верстак)",
     },
     fr: {
       overview: "Aperçu des données",
@@ -354,7 +375,7 @@
       totalCases: "Total inspecté",
       searchCasesPlaceholder: "Recherche par ID, motif ou note...",
       resetsIn: "Réinitialisation dans",
-      serverResetTooltip: "Le quota quotidien est réinitialisé chaque jour à 05:00 UTC",
+      serverResetTooltip: "Le quota quotidien est réinitialisé chaque jour à 00:00 UTC",
       hudAccentColor: "Couleur d'accent du HUD",
       hudAccentDesc: "Thème de couleur tactique pour les contrôles, barres de progression et repères",
       accentAmber: "Ambre",
@@ -365,6 +386,13 @@
       leaveGuardDesc: "Demander confirmation avant de fermer ou recharger l'onglet pendant une inspection active",
       autoHideHudLabel: "Masquage automatique du HUD en plein écran",
       autoHideHudDesc: "Estomper les contrôles et le curseur en plein écran après 2,5 s d'inactivité. Réapparaît instantanément au mouvement de la souris",
+      keybinds: "Raccourcis",
+      keybindsHeading: "Raccourcis clavier & Commandes",
+      keybindsDesc: "Touches tactiques rapides pour l'analyse vidéo, la navigation et les verdicts",
+      playbackKeys: "Lecture & Vitesse",
+      navigationKeys: "Chronologie & Navigation",
+      investigationKeys: "Outils d'enquête & d'affichage",
+      verdictKeys: "Verdicts rapides (Établi)",
     },
     es: {
       overview: "Resumen de datos",
@@ -445,7 +473,7 @@
       totalCases: "Total revisados",
       searchCasesPlaceholder: "Buscar por ID, motivo o nota...",
       resetsIn: "Reinicio en",
-      serverResetTooltip: "La cuota diaria se reinicia todos los días a las 05:00 UTC",
+      serverResetTooltip: "La cuota diaria se reinicia todos los días a las 00:00 UTC",
       hudAccentColor: "Color de acento del HUD",
       hudAccentDesc: "Tema de color táctico para controles, barras de progreso y pines",
       accentAmber: "Ámbar",
@@ -456,6 +484,13 @@
       leaveGuardDesc: "Pedir confirmación antes de cerrar o recargar la pestaña durante una inspección activa",
       autoHideHudLabel: "Ocultación automática del HUD en pantalla completa",
       autoHideHudDesc: "Ocultar controles y cursor en pantalla completa tras 2,5 s de inactividad. Reaparece al instante al mover el ratón",
+      keybinds: "Atajos",
+      keybindsHeading: "Atajos de teclado y Controles",
+      keybindsDesc: "Teclas tácticas rápidas para análisis de video, navegación y veredictos",
+      playbackKeys: "Reproducción y Velocidad",
+      navigationKeys: "Línea de tiempo y Navegación",
+      investigationKeys: "Herramientas de investigación y visualización",
+      verdictKeys: "Veredictos rápidos (Mesa de trabajo)",
     },
     ja: {
       overview: "データの概要",
@@ -536,7 +571,7 @@
       totalCases: "総レビュー数",
       searchCasesPlaceholder: "ID、理由、メモで検索...",
       resetsIn: "リセットまで",
-      serverResetTooltip: "毎日の割当は毎日05:00 UTCにリセットされます",
+      serverResetTooltip: "毎日の割当は毎日00:00 UTCにリセットされます",
       hudAccentColor: "HUDアクセントカラー",
       hudAccentDesc: "コントロール、進行状況バー、ピンの戦術カラーテーマ",
       accentAmber: "アンバー",
@@ -547,6 +582,13 @@
       leaveGuardDesc: "アクティブなケース調査中にタブを閉じたり再読み込みする前に確認を表示します",
       autoHideHudLabel: "全画面クリーンHUD自動非表示",
       autoHideHudDesc: "全画面再生中に2.5秒間操作がない場合、コントロールとカーソルを非表示にします。マウス操作で即座に再表示されます",
+      keybinds: "キー設定",
+      keybindsHeading: "キーボードショートカット一覧",
+      keybindsDesc: "動画の分析、コマ送り、判定入力のためのクイックショートカットキー",
+      playbackKeys: "再生と速度",
+      navigationKeys: "タイムラインとコマ送り",
+      investigationKeys: "調査・表示ツール",
+      verdictKeys: "クイック判定（作業台）",
     },
     "pt-BR": {
       overview: "Visão Geral dos Dados",
@@ -627,7 +669,7 @@
       totalCases: "Total Revisado",
       searchCasesPlaceholder: "Buscar por ID, motivo ou nota...",
       resetsIn: "Reinicia em",
-      serverResetTooltip: "A cota diária é redefinida diariamente às 05:00 UTC",
+      serverResetTooltip: "A cota diária é redefinida diariamente às 00:00 UTC",
       hudAccentColor: "Cor de destaque do HUD",
       hudAccentDesc: "Tema de cor tática para controles, barras de progresso e marcadores",
       accentAmber: "Âmbar",
@@ -638,6 +680,13 @@
       leaveGuardDesc: "Solicitar confirmação antes de fechar ou recarregar a guia durante uma inspeção ativa",
       autoHideHudLabel: "Ocultação automática do HUD em tela cheia",
       autoHideHudDesc: "Ocultar controles e cursor durante a reprodução em tela cheia após 2,5 s de inatividade. Reaparece ao mover o mouse",
+      keybinds: "Atalhos",
+      keybindsHeading: "Atalhos de teclado e Controles",
+      keybindsDesc: "Teclas táticas rápidas para análise de vídeo, navegação e vereditos",
+      playbackKeys: "Reprodução e Velocidade",
+      navigationKeys: "Linha do tempo e Navegação",
+      investigationKeys: "Ferramentas de investigação e visualização",
+      verdictKeys: "Vereditos rápidos (Bancada)",
     },
     "zh-Hant": {
       overview: "數據總覽",
@@ -718,7 +767,7 @@
       totalCases: "總審查數",
       searchCasesPlaceholder: "依編號、原因或備註搜尋...",
       resetsIn: "距每日重置",
-      serverResetTooltip: "每日審核配額於每日 05:00 UTC 重置",
+      serverResetTooltip: "每日審核配額於每日 00:00 UTC 重置",
       hudAccentColor: "HUD強調色",
       hudAccentDesc: "播放器控制欄、進度條與標記點的戰術色彩主題",
       accentAmber: "琥珀金",
@@ -729,6 +778,13 @@
       leaveGuardDesc: "在正在審核案件時，關閉或刷新頁面前提示確認，防止意外丟失進度",
       autoHideHudLabel: "全螢幕自動隱藏沉浸HUD",
       autoHideHudDesc: "全螢幕播放時無滑鼠操作2.5秒後自動隱藏控制欄與游標，晃動滑鼠立即喚醒恢復",
+      keybinds: "快捷鍵",
+      keybindsHeading: "鍵盤快捷鍵與控制",
+      keybindsDesc: "用於影片檢視、逐格分析與裁決判定的快速戰術快捷鍵",
+      playbackKeys: "播放與速度",
+      navigationKeys: "時間軸與逐格導航",
+      investigationKeys: "調查與畫面工具",
+      verdictKeys: "快速裁決（巡查工作台）",
     },
     cn: {
       overview: "数据总览",
@@ -809,7 +865,7 @@
       totalCases: "总审查数",
       searchCasesPlaceholder: "按编号、原因或备注搜索...",
       resetsIn: "距每日重置",
-      serverResetTooltip: "每日巡查配额于每日 05:00 UTC 重置",
+      serverResetTooltip: "每日巡查配额于每日 00:00 UTC 重置",
       hudAccentColor: "HUD强调色",
       hudAccentDesc: "播放器控制栏、进度条与标记点的战术色彩主题",
       accentAmber: "琥珀金",
@@ -820,6 +876,13 @@
       leaveGuardDesc: "在正在审核案件时，关闭或刷新页面前提示确认，防止意外丢失进度",
       autoHideHudLabel: "全屏自动隐藏沉浸HUD",
       autoHideHudDesc: "全屏播放时无鼠标操作2.5秒后自动淡出控制栏与光标，晃动鼠标立即唤醒恢复",
+      keybinds: "快捷键",
+      keybindsHeading: "键盘快捷键与控制",
+      keybindsDesc: "用于视频回放、逐帧分析与判定的战术快捷键",
+      playbackKeys: "播放与速度",
+      navigationKeys: "时间轴与逐帧导航",
+      investigationKeys: "调查与画面工具",
+      verdictKeys: "快速裁决（巡查工作台）",
     },
   };
 
@@ -1018,8 +1081,13 @@
   ];
   let queued = false;
   let settingsViewState = null;
-  let lastNavTab = null;
-  document.addEventListener("abi:overview-updated", scheduleUpdate);
+  document.addEventListener("abi:overview-updated", () => {
+    const summaryCount = window.__abiOverviewData?.userJudgeSummary?.day_judged_num;
+    if (Number.isFinite(summaryCount)) {
+      notifyDailyDoneCount(summaryCount);
+    }
+    scheduleUpdate();
+  });
   document.addEventListener("abi:language-changed", (event) => {
     if (event?.detail?.lang) {
       document.documentElement.dataset.abiLang = event.detail.lang;
@@ -1090,7 +1158,7 @@
 
   const WATERMARK = `
 ================================================================================
-  ABI INSPECTOR EXTENDED \u2014 v2.6.19
+  ABI INSPECTOR EXTENDED \u2014 v3.0.0
   Enhanced Patroller Interface & Local Playback Controls
   Author: deem (https://github.com/mkornela)
   Status: Extension Loaded & Active
@@ -1136,7 +1204,7 @@
     window.__abiExtendedBannerLogged = true;
     try {
       console.log(
-        "%c ABI INSPECTOR EXTENDED %c v2.6.19 %c deem %c ACTIVE \n%cEnhanced Patroller Interface & Local Playback Controls (https://github.com/mkornela)",
+        "%c ABI INSPECTOR EXTENDED %c v3.0.0 %c deem %c ACTIVE \n%cEnhanced Patroller Interface & Local Playback Controls (https://github.com/mkornela)",
         "background: #d49a37; color: #0b0f11; font-weight: bold; font-family: monospace; border-radius: 3px 0 0 3px; padding: 3px 8px; font-size: 11px;",
         "background: #182226; color: #d49a37; font-weight: bold; font-family: monospace; padding: 3px 8px; font-size: 11px; border-left: 1px solid #2a373c;",
         "background: #222f35; color: #c4d0d0; font-family: monospace; padding: 3px 8px; font-size: 11px; border-left: 1px solid #2a373c;",
@@ -2642,10 +2710,10 @@
   function getExtensionVersion() {
     try {
       if (typeof chrome !== "undefined" && chrome?.runtime?.getManifest) {
-        return chrome.runtime.getManifest()?.version || "2.6.19";
+        return chrome.runtime.getManifest()?.version || "3.0.0";
       }
     } catch {}
-    return "2.6.19";
+    return "3.0.0";
   }
 
   function safeStorageGet(defaults) {
@@ -2763,11 +2831,12 @@
     nav.setAttribute("aria-label", "Settings sections");
 
     const navSections = [
-      { id: "abi-section-playback", label: "Playback" },
-      { id: "abi-section-interface", label: "Interface" },
-      { id: "abi-section-verdicts", label: "Verdicts" },
-      { id: "abi-section-privacy", label: "Privacy" },
-      { id: "abi-section-about", label: "About" },
+      { id: "abi-section-playback", label: safeT("playback", "Playback") },
+      { id: "abi-section-keybinds", label: safeT("keybinds", "Keybinds") },
+      { id: "abi-section-interface", label: safeT("interface", "Interface") },
+      { id: "abi-section-verdicts", label: safeT("verdicts", "Verdicts") },
+      { id: "abi-section-privacy", label: safeT("privacy", "Privacy") },
+      { id: "abi-section-about", label: safeT("about", "About") },
     ];
 
     for (const sec of navSections) {
@@ -3008,7 +3077,82 @@
 
     playback.append(playbackHead, controlRow, autoPlayRow, loopRow, autoHideHudRow, volumeRow, speedRow);
 
-    // 2. Interface Card
+    // 2. Keybinds Card
+    const keybindsSection = document.createElement("section");
+    keybindsSection.id = "abi-section-keybinds";
+    keybindsSection.className = "abi-settings-group";
+    keybindsSection.setAttribute("aria-labelledby", "abi-settings-keybinds-title");
+    keybindsSection.dataset.keywords = "keybinds shortcuts hotkeys keys keyboard space k j l m z g f 1 2 3 playback review frame seek volume speed zoom gamma fullscreen verdict enter";
+
+    const keybindsHead = makeSectionHeading(safeT("keybindsHeading", "Keybinds & Shortcuts"));
+    keybindsHead.querySelector("h2").id = "abi-settings-keybinds-title";
+
+    function makeKeybindCategory(title, items) {
+      const cat = document.createElement("div");
+      cat.className = "abi-keybind-category";
+      const catTitle = document.createElement("h3");
+      catTitle.className = "abi-keybind-cat-title";
+      catTitle.textContent = title;
+      cat.append(catTitle);
+
+      const table = document.createElement("div");
+      table.className = "abi-keybind-table";
+      for (const item of items) {
+        const row = document.createElement("div");
+        row.className = "abi-keybind-row";
+        row.dataset.keywords = item.keywords || "";
+        const desc = document.createElement("div");
+        desc.className = "abi-keybind-desc";
+        desc.textContent = item.desc;
+        const keys = document.createElement("div");
+        keys.className = "abi-keybind-keys";
+        keys.innerHTML = item.keys;
+        row.append(desc, keys);
+        table.append(row);
+      }
+      cat.append(table);
+      return cat;
+    }
+
+    const keybindsGrid = document.createElement("div");
+    keybindsGrid.className = "abi-keybinds-grid";
+
+    // Playback & Speed
+    keybindsGrid.append(makeKeybindCategory(safeT("playbackKeys", "Playback & Speed"), [
+      { desc: "Play / Pause", keys: "<kbd>Space</kbd> <span class='abi-key-or'>or</span> <kbd>K</kbd>", keywords: "play pause space k" },
+      { desc: "Mute / Unmute", keys: "<kbd>Shift + M</kbd>", keywords: "mute sound audio shift m" },
+      { desc: "Slower / Faster Speed", keys: "<kbd>[</kbd> <span class='abi-key-or'>/</span> <kbd>]</kbd>", keywords: "speed slower faster bracket" },
+      { desc: "Reset Speed (1.0×)", keys: "<kbd>\\</kbd>", keywords: "reset speed normal backslash" },
+    ]));
+
+    // Timeline & Review Navigation
+    keybindsGrid.append(makeKeybindCategory(safeT("navigationKeys", "Timeline & Review Navigation"), [
+      { desc: "Seek Back / Forward 5s", keys: "<kbd>J</kbd> <span class='abi-key-or'>/</span> <kbd>L</kbd> <span class='abi-key-or'>or</span> <kbd>←</kbd> <span class='abi-key-or'>/</span> <kbd>→</kbd>", keywords: "seek back forward jump 5s arrows j l" },
+      { desc: "Skip 10s Backward / Forward", keys: "<span class='abi-key-badge'>−10s</span> <span class='abi-key-or'>/</span> <span class='abi-key-badge'>+10s</span>", keywords: "skip 10s toolbar" },
+      { desc: "Previous / Next Frame", keys: "<kbd>,</kbd> <span class='abi-key-or'>/</span> <kbd>.</kbd>", keywords: "frame step comma period" },
+      { desc: "Drop Bookmark / Pin", keys: "<kbd>M</kbd> <span class='abi-key-or'>or</span> <kbd>B</kbd>", keywords: "bookmark pin moment marker m b" },
+      { desc: "Toggle Milliseconds", keys: "<span class='abi-key-badge'>Click Time</span>", keywords: "millisecond precision fractional format" },
+    ]));
+
+    // Tactical Investigation Tools
+    keybindsGrid.append(makeKeybindCategory(safeT("investigationKeys", "Investigation & View Tools"), [
+      { desc: "Tactical Loupe (2.5× Zoom)", keys: "<kbd>Hold Z</kbd> <span class='abi-key-or'>or</span> <kbd>Right-Click Hold</kbd>", keywords: "zoom loupe magnify z right click" },
+      { desc: "Shadow & Gamma Boost", keys: "<kbd>G</kbd>", keywords: "gamma shadow boost brightness g" },
+      { desc: "Toggle Fullscreen", keys: "<kbd>F</kbd> <span class='abi-key-or'>or</span> <kbd>Double-Click</kbd>", keywords: "fullscreen cinema expand f dblclick" },
+      { desc: "Reload Player Stream", keys: "<span class='abi-key-badge'>Toolbar Button</span>", keywords: "reload refresh stream unfreeze" },
+    ]));
+
+    // Quick Verdicts
+    keybindsGrid.append(makeKeybindCategory(safeT("verdictKeys", "Quick Verdicts (Workbench)"), [
+      { desc: "No Violation", keys: "<kbd>1</kbd> <span class='abi-key-or'>or</span> <kbd>V</kbd>", keywords: "verdict no violation innocent clean 1 v" },
+      { desc: "Violation", keys: "<kbd>2</kbd> <span class='abi-key-or'>or</span> <kbd>U</kbd>", keywords: "verdict violation guilty cheat 2 u" },
+      { desc: "Uncertain", keys: "<kbd>3</kbd> <span class='abi-key-or'>or</span> <kbd>I</kbd>", keywords: "verdict uncertain unsure 3 i" },
+      { desc: "Submit Final Verdict", keys: "<kbd>Enter</kbd>", keywords: "submit verdict enter confirm" },
+    ]));
+
+    keybindsSection.append(keybindsHead, keybindsGrid);
+
+    // 3. Interface Card
     const interfaceGroup = document.createElement("section");
     interfaceGroup.id = "abi-section-interface";
     interfaceGroup.className = "abi-settings-group";
@@ -3034,15 +3178,15 @@
     );
 
     const accentRow = document.createElement("div");
-    accentRow.className = "abi-settings-row abi-settings-accent-row";
+    accentRow.className = "abi-settings-accent-row";
     accentRow.dataset.keywords = "hud accent color theme amber green blue crimson tactical style";
 
     const accentLabel = document.createElement("label");
     accentLabel.textContent = safeT("hudAccentColor", "HUD Accent Color");
     const accentOutput = document.createElement("output");
-    accentOutput.textContent = "Amber";
+    accentOutput.textContent = safeT("accentAmber", "Amber");
     const accentHeading = document.createElement("div");
-    accentHeading.className = "abi-settings-speed-heading";
+    accentHeading.className = "abi-settings-accent-heading";
     accentHeading.append(accentLabel, accentOutput);
 
     const accentHelp = document.createElement("p");
@@ -3360,7 +3504,7 @@
     aboutGroup.append(aboutHead, aboutInfo, actionsRow, creditsRow);
 
     // Assemble Content Column
-    body.append(playback, interfaceGroup, verdictsGroup, privacyGroup, aboutGroup);
+    body.append(playback, keybindsSection, interfaceGroup, verdictsGroup, privacyGroup, aboutGroup);
     layout.append(nav, body);
     panel.append(topbar, layout);
 
@@ -3370,9 +3514,9 @@
       searchClear.hidden = !q;
       let visibleCardsCount = 0;
 
-      for (const card of [playback, interfaceGroup, verdictsGroup, privacyGroup, aboutGroup]) {
+      for (const card of [playback, keybindsSection, interfaceGroup, verdictsGroup, privacyGroup, aboutGroup]) {
         let visibleInCard = 0;
-        const rows = card.querySelectorAll(".abi-settings-toggle, .abi-settings-volume, .abi-settings-speed, .abi-settings-accent-row, .abi-settings-about-line, .abi-settings-actions-row, .abi-settings-credits");
+        const rows = card.querySelectorAll(".abi-settings-toggle, .abi-settings-volume, .abi-settings-speed, .abi-settings-accent-row, .abi-settings-about-line, .abi-settings-actions-row, .abi-settings-credits, .abi-keybind-row");
         rows.forEach((row) => {
           if (!q) {
             row.hidden = false;
@@ -3420,6 +3564,7 @@
       );
 
       observer.observe(playback);
+      observer.observe(keybindsSection);
       observer.observe(interfaceGroup);
       observer.observe(verdictsGroup);
       observer.observe(privacyGroup);
@@ -3889,6 +4034,10 @@
       // Keep overview data in sync with live count on workbench
       if (window.__abiOverviewData?.userJudgeSummary && Number.isFinite(count) && count > (window.__abiOverviewData.userJudgeSummary.day_judged_num || 0)) {
         window.__abiOverviewData.userJudgeSummary.day_judged_num = count;
+      }
+
+      if (Number.isFinite(count)) {
+        notifyDailyDoneCount(count);
       }
 
       const max = Number(window.__abiOverviewData?.userJudgeSummary?.day_permit_num) || 20;
@@ -4740,6 +4889,60 @@
   const CASE_LOG_STORAGE_KEY = "abi_case_log";
   const MAX_CASE_LOG_ENTRIES = 500;
   let _caseLogCache = null;
+  let _pendingCaseVerdict = null;
+  let _lastKnownDailyDoneCount = null;
+  let _inspectionStartTime = Date.now();
+
+  const resetInspectionStartTime = () => {
+    _inspectionStartTime = Date.now();
+  };
+
+  function getActiveCaseId() {
+    const explicit = document.querySelector(".case-id, #caseId, .case_num, [data-case-id], #caseNumber")?.textContent?.trim();
+    if (explicit) return explicit;
+    const match = (typeof location !== "undefined" && location.hash) ? location.hash.match(/case[_-]?([a-zA-Z0-9]+)/i) : null;
+    if (match) return `CASE-${match[1]}`;
+    const video = document.querySelector("video");
+    if (video?.src) {
+      try {
+        const u = new URL(video.src);
+        const p = u.searchParams.get("case_id") || u.searchParams.get("id");
+        if (p) return `CASE-${p}`;
+        const lastSeg = u.pathname.split("/").pop()?.replace(/\.[^.]+$/, "");
+        if (lastSeg && lastSeg.length >= 4 && lastSeg.length <= 16) return `CASE-${lastSeg.toUpperCase()}`;
+      } catch {}
+    }
+    return `CASE-${Date.now().toString(36).toUpperCase()}`;
+  }
+
+  function notifyDailyDoneCount(currentCount) {
+    if (!Number.isFinite(currentCount)) return;
+    if (_lastKnownDailyDoneCount === null) {
+      _lastKnownDailyDoneCount = currentCount;
+      return;
+    }
+    if (currentCount > _lastKnownDailyDoneCount) {
+      _lastKnownDailyDoneCount = currentCount;
+      const durationSeconds = Math.max(1, Math.round((Date.now() - _inspectionStartTime) / 1000));
+      const entry = _pendingCaseVerdict || {
+        id: getActiveCaseId(),
+        verdict: "uncertain",
+        verdictLabel: "Uncertain",
+        reasons: [],
+        note: "",
+        durationSeconds,
+        timestamp: Date.now(),
+      };
+      _pendingCaseVerdict = null;
+      resetInspectionStartTime();
+      logCaseVerdict(entry);
+    } else if (currentCount < _lastKnownDailyDoneCount) {
+      // Daily reset occurred (e.g. at 00:00 UTC)
+      _lastKnownDailyDoneCount = currentCount;
+      _pendingCaseVerdict = null;
+      resetInspectionStartTime();
+    }
+  }
 
   function getCaseLog() {
     return new Promise((resolve) => {
@@ -5217,7 +5420,7 @@
         totalCases: "Total Reviewed",
         searchCasesPlaceholder: "Search by ID, reason, or note...",
         resetsIn: "Resets in",
-        serverResetTooltip: "Daily quota resets every day at 05:00 UTC",
+        serverResetTooltip: "Daily quota resets every day at 00:00 UTC",
         hudAccentColor: "HUD Accent Color",
         hudAccentDesc: "Tactical color theme for player controls, progress bars, and pins",
         accentAmber: "Amber",
@@ -5228,6 +5431,13 @@
         leaveGuardDesc: "Prompt confirmation before closing or reloading the tab during an active case inspection so you don't lose progress",
         autoHideHudLabel: "Fullscreen auto-hide clean HUD",
         autoHideHudDesc: "Fade out controls and cursor during fullscreen playback after 2.5s of inactivity. Wakes instantly on mouse movement",
+        keybinds: "Keybinds",
+        keybindsHeading: "Keybinds & Shortcuts",
+        keybindsDesc: "Quick tactical hotkeys for rapid video analysis, review navigation, and case verdicts",
+        playbackKeys: "Playback & Speed",
+        navigationKeys: "Timeline & Review Navigation",
+        investigationKeys: "Investigation & View Tools",
+        verdictKeys: "Quick Verdicts (Workbench)",
       };
       return FALLBACKS[key] || key;
     };
@@ -5448,7 +5658,7 @@
         now.getUTCFullYear(),
         now.getUTCMonth(),
         now.getUTCDate(),
-        5, 0, 0, 0
+        0, 0, 0, 0
       ));
       if (now.getTime() >= reset.getTime()) {
         reset.setUTCDate(reset.getUTCDate() + 1);
@@ -5728,7 +5938,7 @@
 
         const resetClock = document.createElement("div");
         resetClock.className = "abi-today-reset-clock";
-        resetClock.title = _t("serverResetTooltip") || "Daily quota resets every day at 05:00 UTC";
+        resetClock.title = _t("serverResetTooltip") || "Daily quota resets every day at 00:00 UTC";
         resetClock.setAttribute("aria-label", "Time until daily quota reset");
 
         const resetIcon = document.createElementNS("http://www.w3.org/2000/svg", "svg");
@@ -5773,7 +5983,7 @@
         if (!resetClock) {
           resetClock = document.createElement("div");
           resetClock.className = "abi-today-reset-clock";
-          resetClock.title = _t("serverResetTooltip") || "Daily quota resets every day at 05:00 UTC";
+          resetClock.title = _t("serverResetTooltip") || "Daily quota resets every day at 00:00 UTC";
           resetClock.setAttribute("aria-label", "Time until daily quota reset");
 
           const resetIcon = document.createElementNS("http://www.w3.org/2000/svg", "svg");
@@ -5796,7 +6006,7 @@
           if (logHint) wrap.insertBefore(resetClock, logHint);
           else wrap.append(resetClock);
         } else {
-          resetClock.title = _t("serverResetTooltip") || "Daily quota resets every day at 05:00 UTC";
+          resetClock.title = _t("serverResetTooltip") || "Daily quota resets every day at 00:00 UTC";
           const timerSpan = resetClock.querySelector(".abi-today-reset-timer");
           if (timerSpan) updateText(timerSpan, `${_t("resetsIn") || "Resets in"} ${formatServerResetCountdown()}`);
         }
@@ -5863,6 +6073,13 @@
       }
 
       const dayDone = Number.isFinite(summary.day_judged_num) ? summary.day_judged_num : null;
+      if (dayDone !== null) {
+        if (typeof notifyDailyDoneCount === "function") {
+          notifyDailyDoneCount(dayDone);
+        } else if (typeof window !== "undefined" && typeof window.__abiNotifyDailyDoneCount === "function") {
+          window.__abiNotifyDailyDoneCount(dayDone);
+        }
+      }
       const dayLimit = Number.isFinite(summary.day_permit_num) ? summary.day_permit_num : null;
       const dayReady = dayDone !== null && dayLimit !== null;
       const dayPercent = dayReady && dayLimit > 0 ? Math.min(100, Math.round((dayDone / dayLimit) * 100)) : 0;
@@ -6412,50 +6629,26 @@
     if (typeof document === "undefined" || document.__abiVerdictLoggingInit) return;
     document.__abiVerdictLoggingInit = true;
 
-    let inspectionStartTime = Date.now();
-
-    const resetStartTime = () => {
-      inspectionStartTime = Date.now();
-    };
-
     document.addEventListener("play", (e) => {
       if (e.target && e.target.tagName === "VIDEO") {
-        inspectionStartTime = Date.now();
+        resetInspectionStartTime();
       }
     }, true);
-
-    const getActiveCaseId = () => {
-      const explicit = document.querySelector(".case-id, #caseId, .case_num, [data-case-id], #caseNumber")?.textContent?.trim();
-      if (explicit) return explicit;
-      const match = (typeof location !== "undefined" && location.hash) ? location.hash.match(/case[_-]?([a-zA-Z0-9]+)/i) : null;
-      if (match) return `CASE-${match[1]}`;
-      const video = document.querySelector("video");
-      if (video?.src) {
-        try {
-          const u = new URL(video.src);
-          const p = u.searchParams.get("case_id") || u.searchParams.get("id");
-          if (p) return `CASE-${p}`;
-          const lastSeg = u.pathname.split("/").pop()?.replace(/\.[^.]+$/, "");
-          if (lastSeg && lastSeg.length >= 4 && lastSeg.length <= 16) return `CASE-${lastSeg.toUpperCase()}`;
-        } catch {}
-      }
-      return `CASE-${Date.now().toString(36).toUpperCase()}`;
-    };
 
     document.addEventListener("click", (e) => {
       // 1. No Violation
       const noViolationBtn = e.target.closest("#patrolButton1, #drillButton1, .operation a[data-index='0']");
       if (noViolationBtn) {
-        const durationSeconds = Math.max(1, Math.round((Date.now() - inspectionStartTime) / 1000));
-        logCaseVerdict({
+        const durationSeconds = Math.max(1, Math.round((Date.now() - _inspectionStartTime) / 1000));
+        _pendingCaseVerdict = {
           id: getActiveCaseId(),
           verdict: "no_violation",
           verdictLabel: "No Violation",
           reasons: [],
           note: "",
           durationSeconds,
-        });
-        resetStartTime();
+          timestamp: Date.now(),
+        };
         return;
       }
 
@@ -6464,16 +6657,16 @@
       if (uncertainBtn) {
         const notSureInput = document.getElementById("notSureReason");
         const note = notSureInput?.value?.trim() || "";
-        const durationSeconds = Math.max(1, Math.round((Date.now() - inspectionStartTime) / 1000));
-        logCaseVerdict({
+        const durationSeconds = Math.max(1, Math.round((Date.now() - _inspectionStartTime) / 1000));
+        _pendingCaseVerdict = {
           id: getActiveCaseId(),
           verdict: "uncertain",
           verdictLabel: "Uncertain",
           reasons: [],
           note,
           durationSeconds,
-        });
-        resetStartTime();
+          timestamp: Date.now(),
+        };
         return;
       }
 
@@ -6491,16 +6684,16 @@
           if (text && !reasons.includes(text)) reasons.push(text);
         });
         const note = popup.querySelector("#guiltyDetail")?.value?.trim() || "";
-        const durationSeconds = Math.max(1, Math.round((Date.now() - inspectionStartTime) / 1000));
-        logCaseVerdict({
+        const durationSeconds = Math.max(1, Math.round((Date.now() - _inspectionStartTime) / 1000));
+        _pendingCaseVerdict = {
           id: getActiveCaseId(),
           verdict: "violation",
           verdictLabel: "Violation",
           reasons,
           note,
           durationSeconds,
-        });
-        resetStartTime();
+          timestamp: Date.now(),
+        };
         return;
       }
     }, true);
@@ -6615,6 +6808,8 @@
     window.__abiClearCaseLog = clearCaseLog;
     window.__abiExportCaseLogCsv = exportCaseLogCsv;
     window.__abiRenderFilteredCases = renderFilteredCases;
+    window.__abiNotifyDailyDoneCount = notifyDailyDoneCount;
+    window.__abiGetPendingCaseVerdict = () => _pendingCaseVerdict;
     window.ensureCaseLogDialog = ensureCaseLogDialog;
     window.syncCaseLogDialog = syncCaseLogDialog;
     window.__abiIsInspectionActive = isInspectionActive;

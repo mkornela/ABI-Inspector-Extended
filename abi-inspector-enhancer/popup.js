@@ -11,9 +11,9 @@ const openSettingsBtn = $("openSettingsBtn");
 let tabId = null; // active tab, if it is the Inspector page
 let page = null; // reply from settings.js, or null when not on the Inspector page
 
-let popupVersion = "2.6.19";
+let popupVersion = "3.0.0";
 try {
-  popupVersion = chrome.runtime?.getManifest?.()?.version || "2.6.19";
+  popupVersion = chrome.runtime?.getManifest?.()?.version || "3.0.0";
 } catch {}
 $("version").textContent = `v${popupVersion}`;
 

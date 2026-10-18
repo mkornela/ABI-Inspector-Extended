@@ -5,6 +5,22 @@ All notable changes to **ABI Inspector Extended** will be documented in this fil
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [3.0.0] - 2026-10-19
+
+### Changed
+- **Single-Row Video Player Control Bar Redesign:**
+  - Modernized HUD video playback bar into a streamlined, high-density single-row layout eliminating dual-tier clutter.
+  - **Top-Edge Scrubber:** Sleek continuous progress timeline spanning the full width across the top edge with hover-time badge and suspect moment bookmarks.
+  - **Left Section:** Core playback controls featuring Play/Pause button (`#play`) and tactical skip steps: `-10s` (`#back10`), `-5s` (`#back5`), `+5s` (`#forward5`), `+10s` (`#forward10`).
+  - **Center Section:** Frame-by-frame analysis controls (`[ ◀ ] Frames [ ▶ ]`, `#previous`, `#next`) flanking the precision timecode readout (`#time`).
+  - **Right Section:** Remade clickable speed pill (`#speedval`) with quick-selection popup menu (`0.25×`, `0.5×`, `0.75×`, `1×`, `1.25×`, `1.5×`, `2×`) and fine-tune stepping, alongside Volume mute & slider (`#mute`, `#volume`), Pin Drop bookmark (`#pinButton`), Gamma shadow boost (`#gamma`), Video Reload (`#reload`), and Fullscreen (`#fullscreen`).
+
+### Added
+- **Dedicated "Keybinds" Settings Tab:**
+  - Moved shortcut reference from intrusive player modal into a dedicated, searchable tab in the Extension Settings panel.
+  - 4 categorized tactical cards: Playback & Speed, Timeline & Review Navigation, Investigation & View Tools, and Quick Verdicts.
+  - Styled with tactical key badges, dark card grid, and full multi-language localization across all 9 supported languages (`en`, `de`, `ru`, `fr`, `es`, `ja`, `pt-BR`, `zh-Hant`, `cn`).
+
 ---
 
 ## [2.6.19] - 2026-10-19
@@ -59,7 +75,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 - **Daily Server Reset Countdown Clock:**
-  - Live timer on the Overview card (`#wxMine .abi-stat-today`) displaying a real-time countdown clock until the daily 20-case quota resets (based on the official 05:00 UTC server reset hour).
+  - Live timer on the Overview card (`#wxMine .abi-stat-today`) displaying a real-time countdown clock until the daily 20-case quota resets (based on the official 00:00 UTC server reset hour).
   - Clean tactical clock badge (`.abi-today-reset-clock`) with SVG clock icon, tabular digits, and informative hover tooltip.
   - Fully localized across all 9 supported extension languages.
   - Added comprehensive automated unit test suite.

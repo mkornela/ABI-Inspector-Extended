@@ -45,7 +45,7 @@ test("Settings panel redesign: DOM structure, search, dependencies, key chips, a
       };
       window.chrome = {
         runtime: {
-          getManifest: () => ({ version: "2.6.19" }),
+          getManifest: () => ({ version: "3.0.0" }),
         },
         storage: {
           local: {
@@ -85,21 +85,26 @@ test("Settings panel redesign: DOM structure, search, dependencies, key chips, a
     assert.equal(await page.locator(".abi-settings-search-input").count(), 1, "Search input exists");
     assert.equal(await page.locator(".abi-settings-toast").count(), 1, "Toast element exists");
 
-    // 2. Verify Left Sidebar Navigation has 5 sections
+    // 2. Verify Left Sidebar Navigation has 6 sections
     const navButtons = page.locator(".abi-settings-nav-btn");
-    assert.equal(await navButtons.count(), 5, "5 sidebar navigation buttons");
+    assert.equal(await navButtons.count(), 6, "6 sidebar navigation buttons");
     assert.equal(await navButtons.nth(0).textContent(), "Playback");
-    assert.equal(await navButtons.nth(1).textContent(), "Interface");
-    assert.equal(await navButtons.nth(2).textContent(), "Verdicts");
-    assert.equal(await navButtons.nth(3).textContent(), "Privacy");
-    assert.equal(await navButtons.nth(4).textContent(), "About");
+    assert.equal(await navButtons.nth(1).textContent(), "Keybinds");
+    assert.equal(await navButtons.nth(2).textContent(), "Interface");
+    assert.equal(await navButtons.nth(3).textContent(), "Verdicts");
+    assert.equal(await navButtons.nth(4).textContent(), "Privacy");
+    assert.equal(await navButtons.nth(5).textContent(), "About");
 
-    // 3. Verify the 5 Section Cards exist
+    // 3. Verify the 6 Section Cards exist
     assert.equal(await page.locator("#abi-section-playback").count(), 1, "Playback section exists");
+    assert.equal(await page.locator("#abi-section-keybinds").count(), 1, "Keybinds section exists");
     assert.equal(await page.locator("#abi-section-interface").count(), 1, "Interface section exists");
     assert.equal(await page.locator("#abi-section-verdicts").count(), 1, "Verdicts section exists");
     assert.equal(await page.locator("#abi-section-privacy").count(), 1, "Privacy section exists");
     assert.equal(await page.locator("#abi-section-about").count(), 1, "About section exists");
+
+    const keybindRows = page.locator("#abi-section-keybinds .abi-keybind-row");
+    assert.ok((await keybindRows.count()) >= 10, "Keybind rows present in keybinds tab");
 
     // 4. Verify Key Chips
     const playbackChips = page.locator("#abi-section-playback .abi-key-chip");

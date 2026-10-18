@@ -938,6 +938,91 @@ html:not([data-abi-site="off"]) {
     padding: 1px 4px;
   }
 
+  /* Keybinds Section in Settings */
+  .abi-keybinds-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 14px;
+    margin-top: 10px;
+  }
+  @media (max-width: 720px) {
+    .abi-keybinds-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+  .abi-keybind-category {
+    background: rgba(255, 255, 255, 0.02);
+    border: 1px solid var(--s-border, rgba(255, 255, 255, 0.08));
+    border-radius: 8px;
+    padding: 12px 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .abi-keybind-cat-title {
+    margin: 0 0 4px;
+    font-size: 11.5px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--s-accent, #e66b4e);
+  }
+  .abi-keybind-table {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+  .abi-keybind-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    padding: 4px 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+  }
+  .abi-keybind-row:last-child {
+    border-bottom: 0;
+  }
+  .abi-keybind-row[hidden] {
+    display: none !important;
+  }
+  .abi-keybind-desc {
+    font-size: 12.5px;
+    color: var(--s-text, #e0e3de);
+    font-weight: 500;
+  }
+  .abi-keybind-keys {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    white-space: nowrap;
+  }
+  .abi-keybind-keys kbd {
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+    font-size: 11px;
+    font-weight: 700;
+    color: #f0f3ee;
+    background: #192024;
+    border: 1px solid var(--s-border, #41494b);
+    border-radius: 4px;
+    padding: 2px 6px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.4);
+  }
+  .abi-key-or {
+    font-size: 10.5px;
+    color: var(--s-muted, #8fa09d);
+    padding: 0 1px;
+  }
+  .abi-key-badge {
+    font-size: 10.5px;
+    font-weight: 700;
+    color: var(--s-muted, #8fa09d);
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 4px;
+    padding: 2px 6px;
+  }
+
   /* Flat 44x26 Pill Switch */
   .abi-settings-checkbox {
     position: absolute;
@@ -986,21 +1071,24 @@ html:not([data-abi-site="off"]) {
     outline-offset: 3px;
   }
 
-  /* Volume & Speed Setting Blocks */
+  /* Volume & Speed & Accent Setting Blocks */
   .abi-settings-volume,
-  .abi-settings-speed {
+  .abi-settings-speed,
+  .abi-settings-accent-row {
     padding: 16px 20px 18px;
     border-top: 1px solid var(--s-border);
     transition: background-color 0.12s;
   }
 
   .abi-settings-volume[hidden],
-  .abi-settings-speed[hidden] {
+  .abi-settings-speed[hidden],
+  .abi-settings-accent-row[hidden] {
     display: none !important;
   }
 
   .abi-settings-volume-heading,
-  .abi-settings-speed-heading {
+  .abi-settings-speed-heading,
+  .abi-settings-accent-heading {
     display: flex;
     align-items: baseline;
     justify-content: space-between;
@@ -1008,24 +1096,28 @@ html:not([data-abi-site="off"]) {
   }
 
   .abi-settings-volume-heading label,
-  .abi-settings-speed-heading label {
+  .abi-settings-speed-heading label,
+  .abi-settings-accent-heading label {
     font-size: 15px;
     font-weight: 600;
     color: var(--s-text);
   }
 
   .abi-settings-volume output,
-  .abi-settings-speed output {
+  .abi-settings-speed output,
+  .abi-settings-accent-row output {
     font-size: 18px;
     font-weight: 700;
     font-variant-numeric: tabular-nums;
     color: var(--s-accent);
     min-width: 3.5ch;
     text-align: right;
+    transition: color 0.15s ease;
   }
 
   .abi-settings-volume p,
-  .abi-settings-speed p {
+  .abi-settings-speed p,
+  .abi-settings-accent-row p {
     margin: 3px 0 12px;
     font-size: 13px;
     line-height: 1.4;
@@ -1127,7 +1219,7 @@ html:not([data-abi-site="off"]) {
   .abi-accent-presets {
     display: inline-flex;
     gap: 6px;
-    padding: 3px;
+    padding: 4px;
     background: var(--s-bg);
     border: 1px solid var(--s-border);
     border-radius: 9px;
@@ -1140,31 +1232,42 @@ html:not([data-abi-site="off"]) {
     cursor: pointer;
     display: inline-flex;
     align-items: center;
-    gap: 7px;
+    gap: 8px;
     padding: 6px 14px;
     border-radius: 6px;
     font-size: 13px;
     font-weight: 500;
     color: var(--s-muted);
-    transition: background-color 0.12s, color 0.12s;
+    border: 1px solid transparent;
+    transition: background-color 0.12s, color 0.12s, border-color 0.12s, box-shadow 0.12s;
   }
 
   .abi-accent-chip:hover {
     color: var(--s-text);
+    background: rgba(255, 255, 255, 0.04);
   }
 
   .abi-accent-chip.active {
-    background: var(--s-accent);
-    color: var(--s-accent-ink);
+    background: rgba(255, 255, 255, 0.08);
+    border-color: var(--s-accent);
+    color: #ffffff;
     font-weight: 700;
+    box-shadow: 0 0 10px var(--abi-accent-glow, rgba(212, 154, 55, 0.3));
   }
 
   .abi-accent-swatch {
     display: inline-block;
-    width: 9px;
-    height: 9px;
+    width: 10px;
+    height: 10px;
     border-radius: 50%;
-    box-shadow: 0 0 4px rgba(0, 0, 0, 0.6);
+    flex-shrink: 0;
+    box-shadow: 0 0 4px rgba(0, 0, 0, 0.8);
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+  }
+
+  .abi-accent-chip.active .abi-accent-swatch {
+    transform: scale(1.15);
+    box-shadow: 0 0 0 1.5px #151a1d, 0 0 0 3px var(--s-accent);
   }
 
   /* Streamer / Privacy Mode Live Preview */
