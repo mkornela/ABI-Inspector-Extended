@@ -7,6 +7,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [2.6.14] - 2026-10-18
+
+### Added
+- **Silent Scrubbing:**
+  - Automatically mutes audio output (`video.muted = true`) while the timeline scrubber is actively being dragged or sought, preventing distorted audio stutter and screeching bursts.
+  - Seamlessly restores the previous audio mute state upon release (`pointerup` / `change`), including when the cursor is released outside the slider bounds or off-window.
+  - Preserves volume display level and mute button state visually so controls do not jump during scrubbing.
+  - Added comprehensive automated unit test suite.
+
+---
+
 ## [2.6.13] - 2026-10-18
 
 ### Added

@@ -2047,6 +2047,204 @@ test("Shadow & Gamma Boost: cycles Normal -> Shadow Boost -> Max Brightness -> N
   }
 });
 
+test("Silent Scrubbing: mutes audio during seek bar drag and restores previous mute state upon release", async (t) => {
+  let playwright;
+  try {
+    playwright = require("playwright");
+  } catch {
+    if (t && typeof t.skip === "function") {
+      t.skip("playwright module is not installed");
+      return;
+    }
+  }
+
+  const browser = await playwright.chromium.launch({
+    headless: true,
+    channel: process.env.ABI_TEST_BROWSER || (process.platform === "win32" ? "msedge" : "chromium"),
+  });
+
+  try {
+    const page = await browser.newPage({ viewport: { width: 1200, height: 800 } });
+
+    const mockHtml = `
+      <html data-abi-site="on" data-abi-auto-play="off">
+      <head>
+        <style>
+          .content.video { width: 800px; height: 500px; }
+          .play-box { width: 100%; height: 100%; }
+          #workingPlayer { width: 800px; height: 450px; }
+          video { width: 800px; height: 450px; display: block; }
+        </style>
+      </head>
+      <body>
+        <div class="main">
+          <ul class="nav">
+            <li id="working" class="current"><span>Workbench</span></li>
+          </ul>
+        </div>
+        <div id="xcWorking">
+          <div class="content video">
+            <div class="play-box">
+              <div id="workingPlayer">
+                <video src="https://example.com/test.mp4" preload="auto"></video>
+              </div>
+            </div>
+          </div>
+        </div>
+      </body>
+      </html>
+    `;
+
+    await page.route("https://www.arenabreakoutinfinite.com/act/a20251028patroller/*", (route) => {
+      route.fulfill({
+        status: 200,
+        contentType: "text/html",
+        body: mockHtml,
+      });
+    });
+
+    await page.goto("https://www.arenabreakoutinfinite.com/act/a20251028patroller/");
+
+    await page.evaluate(() => {
+      const v = document.querySelector("video");
+      let _paused = false;
+      let _currentTime = 10;
+      let _duration = 100;
+      let _muted = false;
+      let _volume = 0.8;
+
+      Object.defineProperty(v, "paused", {
+        get: () => _paused,
+        set: (val) => { _paused = val; },
+        configurable: true,
+      });
+      Object.defineProperty(v, "currentTime", {
+        get: () => _currentTime,
+        set: (val) => {
+          _currentTime = val;
+          v.dispatchEvent(new Event("timeupdate"));
+        },
+        configurable: true,
+      });
+      Object.defineProperty(v, "duration", {
+        get: () => _duration,
+        configurable: true,
+      });
+      Object.defineProperty(v, "readyState", {
+        get: () => 4,
+        configurable: true,
+      });
+      Object.defineProperty(v, "muted", {
+        get: () => _muted,
+        set: (val) => {
+          _muted = val;
+          v.dispatchEvent(new Event("volumechange"));
+        },
+        configurable: true,
+      });
+      Object.defineProperty(v, "volume", {
+        get: () => _volume,
+        set: (val) => {
+          _volume = val;
+          v.dispatchEvent(new Event("volumechange"));
+        },
+        configurable: true,
+      });
+      v.play = async () => { _paused = false; v.dispatchEvent(new Event("play")); };
+      v.pause = () => { _paused = true; v.dispatchEvent(new Event("pause")); };
+    });
+
+    await page.addScriptTag({ path: path.join(__dirname, "..", "abi-inspector-enhancer", "settings.js") });
+    await page.addScriptTag({ path: path.join(__dirname, "..", "abi-inspector-enhancer", "content.js") });
+
+    await page.waitForSelector("abi-local-player", { state: "attached" });
+    await page.waitForSelector("abi-local-controls", { state: "attached" });
+
+    // Initial check: video is unmuted
+    let isMuted = await page.evaluate(() => document.querySelector("video").muted);
+    assert.equal(isMuted, false, "Initial video is not muted");
+
+    // 1. Pointerdown on timeline scrubber starts silent scrubbing
+    await page.evaluate(() => {
+      const controls = document.querySelector("abi-local-controls");
+      const seek = controls.shadowRoot.querySelector("#seek");
+      seek.dispatchEvent(new PointerEvent("pointerdown", { bubbles: true, clientX: 100, clientY: 10 }));
+    });
+
+    isMuted = await page.evaluate(() => document.querySelector("video").muted);
+    assert.equal(isMuted, true, "Video is automatically muted on scrubber pointerdown");
+
+    // 2. Input event during scrubbing updates currentTime while maintaining muted state
+    await page.evaluate(() => {
+      const controls = document.querySelector("abi-local-controls");
+      const seek = controls.shadowRoot.querySelector("#seek");
+      seek.value = "45";
+      seek.dispatchEvent(new Event("input", { bubbles: true }));
+    });
+
+    const scrubState = await page.evaluate(() => {
+      const video = document.querySelector("video");
+      return {
+        muted: video.muted,
+        currentTime: video.currentTime,
+      };
+    });
+    assert.equal(scrubState.muted, true, "Video remains muted while dragging timeline scrubber");
+    assert.equal(scrubState.currentTime, 45, "Video currentTime seeks to new position");
+
+    // 3. Pointerup on scrubber releases scrub and restores unmuted audio
+    await page.evaluate(() => {
+      const controls = document.querySelector("abi-local-controls");
+      const seek = controls.shadowRoot.querySelector("#seek");
+      seek.dispatchEvent(new PointerEvent("pointerup", { bubbles: true }));
+    });
+
+    isMuted = await page.evaluate(() => document.querySelector("video").muted);
+    assert.equal(isMuted, false, "Video audio is automatically restored upon pointerup");
+
+    // 4. Scrubbing when previously muted preserves muted state upon release
+    await page.evaluate(() => {
+      const video = document.querySelector("video");
+      video.muted = true;
+    });
+
+    await page.evaluate(() => {
+      const controls = document.querySelector("abi-local-controls");
+      const seek = controls.shadowRoot.querySelector("#seek");
+      seek.dispatchEvent(new PointerEvent("pointerdown", { bubbles: true, clientX: 100, clientY: 10 }));
+      seek.value = "60";
+      seek.dispatchEvent(new Event("input", { bubbles: true }));
+      seek.dispatchEvent(new PointerEvent("pointerup", { bubbles: true }));
+    });
+
+    isMuted = await page.evaluate(() => document.querySelector("video").muted);
+    assert.equal(isMuted, true, "Video preserves muted state if it was already muted prior to scrubbing");
+
+    // 5. Window pointerup (dragging off-slider) safely releases scrub
+    await page.evaluate(() => {
+      const video = document.querySelector("video");
+      video.muted = false;
+      const controls = document.querySelector("abi-local-controls");
+      const seek = controls.shadowRoot.querySelector("#seek");
+      seek.dispatchEvent(new PointerEvent("pointerdown", { bubbles: true, clientX: 100, clientY: 10 }));
+    });
+
+    isMuted = await page.evaluate(() => document.querySelector("video").muted);
+    assert.equal(isMuted, true, "Video is muted on pointerdown");
+
+    await page.evaluate(() => {
+      window.dispatchEvent(new PointerEvent("pointerup", { bubbles: true }));
+    });
+
+    isMuted = await page.evaluate(() => document.querySelector("video").muted);
+    assert.equal(isMuted, false, "Window pointerup safely restores audio even when released outside scrubber");
+
+  } finally {
+    await browser?.close();
+  }
+});
+
+
 
 
 

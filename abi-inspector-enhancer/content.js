@@ -949,6 +949,8 @@ function main() {
     let bookmarks = [];
     let wasPlayingBeforeBackground = false;
     let precisionMs = false;
+    let isScrubbing = false;
+    let preScrubMuted = false;
     try {
       precisionMs =
         localStorage.getItem("abi-time-precision") === "ms" ||
@@ -1352,17 +1354,18 @@ function main() {
       );
       if (video) {
         ui.volume.value = String(video.volume);
+        const displayMuted = isScrubbing ? preScrubMuted : video.muted;
         ui.volume.style.setProperty(
           "--fill",
-          `${video.muted ? 0 : video.volume * 100}%`,
+          `${displayMuted ? 0 : video.volume * 100}%`,
         );
         decorate(
           ui.mute,
-          video.muted || video.volume === 0 ? "volume-xmark" : "volume-high",
+          displayMuted || video.volume === 0 ? "volume-xmark" : "volume-high",
           "",
-          `${video.muted ? "Unmute" : "Mute"} (Shift+M or icon)`,
+          `${displayMuted ? "Unmute" : "Mute"} (Shift+M or icon)`,
         );
-        ui.mute.setAttribute("aria-pressed", String(video.muted));
+        ui.mute.setAttribute("aria-pressed", String(displayMuted));
         const rate = video.playbackRate;
         ui.speedval.textContent = `${Number(rate.toFixed(2))}×`;
         ui.speedval.classList.toggle("changed", Math.abs(rate - 1) > 0.001);
@@ -1469,7 +1472,11 @@ function main() {
       next: () => step(1),
       mute: () => {
         if (video) {
-          video.muted = !video.muted;
+          if (isScrubbing) {
+            preScrubMuted = !preScrubMuted;
+          } else {
+            video.muted = !video.muted;
+          }
           render();
         }
       },
@@ -1500,11 +1507,40 @@ function main() {
     function hideHoverBadge() {
       ui.hoverBadge?.classList.remove("visible");
     }
+    function startScrubbing() {
+      if (!video || isScrubbing) return;
+      isScrubbing = true;
+      preScrubMuted = Boolean(video.muted);
+      try {
+        video.muted = true;
+      } catch {}
+    }
+    function stopScrubbing() {
+      if (!isScrubbing) return;
+      isScrubbing = false;
+      if (video) {
+        try {
+          video.muted = preScrubMuted;
+        } catch {}
+        render();
+      }
+    }
     on(ui.seek, "pointermove", updateHoverBadge);
     on(ui.seek, "pointerenter", updateHoverBadge);
     on(ui.seek, "pointerleave", hideHoverBadge);
-    on(ui.seek, "pointerdown", updateHoverBadge);
-    on(ui.seek, "input", () => seek(Number(ui.seek.value)));
+    on(ui.seek, "pointerdown", (e) => {
+      selectVideo();
+      startScrubbing();
+      updateHoverBadge(e);
+    });
+    on(ui.seek, "input", () => {
+      if (!isScrubbing) startScrubbing();
+      seek(Number(ui.seek.value));
+    });
+    on(ui.seek, "change", stopScrubbing);
+    on(ui.seek, "pointerup", stopScrubbing);
+    on(window, "pointerup", stopScrubbing);
+    on(window, "pointercancel", stopScrubbing);
     on(ui.volume, "input", () => {
       if (video) {
         video.volume = Number(ui.volume.value);
