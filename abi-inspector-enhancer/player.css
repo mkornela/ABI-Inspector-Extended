@@ -92,6 +92,33 @@ abi-local-player[data-controls-ready]
   flex: 1 1 auto;
   min-height: 280px !important;
   aspect-ratio: auto;
+  overflow: hidden !important;
+}
+
+.abi-zoom-badge {
+  position: absolute;
+  top: 14px;
+  left: 14px;
+  z-index: 25;
+  display: none;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  background: rgba(14, 20, 22, 0.88);
+  border: 1px solid rgba(239, 68, 68, 0.8);
+  border-radius: 4px;
+  color: #fca5a5;
+  font-family: var(--abi-font, "Arial Narrow", sans-serif);
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.6), 0 0 10px rgba(239, 68, 68, 0.35);
+  pointer-events: none;
+  user-select: none;
+}
+.abi-zoom-badge.active {
+  display: inline-flex !important;
 }
 :is(#xcWorking > .content.video, .content.video:has(#drillButton)):has(abi-local-player) .play-box > .operation {
   flex: 0 0 auto;

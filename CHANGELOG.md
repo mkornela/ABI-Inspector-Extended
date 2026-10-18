@@ -7,6 +7,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [2.6.12] - 2026-10-18
+
+### Added
+- **Tactical Hold-to-Zoom Loupe (`Z` key / Right-click hold):**
+  - Hold `Z` (or right-click hold on video) to magnify playback 2.5× centered directly on the mouse cursor position.
+  - Dynamically updates transform origin as the cursor moves across the video frame for fluid inspection of distant suspects.
+  - Instant snap-back to 1× magnification upon releasing `Z` or right-click.
+  - Tactical HUD badge overlay (`.abi-zoom-badge`) displaying `"2.5× LOUPE"`.
+  - Added shortcut reference to the video controls modal (`#keysDialog`).
+  - Added comprehensive automated unit test suite.
+
+---
+
 ## [2.6.11] - 2026-10-18
 
 ### Added

@@ -1647,6 +1647,203 @@ test("Millisecond / Fractional Time Display: toggles precision format via click 
   }
 });
 
+test("Tactical Hold-to-Zoom Loupe: magnifies video 2.5x centered on cursor when Z or right-click held and resets on release", async (t) => {
+  let playwright;
+  try {
+    playwright = require("playwright");
+  } catch {
+    if (t && typeof t.skip === "function") {
+      t.skip("playwright module is not installed");
+      return;
+    }
+  }
+
+  const browser = await playwright.chromium.launch({
+    headless: true,
+    channel: process.env.ABI_TEST_BROWSER || (process.platform === "win32" ? "msedge" : "chromium"),
+  });
+
+  try {
+    const page = await browser.newPage({ viewport: { width: 1200, height: 800 } });
+
+    const mockHtml = `
+      <html data-abi-site="on" data-abi-auto-play="off">
+      <head>
+        <style>
+          .content.video { width: 800px; height: 500px; }
+          .play-box { width: 100%; height: 100%; }
+          #workingPlayer { width: 800px; height: 450px; }
+          video { width: 800px; height: 450px; display: block; }
+        </style>
+      </head>
+      <body>
+        <div class="main">
+          <ul class="nav">
+            <li id="working" class="current"><span>Workbench</span></li>
+          </ul>
+        </div>
+        <div id="xcWorking">
+          <div class="content video">
+            <div class="play-box">
+              <div id="workingPlayer">
+                <video src="https://example.com/test.mp4" preload="auto"></video>
+              </div>
+            </div>
+          </div>
+        </div>
+      </body>
+      </html>
+    `;
+
+    await page.route("https://www.arenabreakoutinfinite.com/act/a20251028patroller/*", (route) => {
+      route.fulfill({
+        status: 200,
+        contentType: "text/html",
+        body: mockHtml,
+      });
+    });
+
+    await page.goto("https://www.arenabreakoutinfinite.com/act/a20251028patroller/");
+
+    await page.evaluate(() => {
+      const v = document.querySelector("video");
+      let _paused = true;
+      Object.defineProperty(v, "paused", {
+        get: () => _paused,
+        set: (val) => { _paused = val; },
+        configurable: true,
+      });
+      v.play = async () => { _paused = false; };
+      v.pause = () => { _paused = true; };
+      Object.defineProperty(v, "duration", { get: () => 62, configurable: true });
+      Object.defineProperty(v, "currentTime", { get: () => 14.35, configurable: true });
+    });
+
+    await page.addScriptTag({ path: path.join(__dirname, "..", "abi-inspector-enhancer", "settings.js") });
+    await page.addScriptTag({ path: path.join(__dirname, "..", "abi-inspector-enhancer", "content.js") });
+
+    await page.waitForSelector("abi-local-player", { state: "attached" });
+    await page.waitForSelector(".abi-zoom-badge", { state: "attached" });
+
+    // 1. Initial State: 1x magnification, badge hidden
+    const initialState = await page.evaluate(() => {
+      const video = document.querySelector("video");
+      const shell = document.querySelector("abi-local-player");
+      const badge = shell.querySelector(".abi-zoom-badge");
+      return {
+        transform: video.style.transform,
+        transformOrigin: video.style.transformOrigin,
+        badgeActive: badge.classList.contains("active"),
+        zoomAttr: shell.dataset.abiZoom,
+      };
+    });
+
+    assert.equal(initialState.transform, "", "Initial transform is empty (1x)");
+    assert.equal(initialState.badgeActive, false, "Zoom badge is initially inactive");
+    assert.equal(initialState.zoomAttr, undefined, "No zoom dataset attribute initially");
+
+    // 2. Move pointer over video at 25% X, 75% Y
+    await page.evaluate(() => {
+      const video = document.querySelector("video");
+      const rect = video.getBoundingClientRect();
+      const player = document.querySelector("#workingPlayer");
+      player.dispatchEvent(new PointerEvent("pointermove", {
+        clientX: rect.left + rect.width * 0.25,
+        clientY: rect.top + rect.height * 0.75,
+        bubbles: true,
+      }));
+    });
+
+    // 3. Press and hold 'z' key
+    await page.keyboard.down("z");
+
+    const zoomedState = await page.evaluate(() => {
+      const video = document.querySelector("video");
+      const shell = document.querySelector("abi-local-player");
+      const badge = shell.querySelector(".abi-zoom-badge");
+      return {
+        transform: video.style.transform,
+        transformOrigin: video.style.transformOrigin,
+        cursor: video.style.cursor,
+        badgeActive: badge.classList.contains("active"),
+        badgeText: badge.textContent,
+        zoomAttr: shell.dataset.abiZoom,
+      };
+    });
+
+    assert.equal(zoomedState.transform, "scale(2.5)", "Holding Z magnifies video to scale(2.5)");
+    assert.match(zoomedState.transformOrigin, /^25(\.0+)?% 75(\.0+)?%$/, "Transform origin aligns with cursor position (25% 75%)");
+    assert.equal(zoomedState.cursor, "crosshair", "Cursor changes to crosshair during zoom");
+    assert.equal(zoomedState.badgeActive, true, "Zoom badge is active");
+    assert.equal(zoomedState.badgeText, "2.5× LOUPE", "Zoom badge displays '2.5× LOUPE'");
+    assert.equal(zoomedState.zoomAttr, "2.5x", "Player shell has data-abi-zoom='2.5x'");
+
+    // 4. Move pointer dynamically while zooming to 60% X, 40% Y
+    await page.evaluate(() => {
+      const video = document.querySelector("video");
+      const rect = video.getBoundingClientRect();
+      window.dispatchEvent(new PointerEvent("pointermove", {
+        clientX: rect.left + rect.width * 0.60,
+        clientY: rect.top + rect.height * 0.40,
+        bubbles: true,
+      }));
+    });
+
+    const pannedOrigin = await page.evaluate(() => document.querySelector("video").style.transformOrigin);
+    assert.match(pannedOrigin, /^60(\.0+)?% 40(\.0+)?%$/, "Transform origin tracks dynamic cursor movement (60% 40%)");
+
+    // 5. Release 'z' key: instantly snaps back to 1x
+    await page.keyboard.up("z");
+
+    const releasedState = await page.evaluate(() => {
+      const video = document.querySelector("video");
+      const shell = document.querySelector("abi-local-player");
+      const badge = shell.querySelector(".abi-zoom-badge");
+      return {
+        transform: video.style.transform,
+        transformOrigin: video.style.transformOrigin,
+        cursor: video.style.cursor,
+        badgeActive: badge.classList.contains("active"),
+        zoomAttr: shell.dataset.abiZoom,
+      };
+    });
+
+    assert.equal(releasedState.transform, "", "Transform snaps back to empty (1x) on key release");
+    assert.equal(releasedState.transformOrigin, "", "Transform origin is cleared");
+    assert.equal(releasedState.badgeActive, false, "Zoom badge is hidden");
+    assert.equal(releasedState.zoomAttr, undefined, "Zoom dataset attribute is cleared");
+
+    // 6. Right-click hold test: pointerdown button=2 activates zoom, pointerup releases
+    await page.evaluate(() => {
+      const video = document.querySelector("video");
+      const rect = video.getBoundingClientRect();
+      const player = document.querySelector("#workingPlayer");
+      player.dispatchEvent(new PointerEvent("pointerdown", {
+        button: 2,
+        clientX: rect.left + rect.width * 0.5,
+        clientY: rect.top + rect.height * 0.5,
+        bubbles: true,
+      }));
+    });
+
+    const rightClickZoomed = await page.evaluate(() => document.querySelector("video").style.transform);
+    assert.equal(rightClickZoomed, "scale(2.5)", "Right-click hold activates scale(2.5)");
+
+    await page.evaluate(() => {
+      window.dispatchEvent(new PointerEvent("pointerup", {
+        button: 2,
+        bubbles: true,
+      }));
+    });
+
+    const rightClickReleased = await page.evaluate(() => document.querySelector("video").style.transform);
+    assert.equal(rightClickReleased, "", "Releasing right click restores 1x");
+
+  } finally {
+    await browser?.close();
+  }
+});
+
 
 
 

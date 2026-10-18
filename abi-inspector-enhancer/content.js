@@ -518,6 +518,10 @@ function main() {
             <h3 id="keysViewTitle">View</h3>
             <dl class="keys-list">
               <div class="keys-row">
+                <dt>Tactical loupe (2.5× zoom)</dt>
+                <dd><kbd>Hold Z</kbd><span class="keys-separator">or</span><span class="keys-detail">Right-click hold</span></dd>
+              </div>
+              <div class="keys-row">
                 <dt>Fullscreen</dt>
                 <dd><kbd>F</kbd><span class="keys-separator">or</span><span class="keys-detail">Double-click</span></dd>
               </div>
@@ -622,6 +626,36 @@ function main() {
         :is(#xcWorking > .content.video, .content.video:has(#drillButton)):has(abi-local-player) .play-box > abi-local-player.abi-case-expiring,
         abi-local-player.abi-case-expiring {
           animation: abi-case-expiry-pulse 1.8s infinite ease-in-out !important;
+        }
+
+        /* Tactical Hold-to-Zoom Loupe */
+        .abi-zoom-badge {
+          position: absolute !important;
+          top: 14px !important;
+          left: 14px !important;
+          z-index: 25 !important;
+          display: none !important;
+          align-items: center !important;
+          gap: 6px !important;
+          padding: 4px 10px !important;
+          background: rgba(14, 20, 22, 0.88) !important;
+          border: 1px solid rgba(239, 68, 68, 0.8) !important;
+          border-radius: 4px !important;
+          color: #fca5a5 !important;
+          font-family: var(--abi-font, "Arial Narrow", sans-serif) !important;
+          font-size: 11px !important;
+          font-weight: 800 !important;
+          letter-spacing: 0.1em !important;
+          text-transform: uppercase !important;
+          box-shadow: 0 4px 14px rgba(0, 0, 0, 0.6), 0 0 10px rgba(239, 68, 68, 0.35) !important;
+          pointer-events: none !important;
+          user-select: none !important;
+        }
+        .abi-zoom-badge.active {
+          display: inline-flex !important;
+        }
+        abi-local-player > :first-child {
+          overflow: hidden !important;
         }
 
         /* Case Expiry Card mounted directly below the Inspection Notes box in .info-team */
@@ -908,6 +942,98 @@ function main() {
     } catch {}
     const on = (el, name, fn) =>
       el.addEventListener(name, fn, { signal: life.signal });
+
+    const zoomBadge = document.createElement("div");
+    zoomBadge.className = "abi-zoom-badge";
+    zoomBadge.textContent = "2.5× LOUPE";
+    zoomBadge.setAttribute("aria-hidden", "true");
+    shell.append(zoomBadge);
+
+    let lastClientX = null;
+    let lastClientY = null;
+    let isZooming = false;
+
+    function updateZoomOrigin(clientX, clientY) {
+      if (!video) return;
+      const rect = video.getBoundingClientRect();
+      if (rect.width > 0 && rect.height > 0 && Number.isFinite(clientX) && Number.isFinite(clientY)) {
+        const x = Math.max(0, Math.min(100, ((clientX - rect.left) / rect.width) * 100));
+        const y = Math.max(0, Math.min(100, ((clientY - rect.top) / rect.height) * 100));
+        video.style.transformOrigin = `${x.toFixed(2)}% ${y.toFixed(2)}%`;
+      } else {
+        video.style.transformOrigin = "50% 50%";
+      }
+    }
+
+    function startZoom(e) {
+      selectVideo();
+      if (!video) return;
+      if (isZooming) return;
+      isZooming = true;
+      shell.dataset.abiZoom = "2.5x";
+      if (player && player.style) player.style.overflow = "hidden";
+      if (e && Number.isFinite(e.clientX)) {
+        lastClientX = e.clientX;
+        lastClientY = e.clientY;
+      }
+      updateZoomOrigin(lastClientX, lastClientY);
+      video.style.transform = "scale(2.5)";
+      video.style.transition = "transform 0.08s ease-out";
+      video.style.cursor = "crosshair";
+      zoomBadge.classList.add("active");
+    }
+
+    function stopZoom() {
+      if (!isZooming) return;
+      isZooming = false;
+      delete shell.dataset.abiZoom;
+      if (video) {
+        video.style.transform = "";
+        video.style.transformOrigin = "";
+        video.style.transition = "";
+        video.style.cursor = "";
+      }
+      if (player && player.style) player.style.overflow = "";
+      zoomBadge.classList.remove("active");
+    }
+
+    on(player, "pointermove", (e) => {
+      lastClientX = e.clientX;
+      lastClientY = e.clientY;
+      if (isZooming) {
+        updateZoomOrigin(e.clientX, e.clientY);
+      }
+    });
+
+    on(window, "pointermove", (e) => {
+      if (isZooming) {
+        lastClientX = e.clientX;
+        lastClientY = e.clientY;
+        updateZoomOrigin(e.clientX, e.clientY);
+      }
+    });
+
+    on(player, "pointerdown", (e) => {
+      if (e.button === 2) {
+        e.preventDefault();
+        startZoom(e);
+      }
+    });
+
+    on(window, "pointerup", (e) => {
+      if (e.button === 2 && isZooming) {
+        stopZoom();
+      }
+    });
+
+    on(player, "contextmenu", (e) => {
+      e.preventDefault();
+    });
+
+    on(window, "blur", () => {
+      stopZoom();
+    });
+
     const notice = (message) => {
       ui.status.textContent = message;
       ui.status.classList.toggle("visible", Boolean(message));
@@ -1477,6 +1603,12 @@ function main() {
           toggleBookmark();
           return;
         }
+        if (event.key.toLowerCase() === "z") {
+          event.preventDefault();
+          event.stopImmediatePropagation();
+          startZoom();
+          return;
+        }
         if (event.key.toLowerCase() === "b") {
           event.preventDefault();
           event.stopImmediatePropagation();
@@ -1506,8 +1638,17 @@ function main() {
           return;
         actions[action]();
       },
+      keyUp(event) {
+        if (event.key.toLowerCase() === "z") {
+          stopZoom();
+        }
+      },
+      startZoom,
+      stopZoom,
       destroy() {
         shell.removeAttribute("data-controls-ready");
+        stopZoom();
+        zoomBadge?.remove();
         life.abort();
         mediaLife?.abort();
         playerObserver.disconnect();
@@ -1602,6 +1743,35 @@ function main() {
       )
         return;
       instance?.key(event);
+    },
+    true,
+  );
+  document.addEventListener(
+    "keyup",
+    (event) => {
+      if (
+        event.defaultPrevented ||
+        event.ctrlKey ||
+        event.metaKey ||
+        event.altKey ||
+        event.shiftKey ||
+        event.isComposing
+      )
+        return;
+      if (
+        event
+          .composedPath()
+          .some(
+            (node) =>
+              node instanceof Element &&
+              (node.isContentEditable ||
+                node.matches(
+                  'input,textarea,select,button,a,[role="textbox"],[role="slider"],[role="button"],[role="dialog"],[aria-modal="true"]',
+                )),
+          )
+      )
+        return;
+      instance?.keyUp?.(event);
     },
     true,
   );
