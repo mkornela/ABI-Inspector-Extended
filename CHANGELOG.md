@@ -7,6 +7,24 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [2.6.11] - 2026-10-18
+
+### Added
+- **Millisecond / Fractional Time Display:**
+  - Toggleable precision time format on the player timeline displaying milliseconds (`MM:SS.ms`, e.g., `00:14.35 / 01:02.00`).
+  - Interactive click on the `#time` display toggles between standard seconds format and millisecond precision mode with HUD toast notification.
+  - Timeline scrubber hover-preview badge dynamically shows millisecond precision when active.
+  - Automatically persists user time precision preference in `localStorage`.
+  - Documented in the video controls shortcuts modal (`#keysDialog`).
+
+### Changed
+- **Relocated Case Expiry Countdown Card:**
+  - Moved the Case Expiry timer from floating in the player area to a dedicated tactical card positioned directly below the official Inspection Notes box (`.tips-content` in `.info-team`).
+  - Re-authored the card description with clear, direct phrasing explaining that verdicts cannot be submitted once the timer expires because the case gets cancelled.
+  - Seamlessly maintains real-time countdown, under-60s warm amber/red pulsing, and expired states.
+
+---
+
 ## [2.6.10] - 2026-10-18
 
 ### Added

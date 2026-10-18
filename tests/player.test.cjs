@@ -1091,6 +1091,32 @@ test("Case Expiry Countdown Timer & Under-60s Amber Pulse: active case countdown
 
     assert.match(toastText, /Case review expires in 00:00/, "Clicking expiry badge shows status toast");
 
+    // 5. Mount below inspection notes box: when .tips-content exists in .info-team, badge moves directly after it
+    const mountedBelowNotes = await page.evaluate(() => {
+      let infoTeam = document.querySelector("#xcWorking .content.video .info-team");
+      if (!infoTeam) {
+        infoTeam = document.createElement("div");
+        infoTeam.className = "info-team";
+        const contentVideo = document.querySelector("#xcWorking .content.video");
+        contentVideo.prepend(infoTeam);
+      }
+      const tipsBox = document.createElement("div");
+      tipsBox.className = "tips-content";
+      infoTeam.append(tipsBox);
+
+      const player = document.querySelector("abi-local-player");
+      player.updateExpiry();
+
+      const badge = document.querySelector("#caseExpiryBadge");
+      return {
+        previousIsNotes: badge.previousElementSibling === tipsBox,
+        parentIsInfoTeam: badge.parentElement === infoTeam,
+      };
+    });
+
+    assert.equal(mountedBelowNotes.previousIsNotes, true, "Case expiry badge mounts directly after .tips-content");
+    assert.equal(mountedBelowNotes.parentIsInfoTeam, true, "Case expiry badge is located inside .info-team");
+
   } finally {
     await browser?.close();
   }
@@ -1449,6 +1475,178 @@ test("Background Tab Auto-Pause: automatically pauses when tab is hidden and res
     await browser?.close();
   }
 });
+
+test("Millisecond / Fractional Time Display: toggles precision format via click on time display, shows milliseconds on player and hover badge, and persists preference", async (t) => {
+  let playwright;
+  try {
+    playwright = require("playwright");
+  } catch {
+    if (t && typeof t.skip === "function") {
+      t.skip("playwright module is not installed");
+      return;
+    }
+  }
+
+  const browser = await playwright.chromium.launch({
+    headless: true,
+    channel: process.env.ABI_TEST_BROWSER || (process.platform === "win32" ? "msedge" : "chromium"),
+  });
+
+  try {
+    const page = await browser.newPage({ viewport: { width: 1200, height: 800 } });
+
+    const mockHtml = `
+      <html data-abi-site="on">
+      <head>
+        <style>
+          .content.video { width: 800px; height: 500px; }
+          .play-box { width: 100%; height: 100%; }
+          #workingPlayer { width: 100%; height: 100%; }
+          video { width: 100%; height: 100%; }
+        </style>
+      </head>
+      <body>
+        <div class="main">
+          <ul class="nav">
+            <li id="working" class="current"><span>Workbench</span></li>
+          </ul>
+        </div>
+        <div id="xcWorking">
+          <div class="content video">
+            <div class="play-box">
+              <div id="workingPlayer">
+                <video src="https://example.com/test.mp4" preload="auto"></video>
+              </div>
+            </div>
+          </div>
+        </div>
+      </body>
+      </html>
+    `;
+
+    await page.route("https://www.arenabreakoutinfinite.com/act/a20251028patroller/*", (route) => {
+      route.fulfill({
+        status: 200,
+        contentType: "text/html",
+        body: mockHtml,
+      });
+    });
+
+    await page.goto("https://www.arenabreakoutinfinite.com/act/a20251028patroller/");
+
+    await page.evaluate(() => {
+      const v = document.querySelector("video");
+      let _paused = true;
+      let _currentTime = 14.35;
+      let _duration = 62.00;
+      Object.defineProperty(v, "paused", {
+        get: () => _paused,
+        set: (val) => { _paused = val; },
+        configurable: true,
+      });
+      Object.defineProperty(v, "currentTime", {
+        get: () => _currentTime,
+        set: (val) => { _currentTime = val; },
+        configurable: true,
+      });
+      Object.defineProperty(v, "duration", {
+        get: () => _duration,
+        set: (val) => { _duration = val; },
+        configurable: true,
+      });
+      v.play = async () => { _paused = false; v.dispatchEvent(new Event("play")); };
+      v.pause = () => { _paused = true; v.dispatchEvent(new Event("pause")); };
+    });
+
+    await page.addScriptTag({ path: path.join(__dirname, "..", "abi-inspector-enhancer", "settings.js") });
+    await page.addScriptTag({ path: path.join(__dirname, "..", "abi-inspector-enhancer", "content.js") });
+
+    await page.waitForSelector("abi-local-player", { state: "attached" });
+
+    // 1. Initial State: Standard format (MM:SS / MM:SS)
+    const initialText = await page.evaluate(() => {
+      const controls = document.querySelector("abi-local-controls");
+      const timeEl = controls.shadowRoot.querySelector("#time");
+      return {
+        text: timeEl.textContent,
+        title: timeEl.title,
+        role: timeEl.getAttribute("role"),
+      };
+    });
+
+    assert.equal(initialText.text, "00:14 / 01:02", "Default format displays standard seconds (00:14 / 01:02)");
+    assert.equal(initialText.role, "button", "Time display has role=button for accessibility");
+    assert.equal(initialText.title, "Click to toggle millisecond precision", "Time display has helpful tooltip");
+
+    // 2. Click time display to toggle millisecond precision
+    await page.evaluate(() => {
+      const controls = document.querySelector("abi-local-controls");
+      const timeEl = controls.shadowRoot.querySelector("#time");
+      timeEl.click();
+    });
+
+    const msState = await page.evaluate(() => {
+      const controls = document.querySelector("abi-local-controls");
+      const timeEl = controls.shadowRoot.querySelector("#time");
+      const toast = controls.shadowRoot.querySelector("#status");
+      const player = document.querySelector("abi-local-player");
+      return {
+        text: timeEl.textContent,
+        toastText: toast?.textContent,
+        datasetPrecision: player.dataset.timePrecision,
+        storedPrecision: localStorage.getItem("abi-time-precision"),
+      };
+    });
+
+    assert.equal(msState.text, "00:14.35 / 01:02.00", "Displays fractional millisecond precision (00:14.35 / 01:02.00)");
+    assert.equal(msState.toastText, "Millisecond precision enabled", "Shows HUD toast notice confirming enablement");
+    assert.equal(msState.datasetPrecision, "ms", "Sets data-time-precision='ms' on player shell");
+    assert.equal(msState.storedPrecision, "ms", "Persists preference in localStorage");
+
+    // 3. Hovering scrubber also previews fractional milliseconds
+    const hoverBadgeText = await page.evaluate(() => {
+      const controls = document.querySelector("abi-local-controls");
+      const seek = controls.shadowRoot.querySelector("#seek");
+      const hoverBadge = controls.shadowRoot.querySelector("#hoverBadge");
+      const rect = seek.getBoundingClientRect();
+      seek.dispatchEvent(
+        new PointerEvent("pointermove", {
+          clientX: rect.left + rect.width * 0.5,
+          bubbles: true,
+        }),
+      );
+      return hoverBadge.textContent;
+    });
+
+    assert.equal(hoverBadgeText, "00:31.00", "Hover badge on scrubber displays fractional millisecond preview");
+
+    // 4. Click again to revert to standard time format
+    await page.evaluate(() => {
+      const controls = document.querySelector("abi-local-controls");
+      const timeEl = controls.shadowRoot.querySelector("#time");
+      timeEl.click();
+    });
+
+    const revertedState = await page.evaluate(() => {
+      const controls = document.querySelector("abi-local-controls");
+      const timeEl = controls.shadowRoot.querySelector("#time");
+      const toast = controls.shadowRoot.querySelector("#status");
+      return {
+        text: timeEl.textContent,
+        toastText: toast?.textContent,
+        storedPrecision: localStorage.getItem("abi-time-precision"),
+      };
+    });
+
+    assert.equal(revertedState.text, "00:14 / 01:02", "Reverts to standard format (00:14 / 01:02)");
+    assert.equal(revertedState.toastText, "Standard time format", "Shows HUD toast notice confirming standard format");
+    assert.equal(revertedState.storedPrecision, "normal", "Updates localStorage to normal");
+
+  } finally {
+    await browser?.close();
+  }
+});
+
 
 
 

@@ -133,7 +133,9 @@ function main() {
       opacity: 1;
       visibility: visible;
     }
-    .time { font-size:13px; font-variant-numeric:tabular-nums; white-space:nowrap; min-width:90px; text-align:right; color:#8fa09d; font-weight:700; letter-spacing:0.02em; }
+    .time { font-size:13px; font-variant-numeric:tabular-nums; white-space:nowrap; min-width:96px; text-align:right; color:#8fa09d; font-weight:700; letter-spacing:0.02em; cursor:pointer; user-select:none; padding:2px 4px; border-radius:4px; transition:color .15s ease, background .15s ease; }
+    .time:hover { color:#ffffff; background:rgba(255,255,255,0.06); }
+    .time:focus-visible { outline:1px solid #e66b4e; outline-offset:2px; }
     .panel { container-type:inline-size; }
     .row { display:grid; grid-template-columns:1fr auto 1fr; align-items:center; column-gap:14px; row-gap:8px; }
     .left { justify-self:start; display:flex; align-items:center; }
@@ -367,11 +369,14 @@ function main() {
     return children.find(visible) || children[0] || null;
   }
 
-  const format = (value) => {
-    if (!Number.isFinite(value)) return "--:--";
-    const seconds = Math.max(0, Math.floor(value));
+  const format = (value, showMs = false) => {
+    if (!Number.isFinite(value)) return showMs ? "--:--.--" : "--:--";
+    const totalSec = Math.max(0, value);
+    const seconds = Math.floor(totalSec);
+    const ms = Math.min(99, Math.max(0, Math.round((totalSec - seconds) * 100)));
     const h = Math.floor(seconds / 3600);
-    return `${h ? `${h}:` : ""}${String(Math.floor(seconds / 60) % 60).padStart(2, "0")}:${String(seconds % 60).padStart(2, "0")}`;
+    const base = `${h ? `${h}:` : ""}${String(Math.floor(seconds / 60) % 60).padStart(2, "0")}:${String(seconds % 60).padStart(2, "0")}`;
+    return showMs ? `${base}.${String(ms).padStart(2, "0")}` : base;
   };
 
   function create(player) {
@@ -429,7 +434,7 @@ function main() {
           <div id="hoverBadge" class="hover-badge" aria-hidden="true">00:00</div>
         </div>
         <button id="pinButton" title="Drop moment bookmark (M)" aria-label="Drop moment bookmark (M)">Bookmark</button>
-        <span class="time" id="time">00:00 / --:--</span>
+        <span class="time" id="time" role="button" tabindex="0" title="Click to toggle millisecond precision">00:00 / --:--</span>
       </div>
       <div class="row">
         <div class="left"><div class="group" role="group" aria-label="Playback"><button id="play" class="primary" title="Play / Pause (Space or K)">Play</button></div></div>
@@ -519,6 +524,10 @@ function main() {
               <div class="keys-row">
                 <dt>Reload player</dt>
                 <dd><span class="keys-detail">Toolbar button</span></dd>
+              </div>
+              <div class="keys-row">
+                <dt>Toggle milliseconds</dt>
+                <dd><span class="keys-detail">Click time display</span></dd>
               </div>
             </dl>
           </section>
@@ -614,48 +623,109 @@ function main() {
         abi-local-player.abi-case-expiring {
           animation: abi-case-expiry-pulse 1.8s infinite ease-in-out !important;
         }
-        .abi-case-expiry-badge {
-          position: absolute;
-          top: 12px;
-          right: 14px;
-          z-index: 30;
-          display: inline-flex;
-          align-items: center;
-          gap: 7px;
-          padding: 5px 12px;
-          background: rgba(14, 18, 20, 0.88);
-          border: 1px solid rgba(255, 255, 255, 0.16);
-          border-radius: 6px;
-          font-family: var(--abi-font, "Arial Narrow", sans-serif);
-          font-size: 12px;
-          font-weight: 700;
-          letter-spacing: 0.04em;
-          font-variant-numeric: tabular-nums;
-          color: #e0e3de;
-          box-shadow: 0 4px 16px rgba(0, 0, 0, 0.55);
+
+        /* Case Expiry Card mounted directly below the Inspection Notes box in .info-team */
+        :is(#xcWorking > .content.video, .content.video:has(#drillButton)) .abi-case-expiry-badge,
+        .info-team .abi-case-expiry-badge {
+          position: static !important;
+          display: flex !important;
+          flex-direction: column !important;
+          gap: 8px !important;
+          width: 100% !important;
+          height: auto !important;
+          min-width: 0 !important;
+          flex: 0 0 auto !important;
+          flex-shrink: 0 !important;
+          box-sizing: border-box !important;
+          margin: 0 !important;
+          padding: 14px 16px !important;
+          border: 1px solid rgba(255, 255, 255, 0.08) !important;
+          border-radius: 8px !important;
+          background: rgba(14, 19, 21, 0.65) !important;
+          box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4) !important;
+          cursor: pointer !important;
+          user-select: none !important;
           backdrop-filter: blur(4px);
-          user-select: none;
-          pointer-events: auto;
-          cursor: help;
-          transition: border-color .3s ease, color .3s ease, background .3s ease;
+          transition: border-color .3s ease, color .3s ease, background .3s ease, box-shadow .3s ease !important;
         }
+
+        :is(#xcWorking > .content.video, .content.video:has(#drillButton)) .abi-case-expiry-badge:hover,
+        .info-team .abi-case-expiry-badge:hover {
+          border-color: rgba(255, 255, 255, 0.18) !important;
+          background: rgba(18, 24, 27, 0.75) !important;
+        }
+
+        .abi-case-expiry-badge .abi-expiry-header {
+          display: flex !important;
+          align-items: center !important;
+          justify-content: space-between !important;
+          width: 100% !important;
+          gap: 12px !important;
+        }
+
+        .abi-case-expiry-badge .abi-expiry-title-group {
+          display: flex !important;
+          align-items: center !important;
+          gap: 8px !important;
+        }
+
         .abi-case-expiry-badge .abi-expiry-icon {
-          width: 13px;
-          height: 13px;
-          fill: currentColor;
-          flex: none;
-          opacity: 0.9;
+          width: 14px !important;
+          height: 14px !important;
+          fill: #e66b4e !important;
+          flex: none !important;
         }
+
         .abi-case-expiry-badge .abi-expiry-label {
-          color: #929a9b;
-          font-size: 11px;
-          text-transform: uppercase;
-          letter-spacing: 0.06em;
+          color: #929a9b !important;
+          font-size: 11px !important;
+          font-weight: 800 !important;
+          text-transform: uppercase !important;
+          letter-spacing: 0.08em !important;
+          font-family: var(--abi-font, "Arial Narrow", sans-serif);
         }
+
         .abi-case-expiry-badge .abi-expiry-time {
-          font-weight: 800;
-          color: #f0f3ee;
+          font-size: 15px !important;
+          font-weight: 800 !important;
+          letter-spacing: 0.05em !important;
+          font-variant-numeric: tabular-nums !important;
+          color: #f0f3ee !important;
+          font-family: var(--abi-font, "Arial Narrow", sans-serif);
         }
+
+        .abi-case-expiry-badge .abi-expiry-desc {
+          font-size: 11px !important;
+          line-height: 1.45 !important;
+          color: #889391 !important;
+          font-family: var(--abi-font, "Arial Narrow", sans-serif);
+        }
+
+        /* Fallback floating appearance if directly inside player shell */
+        abi-local-player > .abi-case-expiry-badge {
+          position: absolute !important;
+          top: 12px !important;
+          right: 14px !important;
+          z-index: 30 !important;
+          display: inline-flex !important;
+          width: auto !important;
+          padding: 5px 12px !important;
+          background: rgba(14, 18, 20, 0.88) !important;
+          border: 1px solid rgba(255, 255, 255, 0.16) !important;
+          border-radius: 6px !important;
+          box-shadow: 0 4px 16px rgba(0, 0, 0, 0.55) !important;
+        }
+        abi-local-player > .abi-case-expiry-badge .abi-expiry-desc {
+          display: none !important;
+        }
+        abi-local-player > .abi-case-expiry-badge .abi-expiry-header {
+          display: inline-flex !important;
+          gap: 7px !important;
+        }
+        abi-local-player > .abi-case-expiry-badge .abi-expiry-time {
+          font-size: 12px !important;
+        }
+
         .abi-case-expiry-badge.abi-case-expiring {
           background: rgba(30, 16, 14, 0.92) !important;
           color: #fca5a5 !important;
@@ -664,14 +734,27 @@ function main() {
         .abi-case-expiry-badge.abi-case-expiring .abi-expiry-label {
           color: #f87171 !important;
         }
+        .abi-case-expiry-badge.abi-case-expiring .abi-expiry-icon {
+          fill: #f87171 !important;
+        }
         .abi-case-expiry-badge.abi-case-expiring .abi-expiry-time {
           color: #fecaca !important;
         }
+        .abi-case-expiry-badge.abi-case-expiring .abi-expiry-desc {
+          color: #fca5a5 !important;
+        }
+
         .abi-case-expiry-badge.abi-case-expired {
           background: rgba(45, 10, 10, 0.95) !important;
           color: #ef4444 !important;
           border-color: #ef4444 !important;
           box-shadow: 0 0 14px rgba(239, 68, 68, 0.6) !important;
+        }
+        .abi-case-expiry-badge.abi-case-expired .abi-expiry-time {
+          color: #ef4444 !important;
+        }
+        .abi-case-expiry-badge.abi-case-expired .abi-expiry-desc {
+          color: #f87171 !important;
         }
       `;
       (document.head || document.documentElement).append(styleEl);
@@ -692,6 +775,12 @@ function main() {
       expiryBadge.setAttribute("role", "timer");
       expiryBadge.setAttribute("aria-live", "polite");
 
+      const header = document.createElement("div");
+      header.className = "abi-expiry-header";
+
+      const titleGroup = document.createElement("div");
+      titleGroup.className = "abi-expiry-title-group";
+
       const expiryIcon = document.createElementNS("http://www.w3.org/2000/svg", "svg");
       expiryIcon.setAttribute("class", "icon abi-expiry-icon");
       expiryIcon.setAttribute("viewBox", icons.clock.viewBox);
@@ -705,12 +794,46 @@ function main() {
       expiryLabel.className = "abi-expiry-label";
       expiryLabel.textContent = "Expires:";
 
+      titleGroup.append(expiryIcon, expiryLabel);
+
       const expiryTime = document.createElement("span");
       expiryTime.className = "abi-expiry-time";
       expiryTime.textContent = "15:00";
 
-      expiryBadge.append(expiryIcon, expiryLabel, expiryTime);
-      shell.append(expiryBadge);
+      header.append(titleGroup, expiryTime);
+
+      const expiryDesc = document.createElement("div");
+      expiryDesc.className = "abi-expiry-desc";
+      expiryDesc.textContent =
+        "Submit your verdict before the timer runs out. Once this time passes, you cannot submit the case because it gets cancelled.";
+
+      expiryBadge.append(header, expiryDesc);
+
+      const mountBadge = () => {
+        const notesBox = document.querySelector(
+          "#xcWorking .tips-content, .content.video .tips-content, .tips-content",
+        );
+        if (notesBox) {
+          if (expiryBadge.previousElementSibling !== notesBox || expiryBadge.parentElement !== notesBox.parentElement) {
+            notesBox.after(expiryBadge);
+          }
+          return;
+        }
+        const infoTeam = document.querySelector(
+          "#xcWorking .info-team, .content.video .info-team, .info-team",
+        );
+        if (infoTeam) {
+          if (expiryBadge.parentElement !== infoTeam) {
+            infoTeam.append(expiryBadge);
+          }
+          return;
+        }
+        if (!expiryBadge.parentElement) {
+          shell.append(expiryBadge);
+        }
+      };
+
+      mountBadge();
 
       let caseStartTime = Date.now();
       let totalExpirySeconds = 900;
@@ -726,18 +849,24 @@ function main() {
       };
 
       const updateExpiry = () => {
+        mountBadge();
         if (!expiryBadge.isConnected) return;
         const remaining = getRemaining();
         const formatted = format(remaining);
 
         if (remaining <= 0) {
           expiryTime.textContent = "00:00 (EXPIRED)";
-          expiryBadge.title = "Case review expires in 00:00 — submitting after expiration makes the verdict invalid";
+          const noticeMsg = "Case review expires in 00:00 — submitting after expiration makes the verdict invalid";
+          expiryBadge.title = noticeMsg;
+          expiryDesc.textContent = "Time has expired. This case was cancelled and can no longer be submitted.";
           expiryBadge.classList.add("abi-case-expiring", "abi-case-expired");
           shell.classList.add("abi-case-expiring");
         } else {
           expiryTime.textContent = formatted;
-          expiryBadge.title = `Case review expires in ${formatted} — submitting after expiration makes the verdict invalid`;
+          const noticeMsg = `Case review expires in ${formatted} — submitting after expiration makes the verdict invalid`;
+          expiryBadge.title = noticeMsg;
+          expiryDesc.textContent =
+            "Submit your verdict before the timer runs out. Once this time passes, you cannot submit the case because it gets cancelled.";
           expiryBadge.classList.remove("abi-case-expired");
           if (remaining <= 60) {
             expiryBadge.classList.add("abi-case-expiring");
@@ -770,6 +899,13 @@ function main() {
     let noticeTimer;
     let bookmarks = [];
     let wasPlayingBeforeBackground = false;
+    let precisionMs = false;
+    try {
+      precisionMs =
+        localStorage.getItem("abi-time-precision") === "ms" ||
+        document.documentElement.dataset.abiTimePrecision === "ms" ||
+        shell.dataset.timePrecision === "ms";
+    } catch {}
     const on = (el, name, fn) =>
       el.addEventListener(name, fn, { signal: life.signal });
     const notice = (message) => {
@@ -1007,7 +1143,7 @@ function main() {
         "aria-label",
         !video || video.paused ? "Play video" : "Pause video",
       );
-      ui.time.textContent = `${format(video?.currentTime || 0)} / ${format(video?.duration)}`;
+      ui.time.textContent = `${format(video?.currentTime || 0, precisionMs)} / ${format(video?.duration, precisionMs)}`;
       ui.seek.max = ready ? String(video.duration) : "1";
       ui.seek.value = ready ? String(video.currentTime) : "0";
       ui.seek.style.setProperty(
@@ -1016,7 +1152,7 @@ function main() {
       );
       ui.seek.setAttribute(
         "aria-valuetext",
-        `${format(video?.currentTime || 0)} of ${format(video?.duration)}`,
+        `${format(video?.currentTime || 0, precisionMs)} of ${format(video?.duration, precisionMs)}`,
       );
       if (video) {
         ui.volume.value = String(video.volume);
@@ -1160,7 +1296,7 @@ function main() {
       const clampX = Math.max(0, Math.min(e.clientX - rect.left, rect.width));
       const ratio = clampX / rect.width;
       const hoverTime = ratio * video.duration;
-      ui.hoverBadge.textContent = format(hoverTime);
+      ui.hoverBadge.textContent = format(hoverTime, precisionMs);
       ui.hoverBadge.style.left = `${ratio * 100}%`;
       ui.hoverBadge.classList.add("visible");
     }
@@ -1192,6 +1328,35 @@ function main() {
     on(ui.keysDialog, "click", (event) => {
       if (event.target === ui.keysDialog) ui.keysDialog.close();
     });
+
+    const togglePrecision = (event) => {
+      event?.preventDefault?.();
+      event?.stopPropagation?.();
+      precisionMs = !precisionMs;
+      try {
+        localStorage.setItem("abi-time-precision", precisionMs ? "ms" : "normal");
+      } catch {}
+      shell.dataset.timePrecision = precisionMs ? "ms" : "normal";
+      render();
+      notice(precisionMs ? "Millisecond precision enabled" : "Standard time format");
+    };
+
+    on(ui.time, "click", togglePrecision);
+    on(ui.time, "keydown", (e) => {
+      if (e.key === "Enter" || e.key === " ") {
+        togglePrecision(e);
+      }
+    });
+
+    shell.togglePrecision = togglePrecision;
+    shell.setPrecision = (val) => {
+      precisionMs = Boolean(val);
+      shell.dataset.timePrecision = precisionMs ? "ms" : "normal";
+      try {
+        localStorage.setItem("abi-time-precision", precisionMs ? "ms" : "normal");
+      } catch {}
+      render();
+    };
     on(document, "fullscreenchange", render);
 
     const onHide = () => {
