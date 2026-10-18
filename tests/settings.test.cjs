@@ -42,7 +42,7 @@ test("Settings panel redesign: DOM structure, search, dependencies, key chips, a
       };
       window.chrome = {
         runtime: {
-          getManifest: () => ({ version: "2.6.12" }),
+          getManifest: () => ({ version: "2.6.13" }),
         },
         storage: {
           local: {
@@ -105,7 +105,7 @@ test("Settings panel redesign: DOM structure, search, dependencies, key chips, a
 
     const verdictChips = page.locator("#abi-section-verdicts .abi-key-chip");
     assert.equal(await verdictChips.count(), 3, "3 key chips present under verdict hotkeys");
-    assert.ok((await verdictChips.first().textContent()).includes("1 or G"), "1 or G hotkey chip present");
+    assert.ok((await verdictChips.first().textContent()).includes("1 or V"), "1 or V hotkey chip present");
 
     // 5. Verify Streamer / Privacy Mode Live Preview
     const preview = page.locator("#abi-section-privacy .abi-privacy-preview-box");

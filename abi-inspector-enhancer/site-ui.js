@@ -982,7 +982,7 @@
 
   const WATERMARK = `
 ================================================================================
-  ABI INSPECTOR EXTENDED \u2014 v2.6.12
+  ABI INSPECTOR EXTENDED \u2014 v2.6.13
   Enhanced Patroller Interface & Local Playback Controls
   Author: deem (https://github.com/mkornela)
   Status: Extension Loaded & Active
@@ -1028,7 +1028,7 @@
     window.__abiExtendedBannerLogged = true;
     try {
       console.log(
-        "%c ABI INSPECTOR EXTENDED %c v2.6.12 %c deem %c ACTIVE \n%cEnhanced Patroller Interface & Local Playback Controls (https://github.com/mkornela)",
+        "%c ABI INSPECTOR EXTENDED %c v2.6.13 %c deem %c ACTIVE \n%cEnhanced Patroller Interface & Local Playback Controls (https://github.com/mkornela)",
         "background: #d49a37; color: #0b0f11; font-weight: bold; font-family: monospace; border-radius: 3px 0 0 3px; padding: 3px 8px; font-size: 11px;",
         "background: #182226; color: #d49a37; font-weight: bold; font-family: monospace; padding: 3px 8px; font-size: 11px; border-left: 1px solid #2a373c;",
         "background: #222f35; color: #c4d0d0; font-family: monospace; padding: 3px 8px; font-size: 11px; border-left: 1px solid #2a373c;",
@@ -2531,10 +2531,10 @@
   function getExtensionVersion() {
     try {
       if (typeof chrome !== "undefined" && chrome?.runtime?.getManifest) {
-        return chrome.runtime.getManifest()?.version || "2.6.12";
+        return chrome.runtime.getManifest()?.version || "2.6.13";
       }
     } catch {}
-    return "2.6.12";
+    return "2.6.13";
   }
 
   function safeStorageGet(defaults) {
@@ -2942,9 +2942,9 @@
       "verdictHotkeys",
       "Quick verdict hotkeys",
       "Press keyboard shortcuts on the inspection workbench to instantly submit your verdict.",
-      "hotkey hotkeys key shortcut verdict 1 2 3 g u i instant submit",
+      "hotkey hotkeys key shortcut verdict 1 2 3 v u i instant submit",
       makeKeyChips([
-        "<kbd>1</kbd> or <kbd>G</kbd> Violation",
+        "<kbd>1</kbd> or <kbd>V</kbd> Violation",
         "<kbd>2</kbd> or <kbd>U</kbd> Uncertain",
         "<kbd>3</kbd> or <kbd>I</kbd> No Violation",
       ]),

@@ -155,6 +155,23 @@ test("Player pause and unpause button, autoplay safety, and click toggling", asy
     isPaused = await page.evaluate(() => document.querySelector("video").paused);
     assert.equal(isPaused, true, "Video should pause when clicking on player container again");
 
+    // Click player container to resume and verify it continues playing without stopping after 500ms
+    await page.evaluate(() => {
+      const player = document.querySelector("#workingPlayer");
+      player.dispatchEvent(new MouseEvent("click", { bubbles: true }));
+    });
+    await page.waitForTimeout(600);
+    isPaused = await page.evaluate(() => document.querySelector("video").paused);
+    assert.equal(isPaused, false, "Video continues playing and does not stop after half a second");
+
+    // Pause again to preserve paused state for subsequent speed tests
+    await page.evaluate(() => {
+      const player = document.querySelector("#workingPlayer");
+      player.dispatchEvent(new MouseEvent("click", { bubbles: true }));
+    });
+    isPaused = await page.evaluate(() => document.querySelector("video").paused);
+    assert.equal(isPaused, true, "Video paused again for next test section");
+
     // Test speed multiplier preservation
     // Increase speed using faster button (+)
     await page.evaluate(() => {
@@ -1838,6 +1855,192 @@ test("Tactical Hold-to-Zoom Loupe: magnifies video 2.5x centered on cursor when 
 
     const rightClickReleased = await page.evaluate(() => document.querySelector("video").style.transform);
     assert.equal(rightClickReleased, "", "Releasing right click restores 1x");
+
+  } finally {
+    await browser?.close();
+  }
+});
+
+test("Shadow & Gamma Boost: cycles Normal -> Shadow Boost -> Max Brightness -> Normal via G key and HUD toolbar button", async (t) => {
+  let playwright;
+  try {
+    playwright = require("playwright");
+  } catch {
+    if (t && typeof t.skip === "function") {
+      t.skip("playwright module is not installed");
+      return;
+    }
+  }
+
+  const browser = await playwright.chromium.launch({
+    headless: true,
+    channel: process.env.ABI_TEST_BROWSER || (process.platform === "win32" ? "msedge" : "chromium"),
+  });
+
+  try {
+    const page = await browser.newPage({ viewport: { width: 1200, height: 800 } });
+
+    const mockHtml = `
+      <html data-abi-site="on" data-abi-auto-play="off">
+      <head>
+        <style>
+          .content.video { width: 800px; height: 500px; }
+          .play-box { width: 100%; height: 100%; }
+          #workingPlayer { width: 800px; height: 450px; }
+          video { width: 800px; height: 450px; display: block; }
+        </style>
+      </head>
+      <body>
+        <div class="main">
+          <ul class="nav">
+            <li id="working" class="current"><span>Workbench</span></li>
+          </ul>
+        </div>
+        <div id="xcWorking">
+          <div class="content video">
+            <div class="play-box">
+              <div id="workingPlayer">
+                <video src="https://example.com/test.mp4" preload="auto"></video>
+              </div>
+            </div>
+          </div>
+        </div>
+      </body>
+      </html>
+    `;
+
+    await page.route("https://www.arenabreakoutinfinite.com/act/a20251028patroller/*", (route) => {
+      route.fulfill({
+        status: 200,
+        contentType: "text/html",
+        body: mockHtml,
+      });
+    });
+
+    await page.goto("https://www.arenabreakoutinfinite.com/act/a20251028patroller/");
+
+    await page.evaluate(() => {
+      const v = document.querySelector("video");
+      let _paused = true;
+      Object.defineProperty(v, "paused", {
+        get: () => _paused,
+        set: (val) => { _paused = val; },
+        configurable: true,
+      });
+      v.play = async () => { _paused = false; };
+      v.pause = () => { _paused = true; };
+      Object.defineProperty(v, "duration", { get: () => 62, configurable: true });
+      Object.defineProperty(v, "currentTime", { get: () => 14.35, configurable: true });
+    });
+
+    await page.addScriptTag({ path: path.join(__dirname, "..", "abi-inspector-enhancer", "settings.js") });
+    await page.addScriptTag({ path: path.join(__dirname, "..", "abi-inspector-enhancer", "content.js") });
+
+    await page.waitForSelector("abi-local-player", { state: "attached" });
+    await page.waitForSelector("abi-local-controls", { state: "attached" });
+
+    // 1. Initial State: normal gamma (filter is empty, gammaMode is normal)
+    const initialState = await page.evaluate(() => {
+      const video = document.querySelector("video");
+      const shell = document.querySelector("abi-local-player");
+      const controls = document.querySelector("abi-local-controls");
+      const gammaBtn = controls.shadowRoot.querySelector("#gamma");
+      return {
+        filter: video.style.filter,
+        gammaAttr: shell.dataset.abiGamma,
+        btnActive: gammaBtn.classList.contains("active"),
+        btnPressed: gammaBtn.getAttribute("aria-pressed"),
+      };
+    });
+
+    assert.equal(initialState.filter, "", "Initial video filter is empty");
+    assert.equal(initialState.gammaAttr, "normal", "Initial player shell has data-abi-gamma='normal'");
+    assert.equal(initialState.btnActive, false, "Gamma button is initially not active");
+    assert.equal(initialState.btnPressed, "false", "Gamma button aria-pressed is initially false");
+
+    // 2. Press 'g' key to cycle to Shadow Boost
+    await page.keyboard.press("g");
+
+    const shadowState = await page.evaluate(() => {
+      const video = document.querySelector("video");
+      const shell = document.querySelector("abi-local-player");
+      const controls = document.querySelector("abi-local-controls");
+      const gammaBtn = controls.shadowRoot.querySelector("#gamma");
+      const toast = controls.shadowRoot.querySelector("#status");
+      return {
+        filter: video.style.filter,
+        gammaAttr: shell.dataset.abiGamma,
+        btnActive: gammaBtn.classList.contains("active"),
+        btnPressed: gammaBtn.getAttribute("aria-pressed"),
+        toast: toast?.textContent,
+        stored: localStorage.getItem("abi-gamma-mode"),
+      };
+    });
+
+    assert.ok(shadowState.filter.includes("brightness(1.35)"), "Shadow Boost applies brightness(1.35)");
+    assert.ok(shadowState.filter.includes("contrast(1.15)"), "Shadow Boost applies contrast(1.15)");
+    assert.equal(shadowState.gammaAttr, "shadow", "Player shell has data-abi-gamma='shadow'");
+    assert.equal(shadowState.btnActive, true, "Gamma button has active class");
+    assert.equal(shadowState.btnPressed, "true", "Gamma button has aria-pressed='true'");
+    assert.equal(shadowState.toast, "Gamma: Shadow Boost", "HUD toast announces 'Gamma: Shadow Boost'");
+    assert.equal(shadowState.stored, "shadow", "Persists preference in localStorage");
+
+    // 3. Press 'g' key again to cycle to Max Brightness
+    await page.keyboard.press("g");
+
+    const maxState = await page.evaluate(() => {
+      const video = document.querySelector("video");
+      const shell = document.querySelector("abi-local-player");
+      const controls = document.querySelector("abi-local-controls");
+      const gammaBtn = controls.shadowRoot.querySelector("#gamma");
+      const toast = controls.shadowRoot.querySelector("#status");
+      return {
+        filter: video.style.filter,
+        gammaAttr: shell.dataset.abiGamma,
+        btnActive: gammaBtn.classList.contains("active"),
+        btnPressed: gammaBtn.getAttribute("aria-pressed"),
+        toast: toast?.textContent,
+        stored: localStorage.getItem("abi-gamma-mode"),
+      };
+    });
+
+    assert.ok(maxState.filter.includes("brightness(1.75)"), "Max Brightness applies brightness(1.75)");
+    assert.ok(maxState.filter.includes("contrast(1.25)"), "Max Brightness applies contrast(1.25)");
+    assert.equal(maxState.gammaAttr, "max", "Player shell has data-abi-gamma='max'");
+    assert.equal(maxState.btnActive, true, "Gamma button remains active");
+    assert.equal(maxState.btnPressed, "true", "Gamma button has aria-pressed='true'");
+    assert.equal(maxState.toast, "Gamma: Max Brightness", "HUD toast announces 'Gamma: Max Brightness'");
+    assert.equal(maxState.stored, "max", "Persists preference in localStorage");
+
+    // 4. Click toolbar button to cycle back to Normal
+    await page.evaluate(() => {
+      const controls = document.querySelector("abi-local-controls");
+      const gammaBtn = controls.shadowRoot.querySelector("#gamma");
+      gammaBtn.click();
+    });
+
+    const revertedState = await page.evaluate(() => {
+      const video = document.querySelector("video");
+      const shell = document.querySelector("abi-local-player");
+      const controls = document.querySelector("abi-local-controls");
+      const gammaBtn = controls.shadowRoot.querySelector("#gamma");
+      const toast = controls.shadowRoot.querySelector("#status");
+      return {
+        filter: video.style.filter,
+        gammaAttr: shell.dataset.abiGamma,
+        btnActive: gammaBtn.classList.contains("active"),
+        btnPressed: gammaBtn.getAttribute("aria-pressed"),
+        toast: toast?.textContent,
+        stored: localStorage.getItem("abi-gamma-mode"),
+      };
+    });
+
+    assert.equal(revertedState.filter, "", "Video filter reverts to empty (Normal)");
+    assert.equal(revertedState.gammaAttr, "normal", "Player shell reverts to data-abi-gamma='normal'");
+    assert.equal(revertedState.btnActive, false, "Gamma button is inactive");
+    assert.equal(revertedState.btnPressed, "false", "Gamma button aria-pressed is false");
+    assert.equal(revertedState.toast, "Gamma: Normal (1.0×)", "HUD toast announces 'Gamma: Normal (1.0×)'");
+    assert.equal(revertedState.stored, "normal", "localStorage updated to 'normal'");
 
   } finally {
     await browser?.close();

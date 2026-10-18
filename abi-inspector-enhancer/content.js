@@ -56,6 +56,10 @@ function main() {
       viewBox: "0 0 512 512",
       d: "M256 0a256 256 0 1 1 0 512A256 256 0 1 1 256 0zM232 120l0 136c0 8 4 15.5 10.7 20l96 64c11 7.4 25.9 4.4 33.3-6.7s4.4-25.9-6.7-33.3L280 243.2 280 120c0-13.3-10.7-24-24-24s-24 10.7-24 24z",
     },
+    gamma: {
+      viewBox: "0 0 512 512",
+      d: "M256 160c-53 0-96 43-96 96s43 96 96 96 96-43 96-96-43-96-96-96zm0-96c13.3 0 24-10.7 24-24V16c0-13.3-10.7-24-24-24s-24 10.7-24 24v24c0 13.3 10.7 24 24 24zm0 384c-13.3 0-24 10.7-24 24v24c0 13.3 10.7 24 24 24s24-10.7 24-24v-24c0-13.3-10.7-24-24-24zm192-216h-24c-13.3 0-24 10.7-24 24s10.7 24 24 24h24c13.3 0 24-10.7 24-24s-10.7-24-24-24zM96 256c0-13.3-10.7-24-24-24H24c-13.3 0-24 10.7-24 24s10.7 24 24 24h48c13.3 0 24-10.7 24-24zm297.9-141.9c-9.4-9.4-24.6-9.4-33.9 0s-9.4 24.6 0 33.9l17 17c9.4 9.4 24.6 9.4 33.9 0s9.4-24.6 0-33.9l-17-17zm-273.8 274c-9.4-9.4-24.6-9.4-33.9 0s-9.4 24.6 0 33.9l17 17c9.4 9.4 24.6 9.4 33.9 0s9.4-24.6 0-33.9l-17-17zm0-274l-17 17c-9.4 9.4-9.4 24.6 0 33.9s24.6 9.4 33.9 0l17-17c9.4-9.4 9.4-24.6 0-33.9s-24.6-9.4-33.9 0zm273.8 274l-17 17c-9.4 9.4-9.4 24.6 0 33.9s24.6 9.4 33.9 0l17-17c9.4-9.4 9.4-24.6 0-33.9s-24.6-9.4-33.9 0z",
+    },
   };
   const styles = `
     :host { display:block; color:var(--abi-text,#e0e3de); font-family:var(--abi-font,"Arial Narrow",sans-serif); font-weight:var(--abi-weight,700); letter-spacing:var(--abi-tracking,0px); color-scheme:dark; }
@@ -143,6 +147,11 @@ function main() {
     .right { justify-self:end; display:flex; align-items:center; gap:12px; }
     .group { display:flex; align-items:center; gap:4px; }
     .label { font-size:11px; font-weight:800; letter-spacing:0.08em; text-transform:uppercase; padding:0 4px; color:#8fa09d; user-select:none; }
+    #gamma.active {
+      color:#fbbf24;
+      border-color:rgba(245,158,11,0.5);
+      background:rgba(245,158,11,0.15);
+    }
     #keysButton { gap:6px; }
     .keyboard-icon {
       fill:none;
@@ -446,6 +455,7 @@ function main() {
         <div class="right">
           <div class="group" role="group" aria-label="Audio"><button id="mute" title="Mute (Shift+M or icon)" aria-pressed="false">Mute</button><input id="volume" type="range" min="0" max="1" step="0.01" value="1" aria-label="Volume"></div>
           <div class="group" role="group" aria-label="View">
+            <button id="gamma" title="Shadow & Gamma Boost (G)" aria-label="Shadow & Gamma Boost (G)">Gamma</button>
             <button id="reload" title="Reload player" aria-label="Reload player">Reload</button>
             <button id="keysButton" title="Show video control keys" aria-label="Show video control keys">
               <svg class="icon keyboard-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
@@ -522,6 +532,10 @@ function main() {
                 <dd><kbd>Hold Z</kbd><span class="keys-separator">or</span><span class="keys-detail">Right-click hold</span></dd>
               </div>
               <div class="keys-row">
+                <dt>Shadow & Gamma Boost</dt>
+                <dd><kbd>G</kbd><span class="keys-separator">or</span><span class="keys-detail">Toolbar button</span></dd>
+              </div>
+              <div class="keys-row">
                 <dt>Fullscreen</dt>
                 <dd><kbd>F</kbd><span class="keys-separator">or</span><span class="keys-detail">Double-click</span></dd>
               </div>
@@ -540,7 +554,7 @@ function main() {
             <dl class="keys-list">
               <div class="keys-row">
                 <dt>Violation</dt>
-                <dd><kbd>1</kbd><span class="keys-separator">or</span><kbd>G</kbd></dd>
+                <dd><kbd>1</kbd><span class="keys-separator">or</span><kbd>V</kbd></dd>
               </div>
               <div class="keys-row">
                 <dt>Uncertain</dt>
@@ -601,6 +615,7 @@ function main() {
     );
     decorate(ui.mute, "volume-high", "", "Mute (Shift+M or icon)");
     decorate(ui.pinButton, "bookmark", "", "Drop moment bookmark (M)");
+    decorate(ui.gamma, "gamma", "", "Shadow & Gamma Boost (G)");
     decorate(ui.reload, "reload", "", "Reload player");
     player.before(shell);
     // Keep the complete original subtree together, including all overlays.
@@ -940,8 +955,8 @@ function main() {
         document.documentElement.dataset.abiTimePrecision === "ms" ||
         shell.dataset.timePrecision === "ms";
     } catch {}
-    const on = (el, name, fn) =>
-      el.addEventListener(name, fn, { signal: life.signal });
+    const on = (el, name, fn, capture = false) =>
+      el.addEventListener(name, fn, { signal: life.signal, capture });
 
     const zoomBadge = document.createElement("div");
     zoomBadge.className = "abi-zoom-badge";
@@ -1033,6 +1048,56 @@ function main() {
     on(window, "blur", () => {
       stopZoom();
     });
+
+    let gammaMode = "normal";
+    try {
+      const saved = localStorage.getItem("abi-gamma-mode");
+      if (saved === "shadow" || saved === "max") gammaMode = saved;
+    } catch {}
+
+    const GAMMA_PRESETS = {
+      normal: {
+        filter: "",
+        name: "Normal (1.0×)",
+      },
+      shadow: {
+        filter: "brightness(1.35) contrast(1.15) saturate(1.1)",
+        name: "Shadow Boost",
+      },
+      max: {
+        filter: "brightness(1.75) contrast(1.25) saturate(1.15)",
+        name: "Max Brightness",
+      },
+    };
+
+    function applyGamma(mode, announce = false) {
+      if (!GAMMA_PRESETS[mode]) mode = "normal";
+      gammaMode = mode;
+      shell.dataset.abiGamma = mode;
+      try {
+        localStorage.setItem("abi-gamma-mode", mode);
+      } catch {}
+      if (video) {
+        video.style.filter = GAMMA_PRESETS[mode].filter;
+      }
+      if (ui.gamma) {
+        ui.gamma.classList.toggle("active", mode !== "normal");
+        ui.gamma.setAttribute("aria-pressed", String(mode !== "normal"));
+        ui.gamma.title = `Shadow & Gamma Boost: ${GAMMA_PRESETS[mode].name} (G)`;
+      }
+      if (announce) {
+        notice(`Gamma: ${GAMMA_PRESETS[mode].name}`);
+      }
+    }
+
+    function toggleGamma() {
+      selectVideo();
+      const nextMode = gammaMode === "normal" ? "shadow" : gammaMode === "shadow" ? "max" : "normal";
+      applyGamma(nextMode, true);
+    }
+
+    shell.toggleGamma = toggleGamma;
+    shell.applyGamma = applyGamma;
 
     const notice = (message) => {
       ui.status.textContent = message;
@@ -1163,6 +1228,7 @@ function main() {
       mediaLife?.abort();
       video = selected;
       if (video) {
+        applyGamma(gammaMode, false);
         const rootDs = document.documentElement.dataset;
         const initialSpeed = Number(rootDs.abiPlaybackSpeed);
         const currentSrc = video.currentSrc || video.src || "loaded";
@@ -1228,12 +1294,16 @@ function main() {
               if (event.type === "durationchange") {
                 renderPins();
               }
-              if (
-                event.type === "play" &&
-                rootDs.abiAutoPlay === "off" &&
-                video.dataset.abiUserPlayed !== "true"
-              ) {
-                video.pause();
+              if (event.type === "play") {
+                if (
+                  rootDs.abiAutoPlay === "off" &&
+                  video.dataset.abiUserPlayed !== "true"
+                ) {
+                  video.pause();
+                } else {
+                  delete video.dataset.abiUserPaused;
+                  video.dataset.abiUserPlayed = "true";
+                }
               }
               render();
             },
@@ -1404,6 +1474,7 @@ function main() {
         }
       },
       pinButton: toggleBookmark,
+      gamma: toggleGamma,
       reload: reloadVideo,
       fullscreen,
     };
@@ -1521,16 +1592,25 @@ function main() {
     });
     const isVideoArea = (target) =>
       target instanceof Element &&
+      (target === player || player.contains(target)) &&
       !target.closest(
-        "button, a, input, select, textarea, [role='button'], [role='slider'], abi-local-controls, .abi-case-expiry-badge",
+        "abi-local-controls, .abi-case-expiry-badge, .abi-case-log-modal, dialog",
       );
 
-    // Click directly on video screen to toggle play/pause
-    on(player, "click", (event) => {
-      if (isVideoArea(event.target)) {
-        togglePlay();
-      }
-    });
+    // Click directly on video screen to toggle play/pause (capture phase intercepts before native player scripts)
+    on(
+      player,
+      "click",
+      (event) => {
+        if (isVideoArea(event.target)) {
+          event.preventDefault();
+          event.stopPropagation();
+          event.stopImmediatePropagation();
+          togglePlay();
+        }
+      },
+      true,
+    );
 
     // Double-click anywhere on the video area toggles fullscreen
     on(shell, "dblclick", (event) => {
@@ -1573,7 +1653,7 @@ function main() {
           const k = event.key.length === 1 ? event.key.toLowerCase() : event.key;
           let verdictTarget = null;
           let verdictName = "";
-          if (k === "1" || k === "g") {
+          if (k === "1" || k === "v") {
             verdictTarget = document.querySelector("#patrolButton0, #drillButton0, .operation a[data-index='1']");
             verdictName = "Violation";
           } else if (k === "2" || k === "u") {
@@ -1625,6 +1705,7 @@ function main() {
           ",": "previous",
           ".": "next",
           f: "fullscreen",
+          g: "gamma",
           "[": "slower",
           "]": "faster",
           "\\": "speedval",
@@ -1645,9 +1726,12 @@ function main() {
       },
       startZoom,
       stopZoom,
+      toggleGamma,
+      applyGamma,
       destroy() {
         shell.removeAttribute("data-controls-ready");
         stopZoom();
+        if (video) video.style.filter = "";
         zoomBadge?.remove();
         life.abort();
         mediaLife?.abort();

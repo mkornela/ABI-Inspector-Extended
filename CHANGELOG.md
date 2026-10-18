@@ -7,6 +7,25 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [2.6.13] - 2026-10-18
+
+### Added
+- **Shadow & Gamma Boost (`G` key):**
+  - Cycle between `Normal` (1.0×), `Shadow Boost` (brightness 1.35, contrast 1.15), and `Max Brightness` (brightness 1.75, contrast 1.25) to reveal targets in shadows, dark corridors, and night raids.
+  - Added dedicated `#gamma` icon toggle button to `<abi-local-controls>` toolbar with visual active styling.
+  - Added HUD toast announcements showing active gamma preset.
+  - Automatically persists gamma preset in `localStorage` (`abi-gamma-mode`).
+  - Shifted Violation verdict hotkey to `V` (accepts `1` or `V`) to dedicate `G` key to Gamma cycling.
+  - Added shortcut reference to the video controls modal (`#keysDialog`).
+
+### Fixed
+- **Video Player Click-to-Resume Stoppage:**
+  - Resolved an issue where clicking on the video player to start playback resulted in playback pausing again after ~400ms.
+  - Intercepted video surface clicks in the capture phase with immediate event propagation stoppage to prevent conflicts with the host site's TCPlayer debounced click handlers.
+  - Synchronized `abiUserPlayed` / `abiUserPaused` tracking on native `play` events to prevent background media settings checkers from falsely re-pausing playback.
+
+---
+
 ## [2.6.12] - 2026-10-18
 
 ### Added
