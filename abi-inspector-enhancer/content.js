@@ -699,7 +699,9 @@ function main() {
       const rootDs = document.documentElement.dataset;
       rootDs.abiPlaybackSpeed = String(rate);
       if (typeof chrome !== "undefined" && chrome.storage) {
-        chrome.storage.local.set({ playbackSpeed: rate }).catch(() => {});
+        try {
+          chrome.storage.local.set({ playbackSpeed: rate }).catch(() => {});
+        } catch {}
       }
       render();
     }
@@ -744,9 +746,11 @@ function main() {
         video.volume = Number(ui.volume.value);
         video.muted = video.volume === 0;
         if (typeof chrome !== "undefined" && chrome.storage) {
-          chrome.storage.local
-            .set({ playerVolume: Math.round(video.volume * 100) })
-            .catch(() => {});
+          try {
+            chrome.storage.local
+              .set({ playerVolume: Math.round(video.volume * 100) })
+              .catch(() => {});
+          } catch {}
         }
         render();
       }
@@ -943,11 +947,16 @@ function main() {
 // "Player controls" switch (popup). Read once per page load; changing it takes
 // effect after the Inspector page is reloaded.
 if (typeof chrome !== "undefined" && chrome.storage) {
-  chrome.storage.local.get({ controls: true, extensionEnabled: true }, ({ controls, extensionEnabled }) => {
-    const active = extensionEnabled !== false && controls;
-    document.documentElement.dataset.abiControlsLoaded = active ? "on" : "off";
-    if (active) main();
-  });
+  try {
+    chrome.storage.local.get({ controls: true, extensionEnabled: true }, (res) => {
+      const current = res || { controls: true, extensionEnabled: true };
+      const active = current.extensionEnabled !== false && current.controls;
+      document.documentElement.dataset.abiControlsLoaded = active ? "on" : "off";
+      if (active) main();
+    });
+  } catch {
+    main();
+  }
 } else {
   main();
 }

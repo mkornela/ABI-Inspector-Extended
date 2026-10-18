@@ -7,6 +7,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [2.6.1] - 2026-10-18
+
+### Added
+- Added German localization showcase screenshot (`screenshots/tab_1_overview_de.png`) to documentation highlighting localized Overview cards and status boards.
+
+### Fixed
+- **Resilient Extension Context Invalidation Handling:**
+  - Safely wrapped all `chrome.runtime` and `chrome.storage` API calls across `site-ui.js`, `content.js`, `settings.js`, and `popup.js` with `try...catch` guards to prevent `Uncaught Error: Extension context invalidated` errors when the extension is updated or reloaded while tabs remain open.
+  - Implemented `safeStorageGet`, `safeStorageSet`, and `getExtensionVersion` fallback utilities to gracefully resolve preferences and metadata without throwing if the extension context disconnects.
+
+---
+
 ## [2.6.0] - 2026-10-18
 
 ### Added

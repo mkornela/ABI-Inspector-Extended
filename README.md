@@ -1,8 +1,8 @@
 # ABI Inspector Extended
 
-**Version 2.6.0** · A local interface enhancement for the official Arena Breakout: Infinite Inspector.
+**Version 2.6.1** · A local interface enhancement for the official Arena Breakout: Infinite Inspector.
 
-ABI Inspector Extended elevates the Inspector experience with a modern metallic card layout, animated overview inspection progress bars, an in-depth in-site settings hub, an extension popup master switch, quick verdict hotkeys, precision video controls, and clean News and Challenges styling. It retains 100% of the official inspection workflows, verification protocols, and network safety.
+ABI Inspector Extended elevates the Inspector experience with a modern metallic card layout, animated overview inspection progress bars, an in-depth in-site settings hub, an extension popup master switch, quick verdict hotkeys, precision video controls, full multi-language localization, and clean News and Challenges styling. It retains 100% of the official inspection workflows, verification protocols, and network safety.
 
 > Independent community project. Not affiliated with or endorsed by the game’s publisher.
 
@@ -12,13 +12,17 @@ All project screenshots live in [`screenshots/`](screenshots/). The Overview, Wo
 
 ### Overview and inspection
 
-| Overview · Accuracy Board | Workbench · video controls |
+| Overview · Accuracy Board (EN) | Overview · German Localization (DE) |
 | --- | --- |
-| ![Anonymized Accuracy Board overview](screenshots/tab_1_overview.png) | ![Workbench with inspection notes, color key, and video controls](screenshots/tab_2_video.png) |
+| ![Anonymized Accuracy Board overview](screenshots/tab_1_overview.png) | ![Overview with German localization](screenshots/tab_1_overview_de.png) |
 
-| Test Cases | Extension popup |
+| Workbench · video controls | Test Cases |
 | --- | --- |
-| ![Test Cases with player and inspection notes](screenshots/tab_4_testcases.png) | ![Extension popup with master toggle](screenshots/settings.png) |
+| ![Workbench with inspection notes, color key, and video controls](screenshots/tab_2_video.png) | ![Test Cases with player and inspection notes](screenshots/tab_4_testcases.png) |
+
+| Extension popup |
+| --- |
+| ![Extension popup with master toggle](screenshots/settings.png) |
 
 ### Restyled Verdict Dialogs
 

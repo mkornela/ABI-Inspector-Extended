@@ -874,7 +874,7 @@
 
   const WATERMARK = `
 ================================================================================
-  ABI INSPECTOR EXTENDED \u2014 v2.6.0
+  ABI INSPECTOR EXTENDED \u2014 v2.6.1
   Enhanced Patroller Interface & Local Playback Controls
   Author: deem (https://github.com/mkornela)
   Status: Extension Loaded & Active
@@ -920,7 +920,7 @@
     window.__abiExtendedBannerLogged = true;
     try {
       console.log(
-        "%c ABI INSPECTOR EXTENDED %c v2.6.0 %c deem %c ACTIVE \n%cEnhanced Patroller Interface & Local Playback Controls (https://github.com/mkornela)",
+        "%c ABI INSPECTOR EXTENDED %c v2.6.1 %c deem %c ACTIVE \n%cEnhanced Patroller Interface & Local Playback Controls (https://github.com/mkornela)",
         "background: #d49a37; color: #0b0f11; font-weight: bold; font-family: monospace; border-radius: 3px 0 0 3px; padding: 3px 8px; font-size: 11px;",
         "background: #182226; color: #d49a37; font-weight: bold; font-family: monospace; padding: 3px 8px; font-size: 11px; border-left: 1px solid #2a373c;",
         "background: #222f35; color: #c4d0d0; font-family: monospace; padding: 3px 8px; font-size: 11px; border-left: 1px solid #2a373c;",
@@ -2420,6 +2420,63 @@
     verdictHotkeys: false,
   };
 
+  function getExtensionVersion() {
+    try {
+      if (typeof chrome !== "undefined" && chrome?.runtime?.getManifest) {
+        return chrome.runtime.getManifest()?.version || "2.6.1";
+      }
+    } catch {}
+    return "2.6.1";
+  }
+
+  function safeStorageGet(defaults) {
+    return new Promise((resolve) => {
+      try {
+        if (typeof chrome !== "undefined" && chrome?.storage?.local?.get) {
+          let resolved = false;
+          const done = (data) => {
+            if (resolved) return;
+            resolved = true;
+            if (chrome?.runtime?.lastError) {
+              resolve({ ...defaults });
+            } else {
+              resolve(data || { ...defaults });
+            }
+          };
+          const res = chrome.storage.local.get(defaults, done);
+          if (res && typeof res.then === "function") {
+            res.then((data) => done(data)).catch(() => done({ ...defaults }));
+          }
+          return;
+        }
+      } catch {}
+      resolve({ ...defaults });
+    });
+  }
+
+  function safeStorageSet(data) {
+    return new Promise((resolve) => {
+      try {
+        if (typeof chrome !== "undefined" && chrome?.storage?.local?.set) {
+          let resolved = false;
+          const done = () => {
+            if (resolved) return;
+            resolved = true;
+            resolve(!chrome?.runtime?.lastError);
+          };
+          const res = chrome.storage.local.set(data, done);
+          if (res && typeof res.then === "function") {
+            res.then(() => done()).catch(() => {
+              if (!resolved) { resolved = true; resolve(false); }
+            });
+          }
+          return;
+        }
+      } catch {}
+      resolve(false);
+    });
+  }
+
   function createSettingsPanel() {
     const panel = document.createElement("section");
     panel.className = "abi-extension-settings";
@@ -2638,7 +2695,7 @@
       syncVolumeChips(volumeSlider.value);
     });
     volumeSlider.addEventListener("change", () => {
-      chrome.storage.local.set({ playerVolume: Number(volumeSlider.value) });
+      safeStorageSet({ playerVolume: Number(volumeSlider.value) });
       showToast("Saved ✓");
     });
 
@@ -2653,7 +2710,7 @@
         volumeOutput.value = `${pVal}%`;
         volumeSlider.style.setProperty("--abi-volume-fill", `${pVal}%`);
         syncVolumeChips(pVal);
-        chrome.storage.local.set({ playerVolume: pVal });
+        safeStorageSet({ playerVolume: pVal });
         showToast("Saved ✓");
       });
       volumePresets.append(chip);
@@ -2686,7 +2743,7 @@
       chip.addEventListener("click", () => {
         speedPresets.querySelectorAll(".abi-speed-chip").forEach((c) => c.classList.toggle("active", c === chip));
         speedOutput.textContent = `${rate}×`;
-        chrome.storage.local.set({ playbackSpeed: rate });
+        safeStorageSet({ playbackSpeed: rate });
         showToast("Saved ✓");
       });
       speedPresets.append(chip);
@@ -2701,7 +2758,7 @@
         playerVolume: 100,
         playbackSpeed: 1,
       };
-      await chrome.storage.local.set(playbackDefaults);
+      await safeStorageSet(playbackDefaults);
       panel.querySelector("#abi-settings-controls").checked = true;
       panel.querySelector("#abi-settings-autoplay").checked = true;
       panel.querySelector("#abi-settings-loop").checked = false;
@@ -2711,7 +2768,7 @@
       syncVolumeChips(100);
       speedOutput.textContent = "1×";
       speedPresets.querySelectorAll(".abi-speed-chip").forEach((c) => c.classList.toggle("active", c.dataset.speed === "1"));
-      updateSettingsStatus(panel, await chrome.storage.local.get(settingsDefaults));
+      updateSettingsStatus(panel, await safeStorageGet(settingsDefaults));
       showToast("Playback reset ✓");
     });
     playbackHead.querySelector("h2").id = "abi-settings-playback-title";
@@ -2745,11 +2802,11 @@
 
     const interfaceHead = makeSectionHeading("Interface", async () => {
       const interfaceDefaults = { site: true, skipIntro: true };
-      await chrome.storage.local.set(interfaceDefaults);
+      await safeStorageSet(interfaceDefaults);
       panel.querySelector("#abi-settings-site").checked = true;
       panel.querySelector("#abi-settings-skip-intro").checked = true;
       updateDependencies(panel);
-      updateSettingsStatus(panel, await chrome.storage.local.get(settingsDefaults));
+      updateSettingsStatus(panel, await safeStorageGet(settingsDefaults));
       showToast("Interface reset ✓");
     });
     interfaceHead.querySelector("h2").id = "abi-settings-interface-title";
@@ -2813,13 +2870,13 @@
         inspectionNotes: true,
         colorKey: true,
       };
-      await chrome.storage.local.set(verdictsDefaults);
+      await safeStorageSet(verdictsDefaults);
       panel.querySelector("#abi-settings-verdict-enhancements").checked = true;
       panel.querySelector("#abi-settings-verdict-hotkeys").checked = false;
       panel.querySelector("#abi-settings-notes").checked = true;
       panel.querySelector("#abi-settings-color-key").checked = true;
       updateDependencies(panel);
-      updateSettingsStatus(panel, await chrome.storage.local.get(settingsDefaults));
+      updateSettingsStatus(panel, await safeStorageGet(settingsDefaults));
       showToast("Verdicts reset ✓");
     });
     verdictsHead.querySelector("h2").id = "abi-settings-verdicts-title";
@@ -2924,7 +2981,7 @@
     badgesWrap.className = "abi-settings-badges";
     const aboutVersion = document.createElement("span");
     aboutVersion.className = "abi-settings-version";
-    aboutVersion.textContent = `v${chrome.runtime?.getManifest?.()?.version || "2.6.0"}`;
+    aboutVersion.textContent = `v${getExtensionVersion()}`;
     const statusBadge = document.createElement("span");
     statusBadge.className = "abi-settings-status-badge";
     statusBadge.textContent = "Active";
@@ -2940,7 +2997,7 @@
     resetBtn.className = "abi-settings-btn abi-settings-btn-neutral";
     resetBtn.textContent = "Restore Defaults";
     resetBtn.addEventListener("click", async () => {
-      await chrome.storage.local.set(settingsDefaults);
+      await safeStorageSet(settingsDefaults);
       privacyAnonymized = false;
       try {
         localStorage.setItem(privacyStorageKey, "false");
@@ -2967,7 +3024,7 @@
       syncVolumeChips(100);
       speedOutput.textContent = "1×";
       speedPresets.querySelectorAll(".abi-speed-chip").forEach((c) => c.classList.toggle("active", c.dataset.speed === "1"));
-      updateSettingsStatus(panel, await chrome.storage.local.get(settingsDefaults));
+      updateSettingsStatus(panel, await safeStorageGet(settingsDefaults));
       scheduleUpdate();
       showToast("All defaults restored ✓");
       const prevText = resetBtn.textContent;
@@ -3068,7 +3125,7 @@
     }
 
     // Populate initial state from storage
-    chrome.storage.local.get(settingsDefaults, (settings) => {
+    safeStorageGet(settingsDefaults).then((settings) => {
       const current = settings || settingsDefaults;
       const setCheck = (selector, val) => {
         const el = panel.querySelector(selector);
@@ -3150,12 +3207,12 @@
     switchVisual.setAttribute("aria-hidden", "true");
 
     input.addEventListener("change", async () => {
-      await chrome.storage.local.set({ [key]: input.checked });
+      await safeStorageSet({ [key]: input.checked });
       if (typeof onSaved === "function") onSaved("Saved ✓");
       const panel = input.closest(".abi-extension-settings");
       if (panel) {
         updateDependencies(panel);
-        updateSettingsStatus(panel, await chrome.storage.local.get(settingsDefaults));
+        updateSettingsStatus(panel, await safeStorageGet(settingsDefaults));
       }
     });
 

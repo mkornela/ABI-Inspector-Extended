@@ -11,7 +11,11 @@ const openSettingsBtn = $("openSettingsBtn");
 let tabId = null; // active tab, if it is the Inspector page
 let page = null; // reply from settings.js, or null when not on the Inspector page
 
-$("version").textContent = `v${chrome.runtime?.getManifest?.()?.version || "2.6.0"}`;
+let popupVersion = "2.6.1";
+try {
+  popupVersion = chrome.runtime?.getManifest?.()?.version || "2.6.1";
+} catch {}
+$("version").textContent = `v${popupVersion}`;
 
 async function findInspectorTab() {
   try {

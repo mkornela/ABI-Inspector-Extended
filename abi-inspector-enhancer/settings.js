@@ -44,7 +44,7 @@
 
   const WATERMARK = `
 ================================================================================
-  ABI INSPECTOR EXTENDED \u2014 v2.6.0
+  ABI INSPECTOR EXTENDED \u2014 v2.6.1
   Enhanced Patroller Interface & Local Playback Controls
   Author: deem (https://github.com/mkornela)
   Status: Extension Loaded & Active
@@ -77,7 +77,7 @@
     window.__abiExtendedBannerLogged = true;
     try {
       console.log(
-        "%c ABI INSPECTOR EXTENDED %c v2.6.0 %c deem %c ACTIVE \n%cEnhanced Patroller Interface & Local Playback Controls (https://github.com/mkornela)",
+        "%c ABI INSPECTOR EXTENDED %c v2.6.1 %c deem %c ACTIVE \n%cEnhanced Patroller Interface & Local Playback Controls (https://github.com/mkornela)",
         "background: #d49a37; color: #0b0f11; font-weight: bold; font-family: monospace; border-radius: 3px 0 0 3px; padding: 3px 8px; font-size: 11px;",
         "background: #182226; color: #d49a37; font-weight: bold; font-family: monospace; padding: 3px 8px; font-size: 11px; border-left: 1px solid #2a373c;",
         "background: #222f35; color: #c4d0d0; font-family: monospace; padding: 3px 8px; font-size: 11px; border-left: 1px solid #2a373c;",
@@ -184,12 +184,19 @@
       applyMediaSettings();
     }
   }
-  const load = (syncMedia = false) =>
-    chrome.storage.local.get(DEFAULTS, (settings) => apply(settings, syncMedia));
+  const load = (syncMedia = false) => {
+    try {
+      if (typeof chrome !== "undefined" && chrome?.storage?.local?.get) {
+        chrome.storage.local.get(DEFAULTS, (settings) => apply(settings, syncMedia));
+      }
+    } catch {}
+  };
   load(true);
-  chrome.storage.onChanged.addListener((_changes, area) => {
-    if (area === "local") load(true);
-  });
+  try {
+    chrome.storage.onChanged.addListener((_changes, area) => {
+      if (area === "local") load(true);
+    });
+  } catch {}
 
   const playerObserver = new MutationObserver(applyMediaSettings);
   playerObserver.observe(root, { childList: true, subtree: true });
@@ -218,20 +225,22 @@
     /^\/act\/a20251028patroller\/?$/.test(location.pathname);
 
   // The popup uses this to show page status, offer reload, or open on-site settings.
-  chrome.runtime.onMessage.addListener((message, _sender, reply) => {
-    if (!onInspector()) return;
-    if (message?.type === "abi:ping") {
-      reply({
-        ok: true,
-        controlsLoaded: root.dataset.abiControlsLoaded || null,
-        extensionEnabled: root.dataset.abiExtension !== "off",
-      });
-    } else if (message?.type === "abi:reload") {
-      location.reload();
-    } else if (message?.type === "abi:open-settings") {
-      const brand = document.querySelector(".abi-extension-brand");
-      if (brand) brand.click();
-      reply?.({ ok: true });
-    }
-  });
+  try {
+    chrome.runtime.onMessage.addListener((message, _sender, reply) => {
+      if (!onInspector()) return;
+      if (message?.type === "abi:ping") {
+        reply({
+          ok: true,
+          controlsLoaded: root.dataset.abiControlsLoaded || null,
+          extensionEnabled: root.dataset.abiExtension !== "off",
+        });
+      } else if (message?.type === "abi:reload") {
+        location.reload();
+      } else if (message?.type === "abi:open-settings") {
+        const brand = document.querySelector(".abi-extension-brand");
+        if (brand) brand.click();
+        reply?.({ ok: true });
+      }
+    });
+  } catch {}
 })();
