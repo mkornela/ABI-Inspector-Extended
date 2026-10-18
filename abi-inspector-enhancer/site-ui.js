@@ -2823,8 +2823,8 @@
       "abi-settings-verdict-enhancements",
       "verdictEnhancements",
       "Verdict dialog enhancements",
-      "English violation placeholders, character counters (x / 50), and 3-category limit badge.",
-      "verdict dialog violation counter placeholder english modal",
+      "Violation quick-tag reason chips, localized placeholders, character counters (x / 50), and 3-category limit badge.",
+      "verdict dialog violation counter placeholder english modal chips tags quick reason",
       null,
       showToast,
     );
@@ -4540,7 +4540,8 @@
       titleRow = document.createElement("div");
       titleRow.className = "abi-identity-honor abi-title-row";
     } else {
-      titleRow.classList.add("abi-identity-honor", "abi-title-row");
+      if (!titleRow.classList.contains("abi-identity-honor")) titleRow.classList.add("abi-identity-honor");
+      if (!titleRow.classList.contains("abi-title-row")) titleRow.classList.add("abi-title-row");
     }
     const meter = shell.querySelector(".abi-meter");
     const oldRank = shell.querySelector(".abi-identity-rank");
@@ -4881,16 +4882,17 @@
 
         const deltaNode = item.querySelector(".abi-stat-delta");
         if (conf.deltaType === "none" || !conf.deltaType) {
-          deltaNode.className = "abi-stat-delta";
+          if (deltaNode.className !== "abi-stat-delta") deltaNode.className = "abi-stat-delta";
           updateText(deltaNode, "");
         } else {
           if (conf.num !== null && lifeAccuracyNum !== null) {
             const diff = conf.num - lifeAccuracyNum;
             const diffSign = diff > 0 ? "+" : "";
             updateText(deltaNode, `${diffSign}${diff.toFixed(1)}%`);
-            deltaNode.className = `abi-stat-delta ${diff > 0 ? "abi-delta-positive" : diff < 0 ? "abi-delta-negative" : "abi-delta-flat"}`;
+            const targetCls = `abi-stat-delta ${diff > 0 ? "abi-delta-positive" : diff < 0 ? "abi-delta-negative" : "abi-delta-flat"}`;
+            if (deltaNode.className !== targetCls) deltaNode.className = targetCls;
           } else {
-            deltaNode.className = "abi-stat-delta";
+            if (deltaNode.className !== "abi-stat-delta") deltaNode.className = "abi-stat-delta";
             updateText(deltaNode, "");
           }
         }
@@ -4953,8 +4955,9 @@
       }
 
       const limitWrapNode = wrap.querySelector(".abi-today-limit-wrap");
+      const targetOf = `${_t("ofWord")} `;
       if (limitWrapNode && limitWrapNode.firstChild && limitWrapNode.firstChild !== limitWrapNode.querySelector(".abi-today-limit")) {
-        limitWrapNode.firstChild.textContent = `${_t("ofWord")} `;
+        if (limitWrapNode.firstChild.textContent !== targetOf) limitWrapNode.firstChild.textContent = targetOf;
       }
 
       const dayDone = Number.isFinite(summary.day_judged_num) ? summary.day_judged_num : null;
@@ -5121,7 +5124,18 @@
 
         // Update period total
         const pTotal = rowNode.querySelector(".abi-period-total");
-        pTotal.innerHTML = `<strong>${count(row.inspections)}</strong> ${_t("inspectionsWord")}`;
+        let pStrong = pTotal.querySelector("strong");
+        if (!pStrong) {
+          pStrong = document.createElement("strong");
+          pTotal.prepend(pStrong);
+        }
+        updateText(pStrong, count(row.inspections));
+        const pWord = ` ${_t("inspectionsWord")}`;
+        if (pStrong.nextSibling) {
+          if (pStrong.nextSibling.textContent !== pWord) pStrong.nextSibling.textContent = pWord;
+        } else {
+          pTotal.append(document.createTextNode(pWord));
+        }
 
         // Update stacked bar and legend
         const bar = rowNode.querySelector(".abi-stacked-bar");
@@ -5174,15 +5188,37 @@
             .map((c) => bar.querySelector(`.${c}`))
             .filter(Boolean);
           if (orderedSegs.length > 1) {
-            bar.append(...orderedSegs);
+            const currentSegs = [...bar.children];
+            const inOrder = orderedSegs.every((seg, idx) => currentSegs[idx] === seg);
+            if (!inOrder) bar.append(...orderedSegs);
           }
         }
 
-        legend.innerHTML = `
-          <span class="abi-legend-item abi-legend-correct" data-stat="Correct"><strong>${count(row.correct)}</strong> ${_t("correctWord")}</span>
-          <span class="abi-legend-item abi-legend-wrong" data-stat="Wrong"><strong>${count(row.wrong)}</strong> ${_t("wrongWord")}</span>
-          <span class="abi-legend-item abi-legend-unresolved" data-stat="Unresolved"><strong>${count(unresolved)}</strong> ${_t("unresolvedWord")}</span>
-        `;
+        const legDefs = [
+          { cls: "abi-legend-correct", stat: "Correct", val: count(row.correct), word: _t("correctWord") },
+          { cls: "abi-legend-wrong", stat: "Wrong", val: count(row.wrong), word: _t("wrongWord") },
+          { cls: "abi-legend-unresolved", stat: "Unresolved", val: count(unresolved), word: _t("unresolvedWord") },
+        ];
+        for (const def of legDefs) {
+          let item = legend.querySelector(`.${def.cls}`);
+          if (!item) {
+            item = document.createElement("span");
+            item.className = `abi-legend-item ${def.cls}`;
+            item.dataset.stat = def.stat;
+            const s = document.createElement("strong");
+            item.append(s, document.createTextNode(""));
+            legend.append(item);
+          }
+          const s = item.querySelector("strong");
+          if (s) updateText(s, def.val);
+          const textNode = item.lastChild;
+          const labelText = ` ${def.word}`;
+          if (textNode && textNode.nodeType === Node.TEXT_NODE) {
+            if (textNode.textContent !== labelText) textNode.textContent = labelText;
+          } else {
+            item.append(document.createTextNode(labelText));
+          }
+        }
 
         // Update accuracy
         const accNode = rowNode.querySelector(".abi-inspection-accuracy");
@@ -5193,11 +5229,37 @@
 
         // Update bans
         const bansNode = rowNode.querySelector(".abi-inspection-bans");
-        bansNode.title = row.lastBanTitle;
+        if (bansNode.title !== row.lastBanTitle) bansNode.title = row.lastBanTitle;
+        let bansStrong = bansNode.querySelector("strong");
+        if (!bansStrong) {
+          bansStrong = document.createElement("strong");
+          bansNode.prepend(bansStrong);
+        }
+        updateText(bansStrong, count(row.bans));
+        const subLabel = bansNode.querySelector(".abi-stat-sublabel");
         if (row.lastBan) {
-          bansNode.innerHTML = `<strong>${count(row.bans)}</strong> ${_t("bansWord")} <span class="abi-stat-sublabel">${row.lastBan}</span>`;
+          if (!subLabel) {
+            const sub = document.createElement("span");
+            sub.className = "abi-stat-sublabel";
+            sub.textContent = row.lastBan;
+            bansNode.append(document.createTextNode(` ${_t("bansWord")} `), sub);
+          } else {
+            updateText(subLabel, row.lastBan);
+            const banWordNode = bansStrong.nextSibling;
+            const bwText = ` ${_t("bansWord")} `;
+            if (banWordNode && banWordNode.nodeType === Node.TEXT_NODE && banWordNode.textContent !== bwText) {
+              banWordNode.textContent = bwText;
+            }
+          }
         } else {
-          bansNode.innerHTML = `<strong>${count(row.bans)}</strong> ${_t("bansWord")}`;
+          subLabel?.remove();
+          const banWordNode = bansStrong.nextSibling;
+          const bwText = ` ${_t("bansWord")}`;
+          if (banWordNode && banWordNode.nodeType === Node.TEXT_NODE) {
+            if (banWordNode.textContent !== bwText) banWordNode.textContent = bwText;
+          } else {
+            bansNode.append(document.createTextNode(bwText));
+          }
         }
       }
     }
@@ -5427,7 +5489,15 @@
     ],
     characterData: true,
   };
-  const observer = new MutationObserver(scheduleUpdate);
+  const observer = new MutationObserver((records) => {
+    const hasExternal = records.some((r) => {
+      const el = r.target.nodeType === Node.ELEMENT_NODE ? r.target : r.target.parentElement;
+      return !el || !el.closest(".abi-overview, .abi-extension-settings, .abi-settings-modal, .abi-reason-chips");
+    });
+    if (hasExternal) {
+      scheduleUpdate();
+    }
+  });
   observer.observe(document.documentElement, observerConfig);
 
   insertWatermark();

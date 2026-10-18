@@ -9,7 +9,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [2.6.2] - 2026-10-18
 
+### Added
+- **Quick-Tag Reason Chips in Violation Modal:**
+  - Added localized one-click reason chips directly above the 50-character violation description field in `#illegalPopup`.
+  - Available tags: **Lag Switching**, **Rage cheating**, and **Macro** (specific violation details not covered by the standard checkboxes).
+  - Clicking any chip fills an empty text box or neatly appends with comma formatting, while re-clicking an active chip removes it.
+  - Fully localized across 9 languages (**English**, **German**, **Russian**, **French**, **Spanish**, **Japanese**, **Portuguese - Brazil**, **Traditional Chinese**, and **Simplified Chinese**).
+  - Enforces the 50-character limit with active state synchronization and character counter shake feedback when limit is reached.
+
 ### Fixed
+- **Overview Inspections Bar Hover & Bidirectional Sync:**
+  - Fixed inspection stacked bar hover behavior so hovering a specific segment (yellow/green correct, red wrong, gray unresolved) highlights only that segment with scale, brightness, and color glow, dims non-hovered segments in the bar, and highlights the corresponding legend label below.
+  - Fixed bidirectional hover sync from legend items to bar segments, ensuring hovering a legend label scales and glows the matching bar segment while dimming others.
+  - Eliminated high-frequency DOM mutation cascade in `updateOverview` by updating legend items, period totals, and segment elements in-place instead of repeatedly recreating DOM nodes on animation frames.
 - **Fixed Doubled Dialog Close Buttons & Stray Cancel Button Styles:**
   - Resolved duplicate close icons caused by CSS `::after` content rendering alongside the injected SVG in `.close-btn`.
   - Fixed CSS selector matching `_close-btn` on footer action buttons (e.g. Cancel button in `illegalPopup` and drill result modals), preventing Cancel buttons from receiving absolute top-right positioning and stray `×` symbols.

@@ -791,6 +791,113 @@ test("Dialog enhancements: close icon is singular and footer cancel button has n
       return window.getComputedStyle(el, "::after").content;
     });
     assert.ok(cancelAfter === "none" || cancelAfter === '""' || cancelAfter === "", `Cancel button ::after should be none, got: ${cancelAfter}`);
+
+    // 3. Quick-Tag Reason Chips in Violation Modal
+    const chipsContainer = page.locator("#illegalPopup .abi-reason-chips");
+    assert.equal(await chipsContainer.count(), 1, "Quick reason tags container rendered in #illegalPopup");
+
+    const chipBtns = page.locator("#illegalPopup .abi-reason-chips .abi-chip-btn");
+    assert.equal(await chipBtns.count(), 3, "All 3 requested quick-tag chips rendered");
+
+    const chipTexts = await chipBtns.allTextContents();
+    assert.deepEqual(
+      chipTexts.map((s) => s.trim()),
+      [
+        "Lag Switching",
+        "Rage cheating",
+        "Macro",
+      ],
+      "Chips render correct English labels"
+    );
+
+    // Test clicking a chip fills empty textarea
+    const lagSwitchBtn = chipBtns.nth(0);
+    await lagSwitchBtn.click();
+    assert.equal(await page.locator("#guiltyDetail").inputValue(), "Lag Switching", "Clicking chip fills textarea");
+    assert.ok(await lagSwitchBtn.evaluate((el) => el.classList.contains("active")), "Clicked chip receives .active class");
+    assert.equal(await lagSwitchBtn.getAttribute("aria-pressed"), "true", "Clicked chip has aria-pressed='true'");
+
+    // Test counter update
+    assert.equal(
+      (await page.locator("#illegalPopup .abi-textcount").textContent()).trim(),
+      "13 / 50",
+      "Character counter updates to 13 / 50"
+    );
+
+    // Test clicking second chip appends with comma
+    const macroBtn = chipBtns.nth(2);
+    await macroBtn.click();
+    assert.equal(
+      await page.locator("#guiltyDetail").inputValue(),
+      "Lag Switching, Macro",
+      "Clicking second chip appends to reason"
+    );
+    assert.ok(await macroBtn.evaluate((el) => el.classList.contains("active")), "Second chip receives .active class");
+    assert.equal(
+      (await page.locator("#illegalPopup .abi-textcount").textContent()).trim(),
+      "20 / 50",
+      "Character counter updates to 20 / 50"
+    );
+
+    // Test clicking second chip again toggles it off
+    await macroBtn.click();
+    assert.equal(
+      await page.locator("#guiltyDetail").inputValue(),
+      "Lag Switching",
+      "Clicking active chip again removes it"
+    );
+    assert.ok(!(await macroBtn.evaluate((el) => el.classList.contains("active"))), "Untoggled chip loses .active class");
+    assert.equal(
+      (await page.locator("#illegalPopup .abi-textcount").textContent()).trim(),
+      "13 / 50",
+      "Character counter reverts to 13 / 50"
+    );
+
+    // Test 50-character limit guard: fill to 40 chars, attempt to add 13-char tag
+    await page.locator("#guiltyDetail").fill("1234567890123456789012345678901234567890"); // 40 chars
+    await lagSwitchBtn.click();
+    assert.equal(
+      await page.locator("#guiltyDetail").inputValue(),
+      "1234567890123456789012345678901234567890",
+      "Appending tag exceeding 50 chars is rejected"
+    );
+    assert.ok(
+      await page.locator("#illegalPopup .abi-textcount").evaluate((el) => el.classList.contains("abi-limit-reached")),
+      "Counter receives .abi-limit-reached shake feedback when limit is exceeded"
+    );
+
+    // Reset textarea
+    await page.locator("#guiltyDetail").fill("");
+    await page.locator("#guiltyDetail").dispatchEvent("input");
+
+    // Test dynamic localization to German
+    await page.evaluate(() => {
+      document.documentElement.dataset.abiLang = "de";
+      window.dispatchEvent(new CustomEvent("abi-language-change", { detail: { lang: "de" } }));
+    });
+    // Give mutation/event a tick
+    await page.waitForTimeout(50);
+    const deChipTexts = await chipBtns.allTextContents();
+    assert.deepEqual(
+      deChipTexts.map((s) => s.trim().replace(/^✓\s*/, "")),
+      [
+        "Lag-Switching",
+        "Rage-Cheating",
+        "Makro",
+      ],
+      "Chips dynamically update to German translations"
+    );
+
+    // Test site modifications disabled cleanup
+    await page.evaluate(() => {
+      document.documentElement.dataset.abiSite = "off";
+    });
+    await page.waitForTimeout(50);
+    assert.equal(
+      await page.locator("#illegalPopup .abi-reason-chips").count(),
+      0,
+      "Reason chips are cleanly removed when site modifications are disabled"
+    );
   } finally {
     await browser?.close();
   }

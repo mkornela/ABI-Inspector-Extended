@@ -17,6 +17,261 @@
   const siteOn = () =>
     root.dataset.abiSite !== "off" && root.dataset.abiVerdictEnhancements !== "off";
 
+  function getCurrentLang() {
+    let raw = "";
+    if (typeof document !== "undefined" && document.documentElement?.dataset?.abiLang) {
+      raw = document.documentElement.dataset.abiLang;
+    } else if (typeof window !== "undefined") {
+      try {
+        raw = new URLSearchParams(window.location.search).get("lang") || "";
+      } catch {}
+      if (!raw) {
+        try {
+          raw = localStorage.getItem("arenabreakout_lang") || "";
+        } catch {}
+      }
+      if (!raw) {
+        try {
+          raw = document.querySelector("._langNav_ .current")?.dataset?.lang || "";
+        } catch {}
+      }
+      if (!raw && window.lang) {
+        raw = window.lang;
+      }
+    }
+    raw = (raw || "en").trim();
+    const lower = raw.toLowerCase();
+    if (lower === "pt-br" || lower === "pt") return "pt-BR";
+    if (lower === "zh-hant" || lower === "zh-tw" || lower === "zh-hk") return "zh-Hant";
+    if (lower === "cn" || lower === "zh-cn" || lower === "zh-hans" || lower === "zh") return "cn";
+    return lower || "en";
+  }
+
+  const REASON_CHIPS = [
+    {
+      id: "lag_switch",
+      labels: {
+        en: "Lag Switching",
+        de: "Lag-Switching",
+        ru: "Лаг-свитч",
+        fr: "Lag Switch",
+        es: "Lag Switch",
+        ja: "ラグスイッチ",
+        "pt-BR": "Lag Switch",
+        "zh-Hant": "延遲開關",
+        cn: "网络延迟器",
+      },
+    },
+    {
+      id: "rage_cheat",
+      labels: {
+        en: "Rage cheating",
+        de: "Rage-Cheating",
+        ru: "Рейдж-чит",
+        fr: "Rage cheat",
+        es: "Rage cheat",
+        ja: "荒らしチート",
+        "pt-BR": "Rage cheat",
+        "zh-Hant": "暴力作弊",
+        cn: "暴力作弊",
+      },
+    },
+    {
+      id: "macro",
+      labels: {
+        en: "Macro",
+        de: "Makro",
+        ru: "Макрос",
+        fr: "Macro",
+        es: "Macro",
+        ja: "マクロ",
+        "pt-BR": "Macro",
+        "zh-Hant": "巨集",
+        cn: "宏",
+      },
+    },
+  ];
+
+  const CHIP_HEADER_TEXT = {
+    title: {
+      en: "Quick Tags",
+      de: "Schnell-Tags",
+      ru: "Быстрые теги",
+      fr: "Tags rapides",
+      es: "Etiquetas rápidas",
+      ja: "クイックタグ",
+      "pt-BR": "Tags rápidas",
+      "zh-Hant": "快捷標籤",
+      cn: "快捷标签",
+    },
+    hint: {
+      en: "Click to fill or append",
+      de: "Klicken zum Ausfüllen",
+      ru: "Нажмите для вставки",
+      fr: "Cliquer pour insérer",
+      es: "Clic para insertar",
+      ja: "クリックで挿入",
+      "pt-BR": "Clique para inserir",
+      "zh-Hant": "點擊填入或追加",
+      cn: "点击填入或追加",
+    },
+  };
+
+  function escapeRegex(str) {
+    return str.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+  }
+
+  function isTagInText(val, tag) {
+    if (!val) return false;
+    const allLabels = Object.values(tag.labels).map((s) => s.trim().toLowerCase());
+    const segments = val.split(/[,，]/).map((s) => s.trim().toLowerCase()).filter(Boolean);
+    if (segments.some((seg) => allLabels.includes(seg))) return true;
+    return allLabels.some((lbl) => val.toLowerCase().includes(lbl));
+  }
+
+  function removeTagFromText(val, tag) {
+    if (!val) return "";
+    const allLabels = Object.values(tag.labels).map((s) => s.trim().toLowerCase());
+    const segments = val.split(/[,，]/).map((s) => s.trim()).filter(Boolean);
+    const remaining = segments.filter((seg) => !allLabels.includes(seg.toLowerCase()));
+    if (remaining.length === segments.length) {
+      let res = val;
+      for (const lbl of allLabels) {
+        if (res.toLowerCase().includes(lbl)) {
+          const regex = new RegExp(`(^|[,，]\\s*)${escapeRegex(lbl)}(\\s*[,，]|$)`, "gi");
+          res = res.replace(regex, (match, p1, p2) => (p1 && p2 ? ", " : "")).trim();
+        }
+      }
+      return res;
+    }
+    return remaining.join(", ");
+  }
+
+  function addTagToText(val, label, maxLen = 50) {
+    const trimmed = (val || "").trim();
+    if (!trimmed) {
+      return label.length <= maxLen ? label : label.slice(0, maxLen);
+    }
+    const candidate = `${trimmed}, ${label}`;
+    if (candidate.length <= maxLen) {
+      return candidate;
+    }
+    return null;
+  }
+
+  function flashCounterLimit(el) {
+    const countEl = el.parentElement?.querySelector(".abi-textcount");
+    if (countEl) {
+      countEl.classList.remove("abi-limit-reached");
+      void countEl.offsetWidth;
+      countEl.classList.add("abi-limit-reached");
+      setTimeout(() => {
+        countEl.classList.remove("abi-limit-reached");
+      }, 800);
+    }
+  }
+
+  function updateChipActiveStates(chipsContainer, textarea) {
+    if (!chipsContainer || !textarea) return;
+    const val = textarea.value || "";
+    const buttons = chipsContainer.querySelectorAll(".abi-chip-btn");
+    for (const btn of buttons) {
+      const tagId = btn.dataset.tagId;
+      const tag = REASON_CHIPS.find((t) => t.id === tagId);
+      if (!tag) continue;
+      const active = isTagInText(val, tag);
+      btn.classList.toggle("active", active);
+      btn.setAttribute("aria-pressed", active ? "true" : "false");
+    }
+  }
+
+  function fixReasonChips() {
+    const popup = document.getElementById("illegalPopup");
+    if (!popup) return;
+    const textarea = popup.querySelector("#guiltyDetail");
+    if (!textarea) return;
+
+    let container = popup.querySelector(".abi-reason-chips");
+    const lang = getCurrentLang();
+
+    if (!container) {
+      container = document.createElement("div");
+      container.className = "abi-reason-chips";
+      container.setAttribute("role", "group");
+      container.setAttribute("aria-label", "Quick reason tags");
+
+      const header = document.createElement("div");
+      header.className = "abi-chips-header";
+
+      const title = document.createElement("span");
+      title.className = "abi-chips-title";
+      header.appendChild(title);
+
+      const hint = document.createElement("span");
+      hint.className = "abi-chips-hint";
+      header.appendChild(hint);
+
+      const list = document.createElement("div");
+      list.className = "abi-chips-list";
+
+      for (const chipData of REASON_CHIPS) {
+        const btn = document.createElement("button");
+        btn.type = "button";
+        btn.className = "abi-chip-btn";
+        btn.dataset.tagId = chipData.id;
+        btn.setAttribute("aria-pressed", "false");
+        btn.addEventListener("click", (e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          const currentLang = getCurrentLang();
+          const label = chipData.labels[currentLang] || chipData.labels.en;
+          const currentVal = textarea.value || "";
+          if (isTagInText(currentVal, chipData)) {
+            textarea.value = removeTagFromText(currentVal, chipData);
+          } else {
+            const max = textarea.maxLength > 0 ? textarea.maxLength : 50;
+            const nextVal = addTagToText(currentVal, label, max);
+            if (nextVal !== null) {
+              textarea.value = nextVal;
+            } else {
+              flashCounterLimit(textarea);
+            }
+          }
+          textarea.dispatchEvent(new Event("input", { bubbles: true }));
+          textarea.dispatchEvent(new Event("change", { bubbles: true }));
+          updateChipActiveStates(container, textarea);
+        });
+        list.appendChild(btn);
+      }
+
+      container.appendChild(header);
+      container.appendChild(list);
+      textarea.before(container);
+    } else if (textarea.previousElementSibling !== container) {
+      textarea.before(container);
+    }
+
+    const titleEl = container.querySelector(".abi-chips-title");
+    const titleText = CHIP_HEADER_TEXT.title[lang] || CHIP_HEADER_TEXT.title.en;
+    if (titleEl && titleEl.textContent !== titleText) titleEl.textContent = titleText;
+
+    const hintEl = container.querySelector(".abi-chips-hint");
+    const hintText = CHIP_HEADER_TEXT.hint[lang] || CHIP_HEADER_TEXT.hint.en;
+    if (hintEl && hintEl.textContent !== hintText) hintEl.textContent = hintText;
+
+    const buttons = container.querySelectorAll(".abi-chip-btn");
+    for (const btn of buttons) {
+      const tagId = btn.dataset.tagId;
+      const tag = REASON_CHIPS.find((t) => t.id === tagId);
+      if (!tag) continue;
+      const label = tag.labels[lang] || tag.labels.en;
+      if (btn.textContent !== label) btn.textContent = label;
+      btn.dataset.label = label;
+    }
+
+    updateChipActiveStates(container, textarea);
+  }
+
   // Display-only English text for placeholders the site ships in Chinese.
   // Values sent to the server are never touched, and the original text is
   // restored when site modifications are switched off.
@@ -227,8 +482,8 @@
       // 1. Top-right close icon button
       const topCloseBtns = popup.querySelectorAll(".close-btn:not(.btn4):not(.popup-btn-box *)");
       for (const btn of topCloseBtns) {
-        btn.setAttribute("aria-label", "Close");
-        btn.setAttribute("title", "Close");
+        if (btn.getAttribute("aria-label") !== "Close") btn.setAttribute("aria-label", "Close");
+        if (btn.getAttribute("title") !== "Close") btn.setAttribute("title", "Close");
         if (!btn.querySelector("svg.abi-close-svg")) {
           btn.innerHTML = `<svg class="abi-close-svg" width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg" style="pointer-events:none;display:block;"><path d="M1.5 1.5L10.5 10.5M1.5 10.5L10.5 1.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>`;
         }
@@ -237,7 +492,7 @@
       // 2. Action buttons (Cancel / 关闭) in popup footer
       const cancelBtns = popup.querySelectorAll(".popup-btn-box .btn4, .popup-btn-box ._close-btn, .btn4");
       for (const btn of cancelBtns) {
-        if (btn.textContent.trim() === "关闭" || btn.textContent.trim() === "Cancel" || HAS_CJK.test(btn.textContent)) {
+        if (btn.textContent.trim() !== "Cancel" && (btn.textContent.trim() === "关闭" || HAS_CJK.test(btn.textContent))) {
           btn.textContent = "Cancel";
           btn.setAttribute("aria-label", "Cancel");
           btn.removeAttribute("title");
@@ -322,7 +577,7 @@
   }
 
   function removeExtras() {
-    document.querySelectorAll(".abi-counter, .abi-textcount").forEach((n) => n.remove());
+    document.querySelectorAll(".abi-counter, .abi-textcount, .abi-reason-chips").forEach((n) => n.remove());
     document.getElementById("courtMenu")?.classList.remove("abi-full");
     restorePlaceholders();
     restoreCommonTips();
@@ -336,6 +591,7 @@
     fixPlaceholders();
     fixCommonTips();
     fixAllDialogs();
+    fixReasonChips();
     refreshTypes();
     refreshTextCounts();
     removeChineseComments();
@@ -346,8 +602,13 @@
       refreshTypes();
   });
   document.addEventListener("input", (event) => {
-    if (siteOn() && event.target instanceof Element && event.target.matches("#guiltyDetail, #notSureReason"))
+    if (siteOn() && event.target instanceof Element && event.target.matches("#guiltyDetail, #notSureReason")) {
       refreshTextCounts();
+      if (event.target.id === "guiltyDetail") {
+        const container = event.target.parentElement?.querySelector(".abi-reason-chips");
+        if (container) updateChipActiveStates(container, event.target);
+      }
+    }
   });
 
   // The site opens/closes popups by changing their inline style and may rebuild
@@ -372,10 +633,10 @@
         subtree: true,
       });
   }
-  // Follow the popup's "Site modifications" switch live.
+  // Follow the popup's "Site modifications" and language/verdict switches live.
   new MutationObserver(queue).observe(root, {
     attributes: true,
-    attributeFilter: ["data-abi-site"],
+    attributeFilter: ["data-abi-site", "data-abi-lang", "data-abi-verdict-enhancements"],
   });
   function closeAnyPopup(popup) {
     if (!popup) return;

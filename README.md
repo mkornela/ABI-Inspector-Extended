@@ -83,7 +83,7 @@ All project screenshots live in [`screenshots/`](screenshots/). The Overview, Wo
   - Account toolbar and settings toggle to anonymize names, account IDs, ranks, levels, and inspection numbers with `***`.
   - Easy toggle between Anonymize and Unanonymize for safe sharing and recording.
 - **Workbench and Test Cases:** Shared player layout, official inspection notes, team/enemy/Scav color references, and native verdict controls.
-- **Restyled verdict dialogs:** Modernized modal styling, English placeholder text, character limits (`x / 50`), and type counters (`x / 3 selected`) while preserving official submission behaviors.
+- **Restyled verdict dialogs & Quick-Tag Reason Chips:** Modernized modal styling, one-click localized quick-tag reason chips (Wallhack / Pre-aiming, Aimbot / Instant Snap, Abnormal Speed / Movement, No Recoil, Macro, Lag Switching, Rage Cheating), English/localized placeholders, character limits (`x / 50`), and category counters (`x / 3 selected`) while preserving official submission behaviors.
 
 ## Install
 
