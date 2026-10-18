@@ -2592,6 +2592,181 @@ test("Custom HUD Accent Color Profiles: dynamically recolors player controls, pr
   }
 });
 
+test("Fullscreen Auto-Hide Clean HUD: fades out controls and cursor after inactivity in fullscreen, and wakes on motion or keypress", async (t) => {
+  let playwright;
+  try {
+    playwright = require("playwright");
+  } catch {
+    if (t && typeof t.skip === "function") {
+      t.skip("playwright module is not installed");
+      return;
+    }
+  }
+
+  const browser = await playwright.chromium.launch({
+    headless: true,
+    channel: process.env.ABI_TEST_BROWSER || (process.platform === "win32" ? "msedge" : "chromium"),
+  });
+
+  try {
+    const page = await browser.newPage({ viewport: { width: 1200, height: 800 } });
+
+    const mockHtml = `
+      <html data-abi-site="on">
+      <head>
+        <style>
+          .content.video { width: 800px; height: 500px; }
+          .play-box { width: 100%; height: 100%; }
+          #workingPlayer { width: 800px; height: 450px; }
+          video { width: 800px; height: 450px; display: block; }
+        </style>
+      </head>
+      <body>
+        <div class="main">
+          <ul class="nav">
+            <li id="working" class="current"><span>Workbench</span></li>
+          </ul>
+        </div>
+        <div id="xcWorking">
+          <div class="content video">
+            <div class="play-box">
+              <div id="workingPlayer">
+                <video src="https://example.com/test.mp4" preload="auto"></video>
+              </div>
+            </div>
+          </div>
+        </div>
+      </body>
+      </html>
+    `;
+
+    await page.route("https://www.arenabreakoutinfinite.com/act/a20251028patroller/*", (route) => {
+      route.fulfill({
+        status: 200,
+        contentType: "text/html",
+        body: mockHtml,
+      });
+    });
+
+    await page.goto("https://www.arenabreakoutinfinite.com/act/a20251028patroller/");
+
+    await page.evaluate(() => {
+      window.__abiHudHideDelay = 50;
+      const v = document.querySelector("video");
+      let _currentTime = 10;
+      Object.defineProperty(v, "paused", { value: false, writable: true, configurable: true });
+      Object.defineProperty(v, "currentTime", { get: () => _currentTime, set: (val) => { _currentTime = val; }, configurable: true });
+      Object.defineProperty(v, "duration", { get: () => 100, configurable: true });
+      Object.defineProperty(v, "readyState", { get: () => 4, configurable: true });
+    });
+
+    await page.addScriptTag({ path: path.join(__dirname, "..", "abi-inspector-enhancer", "settings.js") });
+    await page.addScriptTag({ path: path.join(__dirname, "..", "abi-inspector-enhancer", "content.js") });
+
+    await page.waitForSelector("abi-local-player", { state: "attached" });
+    await page.waitForSelector("abi-local-controls", { state: "attached" });
+
+    // 1. Initially non-fullscreen: HUD is visible
+    let isHidden = await page.evaluate(() => {
+      const shell = document.querySelector("abi-local-player");
+      return shell.isHudHidden();
+    });
+    assert.equal(isHidden, false, "HUD is visible in normal window mode");
+
+    // 2. Simulate entering fullscreen and playing
+    await page.evaluate(() => {
+      const shell = document.querySelector("abi-local-player");
+      const video = document.querySelector("video");
+      Object.defineProperty(document, "fullscreenElement", {
+        value: shell,
+        configurable: true,
+        writable: true,
+      });
+      video.paused = false;
+      shell.wakeHud();
+    });
+
+    // Wait 80ms (> 50ms hide delay)
+    await page.waitForTimeout(80);
+
+    const hudState = await page.evaluate(() => {
+      const shell = document.querySelector("abi-local-player");
+      const host = document.querySelector("abi-local-controls");
+      return {
+        shellHidden: shell.isHudHidden(),
+        shellAttr: shell.getAttribute("data-abi-hud-hidden"),
+        hostClass: host.classList.contains("abi-hud-hidden"),
+      };
+    });
+    assert.equal(hudState.shellHidden, true, "HUD automatically hides in fullscreen after inactivity delay");
+    assert.equal(hudState.shellAttr, "true", "data-abi-hud-hidden attribute is set on shell");
+    assert.equal(hudState.hostClass, true, "abi-hud-hidden class is added to controls host");
+
+    // 3. Move pointer / mouse: HUD wakes instantly
+    await page.evaluate(() => {
+      const shell = document.querySelector("abi-local-player");
+      shell.dispatchEvent(new PointerEvent("pointermove", { bubbles: true }));
+    });
+
+    isHidden = await page.evaluate(() => {
+      const shell = document.querySelector("abi-local-player");
+      return shell.isHudHidden();
+    });
+    assert.equal(isHidden, false, "HUD wakes instantly on pointer movement");
+
+    // Wait 80ms to let it hide again
+    await page.waitForTimeout(80);
+    isHidden = await page.evaluate(() => document.querySelector("abi-local-player").isHudHidden());
+    assert.equal(isHidden, true, "HUD hides again after pointer stops moving");
+
+    // 4. Press key on window: wakes HUD
+    await page.evaluate(() => {
+      window.dispatchEvent(new KeyboardEvent("keydown", { key: "Shift" }));
+    });
+    isHidden = await page.evaluate(() => document.querySelector("abi-local-player").isHudHidden());
+    assert.equal(isHidden, false, "HUD wakes instantly on keydown");
+
+    // 5. Pause video: does NOT hide even in fullscreen
+    await page.evaluate(() => {
+      const video = document.querySelector("video");
+      Object.defineProperty(video, "paused", { value: true, configurable: true, writable: true });
+      const shell = document.querySelector("abi-local-player");
+      shell.wakeHud();
+    });
+    await page.waitForTimeout(80);
+    isHidden = await page.evaluate(() => document.querySelector("abi-local-player").isHudHidden());
+    assert.equal(isHidden, false, "HUD does not auto-hide while video is paused");
+
+    // 6. Disable setting: data-abi-auto-hide-hud="off" -> does NOT hide
+    await page.evaluate(() => {
+      const video = document.querySelector("video");
+      Object.defineProperty(video, "paused", { value: false, configurable: true, writable: true });
+      document.documentElement.dataset.abiAutoHideHud = "off";
+      const shell = document.querySelector("abi-local-player");
+      shell.wakeHud();
+    });
+    await page.waitForTimeout(80);
+    isHidden = await page.evaluate(() => document.querySelector("abi-local-player").isHudHidden());
+    assert.equal(isHidden, false, "HUD does not auto-hide when autoHideHud setting is disabled");
+
+    // 7. Exit fullscreen: completely restores HUD
+    await page.evaluate(() => {
+      document.documentElement.dataset.abiAutoHideHud = "on";
+      Object.defineProperty(document, "fullscreenElement", {
+        value: null,
+        configurable: true,
+        writable: true,
+      });
+      document.dispatchEvent(new Event("fullscreenchange"));
+    });
+    isHidden = await page.evaluate(() => document.querySelector("abi-local-player").isHudHidden());
+    assert.equal(isHidden, false, "Exiting fullscreen restores HUD immediately");
+
+  } finally {
+    await browser?.close();
+  }
+});
+
 
 
 

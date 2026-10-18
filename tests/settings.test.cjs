@@ -41,10 +41,11 @@ test("Settings panel redesign: DOM structure, search, dependencies, key chips, a
         verdictHotkeys: false,
         hudAccent: "amber",
         leaveGuard: true,
+        autoHideHud: true,
       };
       window.chrome = {
         runtime: {
-          getManifest: () => ({ version: "2.6.18" }),
+          getManifest: () => ({ version: "2.6.19" }),
         },
         storage: {
           local: {
@@ -104,6 +105,8 @@ test("Settings panel redesign: DOM structure, search, dependencies, key chips, a
     const playbackChips = page.locator("#abi-section-playback .abi-key-chip");
     assert.ok((await playbackChips.count()) >= 5, "Key chips present under video controls");
     assert.ok((await playbackChips.first().textContent()).includes("Space"), "Space key chip present");
+    assert.equal(await page.locator("#abi-settings-autohide-hud").count(), 1, "Auto-hide HUD toggle exists");
+    assert.equal(await page.locator("#abi-settings-autohide-hud").isChecked(), true, "Auto-hide HUD toggle is checked by default");
 
     const verdictChips = page.locator("#abi-section-verdicts .abi-key-chip");
     assert.equal(await verdictChips.count(), 3, "3 key chips present under verdict hotkeys");

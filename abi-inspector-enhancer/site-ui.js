@@ -90,6 +90,8 @@
       accentCrimson: "Crimson",
       leaveGuardLabel: "Accidental leave guard",
       leaveGuardDesc: "Prompt confirmation before closing or reloading the tab during an active case inspection so you don't lose progress",
+      autoHideHudLabel: "Fullscreen auto-hide clean HUD",
+      autoHideHudDesc: "Fade out controls and cursor during fullscreen playback after 2.5s of inactivity. Wakes instantly on mouse movement",
     },
     de: {
       overview: "Datenübersicht",
@@ -179,6 +181,8 @@
       accentCrimson: "Karmesin",
       leaveGuardLabel: "Schutz vor versehentlichem Schließen",
       leaveGuardDesc: "Vor dem Schließen oder Neuladen des Tabs während einer aktiven Fallprüfung um Bestätigung bitten",
+      autoHideHudLabel: "Sauberes Vollbild-HUD mit automatischem Ausblenden",
+      autoHideHudDesc: "Steuerelemente und Mauszeiger bei Vollbildwiedergabe nach 2,5 s Inaktivität ausblenden. Erscheint bei Mausbewegung sofort wieder",
     },
     ru: {
       overview: "Обзор данных",
@@ -268,6 +272,8 @@
       accentCrimson: "Багровый",
       leaveGuardLabel: "Защита от случайного закрытия",
       leaveGuardDesc: "Запрашивать подтверждение перед закрытием или обновлением вкладки во время активного расследования",
+      autoHideHudLabel: "Автоскрытие HUD в полноэкранном режиме",
+      autoHideHudDesc: "Скрывать элементы управления и курсор во время полноэкранного воспроизведения через 2,5 сек бездействия. Мгновенно пробуждается при движении мыши",
     },
     fr: {
       overview: "Aperçu des données",
@@ -357,6 +363,8 @@
       accentCrimson: "Cramoisi",
       leaveGuardLabel: "Protection contre fermeture accidentelle",
       leaveGuardDesc: "Demander confirmation avant de fermer ou recharger l'onglet pendant une inspection active",
+      autoHideHudLabel: "Masquage automatique du HUD en plein écran",
+      autoHideHudDesc: "Estomper les contrôles et le curseur en plein écran après 2,5 s d'inactivité. Réapparaît instantanément au mouvement de la souris",
     },
     es: {
       overview: "Resumen de datos",
@@ -446,6 +454,8 @@
       accentCrimson: "Carmesí",
       leaveGuardLabel: "Protección contra cierre accidental",
       leaveGuardDesc: "Pedir confirmación antes de cerrar o recargar la pestaña durante una inspección activa",
+      autoHideHudLabel: "Ocultación automática del HUD en pantalla completa",
+      autoHideHudDesc: "Ocultar controles y cursor en pantalla completa tras 2,5 s de inactividad. Reaparece al instante al mover el ratón",
     },
     ja: {
       overview: "データの概要",
@@ -535,6 +545,8 @@
       accentCrimson: "クリムゾン",
       leaveGuardLabel: "タブ誤閉じ・離脱防止ガード",
       leaveGuardDesc: "アクティブなケース調査中にタブを閉じたり再読み込みする前に確認を表示します",
+      autoHideHudLabel: "全画面クリーンHUD自動非表示",
+      autoHideHudDesc: "全画面再生中に2.5秒間操作がない場合、コントロールとカーソルを非表示にします。マウス操作で即座に再表示されます",
     },
     "pt-BR": {
       overview: "Visão Geral dos Dados",
@@ -624,6 +636,8 @@
       accentCrimson: "Carmesim",
       leaveGuardLabel: "Proteção contra fechamento acidental",
       leaveGuardDesc: "Solicitar confirmação antes de fechar ou recarregar a guia durante uma inspeção ativa",
+      autoHideHudLabel: "Ocultação automática do HUD em tela cheia",
+      autoHideHudDesc: "Ocultar controles e cursor durante a reprodução em tela cheia após 2,5 s de inatividade. Reaparece ao mover o mouse",
     },
     "zh-Hant": {
       overview: "數據總覽",
@@ -713,6 +727,8 @@
       accentCrimson: "戰鬥紅",
       leaveGuardLabel: "防止誤關防離開保護",
       leaveGuardDesc: "在正在審核案件時，關閉或刷新頁面前提示確認，防止意外丟失進度",
+      autoHideHudLabel: "全螢幕自動隱藏沉浸HUD",
+      autoHideHudDesc: "全螢幕播放時無滑鼠操作2.5秒後自動隱藏控制欄與游標，晃動滑鼠立即喚醒恢復",
     },
     cn: {
       overview: "数据总览",
@@ -802,6 +818,8 @@
       accentCrimson: "战斗红",
       leaveGuardLabel: "防止误关防离开保护",
       leaveGuardDesc: "在正在审核案件时，关闭或刷新页面前提示确认，防止意外丢失进度",
+      autoHideHudLabel: "全屏自动隐藏沉浸HUD",
+      autoHideHudDesc: "全屏播放时无鼠标操作2.5秒后自动淡出控制栏与光标，晃动鼠标立即唤醒恢复",
     },
   };
 
@@ -1072,7 +1090,7 @@
 
   const WATERMARK = `
 ================================================================================
-  ABI INSPECTOR EXTENDED \u2014 v2.6.18
+  ABI INSPECTOR EXTENDED \u2014 v2.6.19
   Enhanced Patroller Interface & Local Playback Controls
   Author: deem (https://github.com/mkornela)
   Status: Extension Loaded & Active
@@ -1118,7 +1136,7 @@
     window.__abiExtendedBannerLogged = true;
     try {
       console.log(
-        "%c ABI INSPECTOR EXTENDED %c v2.6.18 %c deem %c ACTIVE \n%cEnhanced Patroller Interface & Local Playback Controls (https://github.com/mkornela)",
+        "%c ABI INSPECTOR EXTENDED %c v2.6.19 %c deem %c ACTIVE \n%cEnhanced Patroller Interface & Local Playback Controls (https://github.com/mkornela)",
         "background: #d49a37; color: #0b0f11; font-weight: bold; font-family: monospace; border-radius: 3px 0 0 3px; padding: 3px 8px; font-size: 11px;",
         "background: #182226; color: #d49a37; font-weight: bold; font-family: monospace; padding: 3px 8px; font-size: 11px; border-left: 1px solid #2a373c;",
         "background: #222f35; color: #c4d0d0; font-family: monospace; padding: 3px 8px; font-size: 11px; border-left: 1px solid #2a373c;",
@@ -2618,15 +2636,16 @@
     verdictHotkeys: false,
     hudAccent: "amber",
     leaveGuard: true,
+    autoHideHud: true,
   };
 
   function getExtensionVersion() {
     try {
       if (typeof chrome !== "undefined" && chrome?.runtime?.getManifest) {
-        return chrome.runtime.getManifest()?.version || "2.6.18";
+        return chrome.runtime.getManifest()?.version || "2.6.19";
       }
     } catch {}
-    return "2.6.18";
+    return "2.6.19";
   }
 
   function safeStorageGet(defaults) {
@@ -2678,6 +2697,7 @@
   }
 
   function createSettingsPanel() {
+    const safeT = (k, fb) => (typeof t === "function" ? t(k) : "") || fb;
     const panel = document.createElement("section");
     panel.className = "abi-extension-settings";
     panel.setAttribute("aria-label", "ABI Inspector Extended Settings");
@@ -2857,6 +2877,16 @@
       showToast,
     );
 
+    const autoHideHudRow = makeSettingsToggle(
+      "abi-settings-autohide-hud",
+      "autoHideHud",
+      safeT("autoHideHudLabel", "Fullscreen auto-hide clean HUD"),
+      safeT("autoHideHudDesc", "Fade out controls and cursor during fullscreen playback after 2.5s of inactivity. Wakes instantly on mouse movement."),
+      "fullscreen autohide hud clean hide cursor disappear fade controls cinema",
+      null,
+      showToast,
+    );
+
     const volumeRow = document.createElement("div");
     volumeRow.className = "abi-settings-volume";
     volumeRow.dataset.keywords = "volume audio sound mute loudness default player";
@@ -2955,6 +2985,7 @@
         controls: true,
         autoPlay: true,
         loopVideo: false,
+        autoHideHud: true,
         playerVolume: 100,
         playbackSpeed: 1,
       };
@@ -2962,6 +2993,8 @@
       panel.querySelector("#abi-settings-controls").checked = true;
       panel.querySelector("#abi-settings-autoplay").checked = true;
       panel.querySelector("#abi-settings-loop").checked = false;
+      panel.querySelector("#abi-settings-autohide-hud").checked = true;
+      delete document.documentElement.dataset.abiAutoHideHud;
       volumeSlider.value = "100";
       volumeOutput.value = "100%";
       volumeSlider.style.setProperty("--abi-volume-fill", "100%");
@@ -2973,7 +3006,7 @@
     });
     playbackHead.querySelector("h2").id = "abi-settings-playback-title";
 
-    playback.append(playbackHead, controlRow, autoPlayRow, loopRow, volumeRow, speedRow);
+    playback.append(playbackHead, controlRow, autoPlayRow, loopRow, autoHideHudRow, volumeRow, speedRow);
 
     // 2. Interface Card
     const interfaceGroup = document.createElement("section");
@@ -2999,8 +3032,6 @@
       null,
       showToast,
     );
-
-    const safeT = (k, fb) => (typeof t === "function" ? t(k) : "") || fb;
 
     const accentRow = document.createElement("div");
     accentRow.className = "abi-settings-row abi-settings-accent-row";
@@ -3271,6 +3302,8 @@
       setCheck("#abi-settings-controls", true);
       setCheck("#abi-settings-autoplay", true);
       setCheck("#abi-settings-loop", false);
+      setCheck("#abi-settings-autohide-hud", true);
+      delete document.documentElement.dataset.abiAutoHideHud;
       setCheck("#abi-settings-site", true);
       setCheck("#abi-settings-skip-intro", true);
       setCheck("#abi-settings-privacy", false);
@@ -3403,6 +3436,7 @@
       setCheck("#abi-settings-controls", current.controls);
       setCheck("#abi-settings-autoplay", current.autoPlay);
       setCheck("#abi-settings-loop", current.loopVideo);
+      setCheck("#abi-settings-autohide-hud", current.autoHideHud !== false);
       setCheck("#abi-settings-site", current.site);
       setCheck("#abi-settings-skip-intro", current.skipIntro !== false);
       setCheck("#abi-settings-privacy", privacyAnonymized);
@@ -3488,6 +3522,10 @@
       if (key === "leaveGuard") {
         if (input.checked) delete document.documentElement.dataset.abiLeaveGuard;
         else document.documentElement.dataset.abiLeaveGuard = "off";
+      }
+      if (key === "autoHideHud") {
+        if (input.checked) delete document.documentElement.dataset.abiAutoHideHud;
+        else document.documentElement.dataset.abiAutoHideHud = "off";
       }
       if (typeof onSaved === "function") onSaved("Saved ✓");
       const panel = input.closest(".abi-extension-settings");
@@ -5188,6 +5226,8 @@
         accentCrimson: "Crimson",
         leaveGuardLabel: "Accidental leave guard",
         leaveGuardDesc: "Prompt confirmation before closing or reloading the tab during an active case inspection so you don't lose progress",
+        autoHideHudLabel: "Fullscreen auto-hide clean HUD",
+        autoHideHudDesc: "Fade out controls and cursor during fullscreen playback after 2.5s of inactivity. Wakes instantly on mouse movement",
       };
       return FALLBACKS[key] || key;
     };

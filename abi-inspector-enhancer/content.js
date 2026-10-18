@@ -64,7 +64,9 @@ function main() {
   const styles = `
     :host { display:block; color:var(--abi-text,#e0e3de); font-family:var(--abi-font,"Arial Narrow",sans-serif); font-weight:var(--abi-weight,700); letter-spacing:var(--abi-tracking,0px); color-scheme:dark; }
     * { box-sizing:border-box; }
-    :host { min-width:0; width:100%; box-sizing:border-box; }
+    :host { min-width:0; width:100%; box-sizing:border-box; transition:opacity 0.15s ease; }
+    :host(.abi-hud-hidden) { opacity:0 !important; pointer-events:none !important; cursor:none !important; transition:opacity 0.35s ease !important; }
+    :host(.abi-hud-hidden) * { cursor:none !important; }
     .icon { width:14px; height:14px; fill:currentColor; flex:none; pointer-events:none; }
     button { display:inline-flex; align-items:center; justify-content:center; gap:7px; }
     #mute { width:34px; padding:0; }
@@ -1477,6 +1479,9 @@ function main() {
                   }
                 }
               }
+              if (event.type === "play" || event.type === "pause" || event.type === "ended") {
+                wakeHud();
+              }
               render();
             },
             { signal: mediaLife.signal },
@@ -1777,7 +1782,66 @@ function main() {
       } catch {}
       render();
     };
-    on(document, "fullscreenchange", render);
+
+    let hudHideTimer = null;
+
+    function wakeHud() {
+      if (hudHideTimer) {
+        clearTimeout(hudHideTimer);
+        hudHideTimer = null;
+      }
+      shell.removeAttribute("data-abi-hud-hidden");
+      shell.classList.remove("abi-hud-hidden");
+      if (host) host.classList.remove("abi-hud-hidden");
+
+      const isFullscreen = Boolean(document.fullscreenElement === shell || document.fullscreenElement);
+      const isEnabled = document.documentElement.dataset.abiAutoHideHud !== "off";
+      const isPlaying = video && !video.paused && !video.ended;
+
+      if (isFullscreen && isEnabled && isPlaying && !isScrubbing) {
+        const delay = Number(window.__abiHudHideDelay) || 2500;
+        hudHideTimer = setTimeout(() => {
+          const stillFullscreen = Boolean(document.fullscreenElement === shell || document.fullscreenElement);
+          const stillEnabled = document.documentElement.dataset.abiAutoHideHud !== "off";
+          const stillPlaying = video && !video.paused && !video.ended;
+          if (stillFullscreen && stillEnabled && stillPlaying && !isScrubbing) {
+            shell.setAttribute("data-abi-hud-hidden", "true");
+            shell.classList.add("abi-hud-hidden");
+            if (host) host.classList.add("abi-hud-hidden");
+          }
+        }, delay);
+      }
+    }
+
+    life.signal.addEventListener("abort", () => {
+      if (hudHideTimer) {
+        clearTimeout(hudHideTimer);
+        hudHideTimer = null;
+      }
+    });
+
+    const onFullscreenChange = () => {
+      render();
+      if (!document.fullscreenElement) {
+        if (hudHideTimer) {
+          clearTimeout(hudHideTimer);
+          hudHideTimer = null;
+        }
+        shell.removeAttribute("data-abi-hud-hidden");
+        shell.classList.remove("abi-hud-hidden");
+        if (host) host.classList.remove("abi-hud-hidden");
+      } else {
+        wakeHud();
+      }
+    };
+
+    on(document, "fullscreenchange", onFullscreenChange);
+    on(shell, "pointermove", wakeHud);
+    on(shell, "mousemove", wakeHud);
+    on(shell, "pointerdown", wakeHud);
+    on(window, "keydown", wakeHud);
+    shell.wakeHud = wakeHud;
+    shell.isHudHidden = () => shell.hasAttribute("data-abi-hud-hidden") || shell.classList.contains("abi-hud-hidden");
 
     const onHide = () => {
       if (document.documentElement.dataset.abiBackgroundPause === "off") return;
@@ -1869,6 +1933,7 @@ function main() {
       shell,
       host,
       selectVideo,
+      wakeHud,
       key(event) {
         selectVideo();
         if (!video || !visible(video)) return;

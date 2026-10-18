@@ -39,12 +39,31 @@ abi-local-player:fullscreen > :first-child {
   box-sizing: border-box;
   aspect-ratio: auto;
 }
+abi-local-player[data-abi-hud-hidden="true"],
+abi-local-player.abi-hud-hidden {
+  cursor: none !important;
+}
+
+abi-local-player[data-abi-hud-hidden="true"] *,
+abi-local-player.abi-hud-hidden * {
+  cursor: none !important;
+}
+
+abi-local-player[data-abi-hud-hidden="true"] abi-local-controls,
+abi-local-player.abi-hud-hidden abi-local-controls,
+abi-local-controls.abi-hud-hidden {
+  opacity: 0 !important;
+  pointer-events: none !important;
+  transition: opacity 0.35s ease !important;
+}
+
 abi-local-controls {
   display: block;
   flex: 0 0 auto;
   min-width: 0;
   max-width: 100%;
   box-sizing: border-box;
+  transition: opacity 0.15s ease;
 }
 
 /* Hide only the native bottom controls while the replacement is mounted.

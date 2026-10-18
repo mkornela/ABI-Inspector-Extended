@@ -7,6 +7,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [2.6.19] - 2026-10-19
+
+### Added
+- **Fullscreen Auto-Hide Clean HUD:**
+  - Automatically fades out the custom video control bar and hides the mouse cursor after 2.5 seconds of inactivity when watching evidence in fullscreen.
+  - Instantly wakes controls and restores cursor upon any mouse movement, touch/pointer event, or keyboard shortcut.
+  - Prevents auto-hiding while video is paused so inspectors can examine still frames with controls and scrubbing readily accessible.
+  - Smooth 0.35s ease fade transitions preventing abrupt visual popping.
+  - Configurable toggle in Extension Settings under the Playback section with full multi-language localization across all 9 supported languages (`en`, `de`, `ru`, `fr`, `es`, `ja`, `pt-BR`, `zh-Hant`, `cn`).
+  - Automated unit test suite verifying fullscreen hide timer, pointer/key wake triggers, paused state retention, settings disabling, and fullscreen exit restoration.
+
+---
+
 ## [2.6.18] - 2026-10-19
 
 ### Added
