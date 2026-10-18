@@ -7,6 +7,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [2.6.6] - 2026-10-18
+
+### Added
+- **Reload Player Button on Player Control Bar (`#reload`):**
+  - Added dedicated reload icon button on the `<abi-local-player>` control bar within the View controls group.
+  - Tooltip: `"Reload player"`, with animated SVG spin animation upon click.
+  - Re-attaches and reloads the HTML5 video source in-place to unfreeze stalled CDN streams or unbuffer playback without requiring a full page refresh.
+  - Intelligently preserves playback position (`currentTime`), playback speed (`playbackRate`), and unpaused playing state across reloads.
+  - Documented in the Video Control Keys dialog (`#keysDialog`) under the View section.
+
+---
+
 ## [2.6.5] - 2026-10-18
 
 ### Added

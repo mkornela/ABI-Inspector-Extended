@@ -48,6 +48,10 @@ function main() {
       viewBox: "0 0 384 512",
       d: "M0 48C0 21.5 21.5 0 48 0l288 0c26.5 0 48 21.5 48 48l0 440c0 9-5 17.2-13 21.3s-17.6 3.4-24.9-1.8L192 397.5 37.9 507.5c-7.3 5.2-16.9 5.9-24.9 1.8S0 497 0 488L0 48z",
     },
+    reload: {
+      viewBox: "0 0 512 512",
+      d: "M463.5 224l8.5 0c13.3 0 24-10.7 24-24l0-128c0-9.7-5.8-18.5-14.8-22.2s-19.3-1.7-26.2 5.2L413.4 96.6c-87.6-86.5-228.7-86.2-315.8 1c-87.5 87.5-87.5 229.3 0 316.8s229.3 87.5 316.8 0c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0c-62.5 62.5-163.8 62.5-226.3 0s-62.5-163.8 0-226.3c62.2-62.2 162.7-62.5 225.3-1L327 183c-6.9 6.9-8.9 17.2-5.2 26.2s12.5 14.8 22.2 14.8l119.5 0z",
+    },
   };
   const styles = `
     :host { display:block; color:var(--abi-text,#e0e3de); font-family:var(--abi-font,"Arial Narrow",sans-serif); font-weight:var(--abi-weight,700); letter-spacing:var(--abi-tracking,0px); color-scheme:dark; }
@@ -222,7 +226,14 @@ function main() {
     button[aria-pressed=true] { color:#e66b4e; border-color:#e66b4e; background:rgba(230,107,78,0.12); }
     .primary { width:36px; height:32px; padding:0; color:#ffffff; border:1.5px solid #d95338; background:linear-gradient(135deg,rgba(217,83,56,0.3),rgba(160,42,22,0.45)); border-radius:6px; box-shadow:0 2px 10px rgba(195,71,45,0.35); }
     .primary:hover { border-color:#ff684a; background:linear-gradient(135deg,rgba(230,107,78,0.45),rgba(195,71,45,0.6)); box-shadow:0 4px 14px rgba(195,71,45,0.5); }
-    #previous,#next,#fullscreen,#slower,#faster { width:30px; height:30px; padding:0; }
+    #previous,#next,#fullscreen,#slower,#faster,#reload { width:30px; height:30px; padding:0; }
+    #reload.spinning .icon {
+      animation: abi-reload-spin .6s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    @keyframes abi-reload-spin {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
     #mute { width:32px; height:30px; padding:0; }
     #speedval { min-width:44px; padding:0 6px; text-transform:none; background:rgba(255,255,255,0.06); border-color:rgba(255,255,255,0.12); color:#e0e3de; font-weight:800; }
     #speedval.changed { color:#b8d66a; border-color:#b8d66a; background:rgba(184,214,106,0.14); box-shadow:0 0 8px rgba(184,214,106,0.3); }
@@ -359,6 +370,7 @@ function main() {
         <div class="right">
           <div class="group" role="group" aria-label="Audio"><button id="mute" title="Mute (Shift+M or icon)" aria-pressed="false">Mute</button><input id="volume" type="range" min="0" max="1" step="0.01" value="1" aria-label="Volume"></div>
           <div class="group" role="group" aria-label="View">
+            <button id="reload" title="Reload player" aria-label="Reload player">Reload</button>
             <button id="keysButton" title="Show video control keys" aria-label="Show video control keys">
               <svg class="icon keyboard-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
                 <rect x="2.75" y="5.25" width="18.5" height="13.5" rx="1" />
@@ -433,6 +445,10 @@ function main() {
                 <dt>Fullscreen</dt>
                 <dd><kbd>F</kbd><span class="keys-detail">Esc exits</span></dd>
               </div>
+              <div class="keys-row">
+                <dt>Reload player</dt>
+                <dd><span class="keys-detail">Toolbar button</span></dd>
+              </div>
             </dl>
           </section>
           <section class="keys-group" aria-labelledby="keysVerdictTitle">
@@ -501,6 +517,7 @@ function main() {
     );
     decorate(ui.mute, "volume-high", "", "Mute (Shift+M or icon)");
     decorate(ui.pinButton, "bookmark", "", "Drop moment bookmark (M)");
+    decorate(ui.reload, "reload", "", "Reload player");
     player.before(shell);
     // Keep the complete original subtree together, including all overlays.
     // Modern Chromium supports a state-preserving DOM move.
@@ -574,6 +591,48 @@ function main() {
         notice(`Bookmark dropped at ${format(current)} (M)`);
       }
       renderPins();
+    }
+    function reloadVideo() {
+      selectVideo();
+      if (!video) {
+        notice("No video found to reload");
+        return;
+      }
+      ui.reload?.classList.add("spinning");
+      setTimeout(() => ui.reload?.classList.remove("spinning"), 600);
+      const savedTime = video.currentTime || 0;
+      const wasPaused = video.paused;
+      const currentRate = video.playbackRate;
+      const src = video.getAttribute("src") || video.src;
+      const sources = [...video.querySelectorAll("source")];
+      if (sources.length > 0) {
+        for (const s of sources) {
+          const sSrc = s.getAttribute("src");
+          if (sSrc) s.setAttribute("src", sSrc);
+        }
+      } else if (src) {
+        video.setAttribute("src", src);
+      }
+      const onReady = () => {
+        video.removeEventListener("loadedmetadata", onReady);
+        video.removeEventListener("canplay", onReady);
+        if (savedTime > 0) {
+          try { video.currentTime = savedTime; } catch {}
+        }
+        if (currentRate && currentRate !== 1) {
+          try { video.playbackRate = currentRate; } catch {}
+        }
+        if (!wasPaused) {
+          video.play().catch(() => {});
+        }
+      };
+      video.addEventListener("loadedmetadata", onReady, { once: true });
+      video.addEventListener("canplay", onReady, { once: true });
+      try {
+        video.load();
+      } catch {}
+      notice("Reloaded player stream");
+      render();
     }
     function selectVideo() {
       const scope = player || shell || document;
@@ -679,7 +738,7 @@ function main() {
     }
     function render() {
       const ready = finite();
-      for (const id of ["play", "slower", "speedval", "faster", "mute", "volume", "pinButton"])
+      for (const id of ["play", "slower", "speedval", "faster", "mute", "volume", "pinButton", "reload"])
         if (ui[id]) ui[id].disabled = !video;
       for (const id of [
         "seek",
@@ -838,6 +897,7 @@ function main() {
         }
       },
       pinButton: toggleBookmark,
+      reload: reloadVideo,
       fullscreen,
     };
     for (const [id, fn] of Object.entries(actions))

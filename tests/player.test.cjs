@@ -485,4 +485,154 @@ test("Suspect Moment Bookmarks / Pin Drop: drops pin with M key, renders on time
   }
 });
 
+test("Reload Player Button: reloads video source in-place, preserves currentTime, and gives feedback", async (t) => {
+  let playwright;
+  try {
+    playwright = require("playwright");
+  } catch {
+    if (t && typeof t.skip === "function") {
+      t.skip("playwright module is not installed");
+      return;
+    }
+  }
+  const { chromium } = playwright;
+  let browser;
+  try {
+    browser = await chromium.launch({
+      headless: true,
+      channel: process.env.ABI_TEST_BROWSER || (process.platform === "win32" ? "msedge" : "chromium"),
+    });
+    const context = await browser.newContext();
+    const page = await context.newPage();
+
+    const mockHtml = `
+      <!DOCTYPE html>
+      <html data-abi-site="on" data-abi-auto-play="on">
+      <head>
+        <style>
+          .content.video { width: 800px; height: 500px; }
+          .play-box { width: 100%; height: 100%; }
+          #workingPlayer { width: 100%; height: 100%; }
+          video { width: 100%; height: 100%; }
+        </style>
+      </head>
+      <body>
+        <div class="main">
+          <ul class="nav">
+            <li id="working" class="current"><span>Workbench</span></li>
+          </ul>
+        </div>
+        <div id="xcWorking">
+          <div class="content video">
+            <div class="play-box">
+              <div id="workingPlayer">
+                <video src="https://example.com/test.mp4" preload="auto"></video>
+              </div>
+            </div>
+          </div>
+        </div>
+      </body>
+      </html>
+    `;
+
+    await page.route("https://www.arenabreakoutinfinite.com/act/a20251028patroller/*", (route) => {
+      route.fulfill({
+        status: 200,
+        contentType: "text/html",
+        body: mockHtml,
+      });
+    });
+
+    await page.goto("https://www.arenabreakoutinfinite.com/act/a20251028patroller/");
+
+    await page.evaluate(() => {
+      const v = document.querySelector("video");
+      let _paused = true;
+      let _currentTime = 22;
+      let _duration = 90;
+      let _loadCount = 0;
+      Object.defineProperty(v, "paused", {
+        get: () => _paused,
+        set: (val) => { _paused = val; },
+        configurable: true,
+      });
+      Object.defineProperty(v, "currentTime", {
+        get: () => _currentTime,
+        set: (val) => {
+          _currentTime = val;
+          v.dispatchEvent(new Event("timeupdate"));
+        },
+        configurable: true,
+      });
+      Object.defineProperty(v, "duration", {
+        get: () => _duration,
+        set: (val) => { _duration = val; },
+        configurable: true,
+      });
+      Object.defineProperty(v, "loadCount", {
+        get: () => _loadCount,
+        configurable: true,
+      });
+      v.play = async () => {
+        _paused = false;
+        v.dispatchEvent(new Event("play"));
+      };
+      v.pause = () => {
+        _paused = true;
+        v.dispatchEvent(new Event("pause"));
+      };
+      v.load = () => {
+        _loadCount++;
+        v.dispatchEvent(new Event("loadedmetadata"));
+        v.dispatchEvent(new Event("canplay"));
+      };
+    });
+
+    await page.addScriptTag({ path: path.join(__dirname, "..", "abi-inspector-enhancer", "settings.js") });
+    await page.addScriptTag({ path: path.join(__dirname, "..", "abi-inspector-enhancer", "content.js") });
+
+    await page.waitForSelector("abi-local-player", { state: "attached" });
+    await page.waitForSelector("abi-local-controls", { state: "attached" });
+
+    // Verify #reload button exists with correct tooltip
+    const buttonData = await page.evaluate(() => {
+      const controls = document.querySelector("abi-local-controls");
+      const reloadBtn = controls.shadowRoot.querySelector("button#reload");
+      return {
+        exists: Boolean(reloadBtn),
+        title: reloadBtn?.title,
+        ariaLabel: reloadBtn?.getAttribute("aria-label"),
+      };
+    });
+
+    assert.equal(buttonData.exists, true, "Reload player button should exist in controls");
+    assert.equal(buttonData.title, "Reload player", "Tooltip should say 'Reload player'");
+
+    // Click #reload button
+    await page.evaluate(() => {
+      const controls = document.querySelector("abi-local-controls");
+      controls.shadowRoot.querySelector("button#reload").click();
+    });
+
+    const afterReload = await page.evaluate(() => {
+      const v = document.querySelector("video");
+      const controls = document.querySelector("abi-local-controls");
+      const status = controls.shadowRoot.querySelector("#status")?.textContent;
+      return {
+        loadCount: v.loadCount,
+        currentTime: v.currentTime,
+        status,
+      };
+    });
+
+    assert.equal(afterReload.loadCount, 1, "video.load() was called exactly once on reload");
+    assert.equal(afterReload.currentTime, 22, "Playback timestamp preserved at 22s across reload");
+    assert.match(afterReload.status, /Reloaded player stream/, "Status notice confirms stream reloaded");
+
+  } finally {
+    await browser?.close();
+  }
+});
+
+
 
