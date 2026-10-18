@@ -224,17 +224,24 @@
       if (!popup) continue;
       removeChineseComments(popup);
 
-      const closeBtns = popup.querySelectorAll("._close-btn, .close-btn");
-      for (const btn of closeBtns) {
-        if (btn.classList.contains("close-btn")) {
-          btn.setAttribute("aria-label", "Close");
-          btn.setAttribute("title", "Close");
-          if (!btn.querySelector("svg.abi-close-svg")) {
-            btn.innerHTML = `<svg class="abi-close-svg" width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg" style="pointer-events:none;display:block;"><path d="M1.5 1.5L10.5 10.5M1.5 10.5L10.5 1.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>`;
-          }
-        } else if (btn.textContent.trim() === "关闭" || HAS_CJK.test(btn.textContent)) {
+      // 1. Top-right close icon button
+      const topCloseBtns = popup.querySelectorAll(".close-btn:not(.btn4):not(.popup-btn-box *)");
+      for (const btn of topCloseBtns) {
+        btn.setAttribute("aria-label", "Close");
+        btn.setAttribute("title", "Close");
+        if (!btn.querySelector("svg.abi-close-svg")) {
+          btn.innerHTML = `<svg class="abi-close-svg" width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg" style="pointer-events:none;display:block;"><path d="M1.5 1.5L10.5 10.5M1.5 10.5L10.5 1.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>`;
+        }
+      }
+
+      // 2. Action buttons (Cancel / 关闭) in popup footer
+      const cancelBtns = popup.querySelectorAll(".popup-btn-box .btn4, .popup-btn-box ._close-btn, .btn4");
+      for (const btn of cancelBtns) {
+        if (btn.textContent.trim() === "关闭" || btn.textContent.trim() === "Cancel" || HAS_CJK.test(btn.textContent)) {
           btn.textContent = "Cancel";
           btn.setAttribute("aria-label", "Cancel");
+          btn.removeAttribute("title");
+          btn.querySelectorAll("svg").forEach((s) => s.remove());
         }
       }
 

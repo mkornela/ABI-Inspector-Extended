@@ -729,5 +729,72 @@ test("Multilingual localization: dynamic language switching across 9 supported l
   }
 });
 
+test("Dialog enhancements: close icon is singular and footer cancel button has no extra icon", async (t) => {
+  let playwright;
+  try {
+    playwright = require("playwright");
+  } catch {
+    if (t && typeof t.skip === "function") {
+      t.skip("playwright module is not installed");
+      return;
+    }
+  }
+  const { chromium } = playwright;
+  const browser = await chromium.launch({
+    headless: true,
+    channel: process.env.ABI_TEST_BROWSER || (process.platform === "win32" ? "msedge" : "chromium"),
+  });
+
+  try {
+    const page = await browser.newPage({ viewport: { width: 1280, height: 800 } });
+    await page.setContent(`<!DOCTYPE html><html><head></head><body>
+      <div class="popup patrol-popup" id="illegalPopup">
+        <a class="str96 close-btn _close-btn" href="javascript:;" aria-label="Close">Close</a>
+        <h3>Violation</h3>
+        <ul id="courtMenu" class="popup-checkbox">
+          <li><input type="checkbox" id="c0"/><label for="c0">Wallhack</label></li>
+        </ul>
+        <textarea id="guiltyDetail" class="illegal-description" maxlength="50"></textarea>
+        <div class="popup-btn-box">
+          <a href="javascript:;" class="str94 btn4 _close-btn">关闭</a>
+          <a id="patrolSubmit" href="javascript:;" class="str95 btn3">Submit</a>
+        </div>
+      </div>
+    </body></html>`);
+
+    await page.addStyleTag({ path: path.join(root, "dialogs.css") });
+
+    const dialogsSource = fs.readFileSync(path.join(root, "dialogs.js"), "utf8");
+    await page.evaluate((code) => {
+      window.eval(code);
+    }, dialogsSource);
+
+    // 1. Top-right close button has exactly 1 SVG and no pseudo text
+    const closeBtn = page.locator("#illegalPopup > .close-btn");
+    assert.equal(await closeBtn.count(), 1, "Top close button exists");
+    assert.equal(await closeBtn.locator("svg.abi-close-svg").count(), 1, "Exactly one close SVG in close button");
+
+    const afterContent = await page.evaluate(() => {
+      const el = document.querySelector("#illegalPopup > .close-btn");
+      return window.getComputedStyle(el, "::after").content;
+    });
+    assert.ok(afterContent === "none" || afterContent === '""' || afterContent === "", `::after content should be none, got: ${afterContent}`);
+
+    // 2. Footer Cancel button has text "Cancel", no SVG, and no ::after content
+    const cancelBtn = page.locator("#illegalPopup .popup-btn-box .btn4");
+    assert.equal(await cancelBtn.count(), 1, "Cancel button exists");
+    assert.equal((await cancelBtn.textContent()).trim(), "Cancel", "Cancel button text translated to Cancel");
+    assert.equal(await cancelBtn.locator("svg").count(), 0, "No SVG inside Cancel button");
+
+    const cancelAfter = await page.evaluate(() => {
+      const el = document.querySelector("#illegalPopup .popup-btn-box .btn4");
+      return window.getComputedStyle(el, "::after").content;
+    });
+    assert.ok(cancelAfter === "none" || cancelAfter === '""' || cancelAfter === "", `Cancel button ::after should be none, got: ${cancelAfter}`);
+  } finally {
+    await browser?.close();
+  }
+});
+
 
 

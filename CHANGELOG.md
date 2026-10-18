@@ -16,6 +16,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Resilient Extension Context Invalidation Handling:**
   - Safely wrapped all `chrome.runtime` and `chrome.storage` API calls across `site-ui.js`, `content.js`, `settings.js`, and `popup.js` with `try...catch` guards to prevent `Uncaught Error: Extension context invalidated` errors when the extension is updated or reloaded while tabs remain open.
   - Implemented `safeStorageGet`, `safeStorageSet`, and `getExtensionVersion` fallback utilities to gracefully resolve preferences and metadata without throwing if the extension context disconnects.
+- **Fixed Doubled Dialog Close Buttons:**
+  - Resolved duplicate close icons caused by CSS `::after` content rendering alongside the injected SVG in `.close-btn`.
+  - Fixed CSS selector matching `_close-btn` on footer action buttons (e.g. Cancel button in `illegalPopup` and drill result modals), preventing Cancel buttons from receiving absolute top-right positioning and stray `×` symbols.
 
 ---
 

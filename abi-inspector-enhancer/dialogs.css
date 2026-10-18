@@ -32,7 +32,7 @@ html:not([data-abi-site="off"]) {
   }
 
   /* ---- close button ---- */
-  :is(.popup, .dialog, .modal, .grade-popup, .patrol-popup, [class*="popup"], [class*="dialog"], #illegalPopup, #drillResult1, #drillResult2, #commonTips, #commonTips1, #resultWrong, #resultRight, #notAuth, #notExam, #getAuth, #traingFail, #LowVersion, #noticePopup, #drillIntro) :is(.close-btn, a[class*="close-btn"]) {
+  :is(.popup, .dialog, .modal, .grade-popup, .patrol-popup, [class*="popup"], [class*="dialog"], #illegalPopup, #drillResult1, #drillResult2, #commonTips, #commonTips1, #resultWrong, #resultRight, #notAuth, #notExam, #getAuth, #traingFail, #LowVersion, #noticePopup, #drillIntro) :is(.close-btn, a.close-btn):not(.btn4):not(.popup-btn-box *) {
     position: absolute !important;
     top: 16px !important;
     right: 16px !important;
@@ -54,29 +54,46 @@ html:not([data-abi-site="off"]) {
     z-index: 10 !important;
   }
 
-  :is(.popup, .dialog, .modal, .grade-popup, .patrol-popup, [class*="popup"], [class*="dialog"], #illegalPopup, #drillResult1, #drillResult2, #commonTips, #commonTips1, #resultWrong, #resultRight, #notAuth, #notExam, #getAuth, #traingFail, #LowVersion, #noticePopup, #drillIntro) :is(.close-btn, a[class*="close-btn"])::after {
+  :is(.popup, .dialog, .modal, .grade-popup, .patrol-popup, [class*="popup"], [class*="dialog"], #illegalPopup, #drillResult1, #drillResult2, #commonTips, #commonTips1, #resultWrong, #resultRight, #notAuth, #notExam, #getAuth, #traingFail, #LowVersion, #noticePopup, #drillIntro) :is(.close-btn, a.close-btn):not(.btn4):not(.popup-btn-box *):hover {
+    background: rgba(255, 255, 255, 0.1) !important;
+    border-color: rgba(255, 255, 255, 0.25) !important;
+    color: #ffffff !important;
+  }
+
+  :is(.popup, .dialog, .modal, .grade-popup, .patrol-popup, [class*="popup"], [class*="dialog"], #illegalPopup, #drillResult1, #drillResult2, #commonTips, #commonTips1, #resultWrong, #resultRight, #notAuth, #notExam, #getAuth, #traingFail, #LowVersion, #noticePopup, #drillIntro) :is(.close-btn, a.close-btn):not(.btn4):not(.popup-btn-box *) svg.abi-close-svg {
+    display: block !important;
+    width: 14px !important;
+    height: 14px !important;
+    stroke: currentColor !important;
+  }
+
+  :is(.popup, .dialog, .modal, .grade-popup, .patrol-popup, [class*="popup"], [class*="dialog"], #illegalPopup, #drillResult1, #drillResult2, #commonTips, #commonTips1, #resultWrong, #resultRight, #notAuth, #notExam, #getAuth, #traingFail, #LowVersion, #noticePopup, #drillIntro) :is(.close-btn, a.close-btn):not(.btn4):not(.popup-btn-box *):not(:has(svg))::after {
     content: "×" !important;
-    font-size: 22px !important;
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif !important;
+    font-size: 20px !important;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif !important;
     font-weight: 300 !important;
     line-height: 1 !important;
-    text-indent: 0 !important;
+    color: #8fa09d !important;
     display: flex !important;
     align-items: center !important;
     justify-content: center !important;
     width: 100% !important;
     height: 100% !important;
-    color: #8fa09d !important;
     pointer-events: none !important;
   }
 
-  :is(.popup, .dialog, .modal, .grade-popup, .patrol-popup, [class*="popup"], [class*="dialog"], #illegalPopup, #drillResult1, #drillResult2, #commonTips, #commonTips1, #resultWrong, #resultRight, #notAuth, #notExam, #getAuth, #traingFail, #LowVersion, #noticePopup, #drillIntro) :is(.close-btn, a[class*="close-btn"]):hover {
-    background: rgba(255, 255, 255, 0.1) !important;
-    border-color: rgba(255, 255, 255, 0.25) !important;
+  /* Reset any close styles from affecting Cancel buttons in popup footer */
+  .popup-btn-box a.btn4,
+  .popup-btn-box a._close-btn,
+  .popup-btn-box .btn4 {
+    position: static !important;
   }
 
-  :is(.popup, .dialog, .modal, .grade-popup, .patrol-popup, [class*="popup"], [class*="dialog"], #illegalPopup, #drillResult1, #drillResult2, #commonTips, #commonTips1, #resultWrong, #resultRight, #notAuth, #notExam, #getAuth, #traingFail, #LowVersion, #noticePopup, #drillIntro) :is(.close-btn, a[class*="close-btn"]):hover::after {
-    color: #ffffff !important;
+  .popup-btn-box a.btn4::after,
+  .popup-btn-box a._close-btn::after,
+  .popup-btn-box .btn4::after {
+    content: none !important;
+    display: none !important;
   }
 
   /* ---- header h3 ---- */
