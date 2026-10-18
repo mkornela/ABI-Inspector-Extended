@@ -951,6 +951,10 @@ function main() {
     let precisionMs = false;
     let isScrubbing = false;
     let preScrubMuted = false;
+    let lastStablePlaybackTime = 0;
+    let modalTransitionUntil = 0;
+    let hadOpenModal = false;
+    let isUserSeeking = false;
     try {
       precisionMs =
         localStorage.getItem("abi-time-precision") === "ms" ||
@@ -959,6 +963,80 @@ function main() {
     } catch {}
     const on = (el, name, fn, capture = false) =>
       el.addEventListener(name, fn, { signal: life.signal, capture });
+
+    function isAnyModalOpen() {
+      const candidates = document.querySelectorAll(
+        ".popup, .dialog, .modal, .patrol-popup, .grade-popup, [id*='Popup'], [id*='popup'], [id^='drillResult'], #commonTips, #commonTips1, #resultWrong, #resultRight, #notAuth, #notExam, #getAuth, #traingFail, #LowVersion, #noticePopup, #drillIntro, dialog[open], [role='dialog'], [aria-modal='true']"
+      );
+      for (const el of candidates) {
+        if (el.classList.contains("abi-zoom-badge") || el.classList.contains("abi-case-expiry-badge")) continue;
+        if (el.hasAttribute("hidden")) continue;
+        if (el.tagName === "DIALOG" && !el.open) continue;
+        const disp = el.style?.display;
+        if (disp === "none") continue;
+        const vis = el.style?.visibility;
+        if (vis === "hidden") continue;
+        if (disp === "block" || disp === "flex" || el.open || (el.offsetParent !== null && disp !== "none")) {
+          return true;
+        }
+      }
+      return false;
+    }
+
+    function checkModalTransitions() {
+      const open = isAnyModalOpen();
+      if (open !== hadOpenModal) {
+        hadOpenModal = open;
+        modalTransitionUntil = Date.now() + 2000;
+        if (video && Number.isFinite(video.currentTime) && video.currentTime > 0.3) {
+          lastStablePlaybackTime = video.currentTime;
+        }
+      }
+    }
+
+    const modalObserver = new MutationObserver(checkModalTransitions);
+    try {
+      modalObserver.observe(document.body || document.documentElement, {
+        childList: true,
+        subtree: true,
+        attributes: true,
+        attributeFilter: ["style", "class", "hidden", "open"],
+      });
+      life.signal.addEventListener("abort", () => modalObserver.disconnect());
+    } catch {}
+
+    on(document, "click", (e) => {
+      const t = e.target;
+      if (
+        t instanceof Element &&
+        t.closest(
+          ".popup, .dialog, .modal, .patrol-popup, [id*='Popup'], [id*='popup'], ._close-btn, .close-btn, .btn1, .btn2, .btn3, .btn4, #btn1, #btn2, #btn3, [data-dismiss='modal'], .abi-today-wrap, #keysButton, #keysClose, #keysDone"
+        )
+      ) {
+        modalTransitionUntil = Date.now() + 2000;
+        if (video && Number.isFinite(video.currentTime) && video.currentTime > 0.3) {
+          lastStablePlaybackTime = video.currentTime;
+        }
+      }
+    }, true);
+
+    on(document, "keydown", (e) => {
+      if (
+        e.key === "Escape" ||
+        e.key === "1" ||
+        e.key === "2" ||
+        e.key === "3" ||
+        e.key === "v" ||
+        e.key === "V"
+      ) {
+        modalTransitionUntil = Date.now() + 2000;
+        if (video && Number.isFinite(video.currentTime) && video.currentTime > 0.3) {
+          lastStablePlaybackTime = video.currentTime;
+        }
+      }
+    }, true);
+
+    shell.getRetainedPlaybackTime = () => lastStablePlaybackTime;
 
     const zoomBadge = document.createElement("div");
     zoomBadge.className = "abi-zoom-badge";
@@ -1292,6 +1370,9 @@ function main() {
                 bookmarks = [];
                 renderPins();
                 shell.resetExpiryTimer?.();
+                lastStablePlaybackTime = 0;
+                modalTransitionUntil = 0;
+                hadOpenModal = false;
               }
               if (event.type === "durationchange") {
                 renderPins();
@@ -1305,6 +1386,29 @@ function main() {
                 } else {
                   delete video.dataset.abiUserPaused;
                   video.dataset.abiUserPlayed = "true";
+                }
+              }
+              if (event.type === "timeupdate") {
+                if (
+                  !isUserSeeking &&
+                  !isScrubbing &&
+                  Number.isFinite(video.currentTime) &&
+                  video.currentTime > 0.3
+                ) {
+                  lastStablePlaybackTime = video.currentTime;
+                }
+              }
+              if (event.type === "seeking" || event.type === "timeupdate") {
+                if (
+                  !isUserSeeking &&
+                  !isScrubbing &&
+                  (hadOpenModal || Date.now() < modalTransitionUntil)
+                ) {
+                  if (video.currentTime < 0.2 && lastStablePlaybackTime >= 0.5) {
+                    try {
+                      video.currentTime = lastStablePlaybackTime;
+                    } catch {}
+                  }
                 }
               }
               render();
@@ -1343,10 +1447,13 @@ function main() {
       );
       ui.time.textContent = `${format(video?.currentTime || 0, precisionMs)} / ${format(video?.duration, precisionMs)}`;
       ui.seek.max = ready ? String(video.duration) : "1";
-      ui.seek.value = ready ? String(video.currentTime) : "0";
+      if (!isScrubbing) {
+        ui.seek.value = ready ? String(video.currentTime) : "0";
+      }
+      const fillTime = isScrubbing ? Number(ui.seek.value) : (video?.currentTime || 0);
       ui.seek.style.setProperty(
         "--fill",
-        `${ready ? Math.max(0, Math.min(100, (video.currentTime / video.duration) * 100)) : 0}%`,
+        `${ready ? Math.max(0, Math.min(100, (fillTime / video.duration) * 100)) : 0}%`,
       );
       ui.seek.setAttribute(
         "aria-valuetext",
@@ -1389,12 +1496,19 @@ function main() {
         notice("Seeking unavailable until the video is ready");
         return;
       }
+      isUserSeeking = true;
+      modalTransitionUntil = 0;
+      const targetTime = Math.max(0, Math.min(video.duration, time));
+      lastStablePlaybackTime = targetTime;
       try {
-        video.currentTime = Math.max(0, Math.min(video.duration, time));
+        video.currentTime = targetTime;
       } catch {
         notice("The official video is not seekable yet");
       }
       render();
+      setTimeout(() => {
+        isUserSeeking = false;
+      }, 400);
     }
     function jump(amount) {
       if (video) seek(video.currentTime + amount);
@@ -1510,6 +1624,8 @@ function main() {
     function startScrubbing() {
       if (!video || isScrubbing) return;
       isScrubbing = true;
+      isUserSeeking = true;
+      modalTransitionUntil = 0;
       preScrubMuted = Boolean(video.muted);
       try {
         video.muted = true;
@@ -1518,12 +1634,17 @@ function main() {
     function stopScrubbing() {
       if (!isScrubbing) return;
       isScrubbing = false;
+      modalTransitionUntil = 0;
       if (video) {
+        lastStablePlaybackTime = video.currentTime;
         try {
           video.muted = preScrubMuted;
         } catch {}
         render();
       }
+      setTimeout(() => {
+        isUserSeeking = false;
+      }, 400);
     }
     on(ui.seek, "pointermove", updateHoverBadge);
     on(ui.seek, "pointerenter", updateHoverBadge);

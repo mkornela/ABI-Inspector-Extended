@@ -2244,6 +2244,188 @@ test("Silent Scrubbing: mutes audio during seek bar drag and restores previous m
   }
 });
 
+test("Playback Position Retain on Modals: preserves exact video playback timestamp when opening or closing modals/dialogs, preventing official scripts from rewinding to 0:00", async (t) => {
+  let playwright;
+  try {
+    playwright = require("playwright");
+  } catch {
+    if (t && typeof t.skip === "function") {
+      t.skip("playwright module is not installed");
+      return;
+    }
+  }
+
+  const browser = await playwright.chromium.launch({
+    headless: true,
+    channel: process.env.ABI_TEST_BROWSER || (process.platform === "win32" ? "msedge" : "chromium"),
+  });
+
+  try {
+    const page = await browser.newPage({ viewport: { width: 1200, height: 800 } });
+
+    const mockHtml = `
+      <html data-abi-site="on" data-abi-auto-play="off">
+      <head>
+        <style>
+          .content.video { width: 800px; height: 500px; }
+          .play-box { width: 100%; height: 100%; }
+          #workingPlayer { width: 800px; height: 450px; }
+          video { width: 800px; height: 450px; display: block; }
+          .popup { display: none; }
+        </style>
+      </head>
+      <body>
+        <div class="main">
+          <ul class="nav">
+            <li id="working" class="current"><span>Workbench</span></li>
+          </ul>
+        </div>
+        <div id="xcWorking">
+          <div class="content video">
+            <div class="play-box">
+              <div id="workingPlayer">
+                <video src="https://example.com/test.mp4" preload="auto"></video>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div id="illegalPopup" class="popup">
+          <div class="popup-box">
+            <button class="_close-btn">Close</button>
+          </div>
+        </div>
+      </body>
+      </html>
+    `;
+
+    await page.route("https://www.arenabreakoutinfinite.com/act/a20251028patroller/*", (route) => {
+      route.fulfill({
+        status: 200,
+        contentType: "text/html",
+        body: mockHtml,
+      });
+    });
+
+    await page.goto("https://www.arenabreakoutinfinite.com/act/a20251028patroller/");
+
+    await page.evaluate(() => {
+      const v = document.querySelector("video");
+      let _paused = true;
+      let _currentTime = 28.5;
+      let _duration = 120;
+      let _muted = false;
+      let _volume = 1;
+
+      Object.defineProperty(v, "paused", {
+        get: () => _paused,
+        set: (val) => { _paused = val; },
+        configurable: true,
+      });
+      Object.defineProperty(v, "currentTime", {
+        get: () => _currentTime,
+        set: (val) => {
+          _currentTime = val;
+          v.dispatchEvent(new Event("timeupdate"));
+        },
+        configurable: true,
+      });
+      Object.defineProperty(v, "duration", {
+        get: () => _duration,
+        configurable: true,
+      });
+      Object.defineProperty(v, "readyState", {
+        get: () => 4,
+        configurable: true,
+      });
+      Object.defineProperty(v, "muted", {
+        get: () => _muted,
+        set: (val) => {
+          _muted = val;
+          v.dispatchEvent(new Event("volumechange"));
+        },
+        configurable: true,
+      });
+      Object.defineProperty(v, "volume", {
+        get: () => _volume,
+        set: (val) => {
+          _volume = val;
+          v.dispatchEvent(new Event("volumechange"));
+        },
+        configurable: true,
+      });
+      v.play = async () => { _paused = false; v.dispatchEvent(new Event("play")); };
+      v.pause = () => { _paused = true; v.dispatchEvent(new Event("pause")); };
+    });
+
+    await page.addScriptTag({ path: path.join(__dirname, "..", "abi-inspector-enhancer", "settings.js") });
+    await page.addScriptTag({ path: path.join(__dirname, "..", "abi-inspector-enhancer", "content.js") });
+
+    await page.waitForSelector("abi-local-player", { state: "attached" });
+    await page.waitForSelector("abi-local-controls", { state: "attached" });
+
+    // Establish stable playback position at 28.5s
+    await page.evaluate(() => {
+      const v = document.querySelector("video");
+      v.dispatchEvent(new Event("timeupdate"));
+    });
+
+    let currentPos = await page.evaluate(() => document.querySelector("video").currentTime);
+    assert.equal(currentPos, 28.5, "Video is paused at 28.5s");
+
+    // 1. Simulate official modal opening (e.g. Violation dialog)
+    await page.evaluate(() => {
+      const popup = document.querySelector("#illegalPopup");
+      popup.style.display = "block";
+    });
+    await page.waitForTimeout(50);
+
+    // 2. Official script attempts to rewind video to 0:00 upon opening modal
+    await page.evaluate(() => {
+      const v = document.querySelector("video");
+      v.currentTime = 0;
+      v.dispatchEvent(new Event("seeking"));
+    });
+
+    currentPos = await page.evaluate(() => document.querySelector("video").currentTime);
+    assert.equal(currentPos, 28.5, "Playback position is preserved and restored to 28.5s on modal open rewind");
+
+    // 3. User closes modal (clicks close button / cancel)
+    await page.evaluate(() => {
+      const closeBtn = document.querySelector("#illegalPopup ._close-btn");
+      closeBtn.dispatchEvent(new MouseEvent("click", { bubbles: true }));
+      const popup = document.querySelector("#illegalPopup");
+      popup.style.display = "none";
+    });
+    await page.waitForTimeout(50);
+
+    // 4. Official script attempts to rewind video to 0:00 upon closing modal
+    await page.evaluate(() => {
+      const v = document.querySelector("video");
+      v.currentTime = 0;
+      v.dispatchEvent(new Event("seeking"));
+    });
+
+    currentPos = await page.evaluate(() => document.querySelector("video").currentTime);
+    assert.equal(currentPos, 28.5, "Playback position is preserved and restored to 28.5s on modal close rewind");
+
+    // 5. Intentional user seek to 0:00 via player controls is NOT blocked
+    await page.evaluate(() => {
+      const controls = document.querySelector("abi-local-controls");
+      const seek = controls.shadowRoot.querySelector("#seek");
+      seek.value = "0";
+      seek.dispatchEvent(new PointerEvent("pointerdown", { bubbles: true }));
+      seek.dispatchEvent(new Event("input", { bubbles: true }));
+      seek.dispatchEvent(new PointerEvent("pointerup", { bubbles: true }));
+    });
+
+    currentPos = await page.evaluate(() => document.querySelector("video").currentTime);
+    assert.equal(currentPos, 0, "Intentional user seeking to 0:00 via controls is permitted");
+
+  } finally {
+    await browser?.close();
+  }
+});
+
 
 
 

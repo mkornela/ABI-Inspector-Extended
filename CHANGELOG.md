@@ -7,6 +7,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [2.6.16] - 2026-10-18
+
+### Added
+- **Playback Position Retain on Modals:**
+  - Preserves the exact video playback timestamp when opening or closing modals/dialogs (such as violation confirmation popups, training dialogs, drill results, and notices), preventing official scripts from rewinding playback to 0:00.
+  - Intercepts intrusive script-driven seeking during modal transitions and seamlessly restores the playhead to the last stable playback position.
+  - Distinguishes intentional user seeking (via scrubber, jump keys, or buttons) from scripted rewinds so users can freely seek anywhere including back to 0:00.
+  - Added comprehensive automated unit test suite.
+
+---
+
 ## [2.6.15] - 2026-10-18
 
 ### Added
