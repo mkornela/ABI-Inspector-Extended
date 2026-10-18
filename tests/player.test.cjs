@@ -198,3 +198,104 @@ test("Player pause and unpause button, autoplay safety, and click toggling", asy
     await browser.close();
   }
 });
+
+test("Video does not auto-play when autoPlay setting is off", async (t) => {
+  let playwright;
+  try {
+    playwright = require("playwright");
+  } catch {
+    if (t && typeof t.skip === "function") {
+      t.skip("playwright module is not installed");
+      return;
+    }
+  }
+  const { chromium } = playwright;
+  let browser;
+  try {
+    browser = await chromium.launch({
+      headless: true,
+      channel: process.env.ABI_TEST_BROWSER || (process.platform === "win32" ? "msedge" : "chromium"),
+    });
+    const context = await browser.newContext();
+    const page = await context.newPage();
+
+    const mockHtml = `
+      <!DOCTYPE html>
+      <html data-abi-site="on" data-abi-auto-play="off">
+      <head>
+        <style>
+          .content.video { width: 800px; height: 500px; }
+          .play-box { width: 100%; height: 100%; }
+          #workingPlayer { width: 100%; height: 100%; }
+          video { width: 100%; height: 100%; }
+        </style>
+      </head>
+      <body>
+        <div class="main">
+          <ul class="nav">
+            <li id="working" class="current"><span>Workbench</span></li>
+          </ul>
+        </div>
+        <div id="xcWorking">
+          <div class="content video">
+            <div class="play-box">
+              <div id="workingPlayer">
+                <video src="https://example.com/test.mp4" preload="auto"></video>
+              </div>
+            </div>
+          </div>
+        </div>
+      </body>
+      </html>
+    `;
+
+    await page.route("https://www.arenabreakoutinfinite.com/act/a20251028patroller/*", (route) => {
+      route.fulfill({
+        status: 200,
+        contentType: "text/html",
+        body: mockHtml,
+      });
+    });
+
+    await page.goto("https://www.arenabreakoutinfinite.com/act/a20251028patroller/");
+
+    await page.evaluate(() => {
+      const v = document.querySelector("video");
+      let _paused = true;
+      Object.defineProperty(v, "paused", {
+        get: () => _paused,
+        set: (val) => { _paused = val; },
+        configurable: true,
+      });
+      v.play = async () => {
+        _paused = false;
+        v.dispatchEvent(new Event("play"));
+      };
+      v.pause = () => {
+        _paused = true;
+        v.dispatchEvent(new Event("pause"));
+      };
+    });
+
+    await page.addScriptTag({ path: path.join(__dirname, "..", "abi-inspector-enhancer", "settings.js") });
+    await page.addScriptTag({ path: path.join(__dirname, "..", "abi-inspector-enhancer", "content.js") });
+
+    await page.waitForSelector("abi-local-player", { state: "attached" });
+    await page.waitForSelector("abi-local-controls", { state: "attached" });
+
+    // Video should remain paused because autoPlay is off
+    let isPaused = await page.evaluate(() => document.querySelector("video").paused);
+    assert.equal(isPaused, true, "Video stays paused when autoPlay is off");
+
+    // Clicking play button should start playback
+    await page.evaluate(() => {
+      const controls = document.querySelector("abi-local-controls");
+      controls.shadowRoot.querySelector("button#play").click();
+    });
+    isPaused = await page.evaluate(() => document.querySelector("video").paused);
+    assert.equal(isPaused, false, "Video plays after user explicitly clicks play");
+  } finally {
+    await browser?.close();
+  }
+});
+

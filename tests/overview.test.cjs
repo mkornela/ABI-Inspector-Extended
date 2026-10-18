@@ -32,6 +32,74 @@ test("observer preserves send arguments/result and publishes only summary fields
   assert.equal(messages.length, 1);
 });
 
+test("alert interceptor converts Chinese alert into English formatted alert and respects site setting", () => {
+  const events = [];
+  const nativeAlertCalls = [];
+  let appendedToast = null;
+  const mockDocument = {
+    documentElement: { dataset: { abiExtension: "on", abiSite: "on" } },
+    body: {
+      appendChild: (node) => { appendedToast = node; },
+    },
+    getElementById: () => null,
+    createElement: (tag) => {
+      const el = {
+        tagName: tag.toUpperCase(),
+        classList: { add: () => {}, remove: () => {} },
+        setAttribute: () => {},
+        addEventListener: () => {},
+        append: (...children) => { el.children = children; },
+        appendChild: (child) => { el.children = el.children || []; el.children.push(child); },
+        querySelector: (sel) => {
+          if (sel === ".abi-alert-title") return { textContent: el.title };
+          if (sel === ".abi-alert-message") return { textContent: el.message };
+          return null;
+        },
+      };
+      return el;
+    },
+    addEventListener: () => {},
+    dispatchEvent: (evt) => { events.push(evt); },
+  };
+
+  const context = vm.createContext({
+    XMLHttpRequest: class { addEventListener() {} removeEventListener() {} },
+    URL,
+    location: { origin: "https://www.arenabreakoutinfinite.com" },
+    window: {
+      alert: (msg) => { nativeAlertCalls.push(msg); },
+      postMessage: () => {},
+    },
+    setTimeout,
+    clearTimeout,
+    document: mockDocument,
+    CustomEvent: class {
+      constructor(type, init) {
+        this.type = type;
+        this.detail = init?.detail;
+      }
+    },
+  });
+
+  vm.runInContext(fs.readFileSync(path.join(root, "overview-observer.js"), "utf8"), context);
+
+  // 1. Call alert with "接口请求中，请稍后再试~"
+  context.window.alert("接口请求中，请稍后再试~");
+
+  assert.equal(nativeAlertCalls.length, 0, "Native alert was intercepted");
+  assert.equal(events.length, 1, "Custom event dispatched");
+  assert.equal(events[0].type, "abi:alert");
+  assert.equal(events[0].detail.title, "Request in Progress");
+  assert.equal(events[0].detail.message, "A request is currently in progress. Please wait a moment and try again.");
+  assert.equal(events[0].detail.type, "warning");
+
+  // 2. Call alert when site modifications are disabled
+  mockDocument.documentElement.dataset.abiSite = "off";
+  context.window.alert("接口请求中，请稍后再试~");
+  assert.equal(nativeAlertCalls.length, 1, "Native alert called when site is disabled");
+  assert.equal(nativeAlertCalls[0], "接口请求中，请稍后再试~");
+});
+
 test("Overview renders live counts and XP, updates without duplicate cards, and handles unavailable data", async (t) => {
   let playwright;
   try {
@@ -96,5 +164,592 @@ test("Overview renders live counts and XP, updates without duplicate cards, and 
     await page.evaluate(() => { window.__abiOverviewData = {}; window.renderOverview(true); });
     assert.equal(await page.locator('.abi-level-caption').textContent(), "Waiting for progression data");
     assert.equal(await page.locator('.abi-stat-accuracy [data-stat="seasonal-accuracy"] strong').textContent(), "--");
+
+    // Verify intrusive official Milo loader layer and loading-con are hidden
+    await page.evaluate(() => {
+      const loader = document.createElement("div");
+      loader.id = "__milo_loader_layer__";
+      loader.style.display = "block";
+      loader.innerHTML = `
+        <div id="loading-con">
+          <span class="loading-con--icon"><img src="loading.png"></span>
+          <p>Data loading</p>
+        </div>
+      `;
+      document.body.appendChild(loader);
+    });
+    const loaderDisplay = await page.locator("#__milo_loader_layer__").evaluate((node) => getComputedStyle(node).display);
+    const loadingConDisplay = await page.locator("#loading-con").evaluate((node) => getComputedStyle(node).display);
+    assert.equal(loaderDisplay, "none", "__milo_loader_layer__ is suppressed with display: none");
+    assert.equal(loadingConDisplay, "none", "#loading-con is suppressed with display: none");
+
+    // Verify .index.upon-login is suppressed on load and patroller-btn is triggered
+    await page.evaluate(() => {
+      window.__patrollerClicked = false;
+      const indexDiv = document.createElement("div");
+      indexDiv.className = "index upon-login";
+      const btn = document.createElement("a");
+      btn.className = "str13 btn1 patroller-btn";
+      btn.href = "javascript:window.__patrollerClicked = true;";
+      indexDiv.appendChild(btn);
+      document.body.appendChild(indexDiv);
+    });
+    const indexDisplayBefore = await page.locator(".index.upon-login").evaluate((node) => getComputedStyle(node).display);
+    assert.equal(indexDisplayBefore, "none", ".index.upon-login is hidden before entering");
+
+    // Execute autoEnterInspection logic
+    await page.evaluate(() => {
+      const root = document.documentElement;
+      const indexPage = document.querySelector(".index.upon-login");
+      if (indexPage) {
+        root.dataset.abiEntered = "true";
+        document.querySelectorAll(".index").forEach((el) => {
+          el.style.display = "none";
+        });
+      }
+    });
+    const indexDisplayAfter = await page.locator(".index.upon-login").evaluate((node) => node.style.display);
+    assert.equal(indexDisplayAfter, "none", ".index.upon-login is hidden directly without javascript: navigation");
+    const enteredAttr = await page.evaluate(() => document.documentElement.dataset.abiEntered);
+    assert.equal(enteredAttr, "true", "document.documentElement.dataset.abiEntered set to true");
+
+    // Verify window.alert interception and tactical toast rendering in English
+    const observerSource = fs.readFileSync(path.join(root, "overview-observer.js"), "utf8");
+    await page.evaluate((src) => {
+      window.eval(src);
+      window.alert("接口请求中，请稍后再试~");
+    }, observerSource);
+
+    const toast = page.locator(".abi-alert-toast");
+    assert.equal(await toast.count(), 1, "Toast element is attached");
+    assert.equal(await toast.locator(".abi-alert-title").textContent(), "Request in Progress");
+    assert.equal(await toast.locator(".abi-alert-message").textContent(), "A request is currently in progress. Please wait a moment and try again.");
+    assert.ok((await toast.locator(".abi-alert-icon svg").count()) > 0, "Toast icon is rendered");
+
+    // Click close button to dismiss toast
+    await toast.locator(".abi-alert-close").click();
+    await page.waitForTimeout(300);
+    assert.equal(await page.locator(".abi-alert-toast").count(), 0, "Toast is dismissed on close button click");
+
+    // Verify commonTips modal translation and styling
+    await page.addStyleTag({ path: path.join(root, "dialogs.css") });
+    await page.evaluate(() => {
+      const popup = document.createElement("div");
+      popup.id = "commonTips";
+      popup.className = "popup";
+      popup.innerHTML = `
+        <a class="str96 close-btn _close-btn" href="javascript:;">关闭</a>
+        <h3 class="str103">温馨提示</h3>
+        <div class="popup-content">
+          <p id="commonTipsText" class="common-text">接口请求中，请稍后再试~</p>
+        </div>
+        <a href="javascript:;" class="str102 btn3">确定</a>
+      `;
+      document.body.appendChild(popup);
+    });
+    const dialogsSource = fs.readFileSync(path.join(root, "dialogs.js"), "utf8");
+    const commonTipsFn = dialogsSource.slice(dialogsSource.indexOf("  const COMMON_TIPS_TRANSLATIONS ="), dialogsSource.indexOf("  function removeExtras()"));
+    await page.evaluate((code) => {
+      window.HAS_CJK = /[\u3400-\u9fff\uff00-\uffef]/;
+      window.eval(`${code}; fixCommonTips();`);
+    }, commonTipsFn);
+
+    assert.equal(await page.locator("#commonTips h3").textContent(), "Notice");
+    assert.equal(await page.locator("#commonTips #commonTipsText").textContent(), "A request is currently in progress. Please wait a moment and try again.");
+    assert.equal(await page.locator("#commonTips .btn3").textContent(), "OK");
+
+    // Verify modal close button styling, SVG icon, and click-to-close behavior
+    await page.addScriptTag({ path: path.join(root, "dialogs.js") });
+    assert.ok(await page.locator("#commonTips .close-btn svg").count() >= 1, "Close button has SVG close icon");
+    assert.equal(await page.locator("#commonTips .close-btn").getAttribute("aria-label"), "Close");
+    await page.locator("#commonTips .close-btn").click();
+    await page.waitForTimeout(100);
+    const commonTipsDisplay = await page.evaluate(() => document.getElementById("commonTips").style.display);
+    assert.equal(commonTipsDisplay, "none", "Popup is hidden after clicking close-btn");
+
+    // Verify watermark insertion and Chinese comment removal
+    await page.evaluate(() => {
+      document.body.appendChild(document.createComment(" 巡查系统测试 "));
+      document.body.appendChild(document.createComment(" English comment test "));
+    });
+    const siteUiSource = fs.readFileSync(path.join(root, "site-ui.js"), "utf8");
+    const watermarkAndCommentFn = siteUiSource.slice(
+      siteUiSource.indexOf("  const WATERMARK = `"),
+      siteUiSource.indexOf("  const SITE_TRANSLATIONS ="),
+    );
+    await page.evaluate((code) => {
+      window.root = document.documentElement;
+      window.eval(`${code}; insertWatermark(); removeChineseComments(document);`);
+    }, watermarkAndCommentFn);
+
+    const comments = await page.evaluate(() => {
+      const walker = document.createTreeWalker(document, NodeFilter.SHOW_COMMENT);
+      const res = [];
+      while (walker.nextNode()) {
+        res.push(walker.currentNode.nodeValue);
+      }
+      return res;
+    });
+
+    const watermarkInfo = await page.evaluate(() => {
+      let outsideWatermarkCount = 0;
+      for (let child = document.firstChild; child; child = child.nextSibling) {
+        if (child === document.documentElement) break;
+        if (child.nodeType === Node.COMMENT_NODE && (child.nodeValue || "").includes("ABI INSPECTOR EXTENDED")) {
+          outsideWatermarkCount++;
+        }
+      }
+      let insideWatermarkCount = 0;
+      const innerWalker = document.createTreeWalker(document.documentElement, NodeFilter.SHOW_COMMENT);
+      while (innerWalker.nextNode()) {
+        if ((innerWalker.currentNode.nodeValue || "").includes("ABI INSPECTOR EXTENDED")) {
+          insideWatermarkCount++;
+        }
+      }
+      return { outsideWatermarkCount, insideWatermarkCount };
+    });
+    assert.equal(watermarkInfo.outsideWatermarkCount, 1, "Exactly one watermark comment is placed before the html tag");
+    assert.equal(watermarkInfo.insideWatermarkCount, 0, "Zero watermark comments exist inside the html tag");
+
+    const hasChineseComment = comments.some((c) => /[\u3400-\u9fff]/.test(c));
+    assert.equal(hasChineseComment, false, "All Chinese comments have been stripped from the DOM");
+
+    const hasEnglishComment = comments.some((c) => c.includes("English comment test"));
+    assert.ok(hasEnglishComment, "Non-Chinese comments are preserved");
+
+    // Verify console log banner output
+    const loggedMessages = await page.evaluate((code) => {
+      const logs = [];
+      const origLog = console.log;
+      delete window.__abiExtendedBannerLogged;
+      console.log = (...args) => logs.push(args.join(" "));
+      try {
+        window.eval(code);
+        logExtensionBanner();
+      } finally {
+        console.log = origLog;
+      }
+      return logs;
+    }, siteUiSource.slice(siteUiSource.indexOf("  function logExtensionBanner()"), siteUiSource.indexOf("  const HAS_CJK =")));
+    assert.ok(
+      loggedMessages.some((m) => m.includes("ABI INSPECTOR EXTENDED") && m.includes("v2.6.0") && m.includes("deem") && m.includes("ACTIVE")),
+      "Console banner is logged with extension name, version, author, and active status"
+    );
+
+    // Verify dynamic page-wide Chinese text and placeholder translation
+    await page.evaluate(() => {
+      const container = document.createElement("div");
+      container.id = "translationTestContainer";
+      container.innerHTML = `
+        <div class="index">
+          <div class="bdc"><h3>安全小队介绍</h3><p>亲爱的暗区先锋们：</p></div>
+          <p id="mainText">尊敬的先锋，您目前还未成为B.D.C执行部一员，请先进行巡查资格申请</p>
+          <a id="applyBtn" href="javascript:;">资格申请</a>
+          <a id="practiceBtn" href="javascript:;">巡查演练</a>
+          <a id="selectNoticeBtn" href="javascript:;">巡查公告</a>
+        </div>
+        <div class="operation">
+          <a id="patrolButton0" class="btn1">违规</a>
+          <a id="patrolButton1" class="btn1">不违规</a>
+          <a id="patrolButton2" class="btn1">不确定</a>
+          <a class="exit_btn2">退出巡查</a>
+        </div>
+        <ul id="taskTest">
+          <li><a class="taks-btn2">去完成</a></li>
+          <li><a class="taks-finish">已领取</a></li>
+        </ul>
+        <div class="punish-row">
+          <span>玩家昵称</span>
+          <span>封禁3650天</span>
+        </div>
+        <input id="testInput" placeholder="补充证据不足（最多50字）" title="温馨提示" />
+      `;
+      document.body.appendChild(container);
+    });
+
+    const translateBlock = siteUiSource.slice(
+      siteUiSource.indexOf("  const SITE_TRANSLATIONS ="),
+      siteUiSource.indexOf("  let autoEnteredInspection = false;"),
+    );
+    await page.evaluate((code) => {
+      window.root = document.documentElement;
+      window.eval(`${code}; translateChineseContent(true);`);
+    }, translateBlock);
+
+    assert.equal(await page.locator("#patrolButton0").textContent(), "Violation");
+    assert.equal(await page.locator("#patrolButton1").textContent(), "No Violation");
+    assert.equal(await page.locator("#patrolButton2").textContent(), "Uncertain");
+    assert.equal(await page.locator(".exit_btn2").first().textContent(), "Exit Inspection");
+    assert.equal(await page.locator("#applyBtn").textContent(), "Apply for Qualification");
+    assert.equal(await page.locator("#practiceBtn").textContent(), "Test cases");
+    assert.equal(await page.locator("#selectNoticeBtn").textContent(), "Announcements");
+    assert.equal(await page.locator("#taskTest .taks-btn2").textContent(), "Go");
+    assert.equal(await page.locator("#taskTest .taks-finish").textContent(), "Claimed");
+    assert.equal(await page.locator(".punish-row span").nth(0).textContent(), "Player Nickname");
+    assert.equal(await page.locator(".punish-row span").nth(1).textContent(), "Banned for 10 Years");
+    assert.equal(await page.locator("#testInput").getAttribute("placeholder"), "Add details on why the evidence is insufficient (optional, max 50 characters)");
+    assert.equal(await page.locator("#testInput").getAttribute("title"), "Notice");
+
+    const remainingContainerChinese = await page.evaluate(() => {
+      const el = document.getElementById("translationTestContainer");
+      return /[\u3400-\u9fff]/.test(el?.textContent || "");
+    });
+    assert.equal(remainingContainerChinese, false, "Container has zero remaining Chinese characters after translation");
+
+    // Verify exit inspection button click behavior
+    const exitBtnCode = siteUiSource.slice(
+      siteUiSource.indexOf("  function handleExitInspection("),
+      siteUiSource.indexOf("  function updateChallengeRewards("),
+    );
+    await page.evaluate((code) => {
+      window.eval(code);
+      window.__exitInspectionFired = false;
+      window.addEventListener("abi:exit-inspection", () => {
+        window.__exitInspectionFired = true;
+      });
+      updateExitButton(true);
+    }, exitBtnCode);
+
+    await page.locator(".exit_btn2").first().click();
+    const exitFired = await page.evaluate(() => window.__exitInspectionFired);
+    assert.equal(exitFired, true, "abi:exit-inspection event dispatched on clicking exit button");
+    const exitDisplay = await page.evaluate(() => document.querySelector(".exit_btn2").style.display);
+    assert.equal(exitDisplay, "none", "exit button is hidden after being clicked");
+
+    // Verify reverting translations when site modifications are disabled
+    await page.evaluate(() => {
+      translateChineseContent(false);
+    });
+    assert.equal(await page.locator("#patrolButton0").textContent(), "违规");
+    assert.equal(await page.locator("#patrolButton1").textContent(), "不违规");
+    assert.equal(await page.locator("#testInput").getAttribute("placeholder"), "补充证据不足（最多50字）");
   } finally { await browser?.close(); }
 });
+
+test("Standalone index.html in project root contains watermark, zero Chinese comments, and zero Chinese text", () => {
+  const indexPath = path.join(__dirname, "..", "index.html");
+  assert.ok(fs.existsSync(indexPath), "index.html exists in project root");
+  const html = fs.readFileSync(indexPath, "utf8");
+
+  // 1. Watermark check
+  assert.ok(html.startsWith("<!--\n================================================================================"), "Starts with watermark comment");
+  assert.ok(html.includes("ABI INSPECTOR EXTENDED — v2.6.0"), "Watermark contains extension name and version");
+  assert.ok(html.includes("Author: deem"), "Watermark contains author deem");
+  assert.ok(html.includes("Status: Extension Loaded & Active"), "Watermark contains extension status");
+
+  // 2. Zero Chinese comments
+  const comments = html.match(/<!--[\s\S]*?-->/g) || [];
+  for (const c of comments) {
+    assert.equal(/[\u3400-\u9fff\uff00-\uffef]/.test(c), false, `Comment must not contain Chinese: ${c.slice(0, 50)}`);
+  }
+
+  // 3. Zero Chinese text in entire HTML
+  const cjkMatches = html.match(/[\u3400-\u9fff\uff00-\uffef]/g);
+  assert.equal(cjkMatches, null, `index.html must have 0 Chinese characters, found: ${cjkMatches?.length}`);
+});
+
+test("overview-observer provides ActTools polyfill and formats/consolidates console logs", () => {
+  const originalLogs = [];
+  const fakeConsole = {
+    log: (...args) => originalLogs.push({ method: "log", args }),
+    info: (...args) => originalLogs.push({ method: "info", args }),
+    warn: (...args) => originalLogs.push({ method: "warn", args }),
+    debug: (...args) => originalLogs.push({ method: "debug", args }),
+  };
+
+  const context = vm.createContext({
+    window: {},
+    navigator: { userAgent: "Mozilla/5.0 (Windows NT 10.0; Win64; x64)" },
+    document: { documentElement: { dataset: { abiSite: "on" } } },
+    console: fakeConsole,
+    setTimeout: (fn) => { timers.push(fn); return timers.length; },
+    clearTimeout: () => {},
+  });
+  const timers = [];
+
+  const observerSource = fs.readFileSync(path.join(root, "overview-observer.js"), "utf8");
+  vm.runInContext(observerSource, context);
+
+  // 1. Verify ActTools polyfill exists and functions
+  assert.ok(context.window.ActTools, "window.ActTools is defined");
+  assert.equal(typeof context.window.ActTools.isPhone, "function");
+  assert.equal(context.window.ActTools.isPhone(), false, "isPhone returns false on desktop userAgent");
+
+  // 2. Test consolidating nav.js language logs
+  context.console.log(2, ["cn", "en", "es", "pt-BR", "de", "ja", "ru", "zh-Hant", "th", "fr"]);
+  context.console.log("en");
+  context.console.log("ja");
+  context.console.log("pt-BR");
+  timers.splice(0).forEach((fn) => fn());
+
+  // 3. Test translating Chinese log
+  context.console.log("语言切换回调成功");
+
+  // 4. Test activity start log
+  context.console.log("start=====");
+
+  // 5. Test common.js debug log
+  context.console.log("初始化xxxxxxxxxx");
+
+  const formattedStrings = originalLogs.map((l) => l.args.join(" "));
+
+  // Assert language logs were consolidated
+  const navLog = formattedStrings.find((s) => s.includes("Supported Languages"));
+  assert.ok(navLog, "Consolidated [ABI Nav] log was emitted");
+  assert.ok(navLog.includes("cn, en, es, pt-BR"), "Includes consolidated language codes");
+
+  // Assert individual language logs were NOT emitted separately
+  const singleLangLogs = formattedStrings.filter((s) => s.includes("%cen%c") || s.includes("%cja%c"));
+  assert.equal(singleLangLogs.length, 0, "Individual redundant language code logs were suppressed");
+
+  // Assert Chinese text in logs was translated
+  const translatedLog = formattedStrings.find((s) => s.includes("Language switch callback successful"));
+  assert.ok(translatedLog, "Chinese log was translated to 'Language switch callback successful'");
+
+  const activityLog = formattedStrings.find((s) => s.includes("Patroller activity initialized"));
+  assert.ok(activityLog, "Activity start log was translated to 'Patroller activity initialized'");
+
+  const debugLog = formattedStrings.find((s) => s.includes("Patroller module initialized (debug)"));
+  assert.ok(debugLog, "Debug log was translated to 'Patroller module initialized (debug)'");
+
+  // 6. Test Milo setCommonConfig auto-patching with intlGameid
+  let passedConfig = null;
+  context.window.Milo = {
+    setCommonConfig: (cfg) => { passedConfig = cfg; },
+  };
+  context.window.Milo.setCommonConfig({ needPromiseCallback: false });
+  assert.ok(passedConfig, "Milo setCommonConfig was called");
+  assert.equal(passedConfig.intlGameid, 30061, "intlGameid 30061 was injected automatically");
+
+  // 7. Test suppression of 'milo-outside please setCommonConfig intlGameid' (both with site on and off)
+  const logCountBefore = originalLogs.length;
+  context.console.warn("milo-outside please setCommonConfig intlGameid");
+  assert.equal(originalLogs.length, logCountBefore, "milo-outside please setCommonConfig intlGameid was suppressed when site on");
+
+  context.document.documentElement.dataset.abiSite = "off";
+  context.console.warn("milo-outside please setCommonConfig intlGameid");
+  assert.equal(originalLogs.length, logCountBefore, "milo-outside please setCommonConfig intlGameid was suppressed when site off");
+  context.document.documentElement.dataset.abiSite = "on";
+
+  // 8. Test suppression of 'Blocked script execution in about:blank'
+  context.console.warn("Blocked script execution in 'about:blank'");
+  assert.equal(originalLogs.length, logCountBefore, "Blocked script execution warning was suppressed");
+
+  // 9. Test normal warnings route through rawConsole.log to avoid Chrome extension error tab flags
+  context.console.warn("Generic site warning");
+  assert.equal(originalLogs.length, logCountBefore + 1, "Generic warning was logged");
+  assert.equal(originalLogs[originalLogs.length - 1].method, "log", "Warning was routed through log method to prevent Chrome extension errors");
+});
+
+test("Multilingual localization: dynamic language switching across 9 supported languages", async (t) => {
+  let playwright;
+  try {
+    playwright = require("playwright");
+  } catch {
+    if (t && typeof t.skip === "function") {
+      t.skip("playwright module is not installed in local environment");
+      return;
+    }
+  }
+  const { chromium } = playwright;
+  const browser = await chromium.launch({
+    headless: true,
+    channel: process.env.ABI_TEST_BROWSER || (process.platform === "win32" ? "msedge" : "chromium"),
+  });
+  try {
+    const page = await browser.newPage({ viewport: { width: 1320, height: 900 } });
+    await page.setContent(`
+      <html data-abi-site="on">
+        <head></head>
+        <body>
+          <div class="top-nav">
+            <span id="s3_1">User123</span>
+            <a id="a3_1">退出登录</a>
+            <a class="home-btn">返回官网</a>
+            <a class="safe-link">安全中心</a>
+          </div>
+          <div class="main">
+            <ul class="nav">
+              <li id="mine">数据总览</li>
+              <li id="working">巡查工作台</li>
+              <li id="patrol">巡查挑战</li>
+              <li id="drill">演练</li>
+              <li id="notice">公告</li>
+              <a class="exit_btn2">退出巡查</a>
+            </ul>
+          </div>
+          <div id="wxMine" class="content mine">
+            <div class="user">
+              <div class="user-info">
+                <div class="username">Inspector</div>
+                <div class="userid"><span>ID: 12345</span></div>
+                <div class="honor"><span id="level-text">Senior Inspector</span></div>
+                <div class="grade"><span id="exp_level">22</span></div>
+              </div>
+              <div class="user-data">
+                <ul class="statistics">
+                  <li><strong>616</strong></li>
+                  <li><strong>43</strong></li>
+                  <li><strong>506</strong></li>
+                  <li><strong>86%</strong></li>
+                  <li><strong>185</strong></li>
+                </ul>
+              </div>
+            </div>
+          </div>
+          <div id="xcWorking" class="content video">
+            <div class="user-info">
+              <div class="user-status">
+                <span class="str73">Inspected Today</span>
+                <strong id="dayTotalJudgedNum">0</strong>
+              </div>
+            </div>
+            <div class="tips-content">
+              <p id="p46_1">Distance markers</p>
+              <p id="p46_2">Color Key</p>
+            </div>
+          </div>
+          <div class="box notice">
+            <div class="content">
+              <ul class="notice-nav">
+                <li tabid="notice1" class="current">Penalty List</li>
+                <li tabid="ssss2">Guidelines</li>
+                <li tabid="ssss1">FAQ</li>
+              </ul>
+              <div class="notice-main" style="display: block;">
+                <div class="notice-content str84 scrollbar faq">
+                  <p id="p84_1">Q: How do I become an inspector?</p>
+                  <p id="p84_2">A: Keep a clean record.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </body>
+      </html>
+    `);
+
+    // Load site-ui.js
+    const siteUiSource = fs.readFileSync(path.join(root, "site-ui.js"), "utf8");
+    await page.evaluate((src) => {
+      window.eval(src);
+    }, siteUiSource);
+
+    // 1. Initial English (default)
+    assert.equal(await page.locator("#mine").textContent(), "Overview");
+    assert.equal(await page.locator("#working").textContent(), "Workbench");
+    assert.equal(await page.locator(".exit_btn2").textContent(), "Exit Inspection");
+    assert.equal(await page.locator(".abi-account-welcome").textContent(), "Welcome,");
+    assert.equal(await page.locator(".abi-stat-inspections h3").textContent(), "Inspections");
+    assert.equal(await page.locator(".abi-stat-accuracy h3").textContent(), "Inspection accuracy");
+    assert.equal(await page.locator(".abi-stat-today h3").textContent(), "Today");
+    assert.equal(await page.locator("#xcWorking .abi-status-title").textContent(), "Inspected Today");
+    assert.equal(await page.locator("#xcWorking .abi-status-remaining").textContent(), "20 cases remaining today");
+    assert.deepEqual(
+      await page.locator("#xcWorking #p46_2 .abi-color-name").allTextContents(),
+      ["Teammates", "Enemies", "Scavs (bots)"]
+    );
+    assert.ok((await page.locator("#xcWorking #p46_1").textContent()).includes("added by the official inspection system"));
+    assert.equal(await page.locator(".box.notice .abi-faq-card").count(), 1);
+    assert.equal(await page.locator(".box.notice .abi-guideline-faq-question-prefix").textContent(), "Q:");
+
+    // 2. Switch to German (de)
+    await page.evaluate(() => {
+      document.documentElement.dataset.abiLang = "de";
+      document.dispatchEvent(new CustomEvent("abi:language-changed", { detail: { lang: "de" } }));
+    });
+    await page.waitForTimeout(100);
+    assert.equal(await page.locator("#mine").textContent(), "Datenübersicht");
+    assert.equal(await page.locator("#working").textContent(), "Werkbank");
+    assert.equal(await page.locator("#patrol").textContent(), "Herausforderungen");
+    assert.equal(await page.locator("#drill").textContent(), "Übung");
+    assert.equal(await page.locator("#notice").textContent(), "Ankündigungen");
+    assert.equal(await page.locator(".exit_btn2").textContent(), "Inspektion beenden");
+    assert.equal(await page.locator(".abi-account-welcome").textContent(), "Willkommen,");
+    assert.equal(await page.locator(".abi-stat-inspections h3").textContent(), "Überprüfungen");
+    assert.equal(await page.locator(".abi-stat-accuracy h3").textContent(), "Überprüfungsgenauigkeit");
+    assert.equal(await page.locator(".abi-stat-today h3").textContent(), "Heute");
+    assert.equal(await page.locator("#xcWorking .abi-status-title").textContent(), "Heute überprüft");
+    assert.equal(await page.locator("#xcWorking .abi-status-remaining").textContent(), "20 Fälle heute übrig");
+    assert.deepEqual(
+      await page.locator("#xcWorking #p46_2 .abi-color-name").allTextContents(),
+      ["Teamkameraden", "Gegner", "Scavs (Bots)"]
+    );
+    assert.ok((await page.locator("#xcWorking #p46_1").textContent()).includes("vom offiziellen Überprüfungssystem hinzugefügt"));
+
+    // 3. Switch to Russian (ru)
+    await page.evaluate(() => {
+      document.documentElement.dataset.abiLang = "ru";
+      document.dispatchEvent(new CustomEvent("abi:language-changed", { detail: { lang: "ru" } }));
+    });
+    await page.waitForTimeout(100);
+    assert.equal(await page.locator("#mine").textContent(), "Обзор данных");
+    assert.equal(await page.locator("#working").textContent(), "Верстак");
+    assert.equal(await page.locator("#patrol").textContent(), "Испытания");
+    assert.equal(await page.locator(".exit_btn2").textContent(), "Выйти из инспекции");
+    assert.equal(await page.locator(".abi-account-welcome").textContent(), "Привет,");
+    assert.equal(await page.locator(".abi-stat-inspections h3").textContent(), "Инспекции");
+    assert.equal(await page.locator(".abi-stat-accuracy h3").textContent(), "Точность инспекций");
+    assert.equal(await page.locator(".abi-stat-today h3").textContent(), "Сегодня");
+    assert.equal(await page.locator("#xcWorking .abi-status-title").textContent(), "Проверено сегодня");
+    assert.equal(await page.locator("#xcWorking .abi-status-remaining").textContent(), "20 дел осталось сегодня");
+    assert.deepEqual(
+      await page.locator("#xcWorking #p46_2 .abi-color-name").allTextContents(),
+      ["Союзники", "Враги", "Дикие (боты)"]
+    );
+    assert.ok((await page.locator("#xcWorking #p46_1").textContent()).includes("добавлены официальной системой инспекции"));
+
+    // 4. Switch to Spanish (es)
+    await page.evaluate(() => {
+      document.documentElement.dataset.abiLang = "es";
+      document.dispatchEvent(new CustomEvent("abi:language-changed", { detail: { lang: "es" } }));
+    });
+    await page.waitForTimeout(100);
+    assert.equal(await page.locator("#mine").textContent(), "Resumen de datos");
+    assert.equal(await page.locator("#working").textContent(), "Banco de trabajo");
+    assert.equal(await page.locator(".exit_btn2").textContent(), "Salir de la inspección");
+    assert.equal(await page.locator(".abi-account-welcome").textContent(), "Hola,");
+    assert.equal(await page.locator("#xcWorking .abi-status-title").textContent(), "Inspeccionados hoy");
+    assert.equal(await page.locator("#xcWorking .abi-status-remaining").textContent(), "20 casos restantes hoy");
+    assert.deepEqual(
+      await page.locator("#xcWorking #p46_2 .abi-color-name").allTextContents(),
+      ["Compañeros", "Enemigos", "Scavs (bots)"]
+    );
+
+    // 5. Switch to Japanese (ja)
+    await page.evaluate(() => {
+      document.documentElement.dataset.abiLang = "ja";
+      document.dispatchEvent(new CustomEvent("abi:language-changed", { detail: { lang: "ja" } }));
+    });
+    await page.waitForTimeout(100);
+    assert.equal(await page.locator("#mine").textContent(), "データの概要");
+    assert.equal(await page.locator("#working").textContent(), "ワークベンチ");
+    assert.equal(await page.locator(".exit_btn2").textContent(), "検査を終了");
+    assert.equal(await page.locator("#xcWorking .abi-status-title").textContent(), "本日の検査");
+    assert.equal(await page.locator("#xcWorking .abi-status-remaining").textContent(), "本日残り 20 件");
+    assert.deepEqual(
+      await page.locator("#xcWorking #p46_2 .abi-color-name").allTextContents(),
+      ["味方", "敵", "ボット (Scav)"]
+    );
+
+    // 6. Switch back to English (en)
+    await page.evaluate(() => {
+      document.documentElement.dataset.abiLang = "en";
+      document.dispatchEvent(new CustomEvent("abi:language-changed", { detail: { lang: "en" } }));
+    });
+    await page.waitForTimeout(100);
+    assert.equal(await page.locator("#mine").textContent(), "Overview");
+    assert.equal(await page.locator("#working").textContent(), "Workbench");
+    assert.equal(await page.locator(".exit_btn2").textContent(), "Exit Inspection");
+    assert.equal(await page.locator("#xcWorking .abi-status-title").textContent(), "Inspected Today");
+    assert.equal(await page.locator("#xcWorking .abi-status-remaining").textContent(), "20 cases remaining today");
+    assert.deepEqual(
+      await page.locator("#xcWorking #p46_2 .abi-color-name").allTextContents(),
+      ["Teammates", "Enemies", "Scavs (bots)"]
+    );
+  } finally {
+    await browser?.close();
+  }
+});
+
+
+

@@ -8,6 +8,24 @@ html:not([data-abi-site="off"]) {
   --abi-muted: #929a9b;
   --abi-surface: #0e1214;
 
+  /* Suppress intrusive official Milo "Data loading" overlay on tab switches */
+  #__milo_loader_layer__,
+  #loading-con,
+  #__milo_loader_layer__ #loading-con {
+    display: none !important;
+    visibility: hidden !important;
+    opacity: 0 !important;
+    pointer-events: none !important;
+    width: 0 !important;
+    height: 0 !important;
+    z-index: -9999 !important;
+  }
+
+  /* Suppress intro screen flash when logged in until inspection is entered */
+  &:not([data-abi-skip-intro="off"]):not([data-abi-entered]) .index.upon-login {
+    display: none !important;
+  }
+
   .top-nav,
   .top-nav.abi-account-ready {
     border: none !important;
@@ -196,7 +214,7 @@ html:not([data-abi-site="off"]) {
     opacity: 0.85;
   }
 
-  :is(.top-nav, .abi-topbar-actions) ._langNav_:hover > a::after {
+  :is(.top-nav, .abi-topbar-actions) ._langNav_._showLangNav > a::after {
     transform: rotate(-135deg) translateY(-2px);
   }
 
@@ -222,7 +240,6 @@ html:not([data-abi-site="off"]) {
     z-index: 1000 !important;
   }
 
-  :is(.top-nav, .abi-topbar-actions) ._langNav_:hover > ul,
   :is(.top-nav, .abi-topbar-actions) ._langNav_._showLangNav > ul {
     display: flex !important;
     flex-direction: column !important;
@@ -444,26 +461,48 @@ html:not([data-abi-site="off"]) {
     color: #f1eee8;
   }
 
+  /* ==========================================================================
+     SETTINGS TAB REDESIGN (v2.6.0)
+     Single readable column, sticky sidebar nav / tab strip, live search,
+     consistent 44x26 flat pill toggles, dark tactical metallic cards.
+     ========================================================================== */
+
   .main > .abi-extension-settings {
-    display: grid;
-    grid-template-rows: minmax(0, 1fr) auto;
-    gap: clamp(12px, 1.5vw, 20px);
+    --s-bg: #0e1214;
+    --s-card: #151a1d;
+    --s-card-border: #232a2e;
+    --s-hover: #1b2125;
+    --s-border: #232a2e;
+    --s-text: #eceff1;
+    --s-muted: #9aa5ad;
+    --s-accent: #ff7a50;
+    --s-accent-ink: #1a0c07;
+    --s-off: #343b42;
+    --s-knob: #c9d0d5;
+    --s-sidebar-w: 190px;
+
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 0 !important;
     width: 100% !important;
     height: calc(100% - 106px) !important;
     min-width: 0;
     min-height: 0;
     margin: 0 !important;
-    padding: clamp(16px, 2vw, 28px);
+    padding: 0 !important;
     box-sizing: border-box;
-    overflow: auto;
-    border: 1px solid #30393b;
-    border-top: 2px solid var(--abi-accent);
-    background:
-      linear-gradient(135deg, rgba(230, 107, 78, 0.04) 0%, transparent 40%),
-      #0d1214;
-    scrollbar-color: #c3472d #0d1214;
-    scrollbar-width: auto;
+    overflow-y: auto !important;
+    overflow-x: hidden !important;
+    border: 1px solid #232a2e;
+    border-top: 2px solid var(--s-accent);
+    background: radial-gradient(ellipse at 15% 0%, rgba(255, 122, 80, 0.04) 0%, transparent 40%), var(--s-bg);
+    color: var(--s-text);
+    font-size: 15px;
+    line-height: 1.45;
+    scrollbar-color: var(--s-accent) var(--s-bg);
+    scrollbar-width: thin;
     animation: abiSettingsFadeIn 220ms ease-out both;
+    position: relative;
   }
 
   @keyframes abiSettingsFadeIn {
@@ -482,372 +521,635 @@ html:not([data-abi-site="off"]) {
   }
 
   .abi-extension-settings::-webkit-scrollbar {
-    width: 14px;
+    width: 10px;
   }
 
   .abi-extension-settings::-webkit-scrollbar-track {
-    border-left: 1px solid #394143;
-    background: repeating-linear-gradient(180deg, #101618 0 12px, #12191b 12px 24px);
+    border-left: 1px solid var(--s-border);
+    background: var(--s-bg);
   }
 
   .abi-extension-settings::-webkit-scrollbar-thumb {
     min-height: 36px;
-    border: 3px solid #0d1214;
-    background: repeating-linear-gradient(135deg, #f18460 0 3px, #c3472d 3px 8px);
+    background: #3a4347;
+    border-radius: 4px;
+    border: 2px solid var(--s-bg);
   }
 
-  .abi-settings-body {
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    align-content: start;
+  .abi-extension-settings::-webkit-scrollbar-thumb:hover {
+    background: var(--s-accent);
+  }
+
+  /* Sticky Topbar: Search & Saved Toast */
+  .abi-settings-topbar {
+    position: sticky;
+    top: 0;
+    z-index: 25;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
     gap: 16px;
-    min-width: 0;
+    padding: 14px 24px;
+    background: rgba(14, 18, 20, 0.94);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border-bottom: 1px solid var(--s-border);
   }
 
+  .abi-settings-search-bar {
+    position: relative;
+    max-width: 440px;
+    width: 100%;
+  }
+
+  .abi-settings-search-icon {
+    position: absolute;
+    left: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 15px;
+    height: 15px;
+    color: var(--s-muted);
+    pointer-events: none;
+  }
+
+  .abi-settings-search-input {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 9px 34px 9px 36px;
+    background: var(--s-card);
+    border: 1px solid var(--s-border);
+    border-radius: 8px;
+    color: var(--s-text);
+    font: inherit;
+    font-size: 13.5px;
+    outline: none;
+    transition: border-color 0.15s, box-shadow 0.15s;
+  }
+
+  .abi-settings-search-input::placeholder {
+    color: #6d777e;
+  }
+
+  .abi-settings-search-input:focus {
+    border-color: var(--s-accent);
+    box-shadow: 0 0 0 1px var(--s-accent);
+  }
+
+  .abi-settings-search-clear {
+    position: absolute;
+    right: 8px;
+    top: 50%;
+    transform: translateY(-50%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 20px;
+    height: 20px;
+    padding: 0;
+    border: none;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.08);
+    color: var(--s-muted);
+    font-size: 12px;
+    line-height: 1;
+    cursor: pointer;
+    transition: background-color 0.12s, color 0.12s;
+  }
+
+  .abi-settings-search-clear:hover {
+    background: rgba(255, 255, 255, 0.16);
+    color: var(--s-text);
+  }
+
+  .abi-settings-search-clear[hidden] {
+    display: none !important;
+  }
+
+  /* Transient Toast Notification */
+  .abi-settings-toast {
+    position: fixed;
+    bottom: 24px;
+    right: 28px;
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 9px 18px;
+    border-radius: 8px;
+    background: #182023;
+    border: 1px solid var(--s-accent);
+    color: var(--s-accent);
+    font-size: 13.5px;
+    font-weight: 600;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
+    opacity: 0;
+    transform: translateY(8px);
+    pointer-events: none;
+    transition: opacity 0.2s cubic-bezier(0.2, 0.8, 0.2, 1), transform 0.2s cubic-bezier(0.2, 0.8, 0.2, 1);
+  }
+
+  .abi-settings-toast.show {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  /* Two-Column Layout (Sidebar + Content) */
+  .abi-settings-layout {
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    gap: 32px;
+    max-width: 1080px;
+    width: 100%;
+    margin: 0 auto;
+    padding: 24px 20px 80px;
+    box-sizing: border-box;
+  }
+
+  /* Left Sidebar Navigation */
+  .abi-settings-nav {
+    position: sticky;
+    top: 76px;
+    flex: 0 0 var(--s-sidebar-w);
+    width: var(--s-sidebar-w);
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    padding: 4px 0;
+  }
+
+  .abi-settings-nav-btn {
+    all: unset;
+    box-sizing: border-box;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    padding: 9px 14px;
+    border-radius: 8px;
+    color: var(--s-muted);
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background-color 0.12s, color 0.12s;
+  }
+
+  .abi-settings-nav-btn:hover {
+    background: var(--s-hover);
+    color: var(--s-text);
+  }
+
+  .abi-settings-nav-btn.active {
+    background: rgba(255, 122, 80, 0.12);
+    color: var(--s-accent);
+    font-weight: 600;
+  }
+
+  .abi-settings-nav-btn:focus-visible {
+    outline: 2px solid var(--s-accent);
+    outline-offset: 2px;
+  }
+
+  /* Main Content Column */
+  .abi-settings-body,
+  .abi-settings-content {
+    flex: 1 1 auto;
+    max-width: 780px;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+  }
+
+  /* Empty Search State */
+  .abi-settings-empty {
+    padding: 48px 24px;
+    text-align: center;
+    color: var(--s-muted);
+    font-size: 15px;
+    background: var(--s-card);
+    border: 1px dashed var(--s-border);
+    border-radius: 12px;
+  }
+
+  .abi-settings-empty[hidden] {
+    display: none !important;
+  }
+
+  /* Metallic Section Card */
   .abi-settings-group,
   .abi-settings-about {
     position: relative;
     display: flex;
     flex-direction: column;
-    min-width: 0;
-    padding: clamp(16px, 1.8vw, 24px);
-    border: 1px solid rgba(255, 255, 255, 0.08);
-    border-radius: 6px;
-    background: linear-gradient(145deg, #161c1e 0%, #101517 100%);
-    box-shadow: 0 4px 18px rgba(0, 0, 0, 0.28);
-    transition: border-color 180ms ease, box-shadow 180ms ease;
+    background: var(--s-card);
+    border: 1px solid var(--s-border);
+    border-radius: 12px;
+    overflow: hidden;
+    transition: border-color 0.15s ease;
   }
 
   .abi-settings-group:hover,
   .abi-settings-about:hover {
-    border-color: rgba(255, 255, 255, 0.14);
-    box-shadow: 0 6px 22px rgba(0, 0, 0, 0.36);
+    border-color: #2e363c;
   }
 
+  .abi-settings-group[hidden],
+  .abi-settings-about[hidden] {
+    display: none !important;
+  }
+
+  /* Section Heading */
   .abi-settings-section-heading {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    gap: 12px;
-    margin: 0 0 10px;
-    padding: 0 0 10px;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+    gap: 16px;
+    padding: 18px 20px 14px;
+    border-bottom: 1px solid var(--s-border);
   }
 
-  .abi-settings-section-heading h2,
-  .abi-settings-group > h2,
-  .abi-settings-about > h2 {
-    display: flex;
-    align-items: center;
-    gap: 9px;
+  .abi-settings-section-heading h2 {
     margin: 0;
     padding: 0;
     border: none;
-    color: #f1eee8;
-    font-size: 14px;
+    font-size: 19px;
     font-weight: 700;
-    letter-spacing: 0.06em;
-    text-transform: uppercase;
+    letter-spacing: 0.01em;
+    color: var(--s-text);
   }
 
-  .abi-settings-section-heading h2::before,
-  .abi-settings-group > h2::before,
-  .abi-settings-about > h2::before {
-    content: "";
-    display: inline-block;
-    width: 3.5px;
-    height: 14px;
-    background: var(--abi-accent);
-    border-radius: 2px;
-    flex-shrink: 0;
+  .abi-settings-section-heading h2::before {
+    display: none !important;
+    content: none !important;
   }
 
   .abi-settings-index {
-    color: #ed704e;
-    font-size: 11px;
-    font-weight: 700;
-    letter-spacing: 0.05em;
-    font-variant-numeric: tabular-nums;
-    background: rgba(237, 112, 78, 0.12);
-    border: 1px solid rgba(237, 112, 78, 0.28);
-    border-radius: 4px;
-    padding: 2px 7px;
+    display: none !important;
   }
 
+  .abi-settings-reset-section-btn {
+    all: unset;
+    box-sizing: border-box;
+    cursor: pointer;
+    font-size: 12.5px;
+    font-weight: 500;
+    color: var(--s-muted);
+    padding: 4px 10px;
+    border-radius: 5px;
+    transition: background 0.12s, color 0.12s;
+  }
+
+  .abi-settings-reset-section-btn:hover {
+    color: var(--s-accent);
+    background: rgba(255, 122, 80, 0.09);
+  }
+
+  .abi-settings-reset-section-btn:focus-visible {
+    outline: 2px solid var(--s-accent);
+    outline-offset: 2px;
+  }
+
+  /* Setting Toggle Row */
   .abi-settings-toggle {
     position: relative;
     display: flex;
     align-items: center;
     justify-content: space-between;
-    gap: 16px;
-    min-height: 56px;
-    padding: 12px 0;
+    gap: 24px;
+    padding: 16px 20px;
+    border-top: 1px solid var(--s-border);
     cursor: pointer;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-    transition: background-color 150ms ease;
+    transition: background-color 0.12s, opacity 0.15s;
   }
 
-  .abi-settings-toggle:last-child {
-    border-bottom: none;
-  }
-
-  .abi-settings-toggle + .abi-settings-toggle {
+  .abi-settings-toggle:first-of-type {
     border-top: none;
   }
 
+  .abi-settings-toggle:hover {
+    background: var(--s-hover);
+  }
+
+  .abi-settings-toggle[hidden] {
+    display: none !important;
+  }
+
+  /* Dependencies: dimmed & disabled */
+  .abi-settings-toggle.disabled,
+  .abi-settings-toggle[aria-disabled="true"],
+  .abi-settings-toggle:has(input:disabled) {
+    opacity: 0.42 !important;
+    cursor: not-allowed !important;
+    pointer-events: none !important;
+  }
+
   .abi-settings-copy {
-    flex: 1 1 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
     min-width: 0;
   }
 
-  .abi-settings-copy strong,
-  .abi-settings-copy small {
-    display: block;
-  }
-
   .abi-settings-copy strong {
-    color: #e2e6e3;
-    font-size: 14px;
+    font-size: 15px;
     font-weight: 600;
-    letter-spacing: 0.01em;
+    color: var(--s-text);
   }
 
   .abi-settings-copy small {
-    margin-top: 3px;
-    color: #8c9697;
-    font-size: 12px;
-    line-height: 1.45;
+    font-size: 13px;
+    line-height: 1.42;
+    color: var(--s-muted);
+    max-width: 54ch;
   }
 
+  /* Key Chips */
+  .abi-key-chips {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 6px;
+    margin-top: 8px;
+  }
+
+  .abi-key-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 2px 7px;
+    border-radius: 5px;
+    border: 1px solid var(--s-border);
+    background: rgba(255, 255, 255, 0.03);
+    color: var(--s-muted);
+    font-size: 11.5px;
+    line-height: 1.3;
+  }
+
+  .abi-key-chip kbd {
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+    font-size: 10.5px;
+    font-weight: 700;
+    color: var(--s-accent);
+    background: rgba(255, 122, 80, 0.1);
+    border: 1px solid rgba(255, 122, 80, 0.25);
+    border-radius: 3px;
+    padding: 1px 4px;
+  }
+
+  /* Flat 44x26 Pill Switch */
   .abi-settings-checkbox {
     position: absolute;
     width: 1px;
     height: 1px;
     opacity: 0;
+    pointer-events: none;
   }
 
-  /* Modern Pill Switch */
   .abi-settings-switch {
     position: relative;
-    flex: 0 0 44px;
+    flex: none;
     width: 44px;
-    height: 24px;
-    border-radius: 999px;
-    border: 1px solid rgba(255, 255, 255, 0.18);
-    background: #192022;
-    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.4);
-    transition: border-color 200ms cubic-bezier(0.4, 0, 0.2, 1),
-                background-color 200ms cubic-bezier(0.4, 0, 0.2, 1),
-                box-shadow 200ms cubic-bezier(0.4, 0, 0.2, 1);
+    height: 26px;
+    border-radius: 13px;
+    background: var(--s-off);
+    transition: background-color 0.15s ease;
   }
 
   .abi-settings-switch::after {
+    content: "";
     position: absolute;
     top: 3px;
     left: 3px;
-    width: 16px;
-    height: 16px;
+    width: 20px;
+    height: 20px;
     border-radius: 50%;
-    background: #8e9899;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
-    content: "";
-    transition: transform 200ms cubic-bezier(0.4, 0, 0.2, 1),
-                background-color 200ms ease;
+    background: var(--s-knob);
+    transition: transform 0.15s ease, background-color 0.15s ease;
   }
 
   .abi-settings-checkbox:checked + .abi-settings-switch {
-    border-color: rgba(237, 112, 78, 0.8);
-    background: rgba(237, 112, 78, 0.22);
-    box-shadow: 0 0 10px rgba(237, 112, 78, 0.25), inset 0 1px 2px rgba(0, 0, 0, 0.2);
+    background: var(--s-accent);
   }
 
   .abi-settings-checkbox:checked + .abi-settings-switch::after {
-    background: #f27c5b;
-    transform: translateX(20px);
-    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.6);
+    transform: translateX(18px);
+    background: #ffffff;
   }
 
-  .abi-settings-checkbox:focus-visible + .abi-settings-switch {
-    outline: 2px solid var(--abi-accent);
+  .abi-settings-checkbox:focus-visible + .abi-settings-switch,
+  .abi-extension-settings button:focus-visible,
+  .abi-extension-settings input[type="range"]:focus-visible,
+  .abi-extension-settings input[type="search"]:focus-visible {
+    outline: 2px solid var(--s-accent);
     outline-offset: 3px;
   }
 
-  /* Volume Row & Presets */
-  .abi-settings-volume {
-    margin-top: 4px;
-    padding: 12px 0 4px;
+  /* Volume & Speed Setting Blocks */
+  .abi-settings-volume,
+  .abi-settings-speed {
+    padding: 16px 20px 18px;
+    border-top: 1px solid var(--s-border);
+    transition: background-color 0.12s;
+  }
+
+  .abi-settings-volume[hidden],
+  .abi-settings-speed[hidden] {
+    display: none !important;
   }
 
   .abi-settings-volume-heading,
-  .abi-settings-about-line {
+  .abi-settings-speed-heading {
     display: flex;
-    align-items: center;
+    align-items: baseline;
     justify-content: space-between;
-    gap: 12px;
+    gap: 16px;
   }
 
-  .abi-settings-volume-heading label {
-    color: #e2e6e3;
-    font-size: 14px;
+  .abi-settings-volume-heading label,
+  .abi-settings-speed-heading label {
+    font-size: 15px;
     font-weight: 600;
+    color: var(--s-text);
   }
 
-  .abi-settings-volume-heading output,
-  .abi-settings-version {
-    color: #ed704e;
+  .abi-settings-volume output,
+  .abi-settings-speed output {
+    font-size: 18px;
     font-weight: 700;
     font-variant-numeric: tabular-nums;
+    color: var(--s-accent);
+    min-width: 3.5ch;
+    text-align: right;
   }
 
-  .abi-settings-volume p {
-    margin: 4px 0 0;
-    color: #8c9697;
-    font-size: 12px;
-    line-height: 1.45;
+  .abi-settings-volume p,
+  .abi-settings-speed p {
+    margin: 3px 0 12px;
+    font-size: 13px;
+    line-height: 1.4;
+    color: var(--s-muted);
+    max-width: 54ch;
   }
 
-  .abi-settings-volume input[type="range"] {
-    display: block;
-    width: 100%;
-    height: 20px;
-    margin: 12px 0 10px;
+  /* Volume Slider */
+  .abi-extension-settings input[type="range"] {
+    -webkit-appearance: none;
     appearance: none;
+    width: 100%;
+    height: 24px;
+    margin: 0 0 12px;
     background: transparent;
     cursor: pointer;
   }
 
-  .abi-settings-volume input[type="range"]::-webkit-slider-runnable-track {
+  .abi-extension-settings input[type="range"]::-webkit-slider-runnable-track {
     height: 6px;
     border-radius: 3px;
-    background: linear-gradient(to right, #ed704e 0% var(--abi-volume-fill, 100%), #242c2f var(--abi-volume-fill, 100%) 100%);
+    background: linear-gradient(to right, var(--s-accent) var(--abi-volume-fill, 100%), var(--s-off) var(--abi-volume-fill, 100%));
   }
 
-  .abi-settings-volume input[type="range"]::-webkit-slider-thumb {
-    width: 16px;
-    height: 16px;
+  .abi-extension-settings input[type="range"]::-moz-range-track {
+    height: 6px;
+    border-radius: 3px;
+    background: var(--s-off);
+  }
+
+  .abi-extension-settings input[type="range"]::-moz-range-progress {
+    height: 6px;
+    border-radius: 3px;
+    background: var(--s-accent);
+  }
+
+  .abi-extension-settings input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 18px;
+    height: 18px;
+    margin-top: -6px;
     border-radius: 50%;
-    margin-top: -5px;
-    appearance: none;
-    background: #f1eee8;
-    border: 2px solid #ed704e;
-    box-shadow: 0 1px 5px rgba(0, 0, 0, 0.5);
-    transition: transform 120ms ease, background-color 120ms ease;
-  }
-
-  .abi-settings-volume input[type="range"]::-webkit-slider-thumb:hover {
-    transform: scale(1.18);
     background: #ffffff;
+    border: 0;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.4);
+    transition: transform 0.1s ease;
   }
 
-  .abi-settings-volume input[type="range"]:focus-visible {
-    outline: 2px solid var(--abi-accent);
-    outline-offset: 3px;
+  .abi-extension-settings input[type="range"]::-webkit-slider-thumb:hover {
+    transform: scale(1.15);
   }
 
-  .abi-volume-presets {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    margin-top: 6px;
+  .abi-extension-settings input[type="range"]::-moz-range-thumb {
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: #ffffff;
+    border: 0;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.4);
   }
 
-  .abi-volume-chip {
-    padding: 4px 10px;
-    border: 1px solid rgba(255, 255, 255, 0.12);
-    border-radius: 4px;
-    background: rgba(255, 255, 255, 0.04);
-    color: #a8b2b3;
-    font: inherit;
-    font-size: 11px;
-    font-weight: 600;
+  /* Segmented Controls (Volume & Speed) */
+  .abi-volume-presets,
+  .abi-speed-presets {
+    display: inline-flex;
+    gap: 2px;
+    padding: 3px;
+    background: var(--s-bg);
+    border: 1px solid var(--s-border);
+    border-radius: 9px;
+  }
+
+  .abi-volume-chip,
+  .abi-speed-chip {
+    all: unset;
+    box-sizing: border-box;
     cursor: pointer;
-    transition: background-color 140ms ease, border-color 140ms ease, color 140ms ease;
+    padding: 6px 14px;
+    border-radius: 6px;
+    font-size: 13.5px;
+    font-weight: 500;
+    color: var(--s-muted);
+    font-variant-numeric: tabular-nums;
+    transition: background-color 0.12s, color 0.12s;
   }
 
-  .abi-volume-chip:hover {
-    background: rgba(237, 112, 78, 0.16);
-    border-color: rgba(237, 112, 78, 0.45);
-    color: #f1eee8;
+  .abi-volume-chip:hover,
+  .abi-speed-chip:hover {
+    color: var(--s-text);
   }
 
-  /* Playback Speed Setting */
-  .abi-settings-speed {
-    margin-top: 6px;
-    padding: 12px 0 4px;
-    border-top: 1px solid rgba(255, 255, 255, 0.05);
+  .abi-volume-chip.active,
+  .abi-speed-chip.active {
+    background: var(--s-accent);
+    color: var(--s-accent-ink);
+    font-weight: 700;
   }
 
-  .abi-settings-speed-heading {
+  /* Streamer / Privacy Mode Live Preview */
+  .abi-privacy-preview-box {
+    margin-top: 10px;
+    padding: 10px 14px;
+    background: rgba(0, 0, 0, 0.28);
+    border: 1px solid var(--s-border);
+    border-radius: 8px;
+    font-size: 12.5px;
+  }
+
+  .abi-privacy-preview-title {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--s-muted);
+    margin-bottom: 6px;
+  }
+
+  .abi-privacy-preview-line {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 10px;
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+    font-size: 12px;
+  }
+
+  .abi-privacy-preview-orig {
+    color: var(--s-muted);
+  }
+
+  .abi-privacy-preview-arrow {
+    color: var(--s-accent);
+    font-weight: 700;
+  }
+
+  .abi-privacy-preview-masked {
+    color: var(--s-text);
+    font-weight: 600;
+    transition: color 0.15s ease;
+  }
+
+  .abi-privacy-preview-masked.highlight {
+    color: var(--s-accent);
+  }
+
+  /* About & System Section */
+  .abi-settings-about-line {
     display: flex;
     align-items: center;
     justify-content: space-between;
     gap: 12px;
+    padding: 16px 20px;
+    border-top: 1px solid var(--s-border);
   }
 
-  .abi-settings-speed-heading label {
-    color: #e2e6e3;
-    font-size: 14px;
-    font-weight: 600;
-  }
-
-  .abi-settings-speed-heading output {
-    color: #ed704e;
-    font-weight: 700;
-    font-variant-numeric: tabular-nums;
-  }
-
-  .abi-settings-speed p {
-    margin: 4px 0 0;
-    color: #8c9697;
-    font-size: 12px;
-    line-height: 1.45;
-  }
-
-  .abi-speed-presets {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    margin-top: 8px;
-  }
-
-  .abi-speed-chip {
-    padding: 4px 14px;
-    border: 1px solid rgba(255, 255, 255, 0.12);
-    border-radius: 4px;
-    background: rgba(255, 255, 255, 0.04);
-    color: #a8b2b3;
-    font: inherit;
-    font-size: 12px;
-    font-weight: 700;
-    font-variant-numeric: tabular-nums;
-    cursor: pointer;
-    transition: all 140ms ease;
-  }
-
-  .abi-speed-chip:hover {
-    background: rgba(237, 112, 78, 0.16);
-    border-color: rgba(237, 112, 78, 0.45);
-    color: #f1eee8;
-  }
-
-  .abi-speed-chip.active {
-    background: rgba(237, 112, 78, 0.28);
-    border-color: var(--abi-accent);
-    color: #ffffff;
-    box-shadow: 0 0 10px rgba(237, 112, 78, 0.35);
-  }
-
-  /* About Card & Badges */
-  .abi-settings-about-line {
-    min-height: 38px;
-    padding: 4px 0 12px;
+  .abi-settings-about-line:first-of-type {
+    border-top: none;
   }
 
   .abi-settings-about-line p {
     margin: 0;
-    color: #e2e6e3;
-    font-size: 14px;
+    font-size: 15px;
     font-weight: 600;
+    color: var(--s-text);
   }
 
   .abi-settings-badges {
@@ -856,116 +1158,157 @@ html:not([data-abi-site="off"]) {
     gap: 8px;
   }
 
-  .abi-settings-version {
-    font-size: 11px;
-    font-weight: 700;
-    letter-spacing: 0.05em;
-    background: rgba(237, 112, 78, 0.12);
-    border: 1px solid rgba(237, 112, 78, 0.28);
-    border-radius: 4px;
-    padding: 2px 7px;
+  .abi-settings-version,
+  .abi-settings-status-badge {
+    font-size: 12px;
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+    padding: 3px 10px;
+    border-radius: 999px;
+    border: 1px solid var(--s-border);
+    color: var(--s-muted);
   }
 
   .abi-settings-status-badge {
     color: #4ee68a;
-    font-size: 10px;
-    font-weight: 700;
-    letter-spacing: 0.06em;
-    text-transform: uppercase;
-    background: rgba(78, 230, 138, 0.12);
-    border: 1px solid rgba(78, 230, 138, 0.28);
-    border-radius: 4px;
-    padding: 2px 7px;
+    border-color: rgba(78, 230, 138, 0.3);
+    background: rgba(78, 230, 138, 0.08);
   }
 
   .abi-settings-actions-row {
     display: flex;
+    flex-wrap: wrap;
     align-items: center;
     gap: 10px;
-    padding: 12px 0 14px;
-    border-top: 1px solid rgba(255, 255, 255, 0.06);
-    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+    padding: 14px 20px;
+    border-top: 1px solid var(--s-border);
   }
 
   .abi-settings-btn {
-    min-height: 34px;
-    padding: 0 14px;
-    border-radius: 4px;
-    font: inherit;
-    font-size: 12px;
-    font-weight: 700;
-    letter-spacing: 0.04em;
+    all: unset;
+    box-sizing: border-box;
     cursor: pointer;
-    transition: background-color 140ms ease, border-color 140ms ease, transform 100ms ease;
+    padding: 9px 18px;
+    border-radius: 8px;
+    font-size: 13.5px;
+    font-weight: 600;
+    border: 1px solid var(--s-border);
+    color: var(--s-text);
+    transition: background-color 0.12s, border-color 0.12s, filter 0.12s;
   }
 
-  .abi-settings-btn:active {
-    transform: scale(0.98);
-  }
-
-  .abi-settings-btn-neutral {
-    border: 1px solid rgba(255, 255, 255, 0.14);
-    background: rgba(255, 255, 255, 0.05);
-    color: #dce1dc;
-  }
-
-  .abi-settings-btn-neutral:hover {
-    background: rgba(255, 255, 255, 0.1);
-    border-color: rgba(255, 255, 255, 0.24);
-    color: #ffffff;
+  .abi-settings-btn:hover {
+    background: var(--s-hover);
+    border-color: #384249;
   }
 
   .abi-settings-btn-accent,
-  .abi-settings-reload {
-    border: 1px solid var(--abi-accent);
-    background: rgba(237, 112, 78, 0.18);
-    color: #f1eee8;
-    text-transform: uppercase;
+  .abi-settings-reload-btn {
+    background: var(--s-accent);
+    border-color: var(--s-accent);
+    color: var(--s-accent-ink);
   }
 
   .abi-settings-btn-accent:hover,
-  .abi-settings-reload:hover {
-    background: rgba(237, 112, 78, 0.36);
+  .abi-settings-reload-btn:hover {
+    background: var(--s-accent);
+    filter: brightness(1.08);
   }
 
-  .abi-settings-credits {
-    margin-top: auto;
-    padding-top: 14px;
-    color: #727b7c;
-    font-size: 11px;
-    line-height: 1.5;
-  }
-
-  .abi-settings-author {
-    display: block;
-    margin-top: 2px;
-  }
-
-  .abi-settings-credits a {
-    color: #ed704e;
-    text-decoration: none;
-    font-weight: 600;
-    transition: color 120ms ease;
-  }
-
-  .abi-settings-credits a:hover {
-    color: #f69477;
-    text-decoration: underline;
-  }
-
-  .abi-settings-footer {
-    display: flex;
-    align-items: center;
-    justify-content: flex-end;
-  }
-
-  .abi-settings-footer[hidden] {
+  .abi-settings-btn[hidden] {
     display: none !important;
   }
 
-  @media (max-width: 820px) {
-    .abi-settings-body {
-      grid-template-columns: minmax(0, 1fr);
+  .abi-settings-credits {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    padding: 14px 20px 18px;
+    border-top: 1px solid var(--s-border);
+    font-size: 13px;
+    color: var(--s-muted);
+  }
+
+  .abi-settings-credits a {
+    color: var(--s-accent);
+    text-decoration: none;
+    font-weight: 500;
+  }
+
+  .abi-settings-credits a:hover {
+    text-decoration: underline;
+  }
+
+  /* Responsive below ~760px */
+  @media (max-width: 760px) {
+    .abi-settings-topbar {
+      padding: 10px 14px;
+    }
+
+    .abi-settings-layout {
+      flex-direction: column;
+      gap: 16px;
+      padding: 12px 10px 48px;
+    }
+
+    .abi-settings-nav {
+      position: sticky;
+      top: 58px;
+      z-index: 20;
+      flex-direction: row;
+      width: 100%;
+      flex: none;
+      overflow-x: auto;
+      background: var(--s-bg);
+      border-bottom: 1px solid var(--s-border);
+      padding: 6px 0;
+      gap: 6px;
+      scrollbar-width: none;
+    }
+
+    .abi-settings-nav::-webkit-scrollbar {
+      display: none;
+    }
+
+    .abi-settings-nav-btn {
+      white-space: nowrap;
+      padding: 6px 12px;
+      font-size: 13px;
+      border: 1px solid var(--s-border);
+      border-radius: 6px;
+    }
+
+    .abi-settings-body,
+    .abi-settings-content {
+      max-width: 100%;
+      gap: 16px;
+    }
+
+    .abi-settings-toggle {
+      padding: 14px 16px;
+      gap: 16px;
+    }
+
+    .abi-settings-section-heading {
+      padding: 14px 16px 12px;
+    }
+
+    .abi-settings-volume,
+    .abi-settings-speed,
+    .abi-settings-about-line,
+    .abi-settings-actions-row,
+    .abi-settings-credits {
+      padding-left: 16px;
+      padding-right: 16px;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .abi-extension-settings,
+    .abi-extension-settings * {
+      animation: none !important;
+      transition: none !important;
+      scroll-behavior: auto !important;
     }
   }
 

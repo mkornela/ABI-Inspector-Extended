@@ -10,14 +10,106 @@
     site: true,
     playerVolume: 100,
     playbackSpeed: 1,
-    autoPlay: false,
+    autoPlay: true,
     loopVideo: false,
+    skipIntro: true,
     inspectionNotes: true,
     colorKey: true,
     verdictEnhancements: true,
     verdictHotkeys: false,
   };
   const root = document.documentElement;
+
+  // Early suppression of intrusive official Milo loader overlay on tab switches,
+  // and suppression of intro screen flash when logged in until inspection is entered
+  const earlyStyle = document.createElement("style");
+  earlyStyle.id = "abi-milo-suppress";
+  earlyStyle.textContent = `
+    html:not([data-abi-site="off"]) #__milo_loader_layer__,
+    html:not([data-abi-site="off"]) #loading-con,
+    html:not([data-abi-site="off"]) #__milo_loader_layer__ #loading-con {
+      display: none !important;
+      visibility: hidden !important;
+      opacity: 0 !important;
+      pointer-events: none !important;
+      width: 0 !important;
+      height: 0 !important;
+      z-index: -9999 !important;
+    }
+    html:not([data-abi-site="off"]):not([data-abi-skip-intro="off"]):not([data-abi-entered]) .index.upon-login {
+      display: none !important;
+    }
+  `;
+  (document.head || root).appendChild(earlyStyle);
+
+  const WATERMARK = `
+================================================================================
+  ABI INSPECTOR EXTENDED \u2014 v2.6.0
+  Enhanced Patroller Interface & Local Playback Controls
+  Author: deem (https://github.com/mkornela)
+  Status: Extension Loaded & Active
+================================================================================
+`;
+  function insertWatermark() {
+    if (root.dataset.abiWatermark === "loaded") return;
+    try {
+      let alreadyOutside = false;
+      for (let child = document.firstChild; child; child = child.nextSibling) {
+        if (child === document.documentElement) break;
+        if (child.nodeType === Node.COMMENT_NODE && (child.nodeValue || "").includes("ABI INSPECTOR EXTENDED")) {
+          alreadyOutside = true;
+          break;
+        }
+      }
+      if (!alreadyOutside) {
+        const target = document.documentElement || document.firstChild;
+        if (target && document.insertBefore) {
+          document.insertBefore(document.createComment(WATERMARK), target);
+        }
+      }
+    } catch {}
+    root.dataset.abiWatermark = "loaded";
+  }
+  insertWatermark();
+
+  function logExtensionBanner() {
+    if (window.__abiExtendedBannerLogged) return;
+    window.__abiExtendedBannerLogged = true;
+    try {
+      console.log(
+        "%c ABI INSPECTOR EXTENDED %c v2.6.0 %c deem %c ACTIVE \n%cEnhanced Patroller Interface & Local Playback Controls (https://github.com/mkornela)",
+        "background: #d49a37; color: #0b0f11; font-weight: bold; font-family: monospace; border-radius: 3px 0 0 3px; padding: 3px 8px; font-size: 11px;",
+        "background: #182226; color: #d49a37; font-weight: bold; font-family: monospace; padding: 3px 8px; font-size: 11px; border-left: 1px solid #2a373c;",
+        "background: #222f35; color: #c4d0d0; font-family: monospace; padding: 3px 8px; font-size: 11px; border-left: 1px solid #2a373c;",
+        "background: #238636; color: #ffffff; font-weight: bold; font-family: monospace; border-radius: 0 3px 3px 0; padding: 3px 8px; font-size: 11px;",
+        "color: #8fa0a5; font-size: 11px; padding: 4px 0 2px 2px; font-family: system-ui, sans-serif;"
+      );
+    } catch {}
+  }
+  logExtensionBanner();
+
+  const HAS_CJK = /[\u3400-\u9fff\uff00-\uffef]/;
+  function removeChineseComments() {
+    if (!document.createTreeWalker) return;
+    try {
+      const walker = document.createTreeWalker(document, NodeFilter.SHOW_COMMENT);
+      const toRemove = [];
+      while (walker.nextNode()) {
+        const node = walker.currentNode;
+        if (node && HAS_CJK.test(node.nodeValue || "")) {
+          toRemove.push(node);
+        }
+      }
+      for (const node of toRemove) {
+        try { node.remove(); } catch {}
+      }
+    } catch {}
+  }
+  removeChineseComments();
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", removeChineseComments, { once: true });
+  }
+
   let playerVolume = 100;
   let currentSettings = { ...DEFAULTS };
   let volumeReady = false;
@@ -55,6 +147,8 @@
       ) {
         video.dataset.abiAutoplayed = currentSrc;
         video.play().catch(() => {});
+      } else if (!autoPlay && !video.paused && video.dataset.abiUserPlayed !== "true") {
+        video.pause();
       }
     });
   }
@@ -71,6 +165,7 @@
     root.dataset.abiVerdictHotkeys = master && currentSettings.verdictHotkeys ? "on" : "off";
     root.dataset.abiAutoPlay = master && currentSettings.autoPlay ? "on" : "off";
     root.dataset.abiLoopVideo = master && currentSettings.loopVideo ? "on" : "off";
+    root.dataset.abiSkipIntro = master && currentSettings.skipIntro !== false ? "on" : "off";
     root.dataset.abiPlaybackSpeed = String(currentSettings.playbackSpeed || 1);
 
     const savedVolume = Number(settings.playerVolume);

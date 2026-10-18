@@ -525,6 +525,12 @@ function main() {
         ) {
           video.dataset.abiAutoplayed = currentSrc;
           video.play().catch(() => {});
+        } else if (
+          rootDs.abiAutoPlay === "off" &&
+          !video.paused &&
+          video.dataset.abiUserPlayed !== "true"
+        ) {
+          video.pause();
         }
         mediaLife = new AbortController();
         for (const name of [
@@ -547,8 +553,16 @@ function main() {
             (event) => {
               if (event.type === "loadstart") {
                 delete video.dataset.abiUserPaused;
+                delete video.dataset.abiUserPlayed;
                 delete video.dataset.abiAutoplayed;
                 delete video.dataset.abiSpeedInitialized;
+              }
+              if (
+                event.type === "play" &&
+                rootDs.abiAutoPlay === "off" &&
+                video.dataset.abiUserPlayed !== "true"
+              ) {
+                video.pause();
               }
               render();
             },
@@ -650,11 +664,13 @@ function main() {
       if (!video) return;
       if (!video.paused) {
         video.dataset.abiUserPaused = "true";
+        delete video.dataset.abiUserPlayed;
         try {
           video.pause();
         } catch {}
       } else {
         delete video.dataset.abiUserPaused;
+        video.dataset.abiUserPlayed = "true";
         try {
           await video.play();
         } catch {

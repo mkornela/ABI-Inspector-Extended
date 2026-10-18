@@ -3,7 +3,7 @@
    Gated by data-abi-site="off" on <html> (see settings.js); needs Chrome/Edge 120+. */
 html:not([data-abi-site="off"]) {
   /* ---- shared variables ---- */
-  #illegalPopup, #drillResult1, #drillResult2 {
+  #illegalPopup, #drillResult1, #drillResult2, #commonTips {
     --abi-accent: #ca4d31;
     --abi-line: rgba(255, 255, 255, 0.08);
     --abi-text: #d2dbd3;
@@ -11,7 +11,7 @@ html:not([data-abi-site="off"]) {
   }
 
   /* ---- tactical modal frame styling ---- */
-  :is(#illegalPopup, #drillResult1, #drillResult2).popup.patrol-popup {
+  :is(#illegalPopup, #drillResult1, #drillResult2, #commonTips, #commonTips1, #resultWrong, #resultRight, #notAuth, #notExam, #getAuth, #traingFail, #LowVersion, #noticePopup, #drillIntro).popup {
     background: rgba(14, 19, 21, 0.96) !important;
     background-image: none !important;
     border: 1px solid rgba(255, 255, 255, 0.08) !important;
@@ -32,7 +32,7 @@ html:not([data-abi-site="off"]) {
   }
 
   /* ---- close button ---- */
-  :is(#illegalPopup, #drillResult1, #drillResult2) .close-btn {
+  :is(.popup, .dialog, .modal, .grade-popup, .patrol-popup, [class*="popup"], [class*="dialog"], #illegalPopup, #drillResult1, #drillResult2, #commonTips, #commonTips1, #resultWrong, #resultRight, #notAuth, #notExam, #getAuth, #traingFail, #LowVersion, #noticePopup, #drillIntro) :is(.close-btn, a[class*="close-btn"]) {
     position: absolute !important;
     top: 16px !important;
     right: 16px !important;
@@ -46,29 +46,41 @@ html:not([data-abi-site="off"]) {
     align-items: center !important;
     justify-content: center !important;
     font-size: 0 !important;
+    text-indent: 0 !important;
+    overflow: hidden !important;
     cursor: pointer !important;
     transition: all 0.15s ease !important;
     text-decoration: none !important;
+    z-index: 10 !important;
   }
 
-  :is(#illegalPopup, #drillResult1, #drillResult2) .close-btn::after {
+  :is(.popup, .dialog, .modal, .grade-popup, .patrol-popup, [class*="popup"], [class*="dialog"], #illegalPopup, #drillResult1, #drillResult2, #commonTips, #commonTips1, #resultWrong, #resultRight, #notAuth, #notExam, #getAuth, #traingFail, #LowVersion, #noticePopup, #drillIntro) :is(.close-btn, a[class*="close-btn"])::after {
     content: "×" !important;
-    font-size: 20px !important;
+    font-size: 22px !important;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif !important;
+    font-weight: 300 !important;
     line-height: 1 !important;
+    text-indent: 0 !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    width: 100% !important;
+    height: 100% !important;
     color: #8fa09d !important;
+    pointer-events: none !important;
   }
 
-  :is(#illegalPopup, #drillResult1, #drillResult2) .close-btn:hover {
+  :is(.popup, .dialog, .modal, .grade-popup, .patrol-popup, [class*="popup"], [class*="dialog"], #illegalPopup, #drillResult1, #drillResult2, #commonTips, #commonTips1, #resultWrong, #resultRight, #notAuth, #notExam, #getAuth, #traingFail, #LowVersion, #noticePopup, #drillIntro) :is(.close-btn, a[class*="close-btn"]):hover {
     background: rgba(255, 255, 255, 0.1) !important;
     border-color: rgba(255, 255, 255, 0.25) !important;
   }
 
-  :is(#illegalPopup, #drillResult1, #drillResult2) .close-btn:hover::after {
+  :is(.popup, .dialog, .modal, .grade-popup, .patrol-popup, [class*="popup"], [class*="dialog"], #illegalPopup, #drillResult1, #drillResult2, #commonTips, #commonTips1, #resultWrong, #resultRight, #notAuth, #notExam, #getAuth, #traingFail, #LowVersion, #noticePopup, #drillIntro) :is(.close-btn, a[class*="close-btn"]):hover::after {
     color: #ffffff !important;
   }
 
   /* ---- header h3 ---- */
-  :is(#illegalPopup, #drillResult1, #drillResult2) h3 {
+  :is(#illegalPopup, #drillResult1, #drillResult2, #commonTips, #commonTips1, #resultWrong, #resultRight, #notAuth, #notExam, #getAuth, #traingFail, #LowVersion, #noticePopup, #drillIntro) h3 {
     display: flex !important;
     align-items: center !important;
     gap: 10px !important;
@@ -108,11 +120,11 @@ html:not([data-abi-site="off"]) {
     border-radius: 2px;
   }
 
-  #drillResult2 h3 {
+  #drillResult2 h3, #commonTips h3 {
     color: #fbbf24 !important;
   }
 
-  #drillResult2 h3::before {
+  #drillResult2 h3::before, #commonTips h3::before {
     content: "";
     display: inline-block;
     width: 4px;
@@ -430,5 +442,172 @@ html:not([data-abi-site="off"]) {
   #drillResult2 #patrolConfirm2:hover {
     background: #ad7c23 !important;
     border-color: #fbbf24 !important;
+  }
+
+  /* ---- commonTips confirmation ---- */
+  #commonTips .popup-content {
+    min-height: 0 !important;
+    padding: 16px 0 8px !important;
+    font-size: 14px !important;
+    line-height: 1.6 !important;
+    color: #b9c0bb !important;
+  }
+
+  #commonTips .popup-content p {
+    text-wrap: balance;
+    margin: 0 !important;
+  }
+
+  #commonTips a.btn3 {
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    min-width: 120px !important;
+    height: 42px !important;
+    padding: 0 20px !important;
+    margin-top: 18px !important;
+    float: right !important;
+    box-sizing: border-box !important;
+    border-radius: 4px !important;
+    font-size: 13px !important;
+    font-weight: 700 !important;
+    letter-spacing: 0.04em !important;
+    text-transform: uppercase !important;
+    text-decoration: none !important;
+    cursor: pointer !important;
+    transition: all 0.15s ease !important;
+    line-height: 1 !important;
+    background: #9a6d1e !important;
+    background-image: none !important;
+    border: 1px solid #e0a838 !important;
+    color: #ffffff !important;
+    box-shadow: 0 2px 8px rgba(224, 168, 56, 0.3) !important;
+  }
+
+  #commonTips a.btn3:hover {
+    background: #ad7c23 !important;
+    border-color: #fbbf24 !important;
+  }
+
+  /* ---- tactical toast notification (intercepted window.alert) ---- */
+  .abi-alert-toast {
+    position: fixed !important;
+    top: 24px !important;
+    left: 50% !important;
+    transform: translateX(-50%) !important;
+    z-index: 100000 !important;
+    display: flex !important;
+    align-items: center !important;
+    gap: 12px !important;
+    min-width: 320px !important;
+    max-width: min(520px, calc(100vw - 32px)) !important;
+    padding: 12px 16px !important;
+    box-sizing: border-box !important;
+    background: linear-gradient(180deg, rgba(20, 26, 29, 0.98) 0%, rgba(13, 17, 19, 0.98) 100%) !important;
+    border: 1px solid rgba(255, 255, 255, 0.1) !important;
+    border-left: 3px solid #e0a838 !important;
+    border-radius: 6px !important;
+    box-shadow: 0 16px 48px rgba(0, 0, 0, 0.75), 0 0 0 1px rgba(255, 255, 255, 0.04) !important;
+    backdrop-filter: blur(12px) !important;
+    color: #d2dbd3 !important;
+    font-family: var(--abi-font, "Arial Narrow", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif) !important;
+    animation: abi-toast-in 0.2s cubic-bezier(0.16, 1, 0.3, 1) forwards !important;
+    pointer-events: auto !important;
+    user-select: none !important;
+  }
+
+  .abi-alert-toast.abi-alert-error {
+    border-left-color: #ca4d31 !important;
+  }
+
+  .abi-alert-toast.abi-alert-info {
+    border-left-color: #37cf88 !important;
+  }
+
+  .abi-alert-toast.abi-alert-shake {
+    animation: abi-toast-shake 0.3s ease-in-out !important;
+  }
+
+  .abi-alert-toast.abi-alert-hide {
+    animation: abi-toast-out 0.2s cubic-bezier(0.7, 0, 0.84, 0) forwards !important;
+  }
+
+  .abi-alert-icon {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    flex-shrink: 0 !important;
+    width: 28px !important;
+    height: 28px !important;
+    border-radius: 4px !important;
+    background: rgba(224, 168, 56, 0.12) !important;
+    color: #e0a838 !important;
+  }
+
+  .abi-alert-error .abi-alert-icon {
+    background: rgba(202, 77, 49, 0.12) !important;
+    color: #ca4d31 !important;
+  }
+
+  .abi-alert-info .abi-alert-icon {
+    background: rgba(55, 207, 136, 0.12) !important;
+    color: #37cf88 !important;
+  }
+
+  .abi-alert-body {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 2px !important;
+    min-width: 0 !important;
+    flex: 1 1 auto !important;
+  }
+
+  .abi-alert-title {
+    font-size: 11px !important;
+    font-weight: 800 !important;
+    letter-spacing: 0.06em !important;
+    text-transform: uppercase !important;
+    color: #e0a838 !important;
+    line-height: 1.2 !important;
+  }
+
+  .abi-alert-error .abi-alert-title {
+    color: #ff6b4a !important;
+  }
+
+  .abi-alert-info .abi-alert-title {
+    color: #4ade80 !important;
+  }
+
+  .abi-alert-message {
+    font-size: 13px !important;
+    font-weight: 600 !important;
+    line-height: 1.35 !important;
+    color: #d2dbd3 !important;
+  }
+
+  .abi-alert-close {
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    width: 24px !important;
+    height: 24px !important;
+    margin-left: 4px !important;
+    padding: 0 !important;
+    background: rgba(255, 255, 255, 0.05) !important;
+    border: 1px solid rgba(255, 255, 255, 0.08) !important;
+    border-radius: 4px !important;
+    color: #8fa09d !important;
+    font-size: 18px !important;
+    line-height: 1 !important;
+    cursor: pointer !important;
+    transition: all 0.15s ease !important;
+    flex-shrink: 0 !important;
+  }
+
+  .abi-alert-close:hover {
+    background: rgba(255, 255, 255, 0.12) !important;
+    color: #ffffff !important;
+    border-color: rgba(255, 255, 255, 0.25) !important;
   }
 }

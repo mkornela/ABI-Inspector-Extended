@@ -143,6 +143,8 @@ tests/*.png
 
 # Release archives
 *.zip
+*.crx
 
+abi-settings-preview.html
 abi-network-reader
-test.txt
+abi-inspector-enhancer.pem

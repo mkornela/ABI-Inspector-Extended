@@ -1,6 +1,6 @@
 # ABI Inspector Extended
 
-**Version 2.5.1** · A local interface enhancement for the official Arena Breakout: Infinite Inspector.
+**Version 2.6.0** · A local interface enhancement for the official Arena Breakout: Infinite Inspector.
 
 ABI Inspector Extended elevates the Inspector experience with a modern metallic card layout, animated overview inspection progress bars, an in-depth in-site settings hub, an extension popup master switch, quick verdict hotkeys, precision video controls, and clean News and Challenges styling. It retains 100% of the official inspection workflows, verification protocols, and network safety.
 
