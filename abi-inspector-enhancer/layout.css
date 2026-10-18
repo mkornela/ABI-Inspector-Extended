@@ -2,11 +2,51 @@
    Original navigation and profile nodes remain in place, so the site's own
    tab handlers and live inspector data continue to work. */
 html:not([data-abi-site="off"]) {
-  --abi-accent: #c3472d;
+  --abi-accent: #d49a37;
+  --abi-accent-glow: rgba(212, 154, 55, 0.4);
+  --abi-accent-rgb: 212, 154, 55;
+  --abi-accent-hover: #e5ab48;
+  --abi-track-fill: #e66b4e;
+  --abi-track-glow: rgba(230, 107, 78, 0.4);
+  --abi-pin-color: #f59e0b;
+  --abi-pin-glow: rgba(245, 158, 11, 0.8);
   --abi-line: #41494b;
   --abi-text: #e0e3de;
   --abi-muted: #929a9b;
   --abi-surface: #0e1214;
+
+  &[data-abi-hud-accent="green"] {
+    --abi-accent: #3fb950;
+    --abi-accent-glow: rgba(63, 185, 80, 0.4);
+    --abi-accent-rgb: 63, 185, 80;
+    --abi-accent-hover: #56d364;
+    --abi-track-fill: #3fb950;
+    --abi-track-glow: rgba(63, 185, 80, 0.4);
+    --abi-pin-color: #56d364;
+    --abi-pin-glow: rgba(86, 211, 100, 0.8);
+  }
+
+  &[data-abi-hud-accent="blue"] {
+    --abi-accent: #58a6ff;
+    --abi-accent-glow: rgba(88, 166, 255, 0.4);
+    --abi-accent-rgb: 88, 166, 255;
+    --abi-accent-hover: #79c0ff;
+    --abi-track-fill: #58a6ff;
+    --abi-track-glow: rgba(88, 166, 255, 0.4);
+    --abi-pin-color: #79c0ff;
+    --abi-pin-glow: rgba(121, 192, 255, 0.8);
+  }
+
+  &[data-abi-hud-accent="crimson"] {
+    --abi-accent: #f85149;
+    --abi-accent-glow: rgba(248, 81, 73, 0.4);
+    --abi-accent-rgb: 248, 81, 73;
+    --abi-accent-hover: #ff7b72;
+    --abi-track-fill: #f85149;
+    --abi-track-glow: rgba(248, 81, 73, 0.4);
+    --abi-pin-color: #ff7b72;
+    --abi-pin-glow: rgba(255, 123, 114, 0.8);
+  }
 
   /* Suppress intrusive official Milo "Data loading" overlay on tab switches */
   #__milo_loader_layer__,
@@ -475,7 +515,7 @@ html:not([data-abi-site="off"]) {
     --s-border: #232a2e;
     --s-text: #eceff1;
     --s-muted: #9aa5ad;
-    --s-accent: #ff7a50;
+    --s-accent: var(--abi-accent, #d49a37);
     --s-accent-ink: #1a0c07;
     --s-off: #343b42;
     --s-knob: #c9d0d5;
@@ -1082,6 +1122,49 @@ html:not([data-abi-site="off"]) {
     background: var(--s-accent);
     color: var(--s-accent-ink);
     font-weight: 700;
+  }
+
+  .abi-accent-presets {
+    display: inline-flex;
+    gap: 6px;
+    padding: 3px;
+    background: var(--s-bg);
+    border: 1px solid var(--s-border);
+    border-radius: 9px;
+    flex-wrap: wrap;
+  }
+
+  .abi-accent-chip {
+    all: unset;
+    box-sizing: border-box;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    padding: 6px 14px;
+    border-radius: 6px;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--s-muted);
+    transition: background-color 0.12s, color 0.12s;
+  }
+
+  .abi-accent-chip:hover {
+    color: var(--s-text);
+  }
+
+  .abi-accent-chip.active {
+    background: var(--s-accent);
+    color: var(--s-accent-ink);
+    font-weight: 700;
+  }
+
+  .abi-accent-swatch {
+    display: inline-block;
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+    box-shadow: 0 0 4px rgba(0, 0, 0, 0.6);
   }
 
   /* Streamer / Privacy Mode Live Preview */

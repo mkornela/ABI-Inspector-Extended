@@ -39,10 +39,11 @@ test("Settings panel redesign: DOM structure, search, dependencies, key chips, a
         colorKey: true,
         verdictEnhancements: true,
         verdictHotkeys: false,
+        hudAccent: "amber",
       };
       window.chrome = {
         runtime: {
-          getManifest: () => ({ version: "2.6.16" }),
+          getManifest: () => ({ version: "2.6.17" }),
         },
         storage: {
           local: {
@@ -156,6 +157,24 @@ test("Settings panel redesign: DOM structure, search, dependencies, key chips, a
     // 9. Verify Restore Defaults Button
     await page.locator(".abi-settings-btn-neutral").click();
     assert.equal((await page.locator(".abi-settings-btn-neutral").textContent()).trim(), "Defaults restored ✓", "Button shows confirmation text");
+
+    // 10. Verify Custom HUD Accent Color Profiles
+    const accentChips = page.locator(".abi-accent-chip");
+    assert.equal(await accentChips.count(), 4, "Four accent color options available (amber, green, blue, crimson)");
+    const activeAccent = page.locator(".abi-accent-chip.active");
+    assert.equal(await activeAccent.getAttribute("data-accent"), "amber", "Default active accent is amber");
+
+    // Click Green accent chip
+    await page.locator('.abi-accent-chip[data-accent="green"]').click();
+    assert.equal(await page.locator(".abi-accent-chip.active").getAttribute("data-accent"), "green", "Green accent is now active");
+    let currentHtmlAccent = await page.evaluate(() => document.documentElement.dataset.abiHudAccent);
+    assert.equal(currentHtmlAccent, "green", "document.documentElement data-abi-hud-accent updated to green");
+
+    // Reset Interface section -> resets accent to amber
+    await page.locator("#abi-section-interface .abi-settings-reset-section-btn").click();
+    assert.equal(await page.locator(".abi-accent-chip.active").getAttribute("data-accent"), "amber", "Reset interface section restores amber accent");
+    currentHtmlAccent = await page.evaluate(() => document.documentElement.dataset.abiHudAccent);
+    assert.equal(currentHtmlAccent, "amber", "document.documentElement restored to amber");
   } finally {
     await browser?.close();
   }

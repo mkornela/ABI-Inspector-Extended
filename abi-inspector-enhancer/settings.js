@@ -17,6 +17,7 @@
     colorKey: true,
     verdictEnhancements: true,
     verdictHotkeys: false,
+    hudAccent: "amber",
   };
   const root = document.documentElement;
 
@@ -44,7 +45,7 @@
 
   const WATERMARK = `
 ================================================================================
-  ABI INSPECTOR EXTENDED \u2014 v2.6.16
+  ABI INSPECTOR EXTENDED \u2014 v2.6.17
   Enhanced Patroller Interface & Local Playback Controls
   Author: deem (https://github.com/mkornela)
   Status: Extension Loaded & Active
@@ -77,7 +78,7 @@
     window.__abiExtendedBannerLogged = true;
     try {
       console.log(
-        "%c ABI INSPECTOR EXTENDED %c v2.6.16 %c deem %c ACTIVE \n%cEnhanced Patroller Interface & Local Playback Controls (https://github.com/mkornela)",
+        "%c ABI INSPECTOR EXTENDED %c v2.6.17 %c deem %c ACTIVE \n%cEnhanced Patroller Interface & Local Playback Controls (https://github.com/mkornela)",
         "background: #d49a37; color: #0b0f11; font-weight: bold; font-family: monospace; border-radius: 3px 0 0 3px; padding: 3px 8px; font-size: 11px;",
         "background: #182226; color: #d49a37; font-weight: bold; font-family: monospace; padding: 3px 8px; font-size: 11px; border-left: 1px solid #2a373c;",
         "background: #222f35; color: #c4d0d0; font-family: monospace; padding: 3px 8px; font-size: 11px; border-left: 1px solid #2a373c;",
@@ -167,6 +168,10 @@
     root.dataset.abiLoopVideo = master && currentSettings.loopVideo ? "on" : "off";
     root.dataset.abiSkipIntro = master && currentSettings.skipIntro !== false ? "on" : "off";
     root.dataset.abiPlaybackSpeed = String(currentSettings.playbackSpeed || 1);
+    const validAccents = ["amber", "green", "blue", "crimson"];
+    const accent = validAccents.includes(currentSettings.hudAccent) ? currentSettings.hudAccent : "amber";
+    root.dataset.abiHudAccent = accent;
+    try { localStorage.setItem("abi-hud-accent", accent); } catch {}
 
     const savedVolume = Number(settings.playerVolume);
     playerVolume = Number.isFinite(savedVolume)

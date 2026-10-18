@@ -82,6 +82,12 @@
       searchCasesPlaceholder: "Search by ID, reason, or note...",
       resetsIn: "Resets in",
       serverResetTooltip: "Daily quota resets every day at 05:00 UTC",
+      hudAccentColor: "HUD Accent Color",
+      hudAccentDesc: "Tactical color theme for player controls, progress bars, and pins",
+      accentAmber: "Amber",
+      accentGreen: "Green",
+      accentBlue: "Blue",
+      accentCrimson: "Crimson",
     },
     de: {
       overview: "Datenübersicht",
@@ -163,6 +169,12 @@
       searchCasesPlaceholder: "Suche nach ID, Grund oder Notiz...",
       resetsIn: "Zurücksetzung in",
       serverResetTooltip: "Tägliche Quote wird täglich um 05:00 UTC zurückgesetzt",
+      hudAccentColor: "HUD-Akzentfarbe",
+      hudAccentDesc: "Taktisches Farbthema für Steuerung, Fortschrittsbalken und Pins",
+      accentAmber: "Bernstein",
+      accentGreen: "Grün",
+      accentBlue: "Blau",
+      accentCrimson: "Karmesin",
     },
     ru: {
       overview: "Обзор данных",
@@ -244,6 +256,12 @@
       searchCasesPlaceholder: "Поиск по ID, причине или заметке...",
       resetsIn: "Сброс через",
       serverResetTooltip: "Ежедневная квота сбрасывается каждый день в 05:00 UTC",
+      hudAccentColor: "Цвет акцента HUD",
+      hudAccentDesc: "Тактическая цветовая схема элементов управления, шкал и меток",
+      accentAmber: "Янтарь",
+      accentGreen: "Зеленый",
+      accentBlue: "Синий",
+      accentCrimson: "Багровый",
     },
     fr: {
       overview: "Aperçu des données",
@@ -325,6 +343,12 @@
       searchCasesPlaceholder: "Recherche par ID, motif ou note...",
       resetsIn: "Réinitialisation dans",
       serverResetTooltip: "Le quota quotidien est réinitialisé chaque jour à 05:00 UTC",
+      hudAccentColor: "Couleur d'accent du HUD",
+      hudAccentDesc: "Thème de couleur tactique pour les contrôles, barres de progression et repères",
+      accentAmber: "Ambre",
+      accentGreen: "Vert",
+      accentBlue: "Bleu",
+      accentCrimson: "Cramoisi",
     },
     es: {
       overview: "Resumen de datos",
@@ -406,6 +430,12 @@
       searchCasesPlaceholder: "Buscar por ID, motivo o nota...",
       resetsIn: "Reinicio en",
       serverResetTooltip: "La cuota diaria se reinicia todos los días a las 05:00 UTC",
+      hudAccentColor: "Color de acento del HUD",
+      hudAccentDesc: "Tema de color táctico para controles, barras de progreso y pines",
+      accentAmber: "Ámbar",
+      accentGreen: "Verde",
+      accentBlue: "Azul",
+      accentCrimson: "Carmesí",
     },
     ja: {
       overview: "データの概要",
@@ -487,6 +517,12 @@
       searchCasesPlaceholder: "ID、理由、メモで検索...",
       resetsIn: "リセットまで",
       serverResetTooltip: "毎日の割当は毎日05:00 UTCにリセットされます",
+      hudAccentColor: "HUDアクセントカラー",
+      hudAccentDesc: "コントロール、進行状況バー、ピンの戦術カラーテーマ",
+      accentAmber: "アンバー",
+      accentGreen: "グリーン",
+      accentBlue: "ブルー",
+      accentCrimson: "クリムゾン",
     },
     "pt-BR": {
       overview: "Visão Geral dos Dados",
@@ -568,6 +604,12 @@
       searchCasesPlaceholder: "Buscar por ID, motivo ou nota...",
       resetsIn: "Reinicia em",
       serverResetTooltip: "A cota diária é redefinida diariamente às 05:00 UTC",
+      hudAccentColor: "Cor de destaque do HUD",
+      hudAccentDesc: "Tema de cor tática para controles, barras de progresso e marcadores",
+      accentAmber: "Âmbar",
+      accentGreen: "Verde",
+      accentBlue: "Azul",
+      accentCrimson: "Carmesim",
     },
     "zh-Hant": {
       overview: "數據總覽",
@@ -649,6 +691,12 @@
       searchCasesPlaceholder: "依編號、原因或備註搜尋...",
       resetsIn: "距每日重置",
       serverResetTooltip: "每日審核配額於每日 05:00 UTC 重置",
+      hudAccentColor: "HUD強調色",
+      hudAccentDesc: "播放器控制欄、進度條與標記點的戰術色彩主題",
+      accentAmber: "琥珀金",
+      accentGreen: "夜視綠",
+      accentBlue: "賽博藍",
+      accentCrimson: "戰鬥紅",
     },
     cn: {
       overview: "数据总览",
@@ -730,6 +778,12 @@
       searchCasesPlaceholder: "按编号、原因或备注搜索...",
       resetsIn: "距每日重置",
       serverResetTooltip: "每日巡查配额于每日 05:00 UTC 重置",
+      hudAccentColor: "HUD强调色",
+      hudAccentDesc: "播放器控制栏、进度条与标记点的战术色彩主题",
+      accentAmber: "琥珀金",
+      accentGreen: "夜视绿",
+      accentBlue: "赛博蓝",
+      accentCrimson: "战斗红",
     },
   };
 
@@ -1000,7 +1054,7 @@
 
   const WATERMARK = `
 ================================================================================
-  ABI INSPECTOR EXTENDED \u2014 v2.6.16
+  ABI INSPECTOR EXTENDED \u2014 v2.6.17
   Enhanced Patroller Interface & Local Playback Controls
   Author: deem (https://github.com/mkornela)
   Status: Extension Loaded & Active
@@ -1046,7 +1100,7 @@
     window.__abiExtendedBannerLogged = true;
     try {
       console.log(
-        "%c ABI INSPECTOR EXTENDED %c v2.6.16 %c deem %c ACTIVE \n%cEnhanced Patroller Interface & Local Playback Controls (https://github.com/mkornela)",
+        "%c ABI INSPECTOR EXTENDED %c v2.6.17 %c deem %c ACTIVE \n%cEnhanced Patroller Interface & Local Playback Controls (https://github.com/mkornela)",
         "background: #d49a37; color: #0b0f11; font-weight: bold; font-family: monospace; border-radius: 3px 0 0 3px; padding: 3px 8px; font-size: 11px;",
         "background: #182226; color: #d49a37; font-weight: bold; font-family: monospace; padding: 3px 8px; font-size: 11px; border-left: 1px solid #2a373c;",
         "background: #222f35; color: #c4d0d0; font-family: monospace; padding: 3px 8px; font-size: 11px; border-left: 1px solid #2a373c;",
@@ -2544,15 +2598,16 @@
     colorKey: true,
     verdictEnhancements: true,
     verdictHotkeys: false,
+    hudAccent: "amber",
   };
 
   function getExtensionVersion() {
     try {
       if (typeof chrome !== "undefined" && chrome?.runtime?.getManifest) {
-        return chrome.runtime.getManifest()?.version || "2.6.16";
+        return chrome.runtime.getManifest()?.version || "2.6.17";
       }
     } catch {}
-    return "2.6.16";
+    return "2.6.17";
   }
 
   function safeStorageGet(defaults) {
@@ -2926,18 +2981,67 @@
       showToast,
     );
 
+    const safeT = (k, fb) => (typeof t === "function" ? t(k) : "") || fb;
+
+    const accentRow = document.createElement("div");
+    accentRow.className = "abi-settings-row abi-settings-accent-row";
+    accentRow.dataset.keywords = "hud accent color theme amber green blue crimson tactical style";
+
+    const accentLabel = document.createElement("label");
+    accentLabel.textContent = safeT("hudAccentColor", "HUD Accent Color");
+    const accentOutput = document.createElement("output");
+    accentOutput.textContent = "Amber";
+    const accentHeading = document.createElement("div");
+    accentHeading.className = "abi-settings-speed-heading";
+    accentHeading.append(accentLabel, accentOutput);
+
+    const accentHelp = document.createElement("p");
+    accentHelp.textContent = safeT("hudAccentDesc", "Tactical color theme for player controls, progress bars, and pins.");
+
+    const accentPresets = document.createElement("div");
+    accentPresets.className = "abi-accent-presets";
+    const ACCENT_OPTIONS = [
+      { id: "amber", name: safeT("accentAmber", "Amber"), color: "#d49a37" },
+      { id: "green", name: safeT("accentGreen", "Green"), color: "#3fb950" },
+      { id: "blue", name: safeT("accentBlue", "Blue"), color: "#58a6ff" },
+      { id: "crimson", name: safeT("accentCrimson", "Crimson"), color: "#f85149" },
+    ];
+    for (const opt of ACCENT_OPTIONS) {
+      const chip = document.createElement("button");
+      chip.type = "button";
+      chip.className = "abi-accent-chip";
+      chip.dataset.accent = opt.id;
+      chip.innerHTML = `<span class="abi-accent-swatch" style="background:${opt.color};"></span>${opt.name}`;
+      chip.addEventListener("click", () => {
+        accentPresets.querySelectorAll(".abi-accent-chip").forEach((c) => c.classList.toggle("active", c === chip));
+        accentOutput.textContent = opt.name;
+        safeStorageSet({ hudAccent: opt.id });
+        document.documentElement.dataset.abiHudAccent = opt.id;
+        try { localStorage.setItem("abi-hud-accent", opt.id); } catch {}
+        window.dispatchEvent(new CustomEvent("abi-accent-change", { detail: { accent: opt.id } }));
+        showToast(safeT("savedToast", "Saved ✓"));
+      });
+      accentPresets.append(chip);
+    }
+    accentRow.append(accentHeading, accentHelp, accentPresets);
+
     const interfaceHead = makeSectionHeading("Interface", async () => {
-      const interfaceDefaults = { site: true, skipIntro: true };
+      const interfaceDefaults = { site: true, skipIntro: true, hudAccent: "amber" };
       await safeStorageSet(interfaceDefaults);
       panel.querySelector("#abi-settings-site").checked = true;
       panel.querySelector("#abi-settings-skip-intro").checked = true;
+      accentPresets.querySelectorAll(".abi-accent-chip").forEach((c) => c.classList.toggle("active", c.dataset.accent === "amber"));
+      accentOutput.textContent = safeT("accentAmber", "Amber");
+      document.documentElement.dataset.abiHudAccent = "amber";
+      try { localStorage.setItem("abi-hud-accent", "amber"); } catch {}
+      window.dispatchEvent(new CustomEvent("abi-accent-change", { detail: { accent: "amber" } }));
       updateDependencies(panel);
       updateSettingsStatus(panel, await safeStorageGet(settingsDefaults));
       showToast("Interface reset ✓");
     });
     interfaceHead.querySelector("h2").id = "abi-settings-interface-title";
 
-    interfaceGroup.append(interfaceHead, siteRow, skipIntroRow);
+    interfaceGroup.append(interfaceHead, siteRow, skipIntroRow, accentRow);
 
     // 3. Verdicts Card
     const verdictsGroup = document.createElement("section");
@@ -3150,6 +3254,11 @@
       syncVolumeChips(100);
       speedOutput.textContent = "1×";
       speedPresets.querySelectorAll(".abi-speed-chip").forEach((c) => c.classList.toggle("active", c.dataset.speed === "1"));
+      accentPresets.querySelectorAll(".abi-accent-chip").forEach((c) => c.classList.toggle("active", c.dataset.accent === "amber"));
+      accentOutput.textContent = safeT("accentAmber", "Amber");
+      document.documentElement.dataset.abiHudAccent = "amber";
+      try { localStorage.setItem("abi-hud-accent", "amber"); } catch {}
+      window.dispatchEvent(new CustomEvent("abi-accent-change", { detail: { accent: "amber" } }));
       updateSettingsStatus(panel, await safeStorageGet(settingsDefaults));
       scheduleUpdate();
       showToast("All defaults restored ✓");
@@ -3196,7 +3305,7 @@
 
       for (const card of [playback, interfaceGroup, verdictsGroup, privacyGroup, aboutGroup]) {
         let visibleInCard = 0;
-        const rows = card.querySelectorAll(".abi-settings-toggle, .abi-settings-volume, .abi-settings-speed, .abi-settings-about-line, .abi-settings-actions-row, .abi-settings-credits");
+        const rows = card.querySelectorAll(".abi-settings-toggle, .abi-settings-volume, .abi-settings-speed, .abi-settings-accent-row, .abi-settings-about-line, .abi-settings-actions-row, .abi-settings-credits");
         rows.forEach((row) => {
           if (!q) {
             row.hidden = false;
@@ -3279,6 +3388,13 @@
       speedPresets.querySelectorAll(".abi-speed-chip").forEach((c) => {
         c.classList.toggle("active", Math.abs(Number(c.dataset.speed) - currentSpeed) < 0.01);
       });
+
+      const currentAccent = current.hudAccent || "amber";
+      accentPresets.querySelectorAll(".abi-accent-chip").forEach((c) => c.classList.toggle("active", c.dataset.accent === currentAccent));
+      const activeOpt = ACCENT_OPTIONS.find((o) => o.id === currentAccent) || ACCENT_OPTIONS[0];
+      accentOutput.textContent = activeOpt.name;
+      document.documentElement.dataset.abiHudAccent = currentAccent;
+      try { localStorage.setItem("abi-hud-accent", currentAccent); } catch {}
 
       updateDependencies(panel);
       updateSettingsStatus(panel, current);
@@ -5025,6 +5141,12 @@
         searchCasesPlaceholder: "Search by ID, reason, or note...",
         resetsIn: "Resets in",
         serverResetTooltip: "Daily quota resets every day at 05:00 UTC",
+        hudAccentColor: "HUD Accent Color",
+        hudAccentDesc: "Tactical color theme for player controls, progress bars, and pins",
+        accentAmber: "Amber",
+        accentGreen: "Green",
+        accentBlue: "Blue",
+        accentCrimson: "Crimson",
       };
       return FALLBACKS[key] || key;
     };

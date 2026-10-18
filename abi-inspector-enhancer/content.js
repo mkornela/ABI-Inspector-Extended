@@ -78,29 +78,29 @@ function main() {
       transform:translate(-50%, -50%);
       width:6px;
       height:14px;
-      background:#f59e0b;
+      background:var(--abi-pin-color,#f59e0b);
       border:1px solid #ffffff;
       border-radius:2px;
       cursor:pointer;
       pointer-events:auto;
       z-index:3;
-      box-shadow:0 0 4px rgba(245,158,11,0.8);
+      box-shadow:0 0 4px var(--abi-pin-glow,rgba(245,158,11,0.8));
       transition:transform .1s ease, background .15s ease;
     }
     .timeline-pin:hover {
       transform:translate(-50%, -50%) scale(1.3);
-      background:#fbbf24;
-      box-shadow:0 0 8px rgba(251,191,36,1);
+      background:var(--abi-accent,#fbbf24);
+      box-shadow:0 0 8px var(--abi-accent-glow,rgba(251,191,36,1));
     }
     #pinButton {
       width:30px;
       height:30px;
       padding:0;
-      color:#f59e0b;
+      color:var(--abi-pin-color,#f59e0b);
     }
     #pinButton:hover {
-      color:#fbbf24;
-      border-color:rgba(245,158,11,0.4);
+      color:var(--abi-accent,#fbbf24);
+      border-color:var(--abi-accent-glow,rgba(245,158,11,0.4));
     }
     .hover-badge {
       position: absolute;
@@ -273,9 +273,9 @@ function main() {
     button { font:inherit; font-size:12px; font-weight:700; letter-spacing:0.04em; text-transform:uppercase; height:30px; border:1px solid rgba(255,255,255,0.08); border-radius:4px; color:#c5cec9; background:rgba(255,255,255,0.04); padding:0 9px; cursor:pointer; white-space:nowrap; box-shadow:none; transition:all .15s ease; }
     button:hover { border-color:rgba(255,255,255,0.22); background:rgba(255,255,255,0.09); color:#ffffff; transform:translateY(-1px); }
     button:active { transform:translateY(0); }
-    button[aria-pressed=true] { color:#e66b4e; border-color:#e66b4e; background:rgba(230,107,78,0.12); }
-    .primary { width:36px; height:32px; padding:0; color:#ffffff; border:1.5px solid #d95338; background:linear-gradient(135deg,rgba(217,83,56,0.3),rgba(160,42,22,0.45)); border-radius:6px; box-shadow:0 2px 10px rgba(195,71,45,0.35); }
-    .primary:hover { border-color:#ff684a; background:linear-gradient(135deg,rgba(230,107,78,0.45),rgba(195,71,45,0.6)); box-shadow:0 4px 14px rgba(195,71,45,0.5); }
+    button[aria-pressed=true] { color:var(--abi-accent,#e66b4e); border-color:var(--abi-accent,#e66b4e); background:rgba(var(--abi-accent-rgb,230,107,78),0.12); }
+    .primary { width:36px; height:32px; padding:0; color:#ffffff; border:1.5px solid var(--abi-accent,#d95338); background:linear-gradient(135deg,rgba(var(--abi-accent-rgb,217,83,56),0.3),rgba(var(--abi-accent-rgb,160,42,22),0.45)); border-radius:6px; box-shadow:0 2px 10px var(--abi-accent-glow,rgba(195,71,45,0.35)); }
+    .primary:hover { border-color:var(--abi-accent-hover,#ff684a); background:linear-gradient(135deg,rgba(var(--abi-accent-rgb,230,107,78),0.45),rgba(var(--abi-accent-rgb,195,71,45),0.6)); box-shadow:0 4px 14px var(--abi-accent-glow,rgba(195,71,45,0.5)); }
     #previous,#next,#fullscreen,#slower,#faster,#reload { width:30px; height:30px; padding:0; }
     #reload.spinning .icon {
       animation: abi-reload-spin .6s cubic-bezier(0.4, 0, 0.2, 1);
@@ -291,8 +291,8 @@ function main() {
     :focus-visible { outline:1px solid var(--abi-text,#e0e3de); outline-offset:2px; }
     input[type=range] { appearance:none; -webkit-appearance:none; height:18px; margin:0; padding:0; border:0; background:transparent; cursor:pointer; min-width:0; border-radius:0; }
     #seek { flex:1 1 0; width:0; }
-    #seek::-webkit-slider-runnable-track { height:4px; border:0; border-radius:999px; background:linear-gradient(to right,#e66b4e 0 var(--fill,0%),rgba(255,255,255,0.08) var(--fill,0%) 100%); box-shadow:0 0 6px rgba(230,107,78,0.3); }
-    #seek::-webkit-slider-thumb { appearance:none; -webkit-appearance:none; width:12px; height:12px; margin-top:-4px; border:2px solid #ffffff; border-radius:50%; background:#e66b4e; box-shadow:0 0 8px rgba(230,107,78,0.8); transition:transform .1s ease; }
+    #seek::-webkit-slider-runnable-track { height:4px; border:0; border-radius:999px; background:linear-gradient(to right,var(--abi-track-fill,#e66b4e) 0 var(--fill,0%),rgba(255,255,255,0.08) var(--fill,0%) 100%); box-shadow:0 0 6px var(--abi-track-glow,rgba(230,107,78,0.3)); }
+    #seek::-webkit-slider-thumb { appearance:none; -webkit-appearance:none; width:12px; height:12px; margin-top:-4px; border:2px solid #ffffff; border-radius:50%; background:var(--abi-track-fill,#e66b4e); box-shadow:0 0 8px var(--abi-track-glow,rgba(230,107,78,0.8)); transition:transform .1s ease; }
     #seek:hover::-webkit-slider-thumb { transform:scale(1.25); }
     #volume { width:55px; }
     #volume::-webkit-slider-runnable-track { height:3px; border:0; border-radius:999px; background:linear-gradient(to right,#b8d66a 0 var(--fill,100%),rgba(255,255,255,0.1) var(--fill,100%) 100%); }
@@ -391,11 +391,72 @@ function main() {
   function create(player) {
     const shell = document.createElement("abi-local-player");
     const host = document.createElement("abi-local-controls");
+    const life = new AbortController();
+    const on = (el, name, fn, capture = false) =>
+      el.addEventListener(name, fn, { signal: life.signal, capture });
     const tab = document.querySelector(".nav #working, .nav #drill");
     const activeTab = document.querySelector(".nav li.current");
     const idleTab = document.querySelector(".nav li:not(.current)");
     const note = player.closest(".content.video")?.querySelector(".tips-title");
     const nav = document.querySelector(".main .nav, .nav");
+    const ACCENT_MAP = {
+      amber: {
+        accent: "#d49a37",
+        glow: "rgba(212, 154, 55, 0.4)",
+        rgb: "212, 154, 55",
+        hover: "#e5ab48",
+        track: "#e66b4e",
+        trackGlow: "rgba(230, 107, 78, 0.4)",
+        pin: "#f59e0b",
+        pinGlow: "rgba(245, 158, 11, 0.8)",
+      },
+      green: {
+        accent: "#3fb950",
+        glow: "rgba(63, 185, 80, 0.4)",
+        rgb: "63, 185, 80",
+        hover: "#56d364",
+        track: "#3fb950",
+        trackGlow: "rgba(63, 185, 80, 0.4)",
+        pin: "#56d364",
+        pinGlow: "rgba(86, 211, 100, 0.8)",
+      },
+      blue: {
+        accent: "#58a6ff",
+        glow: "rgba(88, 166, 255, 0.4)",
+        rgb: "88, 166, 255",
+        hover: "#79c0ff",
+        track: "#58a6ff",
+        trackGlow: "rgba(88, 166, 255, 0.4)",
+        pin: "#79c0ff",
+        pinGlow: "rgba(121, 192, 255, 0.8)",
+      },
+      crimson: {
+        accent: "#f85149",
+        glow: "rgba(248, 81, 73, 0.4)",
+        rgb: "248, 81, 73",
+        hover: "#ff7b72",
+        track: "#f85149",
+        trackGlow: "rgba(248, 81, 73, 0.4)",
+        pin: "#ff7b72",
+        pinGlow: "rgba(255, 123, 114, 0.8)",
+      },
+    };
+
+    function applyAccentTheme(accentKey) {
+      const key = accentKey || document.documentElement.dataset.abiHudAccent || "amber";
+      const theme = ACCENT_MAP[key] || ACCENT_MAP.amber;
+      for (const target of [shell, host]) {
+        target.style.setProperty("--abi-accent", theme.accent);
+        target.style.setProperty("--abi-accent-glow", theme.glow);
+        target.style.setProperty("--abi-accent-rgb", theme.rgb);
+        target.style.setProperty("--abi-accent-hover", theme.hover);
+        target.style.setProperty("--abi-track-fill", theme.track);
+        target.style.setProperty("--abi-track-glow", theme.trackGlow);
+        target.style.setProperty("--abi-pin-color", theme.pin);
+        target.style.setProperty("--abi-pin-glow", theme.pinGlow);
+      }
+    }
+
     function syncTheme() {
       const tabStyle = tab && getComputedStyle(tab);
       const idleStyle = idleTab && getComputedStyle(idleTab);
@@ -405,13 +466,8 @@ function main() {
         shell.style.setProperty("--abi-font", tabStyle.fontFamily);
         shell.style.setProperty("--abi-weight", tabStyle.fontWeight);
         shell.style.setProperty("--abi-tracking", tabStyle.letterSpacing);
-        // Sample active-state color only when Workbench is the active tab.
-        if (activeTab)
-          shell.style.setProperty(
-            "--abi-accent",
-            getComputedStyle(activeTab).color,
-          );
       }
+      applyAccentTheme();
       if (idleStyle)
         shell.style.setProperty("--abi-border", idleStyle.borderTopColor);
       if (noteStyle) shell.style.setProperty("--abi-text", noteStyle.color);
@@ -427,6 +483,19 @@ function main() {
     document.fonts?.ready.then(() => {
       if (shell.isConnected) syncTheme();
     });
+    try {
+      const accentObserver = new MutationObserver(() => applyAccentTheme());
+      accentObserver.observe(document.documentElement, {
+        attributes: true,
+        attributeFilter: ["data-abi-hud-accent"],
+      });
+      life.signal.addEventListener("abort", () => accentObserver.disconnect());
+    } catch {}
+    window.addEventListener("abi-accent-change", (e) => {
+      applyAccentTheme(e.detail?.accent);
+    }, { signal: life.signal });
+    shell.getHudAccent = () => document.documentElement.dataset.abiHudAccent || "amber";
+    shell.setHudAccent = (accent) => applyAccentTheme(accent);
     const shadow = host.attachShadow({ mode: "open" });
     const style = document.createElement("style");
     style.textContent = styles;
@@ -942,7 +1011,6 @@ function main() {
       };
     }
 
-    const life = new AbortController();
     let mediaLife = null;
     let video = null;
     let noticeTimer;
@@ -961,8 +1029,6 @@ function main() {
         document.documentElement.dataset.abiTimePrecision === "ms" ||
         shell.dataset.timePrecision === "ms";
     } catch {}
-    const on = (el, name, fn, capture = false) =>
-      el.addEventListener(name, fn, { signal: life.signal, capture });
 
     function isAnyModalOpen() {
       const candidates = document.querySelectorAll(

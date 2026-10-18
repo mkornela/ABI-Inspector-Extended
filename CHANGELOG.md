@@ -7,6 +7,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [2.6.17] - 2026-10-19
+
+### Added
+- **Custom HUD Accent Color Profiles:**
+  - Introduced 4 tactical HUD accent color schemes: Amber (Classic / Default), Green (Operator HUD), Blue (Night Vision), and Crimson (Alert Red).
+  - Dynamically recolors playback progress bars, buffer tracks, suspect moment pin markers, buttons, and settings UI controls.
+  - Tactile swatch chips in the Extension Settings panel with instant live preview and persistence.
+  - Full multi-language localization across all 9 supported languages.
+  - Automated unit test coverage across theme profiles, styles, and settings persistence.
+
+---
+
 ## [2.6.16] - 2026-10-18
 
 ### Added

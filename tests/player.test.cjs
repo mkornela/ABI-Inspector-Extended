@@ -2426,6 +2426,172 @@ test("Playback Position Retain on Modals: preserves exact video playback timesta
   }
 });
 
+test("Custom HUD Accent Color Profiles: dynamically recolors player controls, progress bars, and moment pins across Amber, Green, Blue, and Crimson themes", async (t) => {
+  let playwright;
+  try {
+    playwright = require("playwright");
+  } catch {
+    if (t && typeof t.skip === "function") {
+      t.skip("playwright module is not installed");
+      return;
+    }
+  }
+
+  const browser = await playwright.chromium.launch({
+    headless: true,
+    channel: process.env.ABI_TEST_BROWSER || (process.platform === "win32" ? "msedge" : "chromium"),
+  });
+
+  try {
+    const page = await browser.newPage({ viewport: { width: 1200, height: 800 } });
+    page.on("pageerror", (err) => console.log("PAGE ERROR:", err));
+
+    const mockHtml = `
+      <html data-abi-site="on" data-abi-hud-accent="amber">
+      <head>
+        <style>
+          .content.video { width: 800px; height: 500px; }
+          .play-box { width: 100%; height: 100%; }
+          #workingPlayer { width: 800px; height: 450px; }
+          video { width: 800px; height: 450px; display: block; }
+        </style>
+      </head>
+      <body>
+        <div class="main">
+          <ul class="nav">
+            <li id="working" class="current"><span>Workbench</span></li>
+          </ul>
+        </div>
+        <div id="xcWorking">
+          <div class="content video">
+            <div class="play-box">
+              <div id="workingPlayer">
+                <video src="https://example.com/test.mp4" preload="auto"></video>
+              </div>
+            </div>
+          </div>
+        </div>
+      </body>
+      </html>
+    `;
+
+    await page.route("https://www.arenabreakoutinfinite.com/act/a20251028patroller/*", (route) => {
+      route.fulfill({
+        status: 200,
+        contentType: "text/html",
+        body: mockHtml,
+      });
+    });
+
+    await page.goto("https://www.arenabreakoutinfinite.com/act/a20251028patroller/");
+
+    await page.evaluate(() => {
+      const v = document.querySelector("video");
+      let _currentTime = 10;
+      Object.defineProperty(v, "paused", { get: () => true, configurable: true });
+      Object.defineProperty(v, "currentTime", { get: () => _currentTime, set: (val) => { _currentTime = val; }, configurable: true });
+      Object.defineProperty(v, "duration", { get: () => 100, configurable: true });
+      Object.defineProperty(v, "readyState", { get: () => 4, configurable: true });
+    });
+
+    await page.addScriptTag({ path: path.join(__dirname, "..", "abi-inspector-enhancer", "settings.js") });
+    await page.addScriptTag({ path: path.join(__dirname, "..", "abi-inspector-enhancer", "content.js") });
+
+    await page.waitForSelector("abi-local-player", { state: "attached" });
+    await page.waitForSelector("abi-local-controls", { state: "attached" });
+
+    // 1. Initial Default Accent: Amber
+    let themeProps = await page.evaluate(() => {
+      const shell = document.querySelector("abi-local-player");
+      return {
+        accent: shell.style.getPropertyValue("--abi-accent"),
+        track: shell.style.getPropertyValue("--abi-track-fill"),
+        pin: shell.style.getPropertyValue("--abi-pin-color"),
+      };
+    });
+    assert.equal(themeProps.accent, "#d49a37", "Amber theme primary accent is #d49a37");
+    assert.equal(themeProps.track, "#e66b4e", "Amber theme seek track is #e66b4e");
+    assert.equal(themeProps.pin, "#f59e0b", "Amber theme pin color is #f59e0b");
+
+    // 2. Switch to Night-Vision Green theme
+    await page.evaluate(() => {
+      document.documentElement.dataset.abiHudAccent = "green";
+      window.dispatchEvent(new CustomEvent("abi-accent-change", { detail: { accent: "green" } }));
+    });
+    await page.waitForTimeout(50);
+
+    themeProps = await page.evaluate(() => {
+      const shell = document.querySelector("abi-local-player");
+      return {
+        accent: shell.style.getPropertyValue("--abi-accent"),
+        track: shell.style.getPropertyValue("--abi-track-fill"),
+        pin: shell.style.getPropertyValue("--abi-pin-color"),
+      };
+    });
+    assert.equal(themeProps.accent, "#3fb950", "Green theme primary accent is #3fb950");
+    assert.equal(themeProps.track, "#3fb950", "Green theme seek track is #3fb950");
+    assert.equal(themeProps.pin, "#56d364", "Green theme pin color is #56d364");
+
+    // 3. Switch to Cyber Ice-Blue theme
+    await page.evaluate(() => {
+      document.documentElement.dataset.abiHudAccent = "blue";
+      window.dispatchEvent(new CustomEvent("abi-accent-change", { detail: { accent: "blue" } }));
+    });
+    await page.waitForTimeout(50);
+
+    themeProps = await page.evaluate(() => {
+      const shell = document.querySelector("abi-local-player");
+      return {
+        accent: shell.style.getPropertyValue("--abi-accent"),
+        track: shell.style.getPropertyValue("--abi-track-fill"),
+        pin: shell.style.getPropertyValue("--abi-pin-color"),
+      };
+    });
+    assert.equal(themeProps.accent, "#58a6ff", "Blue theme primary accent is #58a6ff");
+    assert.equal(themeProps.track, "#58a6ff", "Blue theme seek track is #58a6ff");
+    assert.equal(themeProps.pin, "#79c0ff", "Blue theme pin color is #79c0ff");
+
+    // 4. Switch to Combat Crimson theme
+    await page.evaluate(() => {
+      document.documentElement.dataset.abiHudAccent = "crimson";
+      window.dispatchEvent(new CustomEvent("abi-accent-change", { detail: { accent: "crimson" } }));
+    });
+    await page.waitForTimeout(50);
+
+    themeProps = await page.evaluate(() => {
+      const shell = document.querySelector("abi-local-player");
+      return {
+        accent: shell.style.getPropertyValue("--abi-accent"),
+        track: shell.style.getPropertyValue("--abi-track-fill"),
+        pin: shell.style.getPropertyValue("--abi-pin-color"),
+      };
+    });
+    assert.equal(themeProps.accent, "#f85149", "Crimson theme primary accent is #f85149");
+    assert.equal(themeProps.track, "#f85149", "Crimson theme seek track is #f85149");
+    assert.equal(themeProps.pin, "#ff7b72", "Crimson theme pin color is #ff7b72");
+
+    // 5. Reset to Amber theme
+    await page.evaluate(() => {
+      document.documentElement.dataset.abiHudAccent = "amber";
+      window.dispatchEvent(new CustomEvent("abi-accent-change", { detail: { accent: "amber" } }));
+    });
+    await page.waitForTimeout(50);
+
+    themeProps = await page.evaluate(() => {
+      const shell = document.querySelector("abi-local-player");
+      return {
+        accent: shell.style.getPropertyValue("--abi-accent"),
+        track: shell.style.getPropertyValue("--abi-track-fill"),
+        pin: shell.style.getPropertyValue("--abi-pin-color"),
+      };
+    });
+    assert.equal(themeProps.accent, "#d49a37", "Amber theme restored to #d49a37");
+
+  } finally {
+    await browser?.close();
+  }
+});
+
 
 
 
