@@ -1,5 +1,6 @@
 /* Local layout and controls. Original overlay layers are never restyled. */
 abi-local-player {
+  position: relative;
   display: block;
   width: 100%;
   max-width: 100%;
@@ -103,3 +104,85 @@ abi-local-player[data-controls-ready]
   gap: 16px;
   background: transparent;
 }
+
+@keyframes abi-case-expiry-pulse {
+  0%, 100% {
+    border-color: rgba(245, 158, 11, 0.6) !important;
+    box-shadow: 0 0 10px rgba(245, 158, 11, 0.35) !important;
+  }
+  50% {
+    border-color: rgba(239, 68, 68, 0.95) !important;
+    box-shadow: 0 0 22px rgba(239, 68, 68, 0.7) !important;
+  }
+}
+
+:is(#xcWorking > .content.video, .content.video:has(#drillButton)):has(abi-local-player) .play-box > abi-local-player.abi-case-expiring,
+abi-local-player.abi-case-expiring {
+  animation: abi-case-expiry-pulse 1.8s infinite ease-in-out !important;
+}
+
+.abi-case-expiry-badge {
+  position: absolute;
+  top: 12px;
+  right: 14px;
+  z-index: 30;
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 5px 12px;
+  background: rgba(14, 18, 20, 0.88);
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  border-radius: 6px;
+  font-family: var(--abi-font, "Arial Narrow", sans-serif);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  font-variant-numeric: tabular-nums;
+  color: #e0e3de;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.55);
+  backdrop-filter: blur(4px);
+  user-select: none;
+  pointer-events: auto;
+  cursor: help;
+  transition: border-color .3s ease, color .3s ease, background .3s ease;
+}
+
+.abi-case-expiry-badge .abi-expiry-icon {
+  width: 13px;
+  height: 13px;
+  fill: currentColor;
+  flex: none;
+  opacity: 0.9;
+}
+
+.abi-case-expiry-badge .abi-expiry-label {
+  color: #929a9b;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.abi-case-expiry-badge .abi-expiry-time {
+  font-weight: 800;
+  color: #f0f3ee;
+}
+
+.abi-case-expiry-badge.abi-case-expiring {
+  background: rgba(30, 16, 14, 0.92) !important;
+  color: #fca5a5 !important;
+  animation: abi-case-expiry-pulse 1.8s infinite ease-in-out !important;
+}
+.abi-case-expiry-badge.abi-case-expiring .abi-expiry-label {
+  color: #f87171 !important;
+}
+.abi-case-expiry-badge.abi-case-expiring .abi-expiry-time {
+  color: #fecaca !important;
+}
+
+.abi-case-expiry-badge.abi-case-expired {
+  background: rgba(45, 10, 10, 0.95) !important;
+  color: #ef4444 !important;
+  border-color: #ef4444 !important;
+  box-shadow: 0 0 14px rgba(239, 68, 68, 0.6) !important;
+}
+

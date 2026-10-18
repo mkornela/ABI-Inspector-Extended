@@ -52,6 +52,10 @@ function main() {
       viewBox: "0 0 512 512",
       d: "M463.5 224l8.5 0c13.3 0 24-10.7 24-24l0-128c0-9.7-5.8-18.5-14.8-22.2s-19.3-1.7-26.2 5.2L413.4 96.6c-87.6-86.5-228.7-86.2-315.8 1c-87.5 87.5-87.5 229.3 0 316.8s229.3 87.5 316.8 0c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0c-62.5 62.5-163.8 62.5-226.3 0s-62.5-163.8 0-226.3c62.2-62.2 162.7-62.5 225.3-1L327 183c-6.9 6.9-8.9 17.2-5.2 26.2s12.5 14.8 22.2 14.8l119.5 0z",
     },
+    clock: {
+      viewBox: "0 0 512 512",
+      d: "M256 0a256 256 0 1 1 0 512A256 256 0 1 1 256 0zM232 120l0 136c0 8 4 15.5 10.7 20l96 64c11 7.4 25.9 4.4 33.3-6.7s4.4-25.9-6.7-33.3L280 243.2 280 120c0-13.3-10.7-24-24-24s-24 10.7-24 24z",
+    },
   };
   const styles = `
     :host { display:block; color:var(--abi-text,#e0e3de); font-family:var(--abi-font,"Arial Narrow",sans-serif); font-weight:var(--abi-weight,700); letter-spacing:var(--abi-tracking,0px); color-scheme:dark; }
@@ -60,7 +64,7 @@ function main() {
     .icon { width:14px; height:14px; fill:currentColor; flex:none; pointer-events:none; }
     button { display:inline-flex; align-items:center; justify-content:center; gap:7px; }
     #mute { width:34px; padding:0; }
-    .panel { padding:0 16px 12px; background:linear-gradient(180deg,#13191c 0%,#0d1113 100%); border:1px solid rgba(255,255,255,0.08); border-top:0; border-radius:0 0 10px 10px; box-shadow:0 8px 24px rgba(0,0,0,0.4); }
+    .panel { position:relative; padding:0 16px 12px; background:linear-gradient(180deg,#13191c 0%,#0d1113 100%); border:1px solid rgba(255,255,255,0.08); border-top:0; border-radius:0 0 10px 10px; box-shadow:0 8px 24px rgba(0,0,0,0.4); }
     .timeline { display:flex; align-items:center; gap:12px; height:38px; }
     .timeline-bar { position:relative; flex:1 1 0; display:flex; align-items:center; height:100%; min-width:0; }
     .timeline-pins { position:absolute; inset:0; pointer-events:none; }
@@ -281,9 +285,38 @@ function main() {
     #seek:hover::-webkit-slider-thumb { transform:scale(1.25); }
     #volume { width:55px; }
     #volume::-webkit-slider-runnable-track { height:3px; border:0; border-radius:999px; background:linear-gradient(to right,#b8d66a 0 var(--fill,100%),rgba(255,255,255,0.1) var(--fill,100%) 100%); }
-    #volume::-webkit-slider-thumb { appearance:none; -webkit-appearance:none; width:10px; height:10px; margin-top:-3.5px; border:0; border-radius:50%; background:#b8d66a; box-shadow:0 0 6px rgba(184,214,106,0.5); }
-    #status { font-size:13px; line-height:1.5; padding-top:6px; }
-    #status:empty { display:none; }
+    #status {
+      position: absolute;
+      bottom: calc(100% + 14px);
+      left: 50%;
+      transform: translateX(-50%);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      max-width: min(90%, 450px);
+      padding: 6px 14px;
+      background: rgba(14, 18, 20, 0.94);
+      border: 1px solid var(--abi-border, rgba(255, 255, 255, 0.16));
+      border-radius: 6px;
+      color: #f0f3ee;
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.03em;
+      white-space: nowrap;
+      pointer-events: none;
+      z-index: 50;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.7);
+      backdrop-filter: blur(6px);
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 0.15s ease, visibility 0.15s ease, transform 0.15s ease;
+    }
+    #status.visible {
+      opacity: 1;
+      visibility: visible;
+      transform: translateX(-50%) translateY(-2px);
+    }
+    #status:empty { display: none; }
     @media(max-width:600px) { .panel { padding-inline:8px; } button { padding-inline:6px; font-size:14px; } .group { padding-inline:6px; } }
   `;
   let instance = null;
@@ -561,6 +594,174 @@ function main() {
     else shell.append(player);
     shell.append(host);
 
+    if (!document.getElementById("abi-case-expiry-styles")) {
+      const styleEl = document.createElement("style");
+      styleEl.id = "abi-case-expiry-styles";
+      styleEl.textContent = `
+        @keyframes abi-case-expiry-pulse {
+          0%, 100% {
+            border-color: rgba(245, 158, 11, 0.6) !important;
+            box-shadow: 0 0 10px rgba(245, 158, 11, 0.35) !important;
+          }
+          50% {
+            border-color: rgba(239, 68, 68, 0.95) !important;
+            box-shadow: 0 0 22px rgba(239, 68, 68, 0.7) !important;
+          }
+        }
+        :is(#xcWorking > .content.video, .content.video:has(#drillButton)):has(abi-local-player) .play-box > abi-local-player.abi-case-expiring,
+        abi-local-player.abi-case-expiring {
+          animation: abi-case-expiry-pulse 1.8s infinite ease-in-out !important;
+        }
+        .abi-case-expiry-badge {
+          position: absolute;
+          top: 12px;
+          right: 14px;
+          z-index: 30;
+          display: inline-flex;
+          align-items: center;
+          gap: 7px;
+          padding: 5px 12px;
+          background: rgba(14, 18, 20, 0.88);
+          border: 1px solid rgba(255, 255, 255, 0.16);
+          border-radius: 6px;
+          font-family: var(--abi-font, "Arial Narrow", sans-serif);
+          font-size: 12px;
+          font-weight: 700;
+          letter-spacing: 0.04em;
+          font-variant-numeric: tabular-nums;
+          color: #e0e3de;
+          box-shadow: 0 4px 16px rgba(0, 0, 0, 0.55);
+          backdrop-filter: blur(4px);
+          user-select: none;
+          pointer-events: auto;
+          cursor: help;
+          transition: border-color .3s ease, color .3s ease, background .3s ease;
+        }
+        .abi-case-expiry-badge .abi-expiry-icon {
+          width: 13px;
+          height: 13px;
+          fill: currentColor;
+          flex: none;
+          opacity: 0.9;
+        }
+        .abi-case-expiry-badge .abi-expiry-label {
+          color: #929a9b;
+          font-size: 11px;
+          text-transform: uppercase;
+          letter-spacing: 0.06em;
+        }
+        .abi-case-expiry-badge .abi-expiry-time {
+          font-weight: 800;
+          color: #f0f3ee;
+        }
+        .abi-case-expiry-badge.abi-case-expiring {
+          background: rgba(30, 16, 14, 0.92) !important;
+          color: #fca5a5 !important;
+          animation: abi-case-expiry-pulse 1.8s infinite ease-in-out !important;
+        }
+        .abi-case-expiry-badge.abi-case-expiring .abi-expiry-label {
+          color: #f87171 !important;
+        }
+        .abi-case-expiry-badge.abi-case-expiring .abi-expiry-time {
+          color: #fecaca !important;
+        }
+        .abi-case-expiry-badge.abi-case-expired {
+          background: rgba(45, 10, 10, 0.95) !important;
+          color: #ef4444 !important;
+          border-color: #ef4444 !important;
+          box-shadow: 0 0 14px rgba(239, 68, 68, 0.6) !important;
+        }
+      `;
+      (document.head || document.documentElement).append(styleEl);
+    }
+
+    const isDrill = Boolean(
+      player.closest("#drill") ||
+      player.closest(".content.video:has(#drillButton)") ||
+      document.querySelector(".nav #drill.current")
+    );
+
+    let expiryInterval = null;
+    let expiryBadge = null;
+    if (!isDrill) {
+      expiryBadge = document.createElement("div");
+      expiryBadge.id = "caseExpiryBadge";
+      expiryBadge.className = "abi-case-expiry-badge";
+      expiryBadge.setAttribute("role", "timer");
+      expiryBadge.setAttribute("aria-live", "polite");
+
+      const expiryIcon = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+      expiryIcon.setAttribute("class", "icon abi-expiry-icon");
+      expiryIcon.setAttribute("viewBox", icons.clock.viewBox);
+      expiryIcon.setAttribute("aria-hidden", "true");
+      expiryIcon.setAttribute("focusable", "false");
+      const expiryIconPath = document.createElementNS("http://www.w3.org/2000/svg", "path");
+      expiryIconPath.setAttribute("d", icons.clock.d);
+      expiryIcon.append(expiryIconPath);
+
+      const expiryLabel = document.createElement("span");
+      expiryLabel.className = "abi-expiry-label";
+      expiryLabel.textContent = "Expires:";
+
+      const expiryTime = document.createElement("span");
+      expiryTime.className = "abi-expiry-time";
+      expiryTime.textContent = "15:00";
+
+      expiryBadge.append(expiryIcon, expiryLabel, expiryTime);
+      shell.append(expiryBadge);
+
+      let caseStartTime = Date.now();
+      let totalExpirySeconds = 900;
+
+      const getRemaining = () => {
+        if (shell.dataset.caseRemaining !== undefined) {
+          return Math.max(0, parseInt(shell.dataset.caseRemaining, 10));
+        }
+        const customExpiry = parseInt(shell.dataset.caseExpiry || player.dataset.caseExpiry || "", 10);
+        const total = Number.isFinite(customExpiry) && customExpiry > 0 ? customExpiry : totalExpirySeconds;
+        const elapsed = Math.floor((Date.now() - caseStartTime) / 1000);
+        return Math.max(0, total - elapsed);
+      };
+
+      const updateExpiry = () => {
+        if (!expiryBadge.isConnected) return;
+        const remaining = getRemaining();
+        const formatted = format(remaining);
+
+        if (remaining <= 0) {
+          expiryTime.textContent = "00:00 (EXPIRED)";
+          expiryBadge.title = "Case review expires in 00:00 — submitting after expiration makes the verdict invalid";
+          expiryBadge.classList.add("abi-case-expiring", "abi-case-expired");
+          shell.classList.add("abi-case-expiring");
+        } else {
+          expiryTime.textContent = formatted;
+          expiryBadge.title = `Case review expires in ${formatted} — submitting after expiration makes the verdict invalid`;
+          expiryBadge.classList.remove("abi-case-expired");
+          if (remaining <= 60) {
+            expiryBadge.classList.add("abi-case-expiring");
+            shell.classList.add("abi-case-expiring");
+          } else {
+            expiryBadge.classList.remove("abi-case-expiring");
+            shell.classList.remove("abi-case-expiring");
+          }
+        }
+      };
+
+      expiryBadge.addEventListener("click", () => {
+        const remaining = getRemaining();
+        notice(`Case review expires in ${format(remaining)}`);
+      });
+
+      updateExpiry();
+      expiryInterval = setInterval(updateExpiry, 1000);
+      shell.updateExpiry = updateExpiry;
+      shell.resetExpiryTimer = (newDuration) => {
+        if (Number.isFinite(newDuration) && newDuration > 0) totalExpirySeconds = newDuration;
+        caseStartTime = Date.now();
+        updateExpiry();
+      };
+    }
+
     const life = new AbortController();
     let mediaLife = null;
     let video = null;
@@ -570,10 +771,12 @@ function main() {
       el.addEventListener(name, fn, { signal: life.signal });
     const notice = (message) => {
       ui.status.textContent = message;
+      ui.status.classList.toggle("visible", Boolean(message));
       clearTimeout(noticeTimer);
       noticeTimer = setTimeout(() => {
+        ui.status.classList.remove("visible");
         ui.status.textContent = "";
-      }, 3500);
+      }, 3000);
     };
     const finite = () =>
       video && Number.isFinite(video.duration) && video.duration > 0;
@@ -753,6 +956,7 @@ function main() {
                 delete video.dataset.abiSpeedInitialized;
                 bookmarks = [];
                 renderPins();
+                shell.resetExpiryTimer?.();
               }
               if (event.type === "durationchange") {
                 renderPins();
@@ -1090,6 +1294,9 @@ function main() {
         mediaLife?.abort();
         playerObserver.disconnect();
         clearTimeout(noticeTimer);
+        if (expiryInterval) clearInterval(expiryInterval);
+        expiryBadge?.remove();
+        shell.classList.remove("abi-case-expiring");
         // Never delete an official subtree during rerender cleanup.
         host.remove();
         if (shell.isConnected) {

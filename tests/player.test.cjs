@@ -815,6 +815,288 @@ test("Timeline Scrubber Hover-Time Badge: floating timestamp badge follows curso
   }
 });
 
+test("Toast HUD popup does not move or shift the player bar during status notifications", async (t) => {
+  let playwright;
+  try {
+    playwright = require("playwright");
+  } catch {
+    if (t && typeof t.skip === "function") {
+      t.skip("playwright module is not installed");
+      return;
+    }
+  }
+
+  const browser = await playwright.chromium.launch({
+    headless: true,
+    channel: process.env.ABI_TEST_BROWSER || (process.platform === "win32" ? "msedge" : "chromium"),
+  });
+
+  try {
+    const page = await browser.newPage({ viewport: { width: 1200, height: 800 } });
+
+    const mockHtml = `
+      <html data-abi-site="on">
+      <head>
+        <style>
+          .content.video { width: 800px; height: 500px; }
+          .play-box { width: 100%; height: 100%; }
+          #workingPlayer { width: 100%; height: 100%; }
+          video { width: 100%; height: 100%; }
+        </style>
+      </head>
+      <body>
+        <div class="main">
+          <ul class="nav">
+            <li id="working" class="current"><span>Workbench</span></li>
+          </ul>
+        </div>
+        <div id="xcWorking">
+          <div class="content video">
+            <div class="play-box">
+              <div id="workingPlayer">
+                <video src="https://example.com/test.mp4" preload="auto"></video>
+              </div>
+            </div>
+          </div>
+        </div>
+      </body>
+      </html>
+    `;
+
+    await page.route("https://www.arenabreakoutinfinite.com/act/a20251028patroller/*", (route) => {
+      route.fulfill({
+        status: 200,
+        contentType: "text/html",
+        body: mockHtml,
+      });
+    });
+
+    await page.goto("https://www.arenabreakoutinfinite.com/act/a20251028patroller/");
+
+    await page.evaluate(() => {
+      const v = document.querySelector("video");
+      let _paused = true;
+      let _currentTime = 12;
+      let _duration = 100;
+      Object.defineProperty(v, "paused", {
+        get: () => _paused,
+        set: (val) => { _paused = val; },
+        configurable: true,
+      });
+      Object.defineProperty(v, "currentTime", {
+        get: () => _currentTime,
+        set: (val) => { _currentTime = val; },
+        configurable: true,
+      });
+      Object.defineProperty(v, "duration", {
+        get: () => _duration,
+        set: (val) => { _duration = val; },
+        configurable: true,
+      });
+      v.play = async () => { _paused = false; v.dispatchEvent(new Event("play")); };
+      v.pause = () => { _paused = true; v.dispatchEvent(new Event("pause")); };
+    });
+
+    await page.addScriptTag({ path: path.join(__dirname, "..", "abi-inspector-enhancer", "settings.js") });
+    await page.addScriptTag({ path: path.join(__dirname, "..", "abi-inspector-enhancer", "content.js") });
+
+    await page.waitForSelector("abi-local-player", { state: "attached" });
+    await page.waitForSelector("abi-local-controls", { state: "attached" });
+
+    // Measure initial panel bounding box height before any notification
+    const initialPanelHeight = await page.evaluate(() => {
+      const controls = document.querySelector("abi-local-controls");
+      const panel = controls.shadowRoot.querySelector(".panel");
+      return panel.getBoundingClientRect().height;
+    });
+
+    // Drop a bookmark to trigger status notification "Bookmark dropped at 00:12 (M)"
+    await page.keyboard.press("KeyM");
+
+    const statusState = await page.evaluate(() => {
+      const controls = document.querySelector("abi-local-controls");
+      const status = controls.shadowRoot.querySelector("#status");
+      const panel = controls.shadowRoot.querySelector(".panel");
+      return {
+        text: status.textContent,
+        visible: status.classList.contains("visible"),
+        panelHeight: panel.getBoundingClientRect().height,
+      };
+    });
+
+    assert.match(statusState.text, /Bookmark dropped at 00:12 \(M\)/, "Status text shows bookmark dropped");
+    assert.equal(statusState.visible, true, "Status has visible class for floating toast");
+    assert.equal(statusState.panelHeight, initialPanelHeight, "Panel height remains unchanged so player bar never jumps or shifts");
+
+  } finally {
+    await browser?.close();
+  }
+});
+
+test("Case Expiry Countdown Timer & Under-60s Amber Pulse: active case countdown, under-60s warning pulse, expiration state, and drill exclusion", async (t) => {
+  let playwright;
+  try {
+    playwright = require("playwright");
+  } catch {
+    if (t && typeof t.skip === "function") {
+      t.skip("playwright module is not installed");
+      return;
+    }
+  }
+
+  const browser = await playwright.chromium.launch({
+    headless: true,
+    channel: process.env.ABI_TEST_BROWSER || (process.platform === "win32" ? "msedge" : "chromium"),
+  });
+
+  try {
+    const page = await browser.newPage({ viewport: { width: 1200, height: 800 } });
+
+    const mockHtml = `
+      <html data-abi-site="on">
+      <head>
+        <style>
+          .content.video { width: 800px; height: 500px; }
+          .play-box { width: 100%; height: 100%; }
+          #workingPlayer { width: 100%; height: 100%; }
+          video { width: 100%; height: 100%; }
+        </style>
+      </head>
+      <body>
+        <div class="main">
+          <ul class="nav">
+            <li id="working" class="current"><span>Workbench</span></li>
+          </ul>
+        </div>
+        <div id="xcWorking">
+          <div class="content video">
+            <div class="play-box">
+              <div id="workingPlayer">
+                <video src="https://example.com/test.mp4" preload="auto"></video>
+              </div>
+            </div>
+          </div>
+        </div>
+      </body>
+      </html>
+    `;
+
+    await page.route("https://www.arenabreakoutinfinite.com/act/a20251028patroller/*", (route) => {
+      route.fulfill({
+        status: 200,
+        contentType: "text/html",
+        body: mockHtml,
+      });
+    });
+
+    await page.goto("https://www.arenabreakoutinfinite.com/act/a20251028patroller/");
+
+    await page.evaluate(() => {
+      const v = document.querySelector("video");
+      let _paused = true;
+      Object.defineProperty(v, "paused", {
+        get: () => _paused,
+        set: (val) => { _paused = val; },
+        configurable: true,
+      });
+      v.play = async () => { _paused = false; v.dispatchEvent(new Event("play")); };
+      v.pause = () => { _paused = true; v.dispatchEvent(new Event("pause")); };
+    });
+
+    await page.addScriptTag({ path: path.join(__dirname, "..", "abi-inspector-enhancer", "settings.js") });
+    await page.addScriptTag({ path: path.join(__dirname, "..", "abi-inspector-enhancer", "content.js") });
+
+    await page.waitForSelector("abi-local-player", { state: "attached" });
+
+    // 1. Initial State: Expiry badge is mounted with countdown timer
+    const initialBadge = await page.evaluate(() => {
+      const badge = document.querySelector("#caseExpiryBadge");
+      const player = document.querySelector("abi-local-player");
+      return {
+        exists: Boolean(badge),
+        role: badge?.getAttribute("role"),
+        text: badge?.textContent,
+        title: badge?.title,
+        hasPulseBadge: badge?.classList.contains("abi-case-expiring"),
+        hasPulsePlayer: player?.classList.contains("abi-case-expiring"),
+      };
+    });
+
+    assert.equal(initialBadge.exists, true, "Case expiry badge exists on active workbench case");
+    assert.equal(initialBadge.role, "timer", "Badge has role=timer for accessibility");
+    assert.match(initialBadge.text, /Expires:\s*1[45]:\d\d/, "Displays remaining review time (e.g. 15:00 or 14:59)");
+    assert.match(
+      initialBadge.title,
+      /Case review expires in (?:15:00|14:59) — submitting after expiration makes the verdict invalid/,
+      "Tooltip warns about expiration invalidating verdict",
+    );
+    assert.equal(initialBadge.hasPulseBadge, false, "Does not pulse when > 60s remain");
+    assert.equal(initialBadge.hasPulsePlayer, false, "Player border does not pulse when > 60s remain");
+
+    // 2. Under-60s Amber/Red Pulse Warning: Set remaining to 45 seconds
+    const under60 = await page.evaluate(() => {
+      const player = document.querySelector("abi-local-player");
+      const badge = document.querySelector("#caseExpiryBadge");
+      player.dataset.caseRemaining = "45";
+      player.updateExpiry();
+      return {
+        text: badge.textContent,
+        title: badge.title,
+        hasPulseBadge: badge.classList.contains("abi-case-expiring"),
+        hasPulsePlayer: player.classList.contains("abi-case-expiring"),
+      };
+    });
+
+    assert.match(under60.text, /00:45/, "Displays 00:45 remaining time");
+    assert.equal(
+      under60.title,
+      "Case review expires in 00:45 — submitting after expiration makes the verdict invalid",
+      "Tooltip updates with under-60s warning",
+    );
+    assert.equal(under60.hasPulseBadge, true, "Badge pulses in warm amber/red when under 60 seconds");
+    assert.equal(under60.hasPulsePlayer, true, "Player border pulses in warm amber/red when under 60 seconds");
+
+    // 3. Expiration State: Set remaining to 0 seconds
+    const expired = await page.evaluate(() => {
+      const player = document.querySelector("abi-local-player");
+      const badge = document.querySelector("#caseExpiryBadge");
+      player.dataset.caseRemaining = "0";
+      player.updateExpiry();
+      return {
+        text: badge.textContent,
+        title: badge.title,
+        isExpired: badge.classList.contains("abi-case-expired"),
+        hasPulseBadge: badge.classList.contains("abi-case-expiring"),
+      };
+    });
+
+    assert.match(expired.text, /00:00 \(EXPIRED\)/, "Displays expired notice");
+    assert.equal(
+      expired.title,
+      "Case review expires in 00:00 — submitting after expiration makes the verdict invalid",
+      "Tooltip indicates review expired",
+    );
+    assert.equal(expired.isExpired, true, "Badge has abi-case-expired class");
+
+    // 4. Test clicking badge triggers toast notice
+    await page.evaluate(() => {
+      const badge = document.querySelector("#caseExpiryBadge");
+      badge.click();
+    });
+
+    const toastText = await page.evaluate(() => {
+      const controls = document.querySelector("abi-local-controls");
+      return controls.shadowRoot.querySelector("#status")?.textContent;
+    });
+
+    assert.match(toastText, /Case review expires in 00:00/, "Clicking expiry badge shows status toast");
+
+  } finally {
+    await browser?.close();
+  }
+});
+
+
 
 
 

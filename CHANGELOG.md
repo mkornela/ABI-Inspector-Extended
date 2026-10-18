@@ -7,6 +7,23 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [2.6.8] - 2026-10-18
+
+### Added
+- **Case Expiry Countdown Timer & Under-60s Amber Pulse (`#caseExpiryBadge`):**
+  - Added a tactical floating countdown timer badge on active inspection cases (`#xcWorking`) displaying remaining review time before expiration.
+  - Informative tooltip: `"Case review expires in X:XX — submitting after expiration makes the verdict invalid"`.
+  - When under 60 seconds remain, both the timer badge and the entire `<abi-local-player>` border subtly pulse in warm amber/red (`.abi-case-expiring`).
+  - Automatically resets timer on new case load (`loadstart`) and clean removal on player teardown.
+  - Non-intrusive: automatically excluded on offline drill/practice cases.
+
+### Fixed
+- **Floating Status Toast Overlay (`#status`):**
+  - Converted player status notifications (e.g. `"Bookmark dropped at 00:12 (M)"`, stream reload notices) from an in-flow layout element to a floating HUD toast overlay positioned above the control bar.
+  - Completely eliminates player bar shifting, jumping, or layout shifts when dropping bookmarks or receiving notifications.
+
+---
+
 ## [2.6.7] - 2026-10-18
 
 ### Added
