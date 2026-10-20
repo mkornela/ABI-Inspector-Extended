@@ -2012,7 +2012,7 @@ function main() {
       target instanceof Element &&
       (target === player || player.contains(target)) &&
       !target.closest(
-        "abi-local-controls, .abi-case-expiry-badge, .abi-case-log-modal, dialog",
+        "abi-local-controls, .abi-case-expiry-badge, dialog",
       );
 
     // Click directly on video screen to toggle play/pause (capture phase intercepts before native player scripts)

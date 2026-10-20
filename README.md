@@ -1,17 +1,17 @@
 # ABI Inspector Extended
 
-[![Version](https://img.shields.io/badge/version-3.0.0-f59e0b.svg)](CHANGELOG.md)
+[![Version](https://img.shields.io/badge/version-3.0.1-f59e0b.svg)](CHANGELOG.md)
 [![Manifest](https://img.shields.io/badge/manifest-v3-3b82f6.svg)](abi-inspector-enhancer/manifest.json)
-[![Tests](https://img.shields.io/badge/tests-26%20passed-10b981.svg)](tests/)
+[![Tests](https://img.shields.io/badge/tests-25%20passed-10b981.svg)](tests/)
 [![Security](https://img.shields.io/badge/privacy-100%25%20client--side-06b6d4.svg)](#privacy-and-compatibility)
 [![Languages](https://img.shields.io/badge/languages-9%20supported-8b5cf6.svg)](#localization)
 
 > [!WARNING]
 > **Use at your own risk:** I am still awaiting a response from the game developers about the extension and whether it is safe to use.
 
-**Version 3.0.0** · A high-performance tactical interface enhancement for the official Arena Breakout: Infinite Inspector.
+**Version 3.0.1** · A high-performance tactical interface enhancement for the official Arena Breakout: Infinite Inspector.
 
-ABI Inspector Extended elevates the Inspector experience with a streamlined single-row video player HUD, tactical Hold-to-Zoom loupe, shadow and gamma boost, inspection review case logs with CSV export, a live 00:00 UTC daily quota countdown clock, animated overview accuracy boards, an in-depth in-site settings and keybinds hub, and full 9-language localization.
+ABI Inspector Extended elevates the Inspector experience with a streamlined single-row video player HUD, tactical Hold-to-Zoom loupe, shadow and gamma boost, a live 00:00 UTC daily quota countdown clock, animated overview accuracy boards, an in-depth in-site settings and keybinds hub, and full 9-language localization.
 
 > Independent community project. Not affiliated with or endorsed by the game’s publisher. Retains 100% of official inspection workflows, verification protocols, and network safety.
 
@@ -21,15 +21,11 @@ ABI Inspector Extended elevates the Inspector experience with a streamlined sing
 
 All project screenshots live in [`screenshots/`](screenshots/). Inspector identity values and case numbers in screenshots are anonymized with `***`.
 
-### Overview & Inspection History
+### Overview
 
 | Overview · Accuracy Board (EN) | Overview · German Localization (DE) |
 | :---: | :---: |
 | ![Anonymized Accuracy Board overview](screenshots/tab_1_overview.png) | ![Overview with German localization](screenshots/tab_1_overview_de.png) |
-
-| Inspection Log & Case Review History Modal |
-| :---: |
-| ![Inspection Log modal with verdict filters, search bar, and CSV export](screenshots/log_list.png) |
 
 ### Tactical Workbench & Video Player
 
@@ -69,11 +65,6 @@ All project screenshots live in [`screenshots/`](screenshots/). Inspector identi
   - **Right Wing:** Tactile playback speed badge (`0.1×` to `3.0×`), smooth volume slider, suspect bookmark pin dropper, 3-stage Shadow & Gamma Boost, in-place player reload, and native fullscreen toggle.
 - 🔍 **Tactical Hold-to-Zoom Loupe:** Hold **`Z`** or hold **Right-Click** over the video for instantaneous 2.5× magnification centered precisely on your cursor. Release to return smoothly to 1× framing.
 - ☀️ **Shadow & Gamma Boost:** Cycle through **Normal → Shadow Boost → Max Brightness** with the **`G`** key or player toolbar button to reveal targets lurking in pitch-black corners, dense foliage, or dark interiors.
-- 📋 **Inspection Log & Case Review History Modal:**
-  - View all daily reviewed cases with exact timestamps, Case IDs, assigned verdicts, detection reasons, and notes.
-  - **Accurate Quota Sync:** Verifiable logging triggered exclusively when your daily quota count increments.
-  - Filter instantly by **All**, **Violation**, **No Violation**, or **Uncertain**, or search by keyword.
-  - Direct 1-click **CSV Export** for external auditing, tracking, or dispute records.
 - ⏱️ **Daily Server Reset Countdown Clock:** Live countdown badge on the Overview Today card indicating exact hours, minutes, and seconds remaining until the official **00:00 UTC** daily quota refresh.
 - ⌨️ **Dedicated In-Site Keybinds Hub:** Keybinds are now housed in their own dedicated tab inside Settings with visual tactile key chips and clear descriptions.
 - 🎨 **Custom HUD Accent Color Themes:** Choose between **Amber Gold**, **Emerald Green**, **Tactical Blue**, and **Crimson Red** with real-time reactive theme previews.
@@ -216,7 +207,7 @@ Project architecture:
 - [`abi-inspector-enhancer/settings.js`](abi-inspector-enhancer/settings.js) — Centralized configuration schema and storage handlers.
 - [`abi-inspector-enhancer/popup.html`](abi-inspector-enhancer/popup.html) & [`popup.js`](abi-inspector-enhancer/popup.js) — Master toggle popup interface.
 - [`abi-inspector-enhancer/content.js`](abi-inspector-enhancer/content.js) & [`player.css`](abi-inspector-enhancer/player.css) — Single-row video controls, Hold-to-Zoom loupe, Shadow Boost, Silent Scrubbing, and bookmark pins.
-- [`abi-inspector-enhancer/site-ui.js`](abi-inspector-enhancer/site-ui.js) & [`layout.css`](abi-inspector-enhancer/layout.css) — Metallic design system, stacked progress bars, inspection history log modal, 00:00 UTC countdown clock, and settings hub.
+- [`abi-inspector-enhancer/site-ui.js`](abi-inspector-enhancer/site-ui.js) & [`layout.css`](abi-inspector-enhancer/layout.css) — Metallic design system, stacked progress bars, 00:00 UTC countdown clock, and settings hub.
 - [`abi-inspector-enhancer/overview-observer.js`](abi-inspector-enhancer/overview-observer.js) & [`overview-data.js`](abi-inspector-enhancer/overview-data.js) — Passive summary response listener relaying numeric metrics to the Overview DOM.
 - [`abi-inspector-enhancer/dialogs.js`](abi-inspector-enhancer/dialogs.js) & [`dialogs.css`](abi-inspector-enhancer/dialogs.css) — Modern verdict modals, quick-tag reason chips, and character limit indicators.
 - [`screenshots/`](screenshots/) — Visual documentation and gallery captures.
