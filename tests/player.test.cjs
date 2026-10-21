@@ -2916,6 +2916,331 @@ test("Frames Control & Smooth Millisecond Playback: timer resides inside frames-
   }
 });
 
+test("A/B Loop Repeat: sets In ([), Out (]), renders range on scrubber, loops playback, and clears (\\)", async (t) => {
+  let playwright;
+  try {
+    playwright = require("playwright");
+  } catch {
+    if (t && typeof t.skip === "function") {
+      t.skip("playwright module is not installed");
+      return;
+    }
+  }
+
+  const browser = await playwright.chromium.launch({
+    headless: true,
+    channel: process.env.ABI_TEST_BROWSER || (process.platform === "win32" ? "msedge" : "chromium"),
+  });
+
+  try {
+    const page = await browser.newPage({ viewport: { width: 1200, height: 800 } });
+
+    const mockHtml = `
+      <html data-abi-site="on" data-abi-auto-play="off">
+      <head>
+        <style>
+          .content.video { width: 800px; height: 500px; }
+          .play-box { width: 100%; height: 100%; }
+          #workingPlayer { width: 100%; height: 100%; }
+          video { width: 100%; height: 100%; }
+        </style>
+      </head>
+      <body>
+        <div class="main">
+          <ul class="nav">
+            <li id="working" class="current"><span>Workbench</span></li>
+          </ul>
+        </div>
+        <div id="xcWorking">
+          <div class="content video">
+            <div class="play-box">
+              <div id="workingPlayer">
+                <video src="https://example.com/test.mp4" preload="auto"></video>
+              </div>
+            </div>
+          </div>
+        </div>
+      </body>
+      </html>
+    `;
+
+    await page.route("https://www.arenabreakoutinfinite.com/act/a20251028patroller/*", (route) => {
+      route.fulfill({
+        status: 200,
+        contentType: "text/html",
+        body: mockHtml,
+      });
+    });
+
+    await page.goto("https://www.arenabreakoutinfinite.com/act/a20251028patroller/");
+
+    await page.evaluate(() => {
+      const v = document.querySelector("video");
+      let _paused = true;
+      let _currentTime = 10.0;
+      Object.defineProperty(v, "duration", { value: 60.0, configurable: true });
+      Object.defineProperty(v, "currentTime", {
+        get: () => _currentTime,
+        set: (val) => { _currentTime = val; },
+        configurable: true,
+      });
+      Object.defineProperty(v, "paused", {
+        get: () => _paused,
+        set: (val) => { _paused = val; },
+        configurable: true,
+      });
+      v.play = async () => { _paused = false; return Promise.resolve(); };
+      v.pause = () => { _paused = true; };
+      v.load = () => {};
+      v.getBoundingClientRect = () => ({ width: 800, height: 450, top: 0, left: 0, bottom: 450, right: 800 });
+      window.__defineVideoTime = (t) => { _currentTime = t; };
+    });
+
+    await page.addScriptTag({ path: path.join(__dirname, "..", "abi-inspector-enhancer", "settings.js") });
+    await page.addScriptTag({ path: path.join(__dirname, "..", "abi-inspector-enhancer", "content.js") });
+
+    await page.waitForSelector("abi-local-player", { state: "attached" });
+
+    // 1. Initial state: no loop active, loopRange hidden
+    const initialLoop = await page.evaluate(() => {
+      const controls = document.querySelector("abi-local-controls");
+      const loopRange = controls.shadowRoot.querySelector("#loopRange");
+      const loopBtn = controls.shadowRoot.querySelector("#loopBtn");
+      return {
+        loopRangeHidden: loopRange?.hidden,
+        loopBtnActive: loopBtn?.classList.contains("active"),
+      };
+    });
+    assert.equal(initialLoop.loopRangeHidden, true, "Loop range is initially hidden");
+    assert.equal(initialLoop.loopBtnActive, false, "Loop button is not active initially");
+
+    // 2. Press '[' to set In-Point at 10s
+    await page.keyboard.press("[");
+    const afterIn = await page.evaluate(() => {
+      const playerShell = document.querySelector("abi-local-player");
+      return playerShell.getLoopState();
+    });
+    assert.equal(afterIn.loopStart, 10.0, "Loop In set at 10s");
+
+    // 3. Advance to 16s and press ']' to set Out-Point
+    await page.evaluate(() => {
+      window.__defineVideoTime(16.0);
+    });
+    await page.keyboard.press("]");
+
+    const afterOut = await page.evaluate(() => {
+      const playerShell = document.querySelector("abi-local-player");
+      const controls = document.querySelector("abi-local-controls");
+      const loopRange = controls.shadowRoot.querySelector("#loopRange");
+      const loopBtn = controls.shadowRoot.querySelector("#loopBtn");
+      return {
+        state: playerShell.getLoopState(),
+        loopRangeHidden: loopRange?.hidden,
+        loopRangeLeft: loopRange?.style.left,
+        loopRangeWidth: loopRange?.style.width,
+        loopBtnActive: loopBtn?.classList.contains("active"),
+      };
+    });
+
+    assert.equal(afterOut.state.loopStart, 10.0, "Loop start is 10.0");
+    assert.equal(afterOut.state.loopEnd, 16.0, "Loop end is 16.0");
+    assert.equal(afterOut.state.loopActive, true, "Loop is active");
+    assert.equal(afterOut.loopRangeHidden, false, "Loop range is displayed on scrubber");
+    assert.ok(afterOut.loopRangeLeft.startsWith("16.6"), "Left position corresponds to 10s / 60s (~16.6%)");
+    assert.ok(afterOut.loopRangeWidth.startsWith("10"), "Width corresponds to 6s / 60s (10%)");
+    assert.equal(afterOut.loopBtnActive, true, "Loop button displays active state");
+
+    // 4. Simulate active playback exceeding loopEnd (16.0s) -> rewinds to loopStart (10.0s)
+    await page.evaluate(async () => {
+      const v = document.querySelector("video");
+      await v.play();
+      window.__defineVideoTime(16.05);
+      // Trigger a timeupdate or wait a tick
+      v.dispatchEvent(new Event("timeupdate"));
+    });
+
+    const currentTimeAfterLoop = await page.evaluate(() => {
+      return document.querySelector("video").currentTime;
+    });
+    assert.equal(currentTimeAfterLoop, 10.0, "Current playback time rewound back to loop start (10.0s)");
+
+    // 5. Clear loop via '\\' key
+    await page.keyboard.press("\\");
+
+    const afterClear = await page.evaluate(() => {
+      const playerShell = document.querySelector("abi-local-player");
+      const controls = document.querySelector("abi-local-controls");
+      const loopRange = controls.shadowRoot.querySelector("#loopRange");
+      const loopBtn = controls.shadowRoot.querySelector("#loopBtn");
+      return {
+        state: playerShell.getLoopState(),
+        loopRangeHidden: loopRange?.hidden,
+        loopBtnActive: loopBtn?.classList.contains("active"),
+      };
+    });
+    assert.equal(afterClear.state.loopActive, false, "Loop is inactive after clearing");
+    assert.equal(afterClear.state.loopStart, null, "Loop start is cleared");
+    assert.equal(afterClear.loopRangeHidden, true, "Loop range is hidden after clearing");
+    assert.equal(afterClear.loopBtnActive, false, "Loop button is inactive after clearing");
+
+  } finally {
+    await browser?.close();
+  }
+});
+
+test("Vision Filter: cycles Normal -> Silhouette -> Invert -> Thermal -> Normal via X/Shift+G and HUD button", async (t) => {
+  let playwright;
+  try {
+    playwright = require("playwright");
+  } catch {
+    if (t && typeof t.skip === "function") {
+      t.skip("playwright module is not installed");
+      return;
+    }
+  }
+
+  const browser = await playwright.chromium.launch({
+    headless: true,
+    channel: process.env.ABI_TEST_BROWSER || (process.platform === "win32" ? "msedge" : "chromium"),
+  });
+
+  try {
+    const page = await browser.newPage({ viewport: { width: 1200, height: 800 } });
+
+    const mockHtml = `
+      <html data-abi-site="on" data-abi-auto-play="off">
+      <head>
+        <style>
+          .content.video { width: 800px; height: 500px; }
+          .play-box { width: 100%; height: 100%; }
+          #workingPlayer { width: 100%; height: 100%; }
+          video { width: 100%; height: 100%; }
+        </style>
+      </head>
+      <body>
+        <div class="main">
+          <ul class="nav">
+            <li id="working" class="current"><span>Workbench</span></li>
+          </ul>
+        </div>
+        <div id="xcWorking">
+          <div class="content video">
+            <div class="play-box">
+              <div id="workingPlayer">
+                <video src="https://example.com/test.mp4" preload="auto"></video>
+              </div>
+            </div>
+          </div>
+        </div>
+      </body>
+      </html>
+    `;
+
+    await page.route("https://www.arenabreakoutinfinite.com/act/a20251028patroller/*", (route) => {
+      route.fulfill({
+        status: 200,
+        contentType: "text/html",
+        body: mockHtml,
+      });
+    });
+
+    await page.goto("https://www.arenabreakoutinfinite.com/act/a20251028patroller/");
+
+    await page.evaluate(() => {
+      const v = document.querySelector("video");
+      let _paused = true;
+      Object.defineProperty(v, "duration", { value: 60.0, configurable: true });
+      Object.defineProperty(v, "currentTime", { value: 0, writable: true, configurable: true });
+      Object.defineProperty(v, "paused", {
+        get: () => _paused,
+        set: (val) => { _paused = val; },
+        configurable: true,
+      });
+      v.play = async () => { _paused = false; return Promise.resolve(); };
+      v.pause = () => { _paused = true; };
+      v.load = () => {};
+      v.getBoundingClientRect = () => ({ width: 800, height: 450, top: 0, left: 0, bottom: 450, right: 800 });
+      localStorage.removeItem("abi-vision-mode");
+      localStorage.removeItem("abi-gamma-mode");
+    });
+
+    await page.addScriptTag({ path: path.join(__dirname, "..", "abi-inspector-enhancer", "settings.js") });
+    await page.addScriptTag({ path: path.join(__dirname, "..", "abi-inspector-enhancer", "content.js") });
+
+    await page.waitForSelector("abi-local-player", { state: "attached" });
+
+    // 1. Initial: filter is empty
+    const initialFilter = await page.evaluate(() => {
+      const v = document.querySelector("video");
+      const controls = document.querySelector("abi-local-controls");
+      const btn = controls.shadowRoot.querySelector("#visionBtn");
+      return {
+        filter: v.style.filter,
+        btnActive: btn?.classList.contains("active"),
+      };
+    });
+    assert.equal(initialFilter.filter, "", "Initial video filter is empty");
+    assert.equal(initialFilter.btnActive, false, "Vision button is inactive initially");
+
+    // 2. Press 'X' -> Silhouette mode
+    await page.keyboard.press("x");
+    const silhouetteState = await page.evaluate(() => {
+      const v = document.querySelector("video");
+      const controls = document.querySelector("abi-local-controls");
+      const btn = controls.shadowRoot.querySelector("#visionBtn");
+      return {
+        filter: v.style.filter,
+        btnActive: btn?.classList.contains("active"),
+      };
+    });
+    assert.ok(silhouetteState.filter.includes("contrast(2.4)"), "Silhouette contrast applied to video");
+    assert.equal(silhouetteState.btnActive, true, "Vision button is active in silhouette mode");
+
+    // 3. Press 'X' -> Invert mode
+    await page.keyboard.press("x");
+    const invertState = await page.evaluate(() => {
+      const v = document.querySelector("video");
+      return v.style.filter;
+    });
+    assert.ok(invertState.includes("invert(1)"), "Negative invert applied to video");
+
+    // 4. Press 'X' -> Thermal mode
+    await page.keyboard.press("x");
+    const thermalState = await page.evaluate(() => {
+      const v = document.querySelector("video");
+      return v.style.filter;
+    });
+    assert.ok(thermalState.includes("grayscale(1)"), "Monochrome thermal applied to video");
+
+    // 5. Press 'X' -> Returns to normal
+    await page.keyboard.press("x");
+    const normalState = await page.evaluate(() => {
+      const v = document.querySelector("video");
+      const controls = document.querySelector("abi-local-controls");
+      const btn = controls.shadowRoot.querySelector("#visionBtn");
+      return {
+        filter: v.style.filter,
+        btnActive: btn?.classList.contains("active"),
+      };
+    });
+    assert.equal(normalState.filter, "", "Filter returns to empty");
+    assert.equal(normalState.btnActive, false, "Vision button returns to inactive");
+
+    // 6. Click #visionBtn in HUD -> toggles to Silhouette
+    await page.evaluate(() => {
+      const controls = document.querySelector("abi-local-controls");
+      controls.shadowRoot.querySelector("#visionBtn").click();
+    });
+    const clickedState = await page.evaluate(() => {
+      return document.querySelector("video").style.filter;
+    });
+    assert.ok(clickedState.includes("contrast(2.4)"), "Clicking HUD vision button cycles to silhouette mode");
+
+  } finally {
+    await browser?.close();
+  }
+});
+
 
 
 

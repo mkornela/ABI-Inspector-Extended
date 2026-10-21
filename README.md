@@ -1,15 +1,15 @@
 # ABI Inspector Extended
 
-[![Version](https://img.shields.io/badge/version-3.0.3-f59e0b.svg)](CHANGELOG.md)
+[![Version](https://img.shields.io/badge/version-3.0.4-f59e0b.svg)](CHANGELOG.md)
 [![Manifest](https://img.shields.io/badge/manifest-v3-3b82f6.svg)](abi-inspector-enhancer/manifest.json)
-[![Tests](https://img.shields.io/badge/tests-26%20passed-10b981.svg)](tests/)
+[![Tests](https://img.shields.io/badge/tests-29%20passed-10b981.svg)](tests/)
 [![Security](https://img.shields.io/badge/privacy-100%25%20client--side-06b6d4.svg)](#privacy-and-compatibility)
 [![Languages](https://img.shields.io/badge/languages-9%20supported-8b5cf6.svg)](#localization)
 
 > [!WARNING]
 > **Use at your own risk:** I am still awaiting a response from the game developers about the extension and whether it is safe to use.
 
-**Version 3.0.3** · A high-performance tactical interface enhancement for the official Arena Breakout: Infinite Inspector.
+**Version 3.0.4** · A high-performance tactical interface enhancement for the official Arena Breakout: Infinite Inspector.
 
 ABI Inspector Extended elevates the Inspector experience with a streamlined single-row video player HUD, tactical Hold-to-Zoom loupe, shadow and gamma boost, a live 00:00 UTC daily quota countdown clock, animated overview accuracy boards, an in-depth in-site settings and keybinds hub, and full 9-language localization.
 
@@ -88,6 +88,12 @@ All project screenshots live in [`screenshots/`](screenshots/). Inspector identi
   - Dark metallic palette (`#13191c` / `#161f23`) with sleek `6px` rounded borders and subtle hover elevations.
   - Unified rounded button and card styling across Navigation, Overview, Workbench, Challenges, News tabs, and the top account bar.
   - Custom floating language picker and streamlined header actions without background clutters.
+- **Tactical Patrol Challenges Redesign:**
+  - Compact single-row cards at 1/3 of original height (~38px) with hairline progress bars.
+  - Redundant section headers removed in favor of sleek, vertically aligned `Weekly` (slate-cyan cycle) and `Exclusive` (amber star) pill badges.
+  - Informative hover tooltips reveal task constraints (`Can be done multiple times` vs. `Can be done only once per account`).
+  - Two-column vertical reward alignment with single rewards placed next to the action button.
+  - Incomplete button styles unified, eliminating Tencent template background/border discrepancies.
 - **In-Site Settings Hub (`Settings`):**
   - Dedicated configuration tab on the Inspector site with instant reactive toggles and live status badges.
   - Customize Player Controls, Autoplay behavior, Site modifications, Overview enhancements, Anonymization defaults, and Verdict Dialog enhancements.

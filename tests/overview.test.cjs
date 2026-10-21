@@ -332,7 +332,7 @@ test("Overview renders live counts and XP, updates without duplicate cards, and 
       return logs;
     }, siteUiSource.slice(siteUiSource.indexOf("  function logExtensionBanner()"), siteUiSource.indexOf("  const HAS_CJK =")));
     assert.ok(
-      loggedMessages.some((m) => m.includes("ABI INSPECTOR EXTENDED") && m.includes("v3.0.3") && m.includes("deem") && m.includes("ACTIVE")),
+      loggedMessages.some((m) => m.includes("ABI INSPECTOR EXTENDED") && m.includes("v3.0.4") && m.includes("deem") && m.includes("ACTIVE")),
       "Console banner is logged with extension name, version, author, and active status"
     );
 
@@ -1100,6 +1100,287 @@ test("Accidental Tab Close & Leave Guard: prompts beforeunload during active cas
     const disabledSettingCheck = await page.evaluate(() => window.__abiIsInspectionActive());
     assert.equal(disabledSettingCheck, false, "Leave guard respects user setting toggle when disabled");
 
+  } finally {
+    await browser?.close();
+  }
+});
+
+test("Tactical Challenge Cards redesign: 1/3-height compact rows, consistent button styling, and rogue finish cleanup", async (t) => {
+  let playwright;
+  try {
+    playwright = require("playwright");
+  } catch (error) {
+    t.skip("playwright module is not installed");
+    return;
+  }
+  const { chromium } = playwright;
+  const siteUiSource = fs.readFileSync(path.join(root, "site-ui.js"), "utf8");
+  let browser;
+  try {
+    browser = await chromium.launch({
+      headless: true,
+      channel: process.env.ABI_TEST_BROWSER || (process.platform === "win32" ? "msedge" : "chromium"),
+    });
+    const page = await browser.newPage({ viewport: { width: 1280, height: 900 } });
+    const layoutCss = fs.readFileSync(path.join(__dirname, "../abi-inspector-enhancer/layout.css"), "utf8");
+
+    await page.setContent(`
+      <!DOCTYPE html>
+      <html data-abi-site="on">
+      <head>
+        <style>${layoutCss}</style>
+      </head>
+      <body>
+        <div id="wxPatrol" class="box content patrol">
+          <div class="content task">
+            <div class="taks-list">
+              <h4>Weekly Challenge</h4>
+              <ul id="testTaskList1">
+                <li id="itemClaimable">
+                  <div class="taks-info">
+                    <p>Weekly Patrol 10</p>
+                    <span id="weekSpan">10/10</span>
+                    <div class="task-progress">
+                      <div id="weekDiv" style="width:100%"></div>
+                    </div>
+                  </div>
+                  <div class="taks-gift">
+                    <img src="img/gift1.png" alt="">
+                    <span>Koen x100,000</span>
+                  </div>
+                  <a id="weekBtn" href="javascript:;" class="taks-btn2">Claim</a>
+                </li>
+              </ul>
+            </div>
+            <div class="taks-list">
+              <h4>Exclusive Challenge</h4>
+              <ul id="testTaskList2">
+                <li id="itemIntermediate">
+                  <div class="taks-info">
+                    <p>Intermediate + Lv. 35</p>
+                    <span id="mixSpan1">0/1</span>
+                    <div class="task-progress">
+                      <div id="mixDiv1" style="width:0%"></div>
+                    </div>
+                  </div>
+                  <div class="taks-gift" id="singleGift">
+                    <img src="img/gift1.png" alt="">
+                    <span>Koen x250,000</span>
+                  </div>
+                  <a id="mixBtn1" href="javascript:;" class="taks-btn2">COMPLETE NOW</a>
+                </li>
+                <li id="itemAdvanced">
+                  <div class="taks-info">
+                    <p>Advanced + Lv. 35</p>
+                    <span id="mixSpan2">0/1</span>
+                    <div class="task-progress finish">
+                      <div id="mixDiv2" style="width:0%"></div>
+                    </div>
+                  </div>
+                  <div class="taks-gift" id="doubleGift1">
+                    <img src="img/gift1.png" alt="">
+                    <span>Koen x500,000</span>
+                  </div>
+                  <div class="taks-gift" id="doubleGift2">
+                    <img src="img/gift6.png" alt="">
+                    <span>Bonds x450</span>
+                  </div>
+                  <a id="mixBtn2" href="javascript:;" class="taks-btn2">COMPLETE NOW</a>
+                </li>
+                <li id="itemClaimed">
+                  <div class="taks-info">
+                    <p>Completed Badge</p>
+                    <span id="claimedSpan">1/1</span>
+                    <div class="task-progress finish">
+                      <div id="claimedDiv" style="width:100%"></div>
+                    </div>
+                  </div>
+                  <div class="taks-gift">
+                    <img src="img/gift2.png" alt="">
+                    <span>Badge</span>
+                  </div>
+                  <a id="claimedBtn" href="javascript:;" class="taks-finish">Claimed</a>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </body>
+      </html>
+    `);
+
+    // Extract updateChallengeProgressLabels from siteUiSource
+    const updateProgressCode = siteUiSource.slice(
+      siteUiSource.indexOf("  function updateChallengeProgressLabels("),
+      siteUiSource.indexOf("  function updateInspectionNote("),
+    );
+
+    await page.evaluate((code) => {
+      window.eval(code);
+      updateChallengeProgressLabels(true);
+    }, updateProgressCode);
+
+    // 1. Verify height of cards is compact (~38px) - strictly 1 row
+    const intermediateHeight = await page.evaluate(() => {
+      return document.getElementById("itemIntermediate").getBoundingClientRect().height;
+    });
+    assert.ok(
+      intermediateHeight >= 36 && intermediateHeight <= 42,
+      `Challenge card height should be compact ~38px, got: ${intermediateHeight}px`,
+    );
+
+    // 2. Verify [x/10] badge is before [Task name] in visual layout
+    const infoPositions = await page.evaluate(() => {
+      const span = document.querySelector("#itemIntermediate .taks-info > span");
+      const p = document.querySelector("#itemIntermediate .taks-info > p");
+      const spanBox = span.getBoundingClientRect();
+      const pBox = p.getBoundingClientRect();
+      return {
+        spanLeft: spanBox.left,
+        pLeft: pBox.left,
+        sameRow: Math.abs(spanBox.top - pBox.top) < 8,
+      };
+    });
+    assert.equal(infoPositions.sameRow, true, "[x/10] and [Task name] must be on the same horizontal row");
+    assert.ok(infoPositions.spanLeft < infoPositions.pLeft, "[x/10] must be placed before [Task name]");
+
+    // 3. Verify 'Weekly Challenge' and 'Exclusive Challenge' section header labels are removed (display: none)
+    const h4Displays = await page.evaluate(() => {
+      return [...document.querySelectorAll("#wxPatrol .taks-list > h4")].map(
+        (el) => window.getComputedStyle(el).display,
+      );
+    });
+    assert.ok(
+      h4Displays.length >= 2 && h4Displays.every((d) => d === "none"),
+      "All challenge section headers (Weekly / Exclusive) must be hidden (display: none)",
+    );
+
+    // 4. Verify Tactical Challenge Pill Badges:
+    // Placed before rewards in Col 2, lined up vertically across rows, with proper icons, labels, and hover tooltips
+    const badgesInfo = await page.evaluate(() => {
+      const b1 = document.querySelector("#itemClaimable .abi-challenge-badge");
+      const b2 = document.querySelector("#itemIntermediate .abi-challenge-badge");
+      const gift = document.getElementById("singleGift");
+      const b2Rect = b2.getBoundingClientRect();
+      const giftRect = gift.getBoundingClientRect();
+      return {
+        weeklyClass: b1?.className,
+        weeklyText: b1?.textContent?.trim(),
+        weeklyTitle: b1?.getAttribute("title"),
+        weeklyHasIcon: Boolean(b1?.querySelector("svg.abi-badge-icon")),
+        weeklyCol: window.getComputedStyle(b1).gridColumnStart,
+        exclusiveClass: b2?.className,
+        exclusiveText: b2?.textContent?.trim(),
+        exclusiveTitle: b2?.getAttribute("title"),
+        exclusiveHasIcon: Boolean(b2?.querySelector("svg.abi-badge-icon")),
+        exclusiveCol: window.getComputedStyle(b2).gridColumnStart,
+        badgeLeft: b2Rect.left,
+        giftLeft: giftRect.left,
+        alignedVertically: Math.abs(b1.getBoundingClientRect().left - b2Rect.left) < 2,
+      };
+    });
+    assert.ok(badgesInfo.weeklyClass.includes("abi-challenge-badge--weekly"), "Weekly task has weekly badge class");
+    assert.equal(badgesInfo.weeklyText, "Weekly", "Weekly task badge displays 'Weekly'");
+    assert.equal(badgesInfo.weeklyTitle, "Can be done multiple times", "Weekly task tooltip says 'Can be done multiple times'");
+    assert.equal(badgesInfo.weeklyHasIcon, true, "Weekly task badge has icon");
+    assert.equal(badgesInfo.weeklyCol, "2", "Weekly task badge is in Column 2");
+
+    assert.ok(badgesInfo.exclusiveClass.includes("abi-challenge-badge--exclusive"), "Exclusive task has exclusive badge class");
+    assert.equal(badgesInfo.exclusiveText, "Exclusive", "Exclusive task badge displays 'Exclusive'");
+    assert.equal(badgesInfo.exclusiveTitle, "Can be done only once per account", "Exclusive task tooltip says 'Can be done only once per account'");
+    assert.equal(badgesInfo.exclusiveHasIcon, true, "Exclusive task badge has icon");
+    assert.equal(badgesInfo.exclusiveCol, "2", "Exclusive task badge is in Column 2");
+
+    assert.ok(badgesInfo.badgeLeft < badgesInfo.giftLeft, "Pill badge must be placed before rewards with spacing");
+    assert.equal(badgesInfo.alignedVertically, true, "Pill badges in different rows must be vertically lined up");
+
+    // 5. Verify reward columns alignment:
+    // Badges sit in Column 2
+    // Double rewards sit in Column 3 and Column 4
+    // Single reward sits in second reward column (Column 4)
+    // Action buttons sit in Column 5
+    const rewardColumns = await page.evaluate(() => {
+      const getCol = (id) => window.getComputedStyle(document.getElementById(id)).gridColumnStart;
+      const getX = (id) => document.getElementById(id).getBoundingClientRect().left;
+      return {
+        singleCol: getCol("singleGift"),
+        double1Col: getCol("doubleGift1"),
+        double2Col: getCol("doubleGift2"),
+        btnCol: window.getComputedStyle(document.querySelector("#itemIntermediate a.taks-btn2")).gridColumnStart,
+        singleX: getX("singleGift"),
+        double2X: getX("doubleGift2"),
+      };
+    });
+    assert.equal(rewardColumns.double1Col, "3", "First of two rewards must be in first reward column (col 3)");
+    assert.equal(rewardColumns.singleCol, "4", "Single reward must be placed in second reward column (col 4)");
+    assert.equal(rewardColumns.double2Col, "4", "Second of two rewards must be in second reward column (col 4)");
+    assert.equal(rewardColumns.btnCol, "5", "Action button must be placed in column 5");
+    assert.equal(
+      Math.round(rewardColumns.singleX),
+      Math.round(rewardColumns.double2X),
+      "Second column rewards must vertically line up with identical horizontal position",
+    );
+
+    // 6. Verify rogue 'finish' was cleaned up on incomplete Advanced task
+    const advancedProgFinish = await page.evaluate(() => {
+      return document.querySelector("#itemAdvanced .task-progress").classList.contains("finish");
+    });
+    assert.equal(advancedProgFinish, false, "Rogue 'finish' class must be removed from incomplete task");
+
+    // 7. Verify data-abi-task-status attributes
+    const statuses = await page.evaluate(() => ({
+      intermediate: document.getElementById("itemIntermediate").dataset.abiTaskStatus,
+      advanced: document.getElementById("itemAdvanced").dataset.abiTaskStatus,
+      claimable: document.getElementById("itemClaimable").dataset.abiTaskStatus,
+      claimed: document.getElementById("itemClaimed").dataset.abiTaskStatus,
+    }));
+    assert.deepEqual(statuses, {
+      intermediate: "incomplete",
+      advanced: "incomplete",
+      claimable: "claimable",
+      claimed: "claimed",
+    });
+
+    // 8. Verify button styles are identical for incomplete items (no solid vs outline discrepancy)
+    const btnStyles = await page.evaluate(() => {
+      const getStyles = (id) => {
+        const btn = document.querySelector(`#${id} a.taks-btn2`);
+        const cs = window.getComputedStyle(btn);
+        return {
+          backgroundColor: cs.backgroundColor,
+          borderColor: cs.borderColor,
+          color: cs.color,
+          height: cs.height,
+        };
+      };
+      return {
+        intermediate: getStyles("itemIntermediate"),
+        advanced: getStyles("itemAdvanced"),
+      };
+    });
+    assert.equal(
+      btnStyles.intermediate.backgroundColor,
+      btnStyles.advanced.backgroundColor,
+      "Both incomplete buttons must have identical background color",
+    );
+    assert.equal(
+      btnStyles.intermediate.borderColor,
+      btnStyles.advanced.borderColor,
+      "Both incomplete buttons must have identical border color",
+    );
+
+    // 9. Verify claimable button has prominent solid claim styling
+    // Wait for 140ms CSS background-color transition to complete
+    await page.waitForTimeout(200);
+    const claimableBg = await page.evaluate(() => {
+      const btn = document.querySelector("#itemClaimable a.taks-btn2");
+      return window.getComputedStyle(btn).backgroundColor;
+    });
+    assert.equal(
+      claimableBg,
+      "rgb(195, 71, 45)",
+      "Claimable button should have prominent solid crimson background (#c3472d)",
+    );
   } finally {
     await browser?.close();
   }

@@ -87,6 +87,10 @@
       navigationKeys: "Timeline & Review Navigation",
       investigationKeys: "Investigation & View Tools",
       verdictKeys: "Quick Verdicts (Workbench)",
+      challengeWeekly: "Weekly",
+      challengeExclusive: "Exclusive",
+      challengeWeeklyTooltip: "Can be done multiple times",
+      challengeExclusiveTooltip: "Can be done only once per account",
     },
     de: {
       overview: "Datenübersicht",
@@ -173,6 +177,10 @@
       navigationKeys: "Zeitleiste & Navigation",
       investigationKeys: "Ermittlungs- & Anzeigetools",
       verdictKeys: "Schnellurteile (Werkbank)",
+      challengeWeekly: "Wöchentlich",
+      challengeExclusive: "Exklusiv",
+      challengeWeeklyTooltip: "Kann mehrmals abgeschlossen werden",
+      challengeExclusiveTooltip: "Kann nur einmal pro Konto abgeschlossen werden",
     },
     ru: {
       overview: "Обзор данных",
@@ -259,6 +267,10 @@
       navigationKeys: "Таймлайн и навигация",
       investigationKeys: "Инструменты расследования и обзора",
       verdictKeys: "Быстрые вердикты (Верстак)",
+      challengeWeekly: "Еженедельно",
+      challengeExclusive: "Эксклюзивно",
+      challengeWeeklyTooltip: "Можно выполнять несколько раз",
+      challengeExclusiveTooltip: "Можно выполнить только один раз на аккаунт",
     },
     fr: {
       overview: "Aperçu des données",
@@ -345,6 +357,10 @@
       navigationKeys: "Chronologie & Navigation",
       investigationKeys: "Outils d'enquête & d'affichage",
       verdictKeys: "Verdicts rapides (Établi)",
+      challengeWeekly: "Hebdomadaire",
+      challengeExclusive: "Exclusif",
+      challengeWeeklyTooltip: "Peut être accompli plusieurs fois",
+      challengeExclusiveTooltip: "Ne peut être accompli qu'une seule fois par compte",
     },
     es: {
       overview: "Resumen de datos",
@@ -431,6 +447,10 @@
       navigationKeys: "Línea de tiempo y Navegación",
       investigationKeys: "Herramientas de investigación y visualización",
       verdictKeys: "Veredictos rápidos (Mesa de trabajo)",
+      challengeWeekly: "Semanal",
+      challengeExclusive: "Exclusivo",
+      challengeWeeklyTooltip: "Se puede completar varias veces",
+      challengeExclusiveTooltip: "Solo se puede completar una vez por cuenta",
     },
     ja: {
       overview: "データの概要",
@@ -517,6 +537,10 @@
       navigationKeys: "タイムラインとコマ送り",
       investigationKeys: "調査・表示ツール",
       verdictKeys: "クイック判定（作業台）",
+      challengeWeekly: "ウィークリー",
+      challengeExclusive: "限定",
+      challengeWeeklyTooltip: "何度でも達成可能",
+      challengeExclusiveTooltip: "1アカウントにつき1回のみ達成可能",
     },
     "pt-BR": {
       overview: "Visão Geral dos Dados",
@@ -603,6 +627,10 @@
       navigationKeys: "Linha do tempo e Navegação",
       investigationKeys: "Ferramentas de investigação e visualização",
       verdictKeys: "Vereditos rápidos (Bancada)",
+      challengeWeekly: "Semanal",
+      challengeExclusive: "Exclusivo",
+      challengeWeeklyTooltip: "Pode ser concluído várias vezes",
+      challengeExclusiveTooltip: "Pode ser concluído apenas uma vez por conta",
     },
     "zh-Hant": {
       overview: "數據總覽",
@@ -689,6 +717,10 @@
       navigationKeys: "時間軸與逐格導航",
       investigationKeys: "調查與畫面工具",
       verdictKeys: "快速裁決（巡查工作台）",
+      challengeWeekly: "每週",
+      challengeExclusive: "限定",
+      challengeWeeklyTooltip: "可重複多次完成",
+      challengeExclusiveTooltip: "每個帳號僅限完成一次",
     },
     cn: {
       overview: "数据总览",
@@ -775,6 +807,10 @@
       navigationKeys: "时间轴与逐帧导航",
       investigationKeys: "调查与画面工具",
       verdictKeys: "快速裁决（巡查工作台）",
+      challengeWeekly: "每周",
+      challengeExclusive: "限定",
+      challengeWeeklyTooltip: "可重复多次完成",
+      challengeExclusiveTooltip: "每个账号仅限完成一次",
     },
   };
 
@@ -1046,7 +1082,7 @@
 
   const WATERMARK = `
 ================================================================================
-  ABI INSPECTOR EXTENDED \u2014 v3.0.3
+  ABI INSPECTOR EXTENDED \u2014 v3.0.4
   Enhanced Patroller Interface & Local Playback Controls
   Author: deem (https://github.com/mkornela)
   Status: Extension Loaded & Active
@@ -1092,7 +1128,7 @@
     window.__abiExtendedBannerLogged = true;
     try {
       console.log(
-        "%c ABI INSPECTOR EXTENDED %c v3.0.3 %c deem %c ACTIVE \n%cEnhanced Patroller Interface & Local Playback Controls (https://github.com/mkornela)",
+        "%c ABI INSPECTOR EXTENDED %c v3.0.4 %c deem %c ACTIVE \n%cEnhanced Patroller Interface & Local Playback Controls (https://github.com/mkornela)",
         "background: #d49a37; color: #0b0f11; font-weight: bold; font-family: monospace; border-radius: 3px 0 0 3px; padding: 3px 8px; font-size: 11px;",
         "background: #182226; color: #d49a37; font-weight: bold; font-family: monospace; padding: 3px 8px; font-size: 11px; border-left: 1px solid #2a373c;",
         "background: #222f35; color: #c4d0d0; font-family: monospace; padding: 3px 8px; font-size: 11px; border-left: 1px solid #2a373c;",
@@ -2831,10 +2867,10 @@
   function getExtensionVersion() {
     try {
       if (typeof chrome !== "undefined" && chrome?.runtime?.getManifest) {
-        return chrome.runtime.getManifest()?.version || "3.0.3";
+        return chrome.runtime.getManifest()?.version || "3.0.4";
       }
     } catch {}
-    return "3.0.3";
+    return "3.0.4";
   }
 
   function safeStorageGet(defaults) {
@@ -3242,12 +3278,13 @@
     keybindsGrid.append(makeKeybindCategory(safeT("playbackKeys", "Playback & Speed"), [
       { desc: "Play / Pause", keys: "<kbd>Space</kbd> <span class='abi-key-or'>or</span> <kbd>K</kbd>", keywords: "play pause space k" },
       { desc: "Mute / Unmute", keys: "<kbd>Shift + M</kbd>", keywords: "mute sound audio shift m" },
-      { desc: "Slower / Faster Speed", keys: "<kbd>[</kbd> <span class='abi-key-or'>/</span> <kbd>]</kbd>", keywords: "speed slower faster bracket" },
-      { desc: "Reset Speed (1.0×)", keys: "<kbd>\\</kbd>", keywords: "reset speed normal backslash" },
+      { desc: "Slower / Faster Speed", keys: "<kbd>-</kbd> <span class='abi-key-or'>/</span> <kbd>+</kbd>", keywords: "speed slower faster minus plus" },
     ]));
 
     // Timeline & Review Navigation
     keybindsGrid.append(makeKeybindCategory(safeT("navigationKeys", "Timeline & Review Navigation"), [
+      { desc: "A/B Loop Repeat (In / Out)", keys: "<kbd>[</kbd> <span class='abi-key-or'>/</span> <kbd>]</kbd> <span class='abi-key-or'>or</span> <kbd>I</kbd> <span class='abi-key-or'>/</span> <kbd>O</kbd>", keywords: "loop ab repeat in out replay bracket" },
+      { desc: "Clear A/B Loop", keys: "<kbd>\\</kbd>", keywords: "clear loop reset ab backslash" },
       { desc: "Seek Back / Forward 5s", keys: "<kbd>J</kbd> <span class='abi-key-or'>/</span> <kbd>L</kbd> <span class='abi-key-or'>or</span> <kbd>←</kbd> <span class='abi-key-or'>/</span> <kbd>→</kbd>", keywords: "seek back forward jump 5s arrows j l" },
       { desc: "Skip 10s Backward / Forward", keys: "<span class='abi-key-badge'>−10s</span> <span class='abi-key-or'>/</span> <span class='abi-key-badge'>+10s</span>", keywords: "skip 10s toolbar" },
       { desc: "Previous / Next Frame", keys: "<kbd>,</kbd> <span class='abi-key-or'>/</span> <kbd>.</kbd>", keywords: "frame step comma period" },
@@ -3259,6 +3296,7 @@
     keybindsGrid.append(makeKeybindCategory(safeT("investigationKeys", "Investigation & View Tools"), [
       { desc: "Tactical Loupe (2.5× Zoom)", keys: "<kbd>Hold Z</kbd> <span class='abi-key-or'>or</span> <kbd>Right-Click Hold</kbd>", keywords: "zoom loupe magnify z right click" },
       { desc: "Shadow & Gamma Boost", keys: "<kbd>G</kbd>", keywords: "gamma shadow boost brightness g" },
+      { desc: "Vision Filter (Silhouette / Invert)", keys: "<kbd>X</kbd> <span class='abi-key-or'>or</span> <kbd>Shift + G</kbd>", keywords: "vision filter silhouette invert negative thermal x" },
       { desc: "Toggle Fullscreen", keys: "<kbd>F</kbd> <span class='abi-key-or'>or</span> <kbd>Double-Click</kbd>", keywords: "fullscreen cinema expand f dblclick" },
       { desc: "Reload Player Stream", keys: "<span class='abi-key-badge'>Toolbar Button</span>", keywords: "reload refresh stream unfreeze" },
     ]));
@@ -4392,6 +4430,61 @@
   }
 
   function updateChallengeProgressLabels(enabled) {
+    const WEEKLY_CHALLENGE_ICON_SVG =
+      '<svg class="abi-badge-icon" viewBox="0 0 16 16" width="12" height="12" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M2.5 8a5.5 5.5 0 0 1 9.4-3.9L13.5 5.5M13.5 2.5v3h-3"/><path d="M13.5 8a5.5 5.5 0 0 1-9.4 3.9L2.5 10.5M2.5 13.5v-3h3"/></svg>';
+
+    const EXCLUSIVE_CHALLENGE_ICON_SVG =
+      '<svg class="abi-badge-icon" viewBox="0 0 16 16" width="12" height="12" fill="currentColor"><polygon points="8,1 10.2,5.5 15,6.2 11.5,9.6 12.3,14.5 8,12.2 3.7,14.5 4.5,9.6 1,6.2 5.8,5.5"/></svg>';
+
+    function determineChallengeType(row) {
+      const rowId = (row.id || "").toLowerCase();
+      if (rowId.includes("week") || row.querySelector("#weekSpan, #weekDiv, #weekBtn")) {
+        return "weekly";
+      }
+      const nameP = row.querySelector(".taks-info > p")?.textContent || "";
+      if (/weekly patrol|每周巡查|wöchentliche patrouille|patrouille hebdomadaire/i.test(nameP)) {
+        return "weekly";
+      }
+      if (
+        rowId.includes("mix") ||
+        row.querySelector("#mixSpan1, #mixSpan2, #mixDiv1, #mixDiv2, #mixBtn1, #mixBtn2, [id^='stepSpan'], [id^='stepDiv'], [id^='stepBtn']") ||
+        /intermediate|advanced|expert|master|lv\.|初级|中级|高级/i.test(nameP)
+      ) {
+        return "exclusive";
+      }
+      const list = row.closest(".taks-list");
+      const lists = [...document.querySelectorAll("#wxPatrol .taks-list")];
+      const listIndex = lists.indexOf(list);
+      const h4Text = (list?.querySelector("h4")?.textContent || "").toLowerCase();
+      if (
+        h4Text.includes("exclusive") ||
+        h4Text.includes("限定") ||
+        h4Text.includes("exklusiv") ||
+        h4Text.includes("exclusif") ||
+        h4Text.includes("exclusivo") ||
+        listIndex === 1
+      ) {
+        return "exclusive";
+      }
+      return "weekly";
+    }
+
+    function getBadgeText(type) {
+      if (typeof t === "function") {
+        const val = type === "weekly" ? t("challengeWeekly") : t("challengeExclusive");
+        if (val) return val;
+      }
+      return type === "weekly" ? "Weekly" : "Exclusive";
+    }
+
+    function getBadgeTooltip(type) {
+      if (typeof t === "function") {
+        const val = type === "weekly" ? t("challengeWeeklyTooltip") : t("challengeExclusiveTooltip");
+        if (val) return val;
+      }
+      return type === "weekly" ? "Can be done multiple times" : "Can be done only once per account";
+    }
+
     for (const row of document.querySelectorAll("#wxPatrol .taks-list > ul > li")) {
       const button = row.querySelector("a.taks-btn2");
       if (button?.dataset.abiProgressDisplay) {
@@ -4399,14 +4492,70 @@
       }
       const info = row.querySelector(".taks-info");
       const prog = row.querySelector(".task-progress");
+      const existingBadge = row.querySelector(".abi-challenge-badge");
       if (!enabled) {
+        existingBadge?.remove();
         if (prog && info && prog.parentElement !== info) {
           info.appendChild(prog);
         }
+        delete row.dataset.abiTaskStatus;
         continue;
       }
       if (prog && info && prog.parentElement === info) {
         row.appendChild(prog);
+      }
+
+      // Add / update challenge type pill badge
+      const challengeType = determineChallengeType(row);
+      let badge = existingBadge;
+      if (!badge) {
+        badge = document.createElement("div");
+        const firstGift = row.querySelector(".taks-gift");
+        if (firstGift) {
+          row.insertBefore(badge, firstGift);
+        } else {
+          const btn = row.querySelector("a.taks-btn2, a.taks-finish");
+          if (btn) row.insertBefore(badge, btn);
+          else row.appendChild(badge);
+        }
+      }
+      badge.className = `abi-challenge-badge abi-challenge-badge--${challengeType}`;
+      const badgeText = getBadgeText(challengeType);
+      const badgeTooltip = getBadgeTooltip(challengeType);
+      badge.setAttribute("title", badgeTooltip);
+      badge.setAttribute("data-abi-tooltip", badgeTooltip);
+      badge.setAttribute("aria-label", `${badgeText}: ${badgeTooltip}`);
+      const iconSvg = challengeType === "weekly" ? WEEKLY_CHALLENGE_ICON_SVG : EXCLUSIVE_CHALLENGE_ICON_SVG;
+      badge.innerHTML = `${iconSvg}<span class="abi-badge-text">${badgeText}</span>`;
+
+      const finishBtn = row.querySelector("a.taks-finish");
+      const span = row.querySelector(".taks-info > span");
+      const spanText = span?.textContent?.trim() || "";
+      const match = spanText.match(/^(\d+)\s*\/\s*(\d+)$/);
+      const current = match ? parseInt(match[1], 10) : 0;
+      const target = match ? parseInt(match[2], 10) : 0;
+      const isProgressComplete = target > 0 && current >= target;
+
+      const btnText = (button?.textContent || "").trim();
+      const isClaimText = /^(claim|领取|abholen|получить|claim now)$/i.test(btnText);
+      const isClaimable = isProgressComplete || isClaimText;
+
+      if (finishBtn) {
+        row.dataset.abiTaskStatus = "claimed";
+        if (prog && !prog.classList.contains("finish")) {
+          prog.classList.add("finish");
+        }
+      } else if (isClaimable) {
+        row.dataset.abiTaskStatus = "claimable";
+        if (prog && !prog.classList.contains("finish")) {
+          prog.classList.add("finish");
+        }
+      } else {
+        row.dataset.abiTaskStatus = "incomplete";
+        // Clean up rogue static 'finish' class from Tencent HTML template on incomplete tasks
+        if (prog && prog.classList.contains("finish")) {
+          prog.classList.remove("finish");
+        }
       }
     }
   }

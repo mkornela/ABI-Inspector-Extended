@@ -1629,16 +1629,16 @@ html:not([data-abi-site="off"]) {
 
   #wxPatrol .content.task {
     display: flex !important;
-    flex-direction: column;
-    align-items: stretch;
-    gap: clamp(18px, 2.2vw, 28px);
+    flex-direction: column !important;
+    align-items: stretch !important;
+    gap: 2px !important;
     width: 100% !important;
     min-width: 0 !important;
     max-width: 100% !important;
     height: auto !important;
     margin: 0 !important;
-    padding: clamp(14px, 2vw, 24px) clamp(14px, 2vw, 28px) 36px;
-    box-sizing: border-box;
+    padding: 0 16px 8px !important;
+    box-sizing: border-box !important;
     overflow: visible !important;
   }
 
@@ -1650,8 +1650,8 @@ html:not([data-abi-site="off"]) {
     max-width: 100% !important;
     height: auto !important;
     margin: 0 !important;
-    padding: 0;
-    box-sizing: border-box;
+    padding: 0 !important;
+    box-sizing: border-box !important;
     overflow: visible !important;
     border: 0 !important;
     background: transparent !important;
@@ -1665,23 +1665,10 @@ html:not([data-abi-site="off"]) {
     content: none !important;
   }
 
-  #wxPatrol .taks-list > h4 {
-    position: static !important;
-    display: flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-    min-height: 28px;
-    margin: 10px 0 16px !important;
-    padding: 0 !important;
-    border: 0 !important;
-    background: transparent !important;
-    color: #e0e3de !important;
-    font-size: 16px !important;
-    font-weight: 800 !important;
-    letter-spacing: 0.12em !important;
-    line-height: 1.2 !important;
-    text-align: center !important;
-    text-transform: uppercase !important;
+  /* Remove "Weekly Challenge" and "Exclusive Challenge" section labels */
+  #wxPatrol .taks-list > h4,
+  #wxPatrol .taks-list h4 {
+    display: none !important;
   }
 
   #wxPatrol .taks-list > h4::before,
@@ -1692,189 +1679,340 @@ html:not([data-abi-site="off"]) {
 
   #wxPatrol .taks-list > ul {
     display: flex !important;
-    flex-direction: column;
-    gap: 9px;
+    flex-direction: column !important;
+    gap: 3px !important;
     width: 100% !important;
     min-width: 0 !important;
     max-width: 100% !important;
     height: auto !important;
     margin: 0 !important;
-    padding: 0;
+    padding: 0 !important;
     max-height: none !important;
     overflow: visible !important;
-    list-style: none;
+    list-style: none !important;
   }
 
+  /* Compact 1/3-height tactical challenge card - strictly 1 row */
   #wxPatrol .taks-list > ul > li {
-    position: static !important;
+    position: relative !important;
     display: grid !important;
-    grid-template-columns: minmax(0, 1fr) auto auto 128px;
-    grid-template-rows: auto 6px;
-    align-items: center;
-    column-gap: 14px;
-    row-gap: 10px;
+    grid-template-columns: minmax(0, 1fr) 112px 200px 200px 114px !important;
+    grid-template-rows: 38px !important;
+    align-items: center !important;
+    column-gap: 10px !important;
+    row-gap: 0 !important;
     width: 100% !important;
-    min-width: 0;
+    min-width: 0 !important;
     max-width: 100% !important;
-    height: auto !important;
-    min-height: 0;
+    height: 38px !important;
+    min-height: 38px !important;
+    max-height: 38px !important;
     margin: 0 !important;
-    padding: 14px 18px;
-    box-sizing: border-box;
-    border: 1px solid #2a3234 !important;
-    border-left: 3px solid #46504e !important;
-    border-radius: 6px;
-    background: linear-gradient(110deg, #141a1c, #101517 70%);
-    transition: border-color 150ms ease, background-color 150ms ease;
+    padding: 0 12px 0 14px !important;
+    box-sizing: border-box !important;
+    border: 1px solid #232b2d !important;
+    border-left: 3px solid #3c4544 !important;
+    border-radius: 4px !important;
+    background: linear-gradient(90deg, #13181a, #0e1315 80%) !important;
+    overflow: hidden !important;
+    transition: border-color 150ms ease, background-color 150ms ease !important;
   }
 
-  #wxPatrol .taks-list > ul > li:has(.task-progress.finish),
+  #wxPatrol .taks-list > ul > li[data-abi-task-status="claimable"],
+  #wxPatrol .taks-list > ul > li[data-abi-task-status="claimed"],
   #wxPatrol .taks-list > ul > li:has(a.taks-finish) {
     border-left-color: #5a7a2e !important;
   }
 
   #wxPatrol .taks-list > ul > li:hover {
-    border-color: #46545a !important;
+    border-color: #3f4c50 !important;
     border-left-color: var(--abi-accent) !important;
-    background-color: #151c1f;
+    background: linear-gradient(90deg, #182023, #111719 80%) !important;
   }
 
-  #wxPatrol .taks-list > ul > li:has(.task-progress.finish):hover,
+  #wxPatrol .taks-list > ul > li[data-abi-task-status="claimable"]:hover,
+  #wxPatrol .taks-list > ul > li[data-abi-task-status="claimed"]:hover,
   #wxPatrol .taks-list > ul > li:has(a.taks-finish):hover {
     border-left-color: #7ab03c !important;
   }
 
+  /* Column 1: [x/10] [Task name] */
   #wxPatrol .taks-info {
+    grid-column: 1 !important;
+    grid-row: 1 !important;
     position: static !important;
-    grid-column: 1;
-    grid-row: 1;
     display: flex !important;
-    flex-direction: column !important;
-    justify-content: center !important;
-    align-items: flex-start !important;
-    gap: 4px !important;
+    flex-direction: row !important;
+    flex-wrap: nowrap !important;
+    align-items: center !important;
+    gap: 10px !important;
     min-width: 0 !important;
-  }
-
-  #wxPatrol .taks-info > p {
-    position: static !important;
-    margin: 0 !important;
-    padding: 0;
-    color: #dde2de;
-    font-size: 14px;
-    font-weight: 700;
-    line-height: 1.25;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-  }
-
-  #wxPatrol .taks-info > span {
-    position: static !important;
-    margin: 0 !important;
-    color: #8fa09d;
-    font-size: 12px;
-    font-weight: 600;
-    line-height: 1.2;
-    font-variant-numeric: tabular-nums;
-    white-space: nowrap;
-    letter-spacing: 0.02em;
-  }
-
-  /* Progress bar: row 2, spans all 5 columns */
-  #wxPatrol .task-progress {
-    grid-column: 1 / -1;
-    grid-row: 2;
-    position: static !important;
-    display: block !important;
     width: 100% !important;
-    height: 6px !important;
+    height: 100% !important;
+    min-height: 0 !important;
     margin: 0 !important;
     padding: 0 !important;
-    overflow: hidden;
-    border-radius: 999px;
-    border: 0;
-    background: #0f1618 !important;
-    box-shadow: inset 0 1px 2px rgba(0,0,0,0.5);
-    box-sizing: border-box;
+    overflow: hidden !important;
+    box-sizing: border-box !important;
+  }
+
+  /* Badge [x/10] comes FIRST */
+  #wxPatrol .taks-info > span {
+    order: 1 !important;
+    position: static !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    min-width: 48px !important;
+    height: 20px !important;
+    padding: 0 6px !important;
+    margin: 0 !important;
+    box-sizing: border-box !important;
+    border-radius: 3px !important;
+    background: rgba(255, 255, 255, 0.05) !important;
+    border: 1px solid rgba(255, 255, 255, 0.08) !important;
+    color: #8fa09d !important;
+    font-size: 11px !important;
+    font-weight: 700 !important;
+    line-height: 1 !important;
+    font-variant-numeric: tabular-nums !important;
+    white-space: nowrap !important;
+    letter-spacing: 0.02em !important;
+    flex: none !important;
+  }
+
+  #wxPatrol .taks-list > ul > li[data-abi-task-status="claimable"] .taks-info > span {
+    color: #a9d65e !important;
+    border-color: rgba(169, 214, 94, 0.35) !important;
+    background: rgba(169, 214, 94, 0.12) !important;
+  }
+
+  #wxPatrol .taks-list > ul > li[data-abi-task-status="claimed"] .taks-info > span,
+  #wxPatrol .taks-list > ul > li:has(a.taks-finish) .taks-info > span {
+    color: #728c4e !important;
+    border-color: rgba(114, 140, 78, 0.25) !important;
+    background: rgba(114, 140, 78, 0.06) !important;
+  }
+
+  /* Task name comes SECOND - vertically centered without bottom padding clipping */
+  #wxPatrol .taks-info > p,
+  #wxPatrol .taks-info p,
+  #wxPatrol .taks-list p {
+    order: 2 !important;
+    position: static !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    align-self: center !important;
+    height: auto !important;
+    min-height: 0 !important;
+    max-height: 22px !important;
+    margin: 0 !important;
+    margin-top: 0 !important;
+    margin-bottom: 0 !important;
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+    padding: 0 !important;
+    padding-top: 0 !important;
+    padding-bottom: 0 !important;
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+    border: 0 !important;
+    color: #dde2de !important;
+    font-size: 13px !important;
+    font-weight: 700 !important;
+    line-height: 1 !important;
+    white-space: nowrap !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+    letter-spacing: 0.01em !important;
+    flex: 1 1 auto !important;
+    min-width: 0 !important;
+    box-sizing: border-box !important;
+    vertical-align: middle !important;
+  }
+
+  /* Progress bar: sleek 2px hairline bar along the bottom edge of the card */
+  #wxPatrol .task-progress {
+    position: absolute !important;
+    bottom: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    display: block !important;
+    width: 100% !important;
+    height: 2px !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    overflow: hidden !important;
+    border-radius: 0 !important;
+    border: 0 !important;
+    background: rgba(255, 255, 255, 0.04) !important;
+    box-shadow: none !important;
+    box-sizing: border-box !important;
+    pointer-events: none !important;
+    z-index: 1 !important;
   }
 
   #wxPatrol .task-progress > div {
     display: block !important;
     width: 0;
     height: 100% !important;
-    min-height: 0;
+    min-height: 0 !important;
     margin: 0 !important;
-    border: 0;
-    border-radius: 999px;
-    background: linear-gradient(90deg, #bd452e, #f06b4c);
-    box-shadow: 0 0 8px #e66b4e44;
-    transition: width 500ms cubic-bezier(0.2, 0.75, 0.25, 1);
+    border: 0 !important;
+    border-radius: 0 !important;
+    background: linear-gradient(90deg, #bd452e, #f06b4c) !important;
+    box-shadow: 0 0 6px rgba(240, 107, 76, 0.4) !important;
+    transition: width 400ms cubic-bezier(0.2, 0.75, 0.25, 1) !important;
   }
 
-  #wxPatrol .task-progress.finish > div {
-    background: linear-gradient(90deg, #8aaf45, #b7d965);
-    box-shadow: 0 0 8px #a9d65e44;
+  #wxPatrol .task-progress.finish > div,
+  #wxPatrol .taks-list > ul > li[data-abi-task-status="claimable"] .task-progress > div,
+  #wxPatrol .taks-list > ul > li[data-abi-task-status="claimed"] .task-progress > div {
+    background: linear-gradient(90deg, #7da33d, #a9d65e) !important;
+    box-shadow: 0 0 6px rgba(169, 214, 94, 0.4) !important;
   }
 
-  /* Reward pills: horizontal inline-flex, not vertical column */
+  /* Column 2: Challenge Type Pill Badge */
+  #wxPatrol .abi-challenge-badge {
+    grid-column: 2 !important;
+    grid-row: 1 !important;
+    justify-self: start !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 6px !important;
+    height: 22px !important;
+    padding: 0 10px !important;
+    margin: 0 !important;
+    margin-right: 12px !important;
+    box-sizing: border-box !important;
+    border-radius: 11px !important;
+    font-size: 11px !important;
+    font-weight: 700 !important;
+    line-height: 1 !important;
+    white-space: nowrap !important;
+    letter-spacing: 0.02em !important;
+    cursor: help !important;
+    user-select: none !important;
+    transition: background-color 150ms ease, border-color 150ms ease, color 150ms ease, box-shadow 150ms ease !important;
+  }
+
+  #wxPatrol .abi-challenge-badge .abi-badge-icon {
+    display: inline-block !important;
+    flex: 0 0 12px !important;
+    width: 12px !important;
+    height: 12px !important;
+    vertical-align: middle !important;
+  }
+
+  #wxPatrol .abi-challenge-badge .abi-badge-text {
+    display: inline !important;
+    line-height: 1 !important;
+    white-space: nowrap !important;
+  }
+
+  /* Weekly challenge pill: tactical slate-blue / cyan */
+  #wxPatrol .abi-challenge-badge--weekly {
+    background: rgba(86, 172, 240, 0.08) !important;
+    border: 1px solid rgba(86, 172, 240, 0.28) !important;
+    color: #79b7ea !important;
+  }
+
+  #wxPatrol .abi-challenge-badge--weekly .abi-badge-icon {
+    color: #79b7ea !important;
+  }
+
+  #wxPatrol .abi-challenge-badge--weekly:hover {
+    background: rgba(86, 172, 240, 0.16) !important;
+    border-color: rgba(86, 172, 240, 0.52) !important;
+    color: #a0d1fa !important;
+    box-shadow: 0 0 8px rgba(86, 172, 240, 0.2) !important;
+  }
+
+  /* Exclusive challenge pill: tactical amber / gold */
+  #wxPatrol .abi-challenge-badge--exclusive {
+    background: rgba(235, 178, 48, 0.08) !important;
+    border: 1px solid rgba(235, 178, 48, 0.3) !important;
+    color: #e5b64c !important;
+  }
+
+  #wxPatrol .abi-challenge-badge--exclusive .abi-badge-icon {
+    color: #e5b64c !important;
+  }
+
+  #wxPatrol .abi-challenge-badge--exclusive:hover {
+    background: rgba(235, 178, 48, 0.16) !important;
+    border-color: rgba(235, 178, 48, 0.55) !important;
+    color: #fad773 !important;
+    box-shadow: 0 0 8px rgba(235, 178, 48, 0.2) !important;
+  }
+
+  /* Reward columns:
+     Two lined up vertically columns (Col 3 and Col 4).
+     If only one reward is present, it sits in the second column (Col 4).
+     If two rewards are present, first sits in Col 3, second in Col 4. */
   #wxPatrol .taks-gift {
     position: static !important;
+    grid-column: 4 !important;
+    grid-row: 1 !important;
+    justify-self: stretch !important;
     display: inline-flex !important;
     flex-direction: row !important;
     align-items: center !important;
     justify-content: center !important;
-    gap: 6px;
-    flex: none;
-    grid-column: 3;
-    grid-row: 1;
-    height: 34px;
-    min-width: 0;
+    gap: 6px !important;
+    flex: none !important;
+    height: 24px !important;
+    width: 100% !important;
+    max-width: 200px !important;
     margin: 0 !important;
-    padding: 0 10px !important;
-    box-sizing: border-box;
-    border-radius: 5px;
-    border: 1px solid rgba(255,255,255,0.07);
-    background: rgba(255,255,255,0.04);
-    color: #c8d0c8;
-    font-size: 12px;
-    font-weight: 700;
-    line-height: 1;
-    white-space: nowrap;
+    padding: 0 8px !important;
+    box-sizing: border-box !important;
+    border-radius: 4px !important;
+    border: 1px solid rgba(255, 255, 255, 0.07) !important;
+    background: rgba(255, 255, 255, 0.035) !important;
+    color: #c4cdc7 !important;
+    font-size: 11px !important;
+    font-weight: 700 !important;
+    line-height: 1 !important;
+    white-space: nowrap !important;
+    overflow: hidden !important;
   }
 
-  /* When 2 gifts: first sits in col 2, second sits in col 3.
-     When 1 gift: it gets default col 3 (flush against button in col 4). */
+  /* Two rewards: first reward sits in column 3 */
   #wxPatrol .taks-gift:has(+ .taks-gift) {
-    grid-column: 2;
-    grid-row: 1;
+    grid-column: 3 !important;
+    grid-row: 1 !important;
   }
 
+  /* Two rewards: second reward sits in column 4 */
   #wxPatrol .taks-gift + .taks-gift {
-    grid-column: 3;
-    grid-row: 1;
+    grid-column: 4 !important;
+    grid-row: 1 !important;
   }
 
   #wxPatrol .taks-gift > img {
-    display: block;
-    flex: 0 0 18px;
-    width: 18px !important;
-    height: 18px !important;
-    object-fit: contain;
-    image-rendering: auto;
+    display: block !important;
+    flex: 0 0 15px !important;
+    width: 15px !important;
+    height: 15px !important;
+    object-fit: contain !important;
+    image-rendering: auto !important;
   }
 
   #wxPatrol .taks-gift > span {
     position: static !important;
-    display: inline;
+    display: inline !important;
     width: auto !important;
-    min-width: 0;
+    min-width: 0 !important;
     margin: 0 !important;
-    color: #c8d0c8;
-    font-size: 12px;
-    font-weight: 700;
-    line-height: 1;
-    white-space: nowrap;
+    color: #c4cdc7 !important;
+    font-size: 11px !important;
+    font-weight: 700 !important;
+    line-height: 1 !important;
+    white-space: nowrap !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
   }
 
   #wxPatrol .taks-gift > span.abi-compact-reward {
@@ -1884,8 +2022,8 @@ html:not([data-abi-site="off"]) {
   #wxPatrol .taks-gift > span.abi-compact-reward::before {
     content: attr(data-abi-reward-display);
     display: inline;
-    color: #c8d0c8;
-    font-size: 12px;
+    color: #c4cdc7;
+    font-size: 11px;
     font-weight: 700;
     line-height: 1;
     white-space: nowrap;
@@ -1896,69 +2034,70 @@ html:not([data-abi-site="off"]) {
     font-style: normal;
   }
 
-  /* Action button */
+  /* Column 5: Action button */
   #wxPatrol a.taks-btn2,
   #wxPatrol a.taks-finish {
-    grid-column: 4;
-    grid-row: 1;
+    grid-column: 5 !important;
+    grid-row: 1 !important;
     position: static !important;
     display: inline-flex !important;
-    align-items: center;
-    justify-content: center;
-    width: 100% !important;
-    height: 34px !important;
+    align-items: center !important;
+    justify-content: center !important;
+    width: 114px !important;
+    min-width: 114px !important;
+    max-width: 114px !important;
+    height: 24px !important;
     margin: 0 !important;
-    padding: 0 10px !important;
-    box-sizing: border-box;
-    border-radius: 5px;
-    font-size: 11px;
-    font-weight: 800;
-    letter-spacing: 0.07em;
-    line-height: 1.1;
-    text-align: center;
-    text-decoration: none;
-    text-transform: uppercase;
-    transition: color 140ms ease, border-color 140ms ease, background-color 140ms ease, box-shadow 140ms ease;
+    padding: 0 8px !important;
+    box-sizing: border-box !important;
+    border-radius: 4px !important;
+    font-size: 10px !important;
+    font-weight: 800 !important;
+    letter-spacing: 0.06em !important;
+    line-height: 1 !important;
+    text-align: center !important;
+    text-decoration: none !important;
+    text-transform: uppercase !important;
+    flex: none !important;
+    transition: color 140ms ease, border-color 140ms ease, background-color 140ms ease, box-shadow 140ms ease !important;
   }
 
-  #wxPatrol a.taks-btn2,
-  #wxPatrol a.taks-btn2:link,
-  #wxPatrol a.taks-btn2:visited {
+  #wxPatrol a.taks-btn2 {
     border: 1px solid var(--abi-accent) !important;
     color: #f1eee8 !important;
-    background: rgba(195, 71, 45, 0.18) !important;
-    cursor: pointer;
+    background: rgba(195, 71, 45, 0.16) !important;
+    box-shadow: none !important;
+    cursor: pointer !important;
   }
 
   #wxPatrol a.taks-btn2:hover {
     border-color: #f07859 !important;
-    color: #fff !important;
-    background: rgba(195, 71, 45, 0.38) !important;
-    box-shadow: 0 0 10px rgba(195, 71, 45, 0.3);
+    color: #ffffff !important;
+    background: rgba(195, 71, 45, 0.36) !important;
+    box-shadow: 0 0 8px rgba(195, 71, 45, 0.3) !important;
   }
 
-  /* When challenge is completed and ready to claim, make button prominent */
-  #wxPatrol .taks-list > ul > li:has(.task-progress.finish) a.taks-btn2 {
+  /* Prominent claim state: ONLY when task is actually ready to claim */
+  #wxPatrol .taks-list > ul > li[data-abi-task-status="claimable"] a.taks-btn2 {
     border-color: #f07859 !important;
     color: #ffffff !important;
     background: #c3472d !important;
-    box-shadow: 0 0 12px rgba(195, 71, 45, 0.4);
+    box-shadow: 0 0 10px rgba(195, 71, 45, 0.45) !important;
   }
 
-  #wxPatrol .taks-list > ul > li:has(.task-progress.finish) a.taks-btn2:hover {
+  #wxPatrol .taks-list > ul > li[data-abi-task-status="claimable"] a.taks-btn2:hover {
     background: #d85438 !important;
     border-color: #ff8e72 !important;
-    box-shadow: 0 0 16px rgba(230, 107, 78, 0.55);
+    box-shadow: 0 0 14px rgba(230, 107, 78, 0.6) !important;
   }
 
-  #wxPatrol a.taks-finish,
-  #wxPatrol a.taks-finish:link,
-  #wxPatrol a.taks-finish:visited {
+  #wxPatrol a.taks-finish {
     border: 1px solid rgba(90, 122, 46, 0.5) !important;
-    color: #a9d65e !important;
-    background: rgba(169, 214, 94, 0.07) !important;
-    cursor: default;
-    pointer-events: none;
+    color: #8bb84d !important;
+    background: rgba(139, 184, 77, 0.08) !important;
+    box-shadow: none !important;
+    cursor: default !important;
+    pointer-events: none !important;
   }
 
   @media (prefers-reduced-motion: reduce) {
@@ -4186,14 +4325,13 @@ html:not([data-abi-site="off"]) {
     }
 
     #wxPatrol .taks-list > ul > li {
-      grid-template-columns: minmax(0, 1fr) auto auto auto 110px;
-      column-gap: 8px;
-      padding: 12px 14px;
+      padding: 0 10px !important;
+      gap: 8px !important;
     }
 
     #wxPatrol .taks-gift {
-      padding: 0 8px !important;
-      font-size: 11px;
+      padding: 0 6px !important;
+      font-size: 10px !important;
     }
   }
 
@@ -4317,81 +4455,36 @@ html:not([data-abi-site="off"]) {
     }
 
     #wxPatrol .taks-list > h4 {
-      min-height: 21px;
-      margin-bottom: 5px !important;
-      font-size: 16px;
+      display: none !important;
     }
 
     #wxPatrol .taks-list > ul > li {
-      grid-template-columns: minmax(0, 1fr) auto;
-      grid-template-rows: auto 6px auto auto;
-      column-gap: 10px;
-      row-gap: 8px;
-      padding: 12px 14px;
+      height: auto !important;
+      min-height: 38px !important;
+      max-height: none !important;
+      flex-wrap: wrap !important;
+      padding: 6px 10px !important;
+      gap: 6px 8px !important;
     }
 
-    #wxPatrol .taks-info > p {
-      grid-column: 1;
-      grid-row: 1;
-      font-size: 14px;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-
-    #wxPatrol .taks-info > span {
-      grid-column: 2;
-      grid-row: 1;
-      justify-self: end;
-      align-self: center;
-      font-size: 13px;
-    }
-
-    #wxPatrol .task-progress {
-      grid-column: 1 / -1;
-      grid-row: 2;
-      height: 6px !important;
+    #wxPatrol .taks-info {
+      flex: 1 1 100% !important;
+      justify-content: space-between !important;
     }
 
     #wxPatrol .taks-gift {
-      grid-column: 1 / -1 !important;
-      grid-row: 3 !important;
-      justify-self: start !important;
-      min-width: 0;
-      height: 30px;
-      padding: 0 8px !important;
-      font-size: 11px;
-      gap: 6px;
-    }
-
-    #wxPatrol .taks-gift:has(+ .taks-gift) {
-      grid-column: 1 !important;
-      grid-row: 3 !important;
-      justify-self: start !important;
-    }
-
-    #wxPatrol .taks-gift + .taks-gift {
-      grid-column: 2 !important;
-      grid-row: 3 !important;
-      justify-self: end !important;
-    }
-
-    #wxPatrol .taks-gift > img {
-      width: 16px !important;
-      height: 16px !important;
-      flex: 0 0 16px;
+      height: 22px !important;
+      padding: 0 6px !important;
+      font-size: 10px !important;
     }
 
     #wxPatrol a.taks-btn2,
     #wxPatrol a.taks-finish {
-      grid-column: 1 / -1;
-      grid-row: 4;
-      justify-self: stretch;
-      width: 100% !important;
-      height: 34px !important;
-      margin-top: 2px !important;
-      padding: 0 10px !important;
-      font-size: 12px;
+      width: 96px !important;
+      min-width: 96px !important;
+      max-width: 96px !important;
+      height: 22px !important;
+      font-size: 9px !important;
     }
 
     :is(#xcWorking > .content.video, .content.video:has(#drillButton)) > .info-team {

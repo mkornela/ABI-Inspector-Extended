@@ -60,6 +60,14 @@ function main() {
       viewBox: "0 0 512 512",
       d: "M256 160c-53 0-96 43-96 96s43 96 96 96 96-43 96-96-43-96-96-96zm0-96c13.3 0 24-10.7 24-24V16c0-13.3-10.7-24-24-24s-24 10.7-24 24v24c0 13.3 10.7 24 24 24zm0 384c-13.3 0-24 10.7-24 24v24c0 13.3 10.7 24 24 24s24-10.7 24-24v-24c0-13.3-10.7-24-24-24zm192-216h-24c-13.3 0-24 10.7-24 24s10.7 24 24 24h24c13.3 0 24-10.7 24-24s-10.7-24-24-24zM96 256c0-13.3-10.7-24-24-24H24c-13.3 0-24 10.7-24 24s10.7 24 24 24h48c13.3 0 24-10.7 24-24zm297.9-141.9c-9.4-9.4-24.6-9.4-33.9 0s-9.4 24.6 0 33.9l17 17c9.4 9.4 24.6 9.4 33.9 0s9.4-24.6 0-33.9l-17-17zm-273.8 274c-9.4-9.4-24.6-9.4-33.9 0s-9.4 24.6 0 33.9l17 17c9.4 9.4 24.6 9.4 33.9 0s9.4-24.6 0-33.9l-17-17zm0-274l-17 17c-9.4 9.4-9.4 24.6 0 33.9s24.6 9.4 33.9 0l17-17c9.4-9.4 9.4-24.6 0-33.9s-24.6-9.4-33.9 0zm273.8 274l-17 17c-9.4 9.4-9.4 24.6 0 33.9s24.6 9.4 33.9 0l17-17c9.4-9.4 9.4-24.6 0-33.9s-24.6-9.4-33.9 0z",
     },
+    repeat: {
+      viewBox: "0 0 512 512",
+      d: "M0 224c0 17.7 14.3 32 32 32s32-14.3 32-32c0-53 43-96 96-96l160 0 0 32c0 12.9 7.8 24.6 19.8 29.6s25.7 2.2 34.9-6.9l64-64c12.5-12.5 12.5-32.8 0-45.3l-64-64c-9.2-9.2-22.9-11.9-34.9-6.9S320 19.1 320 32l0 32L160 64C71.6 64 0 135.6 0 224zm512 64c0-17.7-14.3-32-32-32s-32 14.3-32 32c0 53-43 96-96 96l-160 0 0-32c0-12.9-7.8-24.6-19.8-29.6s-25.7-2.2-34.9 6.9l-64 64c-12.5 12.5-12.5 32.8 0 45.3l64 64c9.2 9.2 22.9 11.9 34.9 6.9s19.8-16.7 19.8-29.6l0-32 160 0c88.4 0 160-71.6 160-160z",
+    },
+    vision: {
+      viewBox: "0 0 576 512",
+      d: "M288 32c-80.8 0-145.5 36.8-192.6 80.6C48.6 156 17.3 208 2.5 243.7c-3.3 7.9-3.3 16.7 0 24.6C17.3 304 48.6 356 95.4 399.4C142.5 443.2 207.2 480 288 480s145.5-36.8 192.6-80.6c46.9-43.5 78.1-95.4 93-131.1c3.3-7.9 3.3-16.7 0-24.6c-14.9-35.7-46.2-87.7-93-131.1C433.5 68.8 368.8 32 288 32zM144 256a144 144 0 1 1 288 0 144 144 0 1 1 -288 0zm144-64c0 35.3-28.7 64-64 64c-7.1 0-13.9-1.2-20.3-3.3c-5.5-1.8-11.9 1.6-11.7 7.4c.3 6.9 1.3 13.8 3.2 20.6c11.9 44.4 52.4 75.3 98.8 75.3c56.3 0 102-45.7 102-102c0-46.4-30.9-86.9-75.3-98.8c-6.8-1.9-13.7-2.9-20.6-3.2c-5.8-.2-9.2 6.2-7.4 11.7c2.1 6.4 3.3 13.2 3.3 20.3z",
+    },
   };
   const styles = `
     :host { display:block; color:var(--abi-text,#e0e3de); font-family:var(--abi-font,"Arial Narrow",sans-serif); font-weight:var(--abi-weight,700); letter-spacing:var(--abi-tracking,0px); color-scheme:dark; }
@@ -118,6 +126,41 @@ function main() {
       transform: translate(-50%, -50%) scale(1.3);
       background: var(--abi-accent,#fbbf24);
       box-shadow: 0 0 8px var(--abi-accent-glow,rgba(251,191,36,1));
+    }
+    .loop-range {
+      position: absolute;
+      top: 1px;
+      bottom: 1px;
+      background: rgba(var(--abi-accent-rgb,245,158,11),0.3);
+      border-left: 2px solid var(--abi-accent,#f59e0b);
+      border-right: 2px solid var(--abi-accent,#f59e0b);
+      border-radius: 2px;
+      pointer-events: none;
+      z-index: 2;
+      box-shadow: 0 0 6px var(--abi-accent-glow,rgba(245,158,11,0.5));
+    }
+    .loop-range::before, .loop-range::after {
+      position: absolute;
+      top: -14px;
+      font-size: 9px;
+      font-family: ui-monospace, "Cascadia Mono", monospace;
+      font-weight: 800;
+      line-height: 1;
+      padding: 1px 3px;
+      border-radius: 2px;
+      background: var(--abi-accent,#f59e0b);
+      color: #0b0f11;
+      letter-spacing: 0;
+    }
+    .loop-range::before {
+      content: "A";
+      left: 0;
+      transform: translateX(-50%);
+    }
+    .loop-range::after {
+      content: "B";
+      right: 0;
+      transform: translateX(50%);
     }
     .hover-badge {
       position: absolute;
@@ -416,7 +459,7 @@ function main() {
     }
 
     /* Right Group Action Buttons */
-    #mute, #fullscreen, #reload, #previous, #next, #pinButton, #gamma {
+    #mute, #fullscreen, #reload, #previous, #next, #pinButton, #gamma, #loopBtn, #visionBtn {
       width: 30px;
       height: 30px;
       padding: 0;
@@ -427,6 +470,18 @@ function main() {
     #pinButton:hover {
       color: var(--abi-accent,#fbbf24);
       border-color: var(--abi-accent-glow,rgba(245,158,11,0.4));
+    }
+    #loopBtn.active {
+      color: var(--abi-accent,#fbbf24);
+      border-color: var(--abi-accent,#f59e0b);
+      background: rgba(var(--abi-accent-rgb,245,158,11),0.18);
+      box-shadow: 0 0 8px var(--abi-accent-glow,rgba(245,158,11,0.3));
+    }
+    #visionBtn.active {
+      color: #38bdf8;
+      border-color: rgba(56,189,248,0.6);
+      background: rgba(56,189,248,0.18);
+      box-shadow: 0 0 8px rgba(56,189,248,0.35);
     }
     #gamma.active {
       color: #fbbf24;
@@ -678,6 +733,7 @@ function main() {
         <div class="timeline-bar">
           <input id="seek" type="range" min="0" max="1" step="0.01" value="0" aria-label="Video position">
           <div id="timelinePins" class="timeline-pins"></div>
+          <div id="loopRange" class="loop-range" hidden></div>
           <div id="hoverBadge" class="hover-badge" aria-hidden="true">00:00</div>
         </div>
       </div>
@@ -708,16 +764,18 @@ function main() {
                 <button type="button" class="speed-menu-opt" data-speed="2">2.0×</button>
               </div>
               <div class="speed-menu-stepper">
-                <button id="slower" class="speed-step-btn" title="Slower ([)" aria-label="Slower playback ([)">−</button>
+                <button id="slower" class="speed-step-btn" title="Slower (-)" aria-label="Slower playback (-)">−</button>
                 <span class="speed-step-label">Fine Tune</span>
-                <button id="faster" class="speed-step-btn" title="Faster (])" aria-label="Faster playback (])">+</button>
+                <button id="faster" class="speed-step-btn" title="Faster (+)" aria-label="Faster playback (+)">+</button>
               </div>
             </div>
           </div>
           <div class="group volume-group" role="group" aria-label="Audio"><button id="mute" title="Mute (Shift+M or icon)" aria-pressed="false">Mute</button><input id="volume" type="range" min="0" max="1" step="0.01" value="1" aria-label="Volume"></div>
           <div class="group tool-group" role="group" aria-label="Tools">
             <button id="pinButton" title="Drop moment bookmark (M)" aria-label="Drop moment bookmark (M)">Bookmark</button>
+            <button id="loopBtn" title="A/B Loop Repeat: Set In ([) / Out (]); Clear (\)" aria-label="A/B Loop Repeat: Set In ([) / Out (]); Clear (\)">Loop</button>
             <button id="gamma" title="Shadow & Gamma Boost (G)" aria-label="Shadow & Gamma Boost (G)">Gamma</button>
+            <button id="visionBtn" title="Vision Filter: Silhouette, Invert, Thermal (X or Shift+G)" aria-label="Vision Filter: Silhouette, Invert, Thermal (X or Shift+G)">Vision</button>
             <button id="reload" title="Reload player" aria-label="Reload player">Reload</button>
             <button id="fullscreen" title="Fullscreen (F); Escape to exit" aria-pressed="false">Fullscreen</button>
           </div>
@@ -764,7 +822,9 @@ function main() {
     );
     decorate(ui.mute, "volume-high", "", "Mute (Shift+M or icon)");
     decorate(ui.pinButton, "bookmark", "", "Drop moment bookmark (M)");
+    decorate(ui.loopBtn, "repeat", "", "A/B Loop Repeat: Set In ([) / Out (]); Clear (\\)");
     decorate(ui.gamma, "gamma", "", "Shadow & Gamma Boost (G)");
+    decorate(ui.visionBtn, "vision", "", "Vision Filter: Silhouette, Invert, Thermal (X or Shift+G)");
     decorate(ui.reload, "reload", "", "Reload player");
     player.before(shell);
     // Keep the complete original subtree together, including all overlays.
@@ -1304,9 +1364,7 @@ function main() {
       try {
         localStorage.setItem("abi-gamma-mode", mode);
       } catch {}
-      if (video) {
-        video.style.filter = GAMMA_PRESETS[mode].filter;
-      }
+      updateVideoFilter();
       if (ui.gamma) {
         ui.gamma.classList.toggle("active", mode !== "normal");
         ui.gamma.setAttribute("aria-pressed", String(mode !== "normal"));
@@ -1323,8 +1381,185 @@ function main() {
       applyGamma(nextMode, true);
     }
 
+    let visionMode = "normal";
+    try {
+      const savedVision = localStorage.getItem("abi-vision-mode");
+      if (savedVision && ["silhouette", "invert", "thermal"].includes(savedVision)) {
+        visionMode = savedVision;
+      }
+    } catch {}
+
+    const VISION_PRESETS = {
+      normal: {
+        filter: "",
+        name: "Normal",
+      },
+      silhouette: {
+        filter: "contrast(2.4) brightness(1.1) saturate(0.25)",
+        name: "Silhouette Contrast",
+      },
+      invert: {
+        filter: "invert(1) hue-rotate(180deg) contrast(1.35) brightness(1.05)",
+        name: "Negative Invert",
+      },
+      thermal: {
+        filter: "grayscale(1) contrast(2.8) brightness(1.2)",
+        name: "Monochrome Thermal",
+      },
+    };
+
+    function updateVideoFilter() {
+      if (!video) return;
+      const filters = [];
+      if (gammaMode !== "normal" && GAMMA_PRESETS[gammaMode]?.filter) {
+        filters.push(GAMMA_PRESETS[gammaMode].filter);
+      }
+      if (visionMode !== "normal" && VISION_PRESETS[visionMode]?.filter) {
+        filters.push(VISION_PRESETS[visionMode].filter);
+      }
+      video.style.filter = filters.join(" ");
+    }
+
+    function applyVision(mode, announce = false) {
+      if (!VISION_PRESETS[mode]) mode = "normal";
+      visionMode = mode;
+      shell.dataset.abiVision = mode;
+      try {
+        localStorage.setItem("abi-vision-mode", mode);
+      } catch {}
+      updateVideoFilter();
+      if (ui.visionBtn) {
+        ui.visionBtn.classList.toggle("active", mode !== "normal");
+        ui.visionBtn.setAttribute("aria-pressed", String(mode !== "normal"));
+        ui.visionBtn.title = `Vision Filter: ${VISION_PRESETS[mode].name} (X or Shift+G)`;
+      }
+      if (announce) {
+        notice(`Vision: ${VISION_PRESETS[mode].name}`);
+      }
+    }
+
+    function toggleVision() {
+      selectVideo();
+      const modes = ["normal", "silhouette", "invert", "thermal"];
+      const nextIdx = (modes.indexOf(visionMode) + 1) % modes.length;
+      applyVision(modes[nextIdx], true);
+    }
+
     shell.toggleGamma = toggleGamma;
     shell.applyGamma = applyGamma;
+    shell.toggleVision = toggleVision;
+    shell.applyVision = applyVision;
+
+    let loopStart = null;
+    let loopEnd = null;
+    let loopActive = false;
+
+    function renderLoopUI() {
+      if (!ui.loopRange) return;
+      const hasBoth = loopStart !== null && loopEnd !== null && loopEnd > loopStart;
+      if (hasBoth && finite()) {
+        const dur = video.duration;
+        const leftPct = Math.max(0, Math.min(100, (loopStart / dur) * 100));
+        const rightPct = Math.max(0, Math.min(100, (loopEnd / dur) * 100));
+        ui.loopRange.style.left = `${leftPct}%`;
+        ui.loopRange.style.width = `${Math.max(0.5, rightPct - leftPct)}%`;
+        ui.loopRange.hidden = false;
+        ui.loopRange.title = `Looping: ${format(loopStart)} - ${format(loopEnd)} (\\ to clear)`;
+      } else {
+        ui.loopRange.hidden = true;
+      }
+      if (ui.loopBtn) {
+        const isActive = loopActive && hasBoth;
+        ui.loopBtn.classList.toggle("active", isActive);
+        ui.loopBtn.setAttribute("aria-pressed", String(isActive));
+        if (isActive) {
+          ui.loopBtn.title = `Loop active: ${format(loopStart)} - ${format(loopEnd)} (Click or \\ to clear)`;
+        } else if (loopStart !== null) {
+          ui.loopBtn.title = `Loop In set at ${format(loopStart)} (Press ] to set Out point)`;
+        } else {
+          ui.loopBtn.title = "A/B Loop Repeat: Set In ([) / Out (]); Clear (\\)";
+        }
+      }
+    }
+
+    function checkLoopBoundaries() {
+      if (
+        loopActive &&
+        loopStart !== null &&
+        loopEnd !== null &&
+        loopEnd > loopStart &&
+        video &&
+        !isUserSeeking &&
+        !isScrubbing
+      ) {
+        if (video.currentTime >= loopEnd - 0.03 || video.currentTime < loopStart - 0.1) {
+          video.currentTime = loopStart;
+          updateTimeAndSeek();
+        }
+      }
+    }
+
+    function setLoopIn() {
+      selectVideo();
+      if (!finite()) {
+        notice("Video not ready for loop");
+        return;
+      }
+      loopStart = Number(video.currentTime.toFixed(2));
+      if (loopEnd !== null && loopStart >= loopEnd) {
+        loopEnd = Math.min(video.duration, Number((loopStart + 2.0).toFixed(2)));
+      }
+      loopActive = loopEnd !== null && loopEnd > loopStart;
+      if (loopActive) {
+        notice(`Loop A set: ${format(loopStart)} — Active (${format(loopStart)} to ${format(loopEnd)})`);
+      } else {
+        notice(`Loop A set: ${format(loopStart)} ([) — Press ] to set Loop B`);
+      }
+      renderLoopUI();
+    }
+
+    function setLoopOut() {
+      selectVideo();
+      if (!finite()) {
+        notice("Video not ready for loop");
+        return;
+      }
+      loopEnd = Number(video.currentTime.toFixed(2));
+      if (loopStart === null) {
+        loopStart = Math.max(0, Number((loopEnd - 2.0).toFixed(2)));
+      } else if (loopEnd <= loopStart) {
+        const tmp = loopStart;
+        loopStart = loopEnd;
+        loopEnd = tmp;
+      }
+      loopActive = true;
+      notice(`Loop B set: ${format(loopEnd)} (]) — Loop Active (${format(loopStart)} to ${format(loopEnd)})`);
+      renderLoopUI();
+    }
+
+    function clearLoop() {
+      if (loopStart === null && loopEnd === null) return;
+      loopStart = null;
+      loopEnd = null;
+      loopActive = false;
+      notice("Loop cleared (\\)");
+      renderLoopUI();
+    }
+
+    function toggleLoop() {
+      selectVideo();
+      if (loopActive || loopStart !== null || loopEnd !== null) {
+        clearLoop();
+      } else if (finite()) {
+        setLoopIn();
+      }
+    }
+
+    shell.setLoopIn = setLoopIn;
+    shell.setLoopOut = setLoopOut;
+    shell.clearLoop = clearLoop;
+    shell.toggleLoop = toggleLoop;
+    shell.getLoopState = () => ({ loopStart, loopEnd, loopActive });
 
     const notice = (message) => {
       ui.status.textContent = message;
@@ -1458,6 +1693,8 @@ function main() {
       video = selected;
       if (video) {
         applyGamma(gammaMode, false);
+        applyVision(visionMode, false);
+        renderLoopUI();
         const rootDs = document.documentElement.dataset;
         const initialSpeed = Number(rootDs.abiPlaybackSpeed);
         const currentSrc = video.currentSrc || video.src || "loaded";
@@ -1519,6 +1756,10 @@ function main() {
                 wasPlayingBeforeBackground = false;
                 bookmarks = [];
                 renderPins();
+                loopStart = null;
+                loopEnd = null;
+                loopActive = false;
+                renderLoopUI();
                 shell.resetExpiryTimer?.();
                 lastStablePlaybackTime = 0;
                 modalTransitionUntil = 0;
@@ -1526,6 +1767,7 @@ function main() {
               }
               if (event.type === "durationchange") {
                 renderPins();
+                renderLoopUI();
               }
               if (event.type === "play") {
                 if (
@@ -1539,15 +1781,22 @@ function main() {
                   startPlaybackLoop();
                 }
               }
-              if (
+              if (event.type === "ended") {
+                if (loopActive && loopStart !== null) {
+                  video.currentTime = loopStart;
+                  video.play().catch(() => {});
+                  return;
+                }
+                stopPlaybackLoop();
+              } else if (
                 event.type === "pause" ||
-                event.type === "ended" ||
                 event.type === "emptied" ||
                 event.type === "error"
               ) {
                 stopPlaybackLoop();
               }
               if (event.type === "timeupdate") {
+                checkLoopBoundaries();
                 if (
                   !isUserSeeking &&
                   !isScrubbing &&
@@ -1603,6 +1852,7 @@ function main() {
     }
     function tickPlayback() {
       if (video && !video.paused && !video.ended) {
+        checkLoopBoundaries();
         if (
           !isUserSeeking &&
           !isScrubbing &&
@@ -1631,11 +1881,12 @@ function main() {
     }
     function render() {
       const ready = finite();
-      for (const id of ["play", "slower", "speedval", "faster", "mute", "volume", "pinButton", "reload"])
+      for (const id of ["play", "slower", "speedval", "faster", "mute", "volume", "pinButton", "loopBtn", "gamma", "visionBtn", "reload"])
         if (ui[id]) ui[id].disabled = !video;
       for (const id of [
         "seek",
         "pinButton",
+        "loopBtn",
         "back10",
         "back5",
         "forward5",
@@ -1644,6 +1895,7 @@ function main() {
         "next",
       ])
         if (ui[id]) ui[id].disabled = !ready;
+      renderLoopUI();
       const paused = !video || video.paused;
       decorate(
         ui.play,
@@ -1797,7 +2049,9 @@ function main() {
         }
       },
       pinButton: toggleBookmark,
+      loopBtn: toggleLoop,
       gamma: toggleGamma,
+      visionBtn: toggleVision,
       reload: reloadVideo,
       fullscreen,
     };
@@ -2169,6 +2423,60 @@ function main() {
           toggleBookmark();
           return;
         }
+        if (event.shiftKey && event.key.toLowerCase() === "g") {
+          event.preventDefault();
+          event.stopImmediatePropagation();
+          toggleVision();
+          return;
+        }
+        if (event.key.toLowerCase() === "x") {
+          event.preventDefault();
+          event.stopImmediatePropagation();
+          toggleVision();
+          return;
+        }
+        if (
+          event.key.toLowerCase() === "v" &&
+          document.documentElement.dataset.abiVerdictHotkeys !== "on"
+        ) {
+          event.preventDefault();
+          event.stopImmediatePropagation();
+          toggleVision();
+          return;
+        }
+        if (event.key === "[") {
+          event.preventDefault();
+          event.stopImmediatePropagation();
+          setLoopIn();
+          return;
+        }
+        if (event.key === "]") {
+          event.preventDefault();
+          event.stopImmediatePropagation();
+          setLoopOut();
+          return;
+        }
+        if (event.key === "\\") {
+          event.preventDefault();
+          event.stopImmediatePropagation();
+          clearLoop();
+          return;
+        }
+        if (
+          event.key.toLowerCase() === "i" &&
+          document.documentElement.dataset.abiVerdictHotkeys !== "on"
+        ) {
+          event.preventDefault();
+          event.stopImmediatePropagation();
+          setLoopIn();
+          return;
+        }
+        if (event.key.toLowerCase() === "o") {
+          event.preventDefault();
+          event.stopImmediatePropagation();
+          setLoopOut();
+          return;
+        }
         const keys = {
           " ": "play",
           k: "play",
@@ -2180,9 +2488,10 @@ function main() {
           ".": "next",
           f: "fullscreen",
           g: "gamma",
-          "[": "slower",
-          "]": "faster",
-          "\\": "speedval",
+          "-": "slower",
+          "_": "slower",
+          "=": "faster",
+          "+": "faster",
         };
         const action =
           keys[event.key.length === 1 ? event.key.toLowerCase() : event.key];
@@ -2202,6 +2511,13 @@ function main() {
       stopZoom,
       toggleGamma,
       applyGamma,
+      toggleVision,
+      applyVision,
+      setLoopIn,
+      setLoopOut,
+      clearLoop,
+      toggleLoop,
+      getLoopState: () => ({ loopStart, loopEnd, loopActive }),
       destroy() {
         stopPlaybackLoop();
         shell.removeAttribute("data-controls-ready");

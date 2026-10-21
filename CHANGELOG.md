@@ -5,6 +5,36 @@ All notable changes to **ABI Inspector Extended** will be documented in this fil
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [3.0.4] - 2026-10-21
+
+### Added
+- **Tactical Challenge Pill Badges:**
+  - Added sleek, dedicated pill badges to each challenge row positioned before the rewards with deliberate spacing:
+    - `[icon] Weekly`: Slate-cyan pill badge with an embedded vector recurring cycle icon.
+    - `[icon] Exclusive`: Amber-gold pill badge with an embedded vector tactical star icon.
+  - **Rule Constraint Tooltips:** Hovering over the pill badges displays rule constraints:
+    - Weekly: `"Can be done multiple times"`
+    - Exclusive: `"Can be done only once per account"`
+  - **Full 9-Language Localization:** Badge labels and hover tooltips dynamically translate across all 9 supported languages (`en`, `de`, `ru`, `fr`, `es`, `ja`, `pt-BR`, `zh-Hant`, `cn`).
+
+### Changed
+- **Tactical Patrol Challenges Redesign (Compact 1/3-Height Single-Row):**
+  - Completely redesigned `#wxPatrol` challenge cards into compact 38px rows (1/3 of their original height), maximizing screen real estate and reducing scroll travel.
+  - Aligned cards horizontally in strict single-row order: `[x/10] [Task name]  [Pill badge]  [Rewards (2 vertical columns)]  [Action button]`.
+  - Moved progress indicator hairline to the bottom card border (2px height).
+  - Two-column reward alignment: double-reward tasks occupy Column 3 and Column 4, and single-reward tasks automatically sit in Column 4 next to the button for consistent vertical alignment across all rows.
+- **Removed Bulky Section Headers:**
+  - Removed redundant `Weekly Challenge` and `Exclusive Challenge` header labels, collapsing vertical dead space and uniting challenge categories into a single seamless tactical list.
+
+### Fixed
+- **Incomplete Button Style Inconsistency & Rogue Finish Class:**
+  - Stripped Tencent's hardcoded static `finish` classes from incomplete challenge items (`mixSpan2`, `stepSpan4`), ensuring all incomplete task buttons render identically with unified dark styling and red borders.
+  - Action buttons now only illuminate in solid crimson (`#c3472d`) when tasks are genuinely 100% complete or display `Claim`.
+- **Task Name Baseline Alignment & Clipping:**
+  - Neutralized inherited Tencent stylesheet bottom padding/margin in rems on `.taks-info > p`, centering task titles vertically without baseline truncation or container overflow.
+
+---
+
 ## [3.0.3] - 2026-10-21
 
 ### Added
