@@ -5,6 +5,51 @@ All notable changes to **ABI Inspector Extended** will be documented in this fil
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [3.0.6] - 2026-10-22
+
+### Fixed
+- **Quick-Verdict Mapping and Labels Alignment:**
+  - Corrected keybind associations in the in-site **Settings → Keybinds** section to accurately match official keyboard handler bindings:
+    - `1` / `V` → Violation
+    - `2` / `U` → Uncertain
+    - `3` / `C` / `I` → No Violation
+  - Updated settings toggle key chips and help text to display all supported aliases (`C` and `I`) consistently.
+  - Preserved official confirmation dialogs and submission workflows; quick-verdict hotkeys remain disabled by default.
+- **A/B Loop Shortcut Conflict Resolution:**
+  - Eliminated ambiguous `I` and `O` loop aliases from keyboard handlers and UI documentation to prevent collisions with the No Violation verdict hotkey (`I`).
+  - Standardized A/B loop controls exclusively on explicit shortcuts:
+    - `[`: Mark Loop In point.
+    - `]`: Mark Loop Out point.
+    - `\`: Clear active loop.
+  - Removed `V` from gamma mode shortcuts to prevent conflict with Violation verdicts. Loop shortcuts cannot trigger verdict submissions, and verdict keys cannot alter loop points.
+- **True Millisecond Playback Precision:**
+  - Corrected fractional time calculations from hundredth-of-a-second resolution (`totalSec * 100`) to true millisecond precision (`((totalSec * 1000) + 1e-4) % 1000`).
+  - Player timer and scrubber hover badge now display 3-digit fractional seconds (`00:14.450 / 01:02.000` and `--:--.---` for non-finite durations).
+  - Widened the `.time` CSS container to `154px` to guarantee zero layout shift or digit clipping during playback.
+- **Legacy Vision-Mode Preference Migration:**
+  - Implemented automatic, backward-compatible one-time migration for users upgrading from v3.0.4:
+    - Previously saved `abi-vision-mode` preferences (`silhouette`, `invert`, `thermal`) migrate seamlessly into the consolidated `abi-gamma-mode` key if unset or default.
+    - Deterministic precedence preserves newer 3.0.5 `abi-gamma-mode` settings in case of conflict.
+    - Safely cleans up the legacy key and handles invalid values without breaking player initialization.
+- **Multilingual Keybinds Localization Across 9 Languages:**
+  - Completed dictionary translations across all 9 supported languages (`en`, `de`, `ru`, `fr`, `es`, `ja`, `pt-BR`, `zh-Hant`, `cn`) for every Keybinds category title, action description, and keyboard chip.
+  - Eliminated hardcoded English fallbacks across the settings panel and keybind tables.
+- **Idempotent Main-World API Interception:**
+  - Hardened `overview-observer.js` with `__abiPatched` idempotency guards to prevent duplicate wrapping of `XMLHttpRequest.prototype.send`, `window.alert`, and `console` methods if re-executed.
+  - Added safe URL resolution and sanitized `window.postMessage` target origin handling.
+
+### Added
+- **Cross-Platform Release Packaging Tooling:**
+  - Rewrote `scripts/build-zip.cjs` (`npm run package` / `npm run build:zip`) as a pure Node.js solution using built-in `zlib` and `fs`, replacing Windows-only PowerShell `Compress-Archive`.
+  - Added automated pre-build validation verifying `manifest.json` integrity and ensuring all referenced icons, content scripts, and stylesheets exist at the archive root.
+- **Automated CI Quality Workflow:**
+  - Added GitHub Actions workflow (`.github/workflows/ci.yml`) running on standard `ubuntu-latest` Linux runners across Node 20.x and 22.x.
+  - Automatically executes syntax checks (`npm run check`), full test suite (`npm test`), and distribution archive packaging (`npm run package`).
+- **Comprehensive Regression Test Suite:**
+  - Added `tests/audit-fixes.test.cjs` covering quick-verdict mapping execution, shortcut conflict isolation, 3-digit millisecond formatting, legacy migration edge cases, 9-language Keybinds rendering, and release packaging verification.
+
+---
+
 ## [3.0.5] - 2026-10-21
 
 ### Added

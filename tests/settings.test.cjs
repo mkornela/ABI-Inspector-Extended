@@ -17,7 +17,7 @@ test("Settings panel redesign: DOM structure, search, dependencies, key chips, a
   const { chromium } = playwright;
   const browser = await chromium.launch({
     headless: true,
-    channel: process.env.ABI_TEST_BROWSER || (process.platform === "win32" ? "msedge" : "chromium"),
+    channel: process.env.ABI_TEST_BROWSER || (process.platform === "win32" ? "msedge" : undefined),
   });
 
   try {
@@ -45,7 +45,7 @@ test("Settings panel redesign: DOM structure, search, dependencies, key chips, a
       };
       window.chrome = {
         runtime: {
-          getManifest: () => ({ version: "3.0.5" }),
+          getManifest: () => ({ version: "3.0.6" }),
         },
         storage: {
           local: {
@@ -204,7 +204,7 @@ test("Settings panel localization: renders in German, Russian, and Chinese when 
   const { chromium } = playwright;
   const browser = await chromium.launch({
     headless: true,
-    channel: process.env.ABI_TEST_BROWSER || (process.platform === "win32" ? "msedge" : "chromium"),
+    channel: process.env.ABI_TEST_BROWSER || (process.platform === "win32" ? "msedge" : undefined),
   });
 
   try {
@@ -232,7 +232,7 @@ test("Settings panel localization: renders in German, Russian, and Chinese when 
       };
       window.chrome = {
         runtime: {
-          getManifest: () => ({ version: "3.0.5" }),
+          getManifest: () => ({ version: "3.0.6" }),
         },
         storage: {
           local: {
@@ -329,3 +329,115 @@ test("Settings panel localization: renders in German, Russian, and Chinese when 
     await browser?.close();
   }
 });
+
+test("Settings panel: interactive custom keybind remapping, recording, and reset", async (t) => {
+  let playwright;
+  try {
+    playwright = require("playwright");
+  } catch {
+    if (t && typeof t.skip === "function") {
+      t.skip("playwright module is not installed");
+      return;
+    }
+  }
+  const { chromium } = playwright;
+  const browser = await chromium.launch({
+    headless: true,
+    channel: process.env.ABI_TEST_BROWSER || (process.platform === "win32" ? "msedge" : undefined),
+  });
+
+  try {
+    const page = await browser.newPage({ viewport: { width: 1280, height: 800 } });
+    await page.setContent(`<!DOCTYPE html><html><head></head><body><div class="main"></div></body></html>`);
+    await page.addStyleTag({ path: path.join(root, "layout.css") });
+
+    await page.evaluate(() => {
+      window.storageMock = {
+        controls: true,
+        playerVolume: 100,
+        playbackSpeed: 1,
+        autoPlay: true,
+        loopVideo: false,
+        site: true,
+        customKeybinds: {},
+      };
+      window.chrome = {
+        runtime: {
+          getManifest: () => ({ version: "3.0.6" }),
+        },
+        storage: {
+          local: {
+            get: (keys, cb) => {
+              const res = { ...window.storageMock };
+              if (cb) cb(res);
+              return Promise.resolve(res);
+            },
+            set: (data, cb) => {
+              Object.assign(window.storageMock, data);
+              if (cb) cb();
+              return Promise.resolve();
+            },
+          },
+        },
+      };
+      window.privacyAnonymized = false;
+      window.privacyStorageKey = "abi_privacy_mode";
+      window.root = document.documentElement;
+      window.scheduleUpdate = () => {};
+    });
+
+    const siteUiSource = fs.readFileSync(path.join(root, "site-ui.js"), "utf8");
+    const settingsBlock = siteUiSource.slice(
+      siteUiSource.indexOf("  const settingsDefaults = {"),
+      siteUiSource.indexOf("  function configureSettingsNavigation("),
+    );
+
+    await page.evaluate((code) => {
+      window.eval(code);
+      const container = document.querySelector(".main");
+      const panel = createSettingsPanel();
+      container.appendChild(panel);
+    }, settingsBlock);
+
+    // 1. Verify keybinds section has reset all button and key chips
+    const resetAllBtn = page.locator(".abi-reset-keybinds-btn");
+    assert.equal(await resetAllBtn.count(), 1, "Reset all keybinds button exists");
+
+    const playChip = page.locator('.abi-key-chip[data-action="play"]');
+    assert.equal(await playChip.count(), 1, "Play/Pause key chip exists");
+    assert.equal(await playChip.textContent(), "Space", "Default play chip displays Space");
+
+    // 2. Click play chip -> enters recording mode
+    await playChip.click();
+    assert.equal(await playChip.evaluate((el) => el.classList.contains("recording")), true, "Chip enters recording state");
+    assert.equal(await playChip.textContent(), "Press key...", "Chip text prompts to press key");
+
+    // 3. Press 'T' key -> saves custom keybind 'T'
+    await page.keyboard.press("KeyT");
+    assert.equal(await playChip.textContent(), "T", "Chip updates to show custom key 'T'");
+    assert.equal(await playChip.evaluate((el) => el.classList.contains("is-custom")), true, "Chip has is-custom class");
+
+    // Verify storage was updated
+    const savedCustom = await page.evaluate(() => window.storageMock.customKeybinds);
+    assert.equal(savedCustom.play, "T", "customKeybinds.play is saved in storage");
+
+    // 4. Click individual reset button (↺) -> restores default
+    const resetPlayBtn = page.locator('.abi-key-reset-btn[data-reset-action="play"], .abi-keybind-row:has([data-action="play"]) .abi-key-reset-btn');
+    assert.equal(await resetPlayBtn.count(), 1, "Reset button appears for custom keybind");
+    await resetPlayBtn.click();
+
+    assert.equal(await playChip.textContent(), "Space", "Play chip restored to default Space");
+    assert.equal(await playChip.evaluate((el) => el.classList.contains("is-custom")), false, "is-custom removed");
+
+    // 5. Test Reset All button
+    await playChip.click();
+    await page.keyboard.press("KeyY");
+    assert.equal(await playChip.textContent(), "Y", "Play chip set to Y");
+
+    await resetAllBtn.click();
+    assert.equal(await playChip.textContent(), "Space", "Reset all restores play chip to Space");
+  } finally {
+    await browser?.close();
+  }
+});
+

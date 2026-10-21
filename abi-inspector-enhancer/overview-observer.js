@@ -342,10 +342,16 @@
       );
     }
 
-    console.log = function (...args) { formatAndLog("log", args); };
-    console.info = function (...args) { formatAndLog("info", args); };
-    console.warn = function (...args) { formatAndLog("warn", args); };
-    console.debug = function (...args) { formatAndLog("debug", args); };
+    if (!console.log.__abiPatched) {
+      console.log = function (...args) { formatAndLog("log", args); };
+      console.log.__abiPatched = true;
+      console.info = function (...args) { formatAndLog("info", args); };
+      console.info.__abiPatched = true;
+      console.warn = function (...args) { formatAndLog("warn", args); };
+      console.warn.__abiPatched = true;
+      console.debug = function (...args) { formatAndLog("debug", args); };
+      console.debug.__abiPatched = true;
+    }
   }
 
   // Observe existing XHR completions (read-only) and format native page alerts
@@ -356,12 +362,14 @@
     userGrowthSummary: ["ret_exp_level", "total_exp", "level_got_exp", "exp_step", "exp_process"],
   };
 
-  if (typeof XMLHttpRequest !== "undefined" && XMLHttpRequest.prototype) {
+  if (typeof XMLHttpRequest !== "undefined" && XMLHttpRequest.prototype && !XMLHttpRequest.prototype.send?.__abiPatched) {
     const send = XMLHttpRequest.prototype.send;
-    XMLHttpRequest.prototype.send = function (...args) {
+    const wrappedSend = function (...args) {
       const read = () => {
         try {
-          const url = new URL(this.responseURL);
+          if (!this.responseURL) return;
+          const baseUrl = (typeof window !== "undefined" && window.location && window.location.href) ? window.location.href : "https://sg-apps.vasdgame.com";
+          const url = new URL(this.responseURL, baseUrl);
           if (url.origin !== "https://sg-apps.vasdgame.com" || url.pathname !== "/ide/" || this.status !== 200) return;
           const body = this.responseType === "json" ? this.response :
             (!this.responseType || this.responseType === "text") ? JSON.parse(this.responseText) : null;
@@ -377,7 +385,8 @@
             }
           }
           if (Object.keys(data).length && typeof window !== "undefined" && window.postMessage) {
-            window.postMessage({ type: "abi:overview-data", data }, location.origin);
+            const targetOrigin = (location.origin && location.origin !== "null") ? location.origin : "*";
+            window.postMessage({ type: "abi:overview-data", data }, targetOrigin);
           }
         } catch { /* A non-JSON response must not affect the official request. */ }
       };
@@ -385,11 +394,13 @@
       try { return Reflect.apply(send, this, args); }
       catch (error) { this.removeEventListener("load", read); throw error; }
     };
+    wrappedSend.__abiPatched = true;
+    XMLHttpRequest.prototype.send = wrappedSend;
   }
 
   // Intercept native browser alert() to replace raw Chinese messages with
   // styled tactical English alert notifications.
-  if (typeof window !== "undefined" && typeof window.alert === "function") {
+  if (typeof window !== "undefined" && typeof window.alert === "function" && !window.alert.__abiPatched) {
     const originalAlert = window.alert;
 
     const TRANSLATIONS = [
@@ -743,6 +754,7 @@
         } catch {}
       }
     };
+    handler.__abiPatched = true;
 
     try {
       window.alert = handler;

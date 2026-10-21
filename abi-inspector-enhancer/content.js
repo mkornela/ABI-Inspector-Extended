@@ -258,7 +258,7 @@ function main() {
     }
     .time[data-precision="ms"],
     :host-context([data-time-precision="ms"]) .time {
-      min-width: 142px;
+      min-width: 154px;
     }
     .time:hover {
       color: #ffffff;
@@ -500,7 +500,7 @@ function main() {
     :focus-visible { outline:1px solid var(--abi-text,#e0e3de); outline-offset:2px; }
     input[type=range] { appearance:none; -webkit-appearance:none; height:18px; margin:0; padding:0; border:0; background:transparent; cursor:pointer; min-width:0; border-radius:0; }
     #seek { flex:1 1 0; width:0; }
-    #seek::-webkit-slider-runnable-track { height:4px; border:0; border-radius:999px; background:linear-gradient(to right,var(--abi-track-fill,#e66b4e) 0 var(--fill,0%),rgba(255,255,255,0.08) var(--fill,0%) 100%); box-shadow:0 0 6px var(--abi-track-glow,rgba(230,107,78,0.3)); }
+    #seek::-webkit-slider-runnable-track { height:4px; border:0; border-radius:999px; background:linear-gradient(to right,var(--abi-track-fill,#e66b4e) 0 var(--fill,0%),rgba(255,255,255,0.25) var(--fill,0%) var(--buffer,var(--fill,0%)),rgba(255,255,255,0.08) var(--buffer,var(--fill,0%)) 100%); box-shadow:0 0 6px var(--abi-track-glow,rgba(230,107,78,0.3)); }
     #seek::-webkit-slider-thumb { appearance:none; -webkit-appearance:none; width:12px; height:12px; margin-top:-4px; border:2px solid #ffffff; border-radius:50%; background:var(--abi-track-fill,#e66b4e); box-shadow:0 0 8px var(--abi-track-glow,rgba(230,107,78,0.8)); transition:transform .1s ease; }
     #seek:hover::-webkit-slider-thumb { transform:scale(1.25); }
     #volume { width:52px; }
@@ -540,6 +540,50 @@ function main() {
       transform: translateX(-50%) translateY(-2px);
     }
     #status:empty { display: none; }
+
+    .stream-health {
+      background: transparent;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 4px;
+      width: 24px;
+      height: 24px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0;
+      cursor: pointer;
+      position: relative;
+      transition: all 0.15s ease;
+    }
+    .stream-health:hover {
+      border-color: rgba(255, 255, 255, 0.25);
+      background: rgba(255, 255, 255, 0.06);
+    }
+    .stream-health .stream-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #4ade80;
+      box-shadow: 0 0 6px rgba(74, 222, 128, 0.7);
+      transition: background 0.2s ease, box-shadow 0.2s ease;
+    }
+    .stream-health[data-state="buffering"] .stream-dot {
+      background: #f59e0b;
+      box-shadow: 0 0 8px rgba(245, 158, 11, 0.85);
+      animation: streamPulse 0.85s infinite alternate ease-in-out;
+    }
+    .stream-health[data-state="error"] .stream-dot {
+      background: #ef4444;
+      box-shadow: 0 0 8px rgba(239, 68, 68, 0.85);
+    }
+    .stream-health[data-state="idle"] .stream-dot {
+      background: #64748b;
+      box-shadow: none;
+    }
+    @keyframes streamPulse {
+      0% { opacity: 0.35; transform: scale(0.85); }
+      100% { opacity: 1; transform: scale(1.18); }
+    }
 
     @container (max-width: 820px) {
       .row { gap: 6px; }
@@ -603,13 +647,13 @@ function main() {
   }
 
   const format = (value, showMs = false) => {
-    if (!Number.isFinite(value)) return showMs ? "--:--.--" : "--:--";
+    if (!Number.isFinite(value)) return showMs ? "--:--.---" : "--:--";
     const totalSec = Math.max(0, value);
     const seconds = Math.floor(totalSec);
-    const ms = Math.min(99, Math.max(0, Math.floor(((totalSec * 100) + 1e-4) % 100)));
+    const ms = Math.min(999, Math.max(0, Math.floor(((totalSec * 1000) + 1e-4) % 1000)));
     const h = Math.floor(seconds / 3600);
     const base = `${h ? `${h}:` : ""}${String(Math.floor(seconds / 60) % 60).padStart(2, "0")}:${String(seconds % 60).padStart(2, "0")}`;
-    return showMs ? `${base}.${String(ms).padStart(2, "0")}` : base;
+    return showMs ? `${base}.${String(ms).padStart(3, "0")}` : base;
   };
 
   function create(player) {
@@ -775,6 +819,7 @@ function main() {
             <button id="pinButton" title="Drop moment bookmark (M)" aria-label="Drop moment bookmark (M)">Bookmark</button>
             <button id="loopBtn" title="A/B Loop Repeat: Set In ([) / Out (]); Clear (\)" aria-label="A/B Loop Repeat: Set In ([) / Out (]); Clear (\)">Loop</button>
             <button id="gamma" title="Shadow, Gamma & Vision Modes (G)" aria-label="Shadow, Gamma & Vision Modes (G)">Gamma</button>
+            <button id="streamHealth" class="stream-health" role="status" aria-label="Stream health: Ready" title="Stream: Ready" type="button"><span class="stream-dot"></span></button>
             <button id="reload" title="Reload player" aria-label="Reload player">Reload</button>
             <button id="fullscreen" title="Fullscreen (F); Escape to exit" aria-pressed="false">Fullscreen</button>
           </div>
@@ -1435,9 +1480,26 @@ function main() {
 
     let gammaMode = "normal";
     try {
-      const saved = localStorage.getItem("abi-gamma-mode");
-      if (saved && ["shadow", "max", "silhouette", "invert", "thermal"].includes(saved)) {
+      let saved = localStorage.getItem("abi-gamma-mode");
+      const legacyVision = localStorage.getItem("abi-vision-mode");
+      const validGamma = ["normal", "shadow", "max", "silhouette", "invert", "thermal"];
+      const validVision = ["silhouette", "invert", "thermal"];
+
+      // One-time backward-compatible migration:
+      // If legacy vision mode was set, migrate it to abi-gamma-mode if abi-gamma-mode is unset or normal.
+      // If abi-gamma-mode already has a meaningful non-normal mode, it takes deterministic precedence.
+      if (legacyVision !== null) {
+        if ((!saved || saved === "normal") && validVision.includes(legacyVision)) {
+          saved = legacyVision;
+          localStorage.setItem("abi-gamma-mode", legacyVision);
+        }
+        localStorage.removeItem("abi-vision-mode");
+      }
+
+      if (saved && validGamma.includes(saved)) {
         gammaMode = saved;
+      } else {
+        gammaMode = "normal";
       }
     } catch {}
 
@@ -1806,10 +1868,29 @@ function main() {
           "seeking",
           "seeked",
           "error",
+          "progress",
+          "waiting",
+          "canplay",
+          "canplaythrough",
+          "stalled",
         ]) {
           video.addEventListener(
             name,
             (event) => {
+              if (
+                [
+                  "progress",
+                  "waiting",
+                  "canplay",
+                  "canplaythrough",
+                  "stalled",
+                  "error",
+                  "seeking",
+                  "seeked",
+                ].includes(event.type)
+              ) {
+                updateStreamHealth();
+              }
               if (event.type === "loadstart") {
                 stopPlaybackLoop();
                 delete video.dataset.abiUserPaused;
@@ -1894,6 +1975,50 @@ function main() {
       }
       render();
     }
+    function getBufferedEnd(v) {
+      if (!v || !v.buffered || !v.buffered.length) return 0;
+      const cur = v.currentTime || 0;
+      for (let i = 0; i < v.buffered.length; i++) {
+        if (v.buffered.start(i) <= cur + 0.5 && cur <= v.buffered.end(i) + 0.1) {
+          return v.buffered.end(i);
+        }
+      }
+      return v.buffered.end(v.buffered.length - 1);
+    }
+
+    function updateStreamHealth() {
+      if (!ui.streamHealth) return;
+      if (!video || !finite()) {
+        ui.streamHealth.dataset.state = "idle";
+        ui.streamHealth.title = "Stream: Awaiting video";
+        ui.streamHealth.setAttribute("aria-label", "Stream health: Idle");
+        return;
+      }
+      const cur = video.currentTime || 0;
+      const dur = video.duration || 0;
+      const bufEnd = getBufferedEnd(video);
+      const bufferedAhead = Math.max(0, bufEnd - cur);
+      const isFullyBuffered = bufEnd >= dur - 0.25;
+
+      if (video.networkState === HTMLMediaElement.NETWORK_NO_SOURCE || video.error) {
+        ui.streamHealth.dataset.state = "error";
+        ui.streamHealth.title = "Stream: Connection error — click to reload stream";
+        ui.streamHealth.setAttribute("aria-label", "Stream health: Connection error");
+      } else if (video.seeking || video.readyState < 3 || (!video.paused && bufferedAhead < 0.2 && !isFullyBuffered)) {
+        ui.streamHealth.dataset.state = "buffering";
+        ui.streamHealth.title = `Stream: Buffering (${bufferedAhead.toFixed(1)}s ahead) — click to reload`;
+        ui.streamHealth.setAttribute("aria-label", "Stream health: Buffering");
+      } else if (bufferedAhead >= 1.5 || isFullyBuffered) {
+        ui.streamHealth.dataset.state = "excellent";
+        ui.streamHealth.title = `Stream: Healthy (CDN buffered ${isFullyBuffered ? "100%" : bufferedAhead.toFixed(1) + "s ahead"})`;
+        ui.streamHealth.setAttribute("aria-label", "Stream health: Healthy");
+      } else {
+        ui.streamHealth.dataset.state = "good";
+        ui.streamHealth.title = `Stream: Stable (${bufferedAhead.toFixed(1)}s ahead)`;
+        ui.streamHealth.setAttribute("aria-label", "Stream health: Stable");
+      }
+    }
+
     function updateTimeAndSeek() {
       const ready = finite();
       const cur = video?.currentTime || 0;
@@ -1909,6 +2034,10 @@ function main() {
         "--fill",
         `${ready && dur > 0 ? Math.max(0, Math.min(100, (fillTime / dur) * 100)) : 0}%`,
       );
+      const bufEnd = getBufferedEnd(video);
+      const bufPct = ready && dur > 0 ? Math.max(0, Math.min(100, (bufEnd / dur) * 100)) : 0;
+      ui.seek.style.setProperty("--buffer", `${bufPct}%`);
+      updateStreamHealth();
       ui.seek.setAttribute(
         "aria-valuetext",
         `${format(cur, precisionMs)} of ${format(dur, precisionMs)}`,
@@ -1945,7 +2074,7 @@ function main() {
     }
     function render() {
       const ready = finite();
-      for (const id of ["play", "slower", "speedval", "faster", "mute", "volume", "pinButton", "loopBtn", "gamma", "reload"])
+      for (const id of ["play", "slower", "speedval", "faster", "mute", "volume", "pinButton", "loopBtn", "gamma", "reload", "streamHealth"])
         if (ui[id]) ui[id].disabled = !video;
       for (const id of [
         "seek",
@@ -2129,6 +2258,21 @@ function main() {
           selectVideo();
           fn();
         });
+    }
+    if (ui.streamHealth) {
+      on(ui.streamHealth, "click", (e) => {
+        e?.preventDefault?.();
+        e?.stopPropagation?.();
+        selectVideo();
+        updateStreamHealth();
+        const state = ui.streamHealth.dataset.state || "idle";
+        if (state === "error" || state === "buffering") {
+          reloadVideo();
+          notice("Reconnecting stream...");
+        } else {
+          notice(ui.streamHealth.title || "Stream connection healthy");
+        }
+      });
     }
     function updateHoverBadge(e) {
       if (!finite() || !ui.hoverBadge) return;
@@ -2432,27 +2576,64 @@ function main() {
     });
     selectVideo();
     render();
+    shell.getStreamHealth = () => ({
+      state: ui.streamHealth?.dataset.state || "idle",
+      title: ui.streamHealth?.title || "",
+      bufferedEnd: getBufferedEnd(video),
+    });
+    shell.getCustomKeybinds = getCustomKeybinds;
     shell.setAttribute("data-controls-ready", "");
+
+    function getCustomKeybinds() {
+      try {
+        const raw =
+          document.documentElement.dataset.abiKeybinds ||
+          localStorage.getItem("abi-keybinds");
+        if (raw) return JSON.parse(raw);
+      } catch {}
+      return {};
+    }
+
+    function matchesKey(event, action, defaultKeys) {
+      const custom = getCustomKeybinds();
+      const k = event.key.length === 1 ? event.key.toLowerCase() : event.key;
+      if (custom && custom[action]) {
+        const assigned = String(custom[action]).toLowerCase();
+        const normAssigned = assigned === "space" ? " " : assigned;
+        return k === normAssigned || event.code.toLowerCase() === assigned;
+      }
+      return defaultKeys.some((dk) => {
+        const norm = dk.toLowerCase() === "space" ? " " : dk.toLowerCase();
+        return k === norm || event.code.toLowerCase() === dk.toLowerCase();
+      });
+    }
+
     return {
       player,
       shell,
       host,
       selectVideo,
       wakeHud,
+      getCustomKeybinds,
+      matchesKey,
+      getStreamHealth: () => ({
+        state: ui.streamHealth?.dataset.state || "idle",
+        title: ui.streamHealth?.title || "",
+        bufferedEnd: getBufferedEnd(video),
+      }),
       key(event) {
         selectVideo();
         if (!video || !visible(video)) return;
         if (document.documentElement.dataset.abiVerdictHotkeys === "on") {
-          const k = event.key.length === 1 ? event.key.toLowerCase() : event.key;
           let verdictTarget = null;
           let verdictName = "";
-          if (k === "1" || k === "v") {
+          if (matchesKey(event, "verdict1", ["1", "v"])) {
             verdictTarget = document.querySelector("#patrolButton0, #drillButton0, .operation a[data-index='1']");
             verdictName = "Violation";
-          } else if (k === "2" || k === "u") {
+          } else if (matchesKey(event, "verdict2", ["2", "u"])) {
             verdictTarget = document.querySelector("#patrolButton2, .operation a[data-index='2']");
             verdictName = "Uncertain";
-          } else if (k === "3" || k === "i" || k === "c") {
+          } else if (matchesKey(event, "verdict3", ["3", "c", "i"])) {
             verdictTarget = document.querySelector("#patrolButton1, #drillButton1, .operation a[data-index='0']");
             verdictName = "No Violation";
           }
@@ -2464,111 +2645,107 @@ function main() {
             return;
           }
         }
-        if (event.key.toLowerCase() === "m") {
-          if (event.shiftKey) {
-            event.preventDefault();
-            event.stopImmediatePropagation();
-            actions.mute();
-            return;
-          }
+        if (event.shiftKey && matchesKey(event, "mute", ["m"])) {
+          event.preventDefault();
+          event.stopImmediatePropagation();
+          actions.mute();
+          return;
+        }
+        if (!event.shiftKey && matchesKey(event, "bookmark", ["m", "b"])) {
           event.preventDefault();
           event.stopImmediatePropagation();
           toggleBookmark();
           return;
         }
-        if (event.key.toLowerCase() === "z") {
+        if (matchesKey(event, "zoom", ["z"])) {
           event.preventDefault();
           event.stopImmediatePropagation();
           startZoom();
           return;
         }
-        if (event.key.toLowerCase() === "b") {
-          event.preventDefault();
-          event.stopImmediatePropagation();
-          toggleBookmark();
-          return;
-        }
-        if (event.shiftKey && event.key.toLowerCase() === "g") {
+        if (event.shiftKey && (event.key.toLowerCase() === "g" || matchesKey(event, "gamma", ["g"]))) {
           event.preventDefault();
           event.stopImmediatePropagation();
           toggleGamma(-1);
           return;
         }
-        if (event.key.toLowerCase() === "x") {
+        if (matchesKey(event, "gamma", ["g", "x"])) {
           event.preventDefault();
           event.stopImmediatePropagation();
           toggleVision();
           return;
         }
-        if (
-          event.key.toLowerCase() === "v" &&
-          document.documentElement.dataset.abiVerdictHotkeys !== "on"
-        ) {
-          event.preventDefault();
-          event.stopImmediatePropagation();
-          toggleVision();
-          return;
-        }
-        if (event.key === "[") {
+        if (matchesKey(event, "loopIn", ["["])) {
           event.preventDefault();
           event.stopImmediatePropagation();
           setLoopIn();
           return;
         }
-        if (event.key === "]") {
+        if (matchesKey(event, "loopOut", ["]"])) {
           event.preventDefault();
           event.stopImmediatePropagation();
           setLoopOut();
           return;
         }
-        if (event.key === "\\") {
+        if (matchesKey(event, "loopClear", ["\\"])) {
           event.preventDefault();
           event.stopImmediatePropagation();
           clearLoop();
           return;
         }
-        if (
-          event.key.toLowerCase() === "i" &&
-          document.documentElement.dataset.abiVerdictHotkeys !== "on"
-        ) {
+        if (matchesKey(event, "play", [" ", "k"])) {
           event.preventDefault();
           event.stopImmediatePropagation();
-          setLoopIn();
+          if (event.repeat) return;
+          actions.play();
           return;
         }
-        if (event.key.toLowerCase() === "o") {
+        if (matchesKey(event, "back5", ["j", "ArrowLeft"])) {
           event.preventDefault();
           event.stopImmediatePropagation();
-          setLoopOut();
+          actions.back5();
           return;
         }
-        const keys = {
-          " ": "play",
-          k: "play",
-          j: "back5",
-          l: "forward5",
-          ArrowLeft: "back5",
-          ArrowRight: "forward5",
-          ",": "previous",
-          ".": "next",
-          f: "fullscreen",
-          g: "gamma",
-          "-": "slower",
-          "_": "slower",
-          "=": "faster",
-          "+": "faster",
-        };
-        const action =
-          keys[event.key.length === 1 ? event.key.toLowerCase() : event.key];
-        if (!action) return;
-        event.preventDefault();
-        event.stopImmediatePropagation();
-        if (event.repeat && ["play", "mute", "fullscreen"].includes(action))
+        if (matchesKey(event, "forward5", ["l", "ArrowRight"])) {
+          event.preventDefault();
+          event.stopImmediatePropagation();
+          actions.forward5();
           return;
-        actions[action]();
+        }
+        if (matchesKey(event, "previous", [",", "<"])) {
+          event.preventDefault();
+          event.stopImmediatePropagation();
+          actions.previous();
+          return;
+        }
+        if (matchesKey(event, "next", [".", ">"])) {
+          event.preventDefault();
+          event.stopImmediatePropagation();
+          actions.next();
+          return;
+        }
+        if (matchesKey(event, "slower", ["-", "_"])) {
+          event.preventDefault();
+          event.stopImmediatePropagation();
+          actions.slower();
+          return;
+        }
+        if (matchesKey(event, "faster", ["=", "+"])) {
+          event.preventDefault();
+          event.stopImmediatePropagation();
+          actions.faster();
+          return;
+        }
+        if (matchesKey(event, "fullscreen", ["f"])) {
+          event.preventDefault();
+          event.stopImmediatePropagation();
+          if (event.repeat) return;
+          actions.fullscreen();
+          return;
+        }
       },
       keyUp(event) {
-        if (event.key.toLowerCase() === "z") {
+        if (matchesKey(event, "zoom", ["z"])) {
           stopZoom();
         }
       },
@@ -2658,9 +2835,14 @@ function main() {
   document.addEventListener(
     "keydown",
     (event) => {
+      let customValues = [];
+      try {
+        const raw = document.documentElement.dataset.abiKeybinds || localStorage.getItem("abi-keybinds");
+        if (raw) customValues = Object.values(JSON.parse(raw)).map((k) => String(k).toLowerCase());
+      } catch {}
       const isAllowedShift =
         event.shiftKey &&
-        ["m", "g", "+"].includes(event.key.toLowerCase());
+        (["m", "g", "+"].includes(event.key.toLowerCase()) || customValues.includes(event.key.toLowerCase()));
       if (
         event.defaultPrevented ||
         event.ctrlKey ||
@@ -2692,9 +2874,14 @@ function main() {
   document.addEventListener(
     "keyup",
     (event) => {
+      let customValues = [];
+      try {
+        const raw = document.documentElement.dataset.abiKeybinds || localStorage.getItem("abi-keybinds");
+        if (raw) customValues = Object.values(JSON.parse(raw)).map((k) => String(k).toLowerCase());
+      } catch {}
       const isAllowedShift =
         event.shiftKey &&
-        ["m", "g", "+"].includes(event.key.toLowerCase());
+        (["m", "g", "+"].includes(event.key.toLowerCase()) || customValues.includes(event.key.toLowerCase()));
       if (
         event.defaultPrevented ||
         event.ctrlKey ||

@@ -111,7 +111,7 @@ test("Overview renders live counts and XP, updates without duplicate cards, and 
     }
   }
   const { chromium } = playwright;
-  const browser = await chromium.launch({ headless: true, channel: process.env.ABI_TEST_BROWSER || (process.platform === "win32" ? "msedge" : "chromium") });
+  const browser = await chromium.launch({ headless: true, channel: process.env.ABI_TEST_BROWSER || (process.platform === "win32" ? "msedge" : undefined) });
   try {
     const page = await browser.newPage({ viewport: { width: 1320, height: 900 } });
     await page.setContent(`<html data-abi-site="on"><head><style>html{font-size:100px}body{font:16px system-ui;margin:0;background:#101618;color:white}#wxMine{height:850px}</style></head><body><div id="wxMine" class="content mine"><div class="user"><div class="user-info"><div class="username">Inspector</div><div class="userid"><span>ID</span></div><div class="honor"><span id="level-text">Senior Inspector</span></div><div class="grade"><span id="exp_level">22</span></div></div><div class="user-data"><ul class="statistics">${[616,43,506,"86%",185].map(value => `<li><strong>${value}</strong></li>`).join("")}</ul></div></div></div></body></html>`);
@@ -332,7 +332,7 @@ test("Overview renders live counts and XP, updates without duplicate cards, and 
       return logs;
     }, siteUiSource.slice(siteUiSource.indexOf("  function logExtensionBanner()"), siteUiSource.indexOf("  const HAS_CJK =")));
     assert.ok(
-      loggedMessages.some((m) => m.includes("ABI INSPECTOR EXTENDED") && m.includes("v3.0.5") && m.includes("deem") && m.includes("ACTIVE")),
+      loggedMessages.some((m) => m.includes("ABI INSPECTOR EXTENDED") && m.includes("v3.0.6") && m.includes("deem") && m.includes("ACTIVE")),
       "Console banner is logged with extension name, version, author, and active status"
     );
 
@@ -532,7 +532,7 @@ test("Multilingual localization: dynamic language switching across 9 supported l
   const { chromium } = playwright;
   const browser = await chromium.launch({
     headless: true,
-    channel: process.env.ABI_TEST_BROWSER || (process.platform === "win32" ? "msedge" : "chromium"),
+    channel: process.env.ABI_TEST_BROWSER || (process.platform === "win32" ? "msedge" : undefined),
   });
   try {
     const page = await browser.newPage({ viewport: { width: 1320, height: 900 } });
@@ -767,7 +767,7 @@ test("Dialog enhancements: close icon is singular and footer cancel button has n
   const { chromium } = playwright;
   const browser = await chromium.launch({
     headless: true,
-    channel: process.env.ABI_TEST_BROWSER || (process.platform === "win32" ? "msedge" : "chromium"),
+    channel: process.env.ABI_TEST_BROWSER || (process.platform === "win32" ? "msedge" : undefined),
   });
 
   try {
@@ -941,7 +941,7 @@ test("Daily Server Reset Countdown Clock: displays live countdown until daily 20
 
   const browser = await playwright.chromium.launch({
     headless: true,
-    channel: process.env.ABI_TEST_BROWSER || (process.platform === "win32" ? "msedge" : "chromium"),
+    channel: process.env.ABI_TEST_BROWSER || (process.platform === "win32" ? "msedge" : undefined),
   });
 
   try {
@@ -1023,7 +1023,7 @@ test("Accidental Tab Close & Leave Guard: prompts beforeunload during active cas
     const { chromium } = require("playwright");
     browser = await chromium.launch({
       headless: true,
-      channel: process.env.ABI_TEST_BROWSER || (process.platform === "win32" ? "msedge" : "chromium"),
+      channel: process.env.ABI_TEST_BROWSER || (process.platform === "win32" ? "msedge" : undefined),
     });
     const page = await browser.newPage({ viewport: { width: 1280, height: 900 } });
 
@@ -1119,7 +1119,7 @@ test("Tactical Challenge Cards redesign: 1/3-height compact rows, consistent but
   try {
     browser = await chromium.launch({
       headless: true,
-      channel: process.env.ABI_TEST_BROWSER || (process.platform === "win32" ? "msedge" : "chromium"),
+      channel: process.env.ABI_TEST_BROWSER || (process.platform === "win32" ? "msedge" : undefined),
     });
     const page = await browser.newPage({ viewport: { width: 1280, height: 900 } });
     const layoutCss = fs.readFileSync(path.join(__dirname, "../abi-inspector-enhancer/layout.css"), "utf8");

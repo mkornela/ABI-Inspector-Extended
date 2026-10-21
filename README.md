@@ -1,15 +1,15 @@
 # ABI Inspector Extended
 
-[![Version](https://img.shields.io/badge/version-3.0.5-f59e0b.svg)](CHANGELOG.md)
+[![Version](https://img.shields.io/badge/version-3.0.6-f59e0b.svg)](CHANGELOG.md)
 [![Manifest](https://img.shields.io/badge/manifest-v3-3b82f6.svg)](abi-inspector-enhancer/manifest.json)
-[![Tests](https://img.shields.io/badge/tests-31%20passed-10b981.svg)](tests/)
+[![CI](https://github.com/mkornela/ABI-Inspector-Extended/actions/workflows/ci.yml/badge.svg)](https://github.com/mkornela/ABI-Inspector-Extended/actions/workflows/ci.yml)
 [![Security](https://img.shields.io/badge/privacy-100%25%20client--side-06b6d4.svg)](#privacy-and-compatibility)
 [![Languages](https://img.shields.io/badge/languages-9%20supported-8b5cf6.svg)](#localization)
 
 > [!WARNING]
 > **Use at your own risk:** I am still awaiting a response from the game developers about the extension and whether it is safe to use.
 
-**Version 3.0.5** · A high-performance tactical interface enhancement for the official Arena Breakout: Infinite Inspector.
+**Version 3.0.6** · A high-performance tactical interface enhancement for the official Arena Breakout: Infinite Inspector.
 
 ABI Inspector Extended elevates the Inspector experience with a streamlined single-row video player HUD, tactical Hold-to-Zoom loupe, shadow and gamma boost, a live 00:00 UTC daily quota countdown clock, animated overview accuracy boards, an in-depth in-site settings and keybinds hub, and full 9-language localization.
 
@@ -107,9 +107,9 @@ All project screenshots live in [`screenshots/`](screenshots/). Inspector identi
   - Displays live connection status and version details.
 - **Quick Verdict Hotkeys (Workbench):**
   - Instant verdict selection directly from your keyboard:
-    - **`1`**: Violation
-    - **`2`**: Uncertain
-    - **`3`**: No Violation
+    - **`1`** / **`V`**: Violation
+    - **`2`** / **`U`**: Uncertain
+    - **`3`** / **`C`** / **`I`**: No Violation
   - Disabled by default in Settings to prevent accidental submissions; can be enabled at any time.
 - **Enhanced Video Controls & Player Fixes:**
   - Full playback bar: play/pause, 5-second & 10-second jumps, frame stepping (~1/30s), playback speed multiplier (0.1× to 3×), volume slider, and fullscreen.
@@ -188,9 +188,9 @@ Shortcuts apply while focused on the Inspector page or video player. Hotkeys are
 
 | Verdict | Hotkey | Action |
 | :--- | :--- | :--- |
-| **Violation** | `1` | Opens the Violation classification dialog |
-| **Uncertain** | `2` | Opens the Uncertain submission dialog |
-| **No Violation** | `3` | Opens the No Violation confirmation dialog |
+| **Violation** | `1` / `V` | Opens the Violation classification dialog |
+| **Uncertain** | `2` / `U` | Opens the Uncertain submission dialog |
+| **No Violation** | `3` / `C` / `I` | Opens the No Violation confirmation dialog |
 
 ---
 

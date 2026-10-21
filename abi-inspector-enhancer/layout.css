@@ -1074,6 +1074,72 @@ html:not([data-abi-site="off"]) {
     border-radius: 4px;
     padding: 2px 6px;
   }
+  .abi-keybind-keys kbd.abi-key-chip {
+    cursor: pointer;
+    transition: all 0.15s ease;
+    user-select: none;
+    position: relative;
+  }
+  .abi-keybind-keys kbd.abi-key-chip:hover {
+    border-color: var(--s-accent, #e5a93c);
+    color: #ffffff;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.5);
+  }
+  .abi-keybind-keys kbd.abi-key-chip.is-custom {
+    border-color: #38bdf8;
+    color: #38bdf8;
+    background: rgba(56, 189, 248, 0.12);
+    box-shadow: 0 0 6px rgba(56, 189, 248, 0.3);
+  }
+  .abi-keybind-keys kbd.abi-key-chip.recording {
+    border-color: #f59e0b !important;
+    color: #f59e0b !important;
+    background: rgba(245, 158, 11, 0.2) !important;
+    animation: abiPulseKey 0.8s infinite alternate ease-in-out;
+  }
+  @keyframes abiPulseKey {
+    0% { box-shadow: 0 0 4px rgba(245, 158, 11, 0.4); }
+    100% { box-shadow: 0 0 12px rgba(245, 158, 11, 0.95); }
+  }
+  .abi-key-reset-btn {
+    background: transparent;
+    border: 0;
+    color: var(--s-muted, #8fa09d);
+    cursor: pointer;
+    font-size: 13px;
+    padding: 2px 5px;
+    margin-left: 2px;
+    border-radius: 4px;
+    transition: all 0.15s ease;
+    line-height: 1;
+  }
+  .abi-key-reset-btn:hover {
+    color: #ef4444;
+    background: rgba(239, 68, 68, 0.12);
+  }
+  .abi-keybind-header-actions {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 8px;
+  }
+  .abi-reset-keybinds-btn {
+    font-size: 11px;
+    font-weight: 600;
+    padding: 4px 10px;
+    border-radius: 4px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    color: var(--s-muted, #8fa09d);
+    cursor: pointer;
+    transition: all 0.15s ease;
+  }
+  .abi-reset-keybinds-btn:hover {
+    color: #f0f3ee;
+    border-color: rgba(255, 255, 255, 0.25);
+    background: rgba(255, 255, 255, 0.1);
+  }
 
   /* Flat 44x26 Pill Switch */
   .abi-settings-checkbox {

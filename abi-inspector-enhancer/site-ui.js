@@ -143,6 +143,12 @@
       keyViolationDesc: "Violation",
       keyUncertainDesc: "Uncertain",
       keySubmitFinalDesc: "Submit Final Verdict",
+      resetAllKeybinds: "Reset all keybinds to defaults",
+      pressKey: "Press key...",
+      keybindUpdated: "Keybind updated",
+      keybindsReset: "All keybinds reset to defaults",
+      clickToRebind: "Click to rebind key",
+      resetKeybind: "Reset to default",
       settingSiteTitle: "Site modifications",
       settingSiteDesc: "Enable custom overview stats board, responsive layout, tab navigation, and verdict dialogs.",
       settingSkipIntroTitle: "Skip intro screen on load",
@@ -305,6 +311,12 @@
       keyViolationDesc: "Verstoß",
       keyUncertainDesc: "Unsicher",
       keySubmitFinalDesc: "Endgültiges Urteil abgeben",
+      resetAllKeybinds: "Alle Tastenbelegungen zurücksetzen",
+      pressKey: "Taste drücken...",
+      keybindUpdated: "Tastenbelegung aktualisiert",
+      keybindsReset: "Alle Tastenbelegungen auf Standard zurückgesetzt",
+      clickToRebind: "Klicken zum Ändern der Taste",
+      resetKeybind: "Auf Standard zurücksetzen",
       settingSiteTitle: "Seitenmodifikationen",
       settingSiteDesc: "Benutzerdefinierte Statistik-Übersicht, responsives Layout, Tab-Navigation und Urteilsdialoge aktivieren.",
       settingSkipIntroTitle: "Intro beim Laden überspringen",
@@ -467,6 +479,12 @@
       keyViolationDesc: "Нарушение",
       keyUncertainDesc: "Не уверен",
       keySubmitFinalDesc: "Подтвердить вердикт",
+      resetAllKeybinds: "Сбросить все горячие клавиши",
+      pressKey: "Нажмите клавишу...",
+      keybindUpdated: "Горячая клавиша обновлена",
+      keybindsReset: "Все клавиши сброшены по умолчанию",
+      clickToRebind: "Нажмите, чтобы изменить клавишу",
+      resetKeybind: "Сбросить на значение по умолчанию",
       settingSiteTitle: "Модификации сайта",
       settingSiteDesc: "Включить панель статистики, адаптивный интерфейс, навигацию по вкладкам и окна вердиктов.",
       settingSkipIntroTitle: "Пропускать заставку при входе",
@@ -629,6 +647,12 @@
       keyViolationDesc: "Infraction",
       keyUncertainDesc: "Incertain",
       keySubmitFinalDesc: "Confirmer le verdict final",
+      resetAllKeybinds: "Réinitialiser tous les raccourcis",
+      pressKey: "Appuyez sur une touche...",
+      keybindUpdated: "Raccourci mis à jour",
+      keybindsReset: "Tous les raccourcis réinitialisés",
+      clickToRebind: "Cliquer pour réassigner la touche",
+      resetKeybind: "Rétablir par défaut",
       settingSiteTitle: "Modifications du site",
       settingSiteDesc: "Activer le tableau de statistiques personnalisé, la mise en page adaptative et les fenêtres de verdict.",
       settingSkipIntroTitle: "Passer l'introduction au chargement",
@@ -791,6 +815,12 @@
       keyViolationDesc: "Infracción",
       keyUncertainDesc: "Incierto",
       keySubmitFinalDesc: "Enviar veredicto final",
+      resetAllKeybinds: "Restablecer todos los atajos",
+      pressKey: "Presiona una tecla...",
+      keybindUpdated: "Atajo actualizado",
+      keybindsReset: "Todos los atajos se han restablecido",
+      clickToRebind: "Haz clic para reasignar la tecla",
+      resetKeybind: "Restablecer a predeterminado",
       settingSiteTitle: "Modificaciones del sitio",
       settingSiteDesc: "Habilitar panel de estadísticas personalizado, diseño adaptable, pestañas y diálogos de veredicto.",
       settingSkipIntroTitle: "Omitir introducción al cargar",
@@ -953,6 +983,12 @@
       keyViolationDesc: "違反あり",
       keyUncertainDesc: "判断保留",
       keySubmitFinalDesc: "最終判定を提出",
+      resetAllKeybinds: "すべてのキー設定を初期化",
+      pressKey: "キーを押してください...",
+      keybindUpdated: "キー設定を更新しました",
+      keybindsReset: "すべてのキー設定をデフォルトに戻しました",
+      clickToRebind: "クリックしてキーを変更",
+      resetKeybind: "デフォルトに戻す",
       settingSiteTitle: "サイト拡張機能",
       settingSiteDesc: "カスタム統計概要パネル、レスポンシブ配置、タブ遷移、判定ダイアログを有効にします。",
       settingSkipIntroTitle: "開始演出のスキップ",
@@ -1115,6 +1151,12 @@
       keyViolationDesc: "Violação",
       keyUncertainDesc: "Incerto",
       keySubmitFinalDesc: "Enviar veredito final",
+      resetAllKeybinds: "Redefinir todos os atalhos",
+      pressKey: "Pressione uma tecla...",
+      keybindUpdated: "Atalho atualizado",
+      keybindsReset: "Todos os atalhos foram redefinidos para os padrões",
+      clickToRebind: "Clique para reatribuir a tecla",
+      resetKeybind: "Redefinir para o padrão",
       settingSiteTitle: "Modificações do site",
       settingSiteDesc: "Ativar painel de estatísticas personalizado, layout responsivo, abas e diálogos de veredito.",
       settingSkipIntroTitle: "Pular introdução ao carregar",
@@ -1277,6 +1319,12 @@
       keyViolationDesc: "違規",
       keyUncertainDesc: "不確定",
       keySubmitFinalDesc: "送出最終裁決",
+      resetAllKeybinds: "重設所有快捷鍵為預設",
+      pressKey: "請按任意鍵...",
+      keybindUpdated: "快捷鍵已更新",
+      keybindsReset: "所有快捷鍵已恢復為預設值",
+      clickToRebind: "點擊以重新綁定按鍵",
+      resetKeybind: "重設為預設值",
       settingSiteTitle: "網站增強功能",
       settingSiteDesc: "啟用自訂數據總覽看板、響應式版面、分頁導覽與裁決對話方塊。",
       settingSkipIntroTitle: "載入時跳過開場畫面",
@@ -1439,6 +1487,12 @@
       keyViolationDesc: "违规",
       keyUncertainDesc: "无法确定",
       keySubmitFinalDesc: "提交最终裁决",
+      resetAllKeybinds: "重置所有快捷键为默认",
+      pressKey: "请按任意键...",
+      keybindUpdated: "快捷键已更新",
+      keybindsReset: "所有快捷键已恢复为默认值",
+      clickToRebind: "点击以重新绑定按键",
+      resetKeybind: "重置为默认值",
       settingSiteTitle: "站点增强功能",
       settingSiteDesc: "启用自定义数据总览看板、自适应布局、标签页导航与裁决对话框。",
       settingSkipIntroTitle: "加载时跳过入场动画",
@@ -1730,7 +1784,7 @@
 
   const WATERMARK = `
 ================================================================================
-  ABI INSPECTOR EXTENDED \u2014 v3.0.5
+  ABI INSPECTOR EXTENDED \u2014 v3.0.6
   Enhanced Patroller Interface & Local Playback Controls
   Author: deem (https://github.com/mkornela)
   Status: Extension Loaded & Active
@@ -1776,7 +1830,7 @@
     window.__abiExtendedBannerLogged = true;
     try {
       console.log(
-        "%c ABI INSPECTOR EXTENDED %c v3.0.5 %c deem %c ACTIVE \n%cEnhanced Patroller Interface & Local Playback Controls (https://github.com/mkornela)",
+        "%c ABI INSPECTOR EXTENDED %c v3.0.6 %c deem %c ACTIVE \n%cEnhanced Patroller Interface & Local Playback Controls (https://github.com/mkornela)",
         "background: #d49a37; color: #0b0f11; font-weight: bold; font-family: monospace; border-radius: 3px 0 0 3px; padding: 3px 8px; font-size: 11px;",
         "background: #182226; color: #d49a37; font-weight: bold; font-family: monospace; padding: 3px 8px; font-size: 11px; border-left: 1px solid #2a373c;",
         "background: #222f35; color: #c4d0d0; font-family: monospace; padding: 3px 8px; font-size: 11px; border-left: 1px solid #2a373c;",
@@ -3516,10 +3570,10 @@
   function getExtensionVersion() {
     try {
       if (typeof chrome !== "undefined" && chrome?.runtime?.getManifest) {
-        return chrome.runtime.getManifest()?.version || "3.0.5";
+        return chrome.runtime.getManifest()?.version || "3.0.6";
       }
     } catch {}
-    return "3.0.5";
+    return "3.0.6";
   }
 
   function safeStorageGet(defaults) {
@@ -3906,70 +3960,199 @@
     const keybindsHead = makeSectionHeading(safeT("keybindsHeading", "Keybinds & Shortcuts"));
     keybindsHead.querySelector("h2").id = "abi-settings-keybinds-title";
 
-    function makeKeybindCategory(title, items) {
-      const cat = document.createElement("div");
-      cat.className = "abi-keybind-category";
-      const catTitle = document.createElement("h3");
-      catTitle.className = "abi-keybind-cat-title";
-      catTitle.textContent = title;
-      cat.append(catTitle);
+    const resetAllKeybindsBtn = document.createElement("button");
+    resetAllKeybindsBtn.type = "button";
+    resetAllKeybindsBtn.className = "abi-reset-keybinds-btn";
+    resetAllKeybindsBtn.textContent = safeT("resetAllKeybinds", "Reset all keybinds to defaults");
 
-      const table = document.createElement("div");
-      table.className = "abi-keybind-table";
-      for (const item of items) {
-        const row = document.createElement("div");
-        row.className = "abi-keybind-row";
-        row.dataset.keywords = item.keywords || "";
-        const desc = document.createElement("div");
-        desc.className = "abi-keybind-desc";
-        desc.textContent = item.desc;
-        const keys = document.createElement("div");
-        keys.className = "abi-keybind-keys";
-        keys.innerHTML = item.keys;
-        row.append(desc, keys);
-        table.append(row);
+    const keybindActionsRow = document.createElement("div");
+    keybindActionsRow.className = "abi-keybind-header-actions";
+    keybindActionsRow.append(resetAllKeybindsBtn);
+    keybindsHead.append(keybindActionsRow);
+
+    let customKeybinds = {};
+    try {
+      const raw =
+        document.documentElement.dataset.abiKeybinds ||
+        localStorage.getItem("abi-keybinds");
+      if (raw) customKeybinds = JSON.parse(raw);
+    } catch {}
+
+    function saveKeybinds() {
+      document.documentElement.dataset.abiKeybinds = JSON.stringify(customKeybinds);
+      try {
+        localStorage.setItem("abi-keybinds", JSON.stringify(customKeybinds));
+      } catch {}
+      if (typeof chrome !== "undefined" && chrome?.storage?.local?.set) {
+        chrome.storage.local.set({ customKeybinds }).catch(() => {});
       }
-      cat.append(table);
-      return cat;
     }
+
+    resetAllKeybindsBtn.addEventListener("click", () => {
+      customKeybinds = {};
+      saveKeybinds();
+      renderKeybindsGrid();
+      showToast(safeT("keybindsReset", "All keybinds reset to defaults"));
+    });
 
     const keybindsGrid = document.createElement("div");
     keybindsGrid.className = "abi-keybinds-grid";
 
-    // Playback & Speed
-    keybindsGrid.append(makeKeybindCategory(safeT("playbackKeys", "Playback & Speed"), [
-      { desc: safeT("keyPlayPauseDesc", "Play / Pause"), keys: "<kbd>Space</kbd> <span class='abi-key-or'>" + safeT("keyOr", "or") + "</span> <kbd>K</kbd>", keywords: "play pause space k" },
-      { desc: safeT("keyMuteDesc", "Mute / Unmute"), keys: "<kbd>Shift + M</kbd>", keywords: "mute sound audio shift m" },
-      { desc: safeT("keySpeedDesc", "Slower / Faster Speed"), keys: "<kbd>-</kbd> <span class='abi-key-or'>/</span> <kbd>+</kbd>", keywords: "speed slower faster minus plus" },
-    ]));
+    const KEYBIND_CATEGORIES = [
+      {
+        title: safeT("playbackKeys", "Playback & Speed"),
+        items: [
+          { id: "play", desc: safeT("keyPlayPauseDesc", "Play / Pause"), defaultDisplay: "Space", altDisplay: "K", keywords: "play pause space k" },
+          { id: "mute", desc: safeT("keyMuteDesc", "Mute / Unmute"), defaultDisplay: "Shift + M", keywords: "mute sound audio shift m" },
+          { id: "slower", desc: safeT("keySpeedDesc", "Slower / Faster Speed"), defaultDisplay: "-", altDisplay: "+", keywords: "speed slower faster minus plus" },
+        ],
+      },
+      {
+        title: safeT("navigationKeys", "Timeline & Review Navigation"),
+        items: [
+          { id: "loopIn", desc: safeT("keyLoopDesc", "A/B Loop Repeat (In / Out)"), defaultDisplay: "[ / ]", keywords: "loop ab repeat in out replay bracket" },
+          { id: "loopClear", desc: safeT("keyClearLoopDesc", "Clear A/B Loop"), defaultDisplay: "\\", keywords: "clear loop reset ab backslash" },
+          { id: "back5", desc: safeT("keySeek5sDesc", "Seek Back / Forward 5s"), defaultDisplay: "J / L", altDisplay: "← / →", keywords: "seek back forward jump 5s arrows j l" },
+          { id: null, desc: safeT("keySkip10sDesc", "Skip 10s Backward / Forward"), badgeDisplay: "−10s / +10s", keywords: "skip 10s toolbar" },
+          { id: "previous", desc: safeT("keyFrameDesc", "Previous / Next Frame"), defaultDisplay: ", / .", keywords: "frame step comma period" },
+          { id: "bookmark", desc: safeT("keyBookmarkDesc", "Drop Bookmark / Pin"), defaultDisplay: "M", altDisplay: "B", keywords: "bookmark pin moment marker m b" },
+          { id: null, desc: safeT("keyMillisecondsDesc", "Toggle Milliseconds"), badgeDisplay: safeT("keyClickTimeBadge", "Click Time"), keywords: "millisecond precision fractional format" },
+        ],
+      },
+      {
+        title: safeT("investigationKeys", "Investigation & View Tools"),
+        items: [
+          { id: "zoom", desc: safeT("keyLoupeDesc", "Tactical Loupe (2.5× Zoom)"), defaultDisplay: safeT("keyHoldZ", "Hold Z"), altDisplay: safeT("keyRightClickHold", "Right-Click Hold"), keywords: "zoom loupe magnify z right click" },
+          { id: "gamma", desc: safeT("keyGammaDesc", "Shadow & Gamma Boost"), defaultDisplay: "G", altDisplay: "Shift + G / X", keywords: "gamma shadow boost brightness vision silhouette invert negative thermal g x" },
+          { id: "fullscreen", desc: safeT("keyFullscreenDesc", "Toggle Fullscreen"), defaultDisplay: "F", altDisplay: safeT("keyDoubleClick", "Double-Click"), keywords: "fullscreen cinema expand f dblclick" },
+          { id: null, desc: safeT("keyReloadStreamDesc", "Reload Player Stream"), badgeDisplay: safeT("keyToolbarButton", "Toolbar Button"), keywords: "reload refresh stream unfreeze" },
+        ],
+      },
+      {
+        title: safeT("verdictKeys", "Quick Verdicts (Workbench)"),
+        items: [
+          { id: "verdict1", desc: safeT("keyViolationDesc", "Violation"), defaultDisplay: "1", altDisplay: "V", keywords: "verdict violation guilty cheat 1 v" },
+          { id: "verdict2", desc: safeT("keyUncertainDesc", "Uncertain"), defaultDisplay: "2", altDisplay: "U", keywords: "verdict uncertain unsure 2 u" },
+          { id: "verdict3", desc: safeT("keyNoViolationDesc", "No Violation"), defaultDisplay: "3", altDisplay: "C / I", keywords: "verdict no violation innocent clean 3 c i" },
+          { id: null, desc: safeT("keySubmitFinalDesc", "Submit Final Verdict"), defaultDisplay: "Enter", keywords: "submit verdict enter confirm" },
+        ],
+      },
+    ];
 
-    // Timeline & Review Navigation
-    keybindsGrid.append(makeKeybindCategory(safeT("navigationKeys", "Timeline & Review Navigation"), [
-      { desc: "A/B Loop Repeat (In / Out)", keys: "<kbd>[</kbd> <span class='abi-key-or'>/</span> <kbd>]</kbd> <span class='abi-key-or'>or</span> <kbd>I</kbd> <span class='abi-key-or'>/</span> <kbd>O</kbd>", keywords: "loop ab repeat in out replay bracket" },
-      { desc: "Clear A/B Loop", keys: "<kbd>\\</kbd>", keywords: "clear loop reset ab backslash" },
-      { desc: "Seek Back / Forward 5s", keys: "<kbd>J</kbd> <span class='abi-key-or'>/</span> <kbd>L</kbd> <span class='abi-key-or'>or</span> <kbd>←</kbd> <span class='abi-key-or'>/</span> <kbd>→</kbd>", keywords: "seek back forward jump 5s arrows j l" },
-      { desc: "Skip 10s Backward / Forward", keys: "<span class='abi-key-badge'>−10s</span> <span class='abi-key-or'>/</span> <span class='abi-key-badge'>+10s</span>", keywords: "skip 10s toolbar" },
-      { desc: "Previous / Next Frame", keys: "<kbd>,</kbd> <span class='abi-key-or'>/</span> <kbd>.</kbd>", keywords: "frame step comma period" },
-      { desc: "Drop Bookmark / Pin", keys: "<kbd>M</kbd> <span class='abi-key-or'>or</span> <kbd>B</kbd>", keywords: "bookmark pin moment marker m b" },
-      { desc: "Toggle Milliseconds", keys: "<span class='abi-key-badge'>Click Time</span>", keywords: "millisecond precision fractional format" },
-    ]));
+    function renderKeybindsGrid() {
+      keybindsGrid.replaceChildren();
+      for (const cat of KEYBIND_CATEGORIES) {
+        const catEl = document.createElement("div");
+        catEl.className = "abi-keybind-category";
+        const catTitle = document.createElement("h3");
+        catTitle.className = "abi-keybind-cat-title";
+        catTitle.textContent = cat.title;
+        catEl.append(catTitle);
 
-    // Tactical Investigation Tools
-    keybindsGrid.append(makeKeybindCategory(safeT("investigationKeys", "Investigation & View Tools"), [
-      { desc: safeT("keyLoupeDesc", "Tactical Loupe (2.5× Zoom)"), keys: "<kbd>" + safeT("keyHoldZ", "Hold Z") + "</kbd> <span class='abi-key-or'>" + safeT("keyOr", "or") + "</span> <kbd>" + safeT("keyRightClickHold", "Right-Click Hold") + "</kbd>", keywords: "zoom loupe magnify z right click" },
-      { desc: safeT("keyGammaDesc", "Shadow & Gamma Boost"), keys: "<kbd>G</kbd> <span class='abi-key-or'>" + safeT("keyOr", "or") + "</span> <kbd>Shift + G</kbd> <span class='abi-key-or'>" + safeT("keyOr", "or") + "</span> <kbd>X</kbd>", keywords: "gamma shadow boost brightness vision silhouette invert negative thermal g x" },
-      { desc: safeT("keyFullscreenDesc", "Toggle Fullscreen"), keys: "<kbd>F</kbd> <span class='abi-key-or'>" + safeT("keyOr", "or") + "</span> <kbd>" + safeT("keyDoubleClick", "Double-Click") + "</kbd>", keywords: "fullscreen cinema expand f dblclick" },
-      { desc: safeT("keyReloadStreamDesc", "Reload Player Stream"), keys: "<span class='abi-key-badge'>" + safeT("keyToolbarButton", "Toolbar Button") + "</span>", keywords: "reload refresh stream unfreeze" },
-    ]));
+        const table = document.createElement("div");
+        table.className = "abi-keybind-table";
 
-    // Quick Verdicts
-    keybindsGrid.append(makeKeybindCategory(safeT("verdictKeys", "Quick Verdicts (Workbench)"), [
-      { desc: safeT("keyNoViolationDesc", "No Violation"), keys: "<kbd>1</kbd> <span class='abi-key-or'>" + safeT("keyOr", "or") + "</span> <kbd>V</kbd>", keywords: "verdict no violation innocent clean 1 v" },
-      { desc: safeT("keyViolationDesc", "Violation"), keys: "<kbd>2</kbd> <span class='abi-key-or'>" + safeT("keyOr", "or") + "</span> <kbd>U</kbd>", keywords: "verdict violation guilty cheat 2 u" },
-      { desc: safeT("keyUncertainDesc", "Uncertain"), keys: "<kbd>3</kbd> <span class='abi-key-or'>" + safeT("keyOr", "or") + "</span> <kbd>I</kbd>", keywords: "verdict uncertain unsure 3 i" },
-      { desc: safeT("keySubmitFinalDesc", "Submit Final Verdict"), keys: "<kbd>Enter</kbd>", keywords: "submit verdict enter confirm" },
-    ]));
+        for (const item of cat.items) {
+          const row = document.createElement("div");
+          row.className = "abi-keybind-row";
+          row.dataset.keywords = item.keywords || "";
 
+          const desc = document.createElement("div");
+          desc.className = "abi-keybind-desc";
+          desc.textContent = item.desc;
+
+          const keysWrap = document.createElement("div");
+          keysWrap.className = "abi-keybind-keys";
+
+          if (item.id) {
+            const isCustom = Boolean(customKeybinds[item.id]);
+            const displayKey = isCustom ? customKeybinds[item.id] : item.defaultDisplay;
+
+            const chip = document.createElement("kbd");
+            chip.className = "abi-key-chip" + (isCustom ? " is-custom" : "");
+            chip.textContent = displayKey;
+            chip.setAttribute("role", "button");
+            chip.setAttribute("tabindex", "0");
+            chip.setAttribute("data-action", item.id);
+            chip.title = safeT("clickToRebind", "Click to rebind key");
+
+            chip.addEventListener("click", () => {
+              if (chip.classList.contains("recording")) return;
+              chip.classList.add("recording");
+              const prevText = chip.textContent;
+              chip.textContent = safeT("pressKey", "Press key...");
+
+              const onKey = (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                e.stopImmediatePropagation();
+                window.removeEventListener("keydown", onKey, true);
+                chip.classList.remove("recording");
+
+                if (e.key === "Escape") {
+                  chip.textContent = prevText;
+                  return;
+                }
+
+                let keyName = e.key;
+                if (keyName === " ") keyName = "Space";
+                else if (keyName.length === 1) keyName = keyName.toUpperCase();
+
+                customKeybinds[item.id] = keyName;
+                saveKeybinds();
+                renderKeybindsGrid();
+                showToast(`${safeT("keybindUpdated", "Keybind updated")}: ${item.desc} → ${keyName}`);
+              };
+
+              window.addEventListener("keydown", onKey, true);
+            });
+
+            keysWrap.append(chip);
+
+            if (isCustom) {
+              const resetBtn = document.createElement("button");
+              resetBtn.type = "button";
+              resetBtn.className = "abi-key-reset-btn";
+              resetBtn.title = safeT("resetKeybind", "Reset to default");
+              resetBtn.textContent = "↺";
+              resetBtn.addEventListener("click", (e) => {
+                e.stopPropagation();
+                delete customKeybinds[item.id];
+                saveKeybinds();
+                renderKeybindsGrid();
+                showToast(`${item.desc}: ${safeT("resetKeybind", "Reset to default")}`);
+              });
+              keysWrap.append(resetBtn);
+            } else if (item.altDisplay) {
+              const orSpan = document.createElement("span");
+              orSpan.className = "abi-key-or";
+              orSpan.textContent = safeT("keyOr", "or");
+
+              const altKbd = document.createElement("kbd");
+              altKbd.textContent = item.altDisplay;
+              keysWrap.append(orSpan, altKbd);
+            }
+          } else if (item.badgeDisplay) {
+            const badge = document.createElement("span");
+            badge.className = "abi-key-badge";
+            badge.textContent = item.badgeDisplay;
+            keysWrap.append(badge);
+          } else {
+            const kbd = document.createElement("kbd");
+            kbd.textContent = item.defaultDisplay;
+            keysWrap.append(kbd);
+          }
+
+          row.append(desc, keysWrap);
+          table.append(row);
+        }
+
+        catEl.append(table);
+        keybindsGrid.append(catEl);
+      }
+    }
+
+    renderKeybindsGrid();
     keybindsSection.append(keybindsHead, keybindsGrid);
 
     // 3. Interface Card
@@ -4078,11 +4261,11 @@
       "verdictHotkeys",
       safeT("settingVerdictHotkeysTitle", "Quick verdict hotkeys"),
       safeT("settingVerdictHotkeysDesc", "Press keyboard shortcuts on the inspection workbench to instantly submit your verdict."),
-      "hotkey hotkeys key shortcut verdict 1 2 3 v u i instant submit",
+      "hotkey hotkeys key shortcut verdict 1 2 3 v u c i instant submit",
       makeKeyChips([
         "<kbd>1</kbd> " + safeT("keyOr", "or") + " <kbd>V</kbd> " + safeT("keyViolationDesc", "Violation"),
         "<kbd>2</kbd> " + safeT("keyOr", "or") + " <kbd>U</kbd> " + safeT("keyUncertainDesc", "Uncertain"),
-        "<kbd>3</kbd> " + safeT("keyOr", "or") + " <kbd>I</kbd> " + safeT("keyNoViolationDesc", "No Violation"),
+        "<kbd>3</kbd> " + safeT("keyOr", "or") + " <kbd>C</kbd> " + safeT("keyOr", "or") + " <kbd>I</kbd> " + safeT("keyNoViolationDesc", "No Violation"),
       ]),
       showToast,
     );
@@ -5904,6 +6087,12 @@
         navigationKeys: "Timeline & Review Navigation",
         investigationKeys: "Investigation & View Tools",
         verdictKeys: "Quick Verdicts (Workbench)",
+        resetAllKeybinds: "Reset all keybinds to defaults",
+        pressKey: "Press key...",
+        keybindUpdated: "Keybind updated",
+        keybindsReset: "All keybinds reset to defaults",
+        clickToRebind: "Click to rebind key",
+        resetKeybind: "Reset to default",
       };
       return FALLBACKS[key] || key;
     };

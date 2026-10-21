@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "ABI Inspector Extended",
-  "version": "3.0.5",
+  "version": "3.0.6",
   "description": "Local playback controls for the official Arena Breakout: Infinite Inspector video. No network requests or verdict automation.",
   "icons": {
     "16": "icons/icon-16.png",
@@ -9,7 +9,9 @@
     "48": "icons/icon-48.png",
     "128": "icons/icon-128.png"
   },
-  "permissions": ["storage"],
+  "permissions": [
+    "storage"
+  ],
   "action": {
     "default_title": "ABI Inspector Extended",
     "default_popup": "popup.html",
@@ -22,13 +24,21 @@
   },
   "content_scripts": [
     {
-      "matches": ["https://www.arenabreakoutinfinite.com/act/a20251028patroller/*"],
-      "js": ["overview-data.js"],
+      "matches": [
+        "https://www.arenabreakoutinfinite.com/act/a20251028patroller/*"
+      ],
+      "js": [
+        "overview-data.js"
+      ],
       "run_at": "document_start"
     },
     {
-      "matches": ["https://www.arenabreakoutinfinite.com/act/a20251028patroller/*"],
-      "js": ["overview-observer.js"],
+      "matches": [
+        "https://www.arenabreakoutinfinite.com/act/a20251028patroller/*"
+      ],
+      "js": [
+        "overview-observer.js"
+      ],
       "world": "MAIN",
       "run_at": "document_start"
     },
@@ -36,7 +46,9 @@
       "matches": [
         "https://www.arenabreakoutinfinite.com/act/a20251028patroller/*"
       ],
-      "js": ["settings.js"],
+      "js": [
+        "settings.js"
+      ],
       "run_at": "document_start",
       "all_frames": false
     },
@@ -44,8 +56,16 @@
       "matches": [
         "https://www.arenabreakoutinfinite.com/act/a20251028patroller/*"
       ],
-      "js": ["site-ui.js", "content.js", "dialogs.js"],
-      "css": ["player.css", "layout.css", "dialogs.css"],
+      "js": [
+        "site-ui.js",
+        "content.js",
+        "dialogs.js"
+      ],
+      "css": [
+        "player.css",
+        "layout.css",
+        "dialogs.css"
+      ],
       "run_at": "document_idle",
       "all_frames": false
     }

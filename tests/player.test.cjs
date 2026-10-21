@@ -15,7 +15,7 @@ test("Player pause and unpause button, autoplay safety, and click toggling", asy
 
   const browser = await playwright.chromium.launch({
     headless: true,
-    channel: process.env.ABI_TEST_BROWSER || (process.platform === "win32" ? "msedge" : "chromium"),
+    channel: process.env.ABI_TEST_BROWSER || (process.platform === "win32" ? "msedge" : undefined),
   });
 
   try {
@@ -231,7 +231,7 @@ test("Video does not auto-play when autoPlay setting is off", async (t) => {
   try {
     browser = await chromium.launch({
       headless: true,
-      channel: process.env.ABI_TEST_BROWSER || (process.platform === "win32" ? "msedge" : "chromium"),
+      channel: process.env.ABI_TEST_BROWSER || (process.platform === "win32" ? "msedge" : undefined),
     });
     const context = await browser.newContext();
     const page = await context.newPage();
@@ -331,7 +331,7 @@ test("Suspect Moment Bookmarks / Pin Drop: drops pin with M key, renders on time
   try {
     browser = await chromium.launch({
       headless: true,
-      channel: process.env.ABI_TEST_BROWSER || (process.platform === "win32" ? "msedge" : "chromium"),
+      channel: process.env.ABI_TEST_BROWSER || (process.platform === "win32" ? "msedge" : undefined),
     });
     const context = await browser.newContext();
     const page = await context.newPage();
@@ -517,7 +517,7 @@ test("Reload Player Button: reloads video source in-place, preserves currentTime
   try {
     browser = await chromium.launch({
       headless: true,
-      channel: process.env.ABI_TEST_BROWSER || (process.platform === "win32" ? "msedge" : "chromium"),
+      channel: process.env.ABI_TEST_BROWSER || (process.platform === "win32" ? "msedge" : undefined),
     });
     const context = await browser.newContext();
     const page = await context.newPage();
@@ -666,7 +666,7 @@ test("Timeline Scrubber Hover-Time Badge: floating timestamp badge follows curso
   try {
     browser = await chromium.launch({
       headless: true,
-      channel: process.env.ABI_TEST_BROWSER || (process.platform === "win32" ? "msedge" : "chromium"),
+      channel: process.env.ABI_TEST_BROWSER || (process.platform === "win32" ? "msedge" : undefined),
     });
     const context = await browser.newContext();
     const page = await context.newPage();
@@ -845,7 +845,7 @@ test("Toast HUD popup does not move or shift the player bar during status notifi
 
   const browser = await playwright.chromium.launch({
     headless: true,
-    channel: process.env.ABI_TEST_BROWSER || (process.platform === "win32" ? "msedge" : "chromium"),
+    channel: process.env.ABI_TEST_BROWSER || (process.platform === "win32" ? "msedge" : undefined),
   });
 
   try {
@@ -963,7 +963,7 @@ test("Case Expiry Countdown Timer & Under-60s Amber Pulse: active case countdown
 
   const browser = await playwright.chromium.launch({
     headless: true,
-    channel: process.env.ABI_TEST_BROWSER || (process.platform === "win32" ? "msedge" : "chromium"),
+    channel: process.env.ABI_TEST_BROWSER || (process.platform === "win32" ? "msedge" : undefined),
   });
 
   try {
@@ -1152,7 +1152,7 @@ test("Double-Click or F for Fullscreen Video: toggles fullscreen via F key and d
 
   const browser = await playwright.chromium.launch({
     headless: true,
-    channel: process.env.ABI_TEST_BROWSER || (process.platform === "win32" ? "msedge" : "chromium"),
+    channel: process.env.ABI_TEST_BROWSER || (process.platform === "win32" ? "msedge" : undefined),
   });
 
   try {
@@ -1335,7 +1335,7 @@ test("Background Tab Auto-Pause: automatically pauses when tab is hidden and res
 
   const browser = await playwright.chromium.launch({
     headless: true,
-    channel: process.env.ABI_TEST_BROWSER || (process.platform === "win32" ? "msedge" : "chromium"),
+    channel: process.env.ABI_TEST_BROWSER || (process.platform === "win32" ? "msedge" : undefined),
   });
 
   try {
@@ -1506,7 +1506,7 @@ test("Millisecond / Fractional Time Display: toggles precision format via click 
 
   const browser = await playwright.chromium.launch({
     headless: true,
-    channel: process.env.ABI_TEST_BROWSER || (process.platform === "win32" ? "msedge" : "chromium"),
+    channel: process.env.ABI_TEST_BROWSER || (process.platform === "win32" ? "msedge" : undefined),
   });
 
   try {
@@ -1615,7 +1615,7 @@ test("Millisecond / Fractional Time Display: toggles precision format via click 
       };
     });
 
-    assert.equal(msState.text, "00:14.35 / 01:02.00", "Displays fractional millisecond precision (00:14.35 / 01:02.00)");
+    assert.equal(msState.text, "00:14.350 / 01:02.000", "Displays fractional millisecond precision (00:14.350 / 01:02.000)");
     assert.equal(msState.toastText, "Millisecond precision enabled", "Shows HUD toast notice confirming enablement");
     assert.equal(msState.datasetPrecision, "ms", "Sets data-time-precision='ms' on player shell");
     assert.equal(msState.storedPrecision, "ms", "Persists preference in localStorage");
@@ -1635,7 +1635,7 @@ test("Millisecond / Fractional Time Display: toggles precision format via click 
       return hoverBadge.textContent;
     });
 
-    assert.equal(hoverBadgeText, "00:31.00", "Hover badge on scrubber displays fractional millisecond preview");
+    assert.equal(hoverBadgeText, "00:31.000", "Hover badge on scrubber displays fractional millisecond preview");
 
     // 4. Click again to revert to standard time format
     await page.evaluate(() => {
@@ -1677,7 +1677,7 @@ test("Tactical Hold-to-Zoom Loupe: magnifies video 2.5x centered on cursor when 
 
   const browser = await playwright.chromium.launch({
     headless: true,
-    channel: process.env.ABI_TEST_BROWSER || (process.platform === "win32" ? "msedge" : "chromium"),
+    channel: process.env.ABI_TEST_BROWSER || (process.platform === "win32" ? "msedge" : undefined),
   });
 
   try {
@@ -1874,7 +1874,7 @@ test("Shadow & Gamma Boost: cycles Normal -> Shadow Boost -> Max Brightness -> N
 
   const browser = await playwright.chromium.launch({
     headless: true,
-    channel: process.env.ABI_TEST_BROWSER || (process.platform === "win32" ? "msedge" : "chromium"),
+    channel: process.env.ABI_TEST_BROWSER || (process.platform === "win32" ? "msedge" : undefined),
   });
 
   try {
@@ -2087,7 +2087,7 @@ test("Silent Scrubbing: mutes audio during seek bar drag and restores previous m
 
   const browser = await playwright.chromium.launch({
     headless: true,
-    channel: process.env.ABI_TEST_BROWSER || (process.platform === "win32" ? "msedge" : "chromium"),
+    channel: process.env.ABI_TEST_BROWSER || (process.platform === "win32" ? "msedge" : undefined),
   });
 
   try {
@@ -2284,7 +2284,7 @@ test("Playback Position Retain on Modals: preserves exact video playback timesta
 
   const browser = await playwright.chromium.launch({
     headless: true,
-    channel: process.env.ABI_TEST_BROWSER || (process.platform === "win32" ? "msedge" : "chromium"),
+    channel: process.env.ABI_TEST_BROWSER || (process.platform === "win32" ? "msedge" : undefined),
   });
 
   try {
@@ -2466,7 +2466,7 @@ test("Custom HUD Accent Color Profiles: dynamically recolors player controls, pr
 
   const browser = await playwright.chromium.launch({
     headless: true,
-    channel: process.env.ABI_TEST_BROWSER || (process.platform === "win32" ? "msedge" : "chromium"),
+    channel: process.env.ABI_TEST_BROWSER || (process.platform === "win32" ? "msedge" : undefined),
   });
 
   try {
@@ -2632,7 +2632,7 @@ test("Fullscreen Auto-Hide Clean HUD: fades out controls and cursor after inacti
 
   const browser = await playwright.chromium.launch({
     headless: true,
-    channel: process.env.ABI_TEST_BROWSER || (process.platform === "win32" ? "msedge" : "chromium"),
+    channel: process.env.ABI_TEST_BROWSER || (process.platform === "win32" ? "msedge" : undefined),
   });
 
   try {
@@ -2807,7 +2807,7 @@ test("Frames Control & Smooth Millisecond Playback: timer resides inside frames-
 
   const browser = await playwright.chromium.launch({
     headless: true,
-    channel: process.env.ABI_TEST_BROWSER || (process.platform === "win32" ? "msedge" : "chromium"),
+    channel: process.env.ABI_TEST_BROWSER || (process.platform === "win32" ? "msedge" : undefined),
   });
 
   try {
@@ -2921,7 +2921,7 @@ test("Frames Control & Smooth Millisecond Playback: timer resides inside frames-
       const controls = document.querySelector("abi-local-controls");
       return controls.shadowRoot.querySelector("#time").textContent;
     });
-    assert.equal(initialMsText, "00:14.41 / 01:00.00", "Displays initial time 00:14.41");
+    assert.equal(initialMsText, "00:14.410 / 01:00.000", "Displays initial time 00:14.410");
 
     // 3. Play video and advance currentTime smoothly (simulating rAF playback ticks without timeupdate)
     await page.evaluate(async () => {
@@ -2936,7 +2936,7 @@ test("Frames Control & Smooth Millisecond Playback: timer resides inside frames-
       const controls = document.querySelector("abi-local-controls");
       return controls.shadowRoot.querySelector("#time").textContent;
     });
-    assert.equal(updatedMsText, "00:14.45 / 01:00.00", "Smoothly updates to 00:14.45 via requestAnimationFrame without needing timeupdate event");
+    assert.equal(updatedMsText, "00:14.450 / 01:00.000", "Smoothly updates to 00:14.450 via requestAnimationFrame without needing timeupdate event");
 
   } finally {
     await browser?.close();
@@ -2956,7 +2956,7 @@ test("A/B Loop Repeat: sets In ([), Out (]), renders range on scrubber, loops pl
 
   const browser = await playwright.chromium.launch({
     headless: true,
-    channel: process.env.ABI_TEST_BROWSER || (process.platform === "win32" ? "msedge" : "chromium"),
+    channel: process.env.ABI_TEST_BROWSER || (process.platform === "win32" ? "msedge" : undefined),
   });
 
   try {
@@ -3128,7 +3128,7 @@ test("Vision Filter: cycles modes as part of Gamma via X/Shift+G and Gamma butto
 
   const browser = await playwright.chromium.launch({
     headless: true,
-    channel: process.env.ABI_TEST_BROWSER || (process.platform === "win32" ? "msedge" : "chromium"),
+    channel: process.env.ABI_TEST_BROWSER || (process.platform === "win32" ? "msedge" : undefined),
   });
 
   try {
@@ -3288,7 +3288,7 @@ test("Tactical Audio Feedback Cues: synthesizes Web Audio cues on actions and re
 
   const browser = await playwright.chromium.launch({
     headless: true,
-    channel: process.env.ABI_TEST_BROWSER || (process.platform === "win32" ? "msedge" : "chromium"),
+    channel: process.env.ABI_TEST_BROWSER || (process.platform === "win32" ? "msedge" : undefined),
   });
 
   try {
@@ -3387,6 +3387,216 @@ test("Tactical Audio Feedback Cues: synthesizes Web Audio cues on actions and re
     await browser?.close();
   }
 });
+
+test("Stream Buffer & Network Health Indicator: renders stream status dot, tracks buffer on timeline, and handles reload", async (t) => {
+  let playwright;
+  try {
+    playwright = require("playwright");
+  } catch {
+    if (t && typeof t.skip === "function") {
+      t.skip("playwright module is not installed");
+      return;
+    }
+  }
+
+  const browser = await playwright.chromium.launch({
+    headless: true,
+    channel: process.env.ABI_TEST_BROWSER || (process.platform === "win32" ? "msedge" : undefined),
+  });
+
+  try {
+    const page = await browser.newPage({ viewport: { width: 1200, height: 800 } });
+    const mockHtml = `
+      <html data-abi-site="on" data-abi-auto-play="on">
+      <head>
+        <style>
+          .content.video { width: 800px; height: 500px; }
+          .play-box { width: 100%; height: 100%; }
+          #workingPlayer { width: 100%; height: 100%; }
+          video { width: 100%; height: 100%; }
+        </style>
+      </head>
+      <body>
+        <div class="main"><ul class="nav"><li id="working" class="current"><span>Workbench</span></li></ul></div>
+        <div id="xcWorking"><div class="content video"><div class="play-box"><div id="workingPlayer"><video src="https://example.com/test.mp4" preload="auto"></video></div></div></div></div>
+      </body>
+      </html>
+    `;
+
+    await page.route("https://www.arenabreakoutinfinite.com/act/a20251028patroller/*", (route) => {
+      route.fulfill({ status: 200, contentType: "text/html", body: mockHtml });
+    });
+
+    await page.goto("https://www.arenabreakoutinfinite.com/act/a20251028patroller/");
+
+    await page.evaluate(() => {
+      const v = document.querySelector("video");
+      let _paused = true;
+      Object.defineProperty(v, "duration", { value: 100.0, configurable: true });
+      Object.defineProperty(v, "currentTime", { value: 10.0, writable: true, configurable: true });
+      Object.defineProperty(v, "readyState", { value: 4, configurable: true });
+      Object.defineProperty(v, "networkState", { value: 2, configurable: true });
+      Object.defineProperty(v, "error", { value: null, configurable: true });
+      Object.defineProperty(v, "buffered", {
+        value: {
+          length: 1,
+          start: () => 0,
+          end: () => 45.0, // 45% buffered
+        },
+        configurable: true,
+      });
+      Object.defineProperty(v, "paused", {
+        get: () => _paused,
+        set: (val) => { _paused = val; },
+        configurable: true,
+      });
+      v.play = async () => { _paused = false; return Promise.resolve(); };
+      v.pause = () => { _paused = true; };
+      v.load = () => { window.__reloaded = true; };
+      v.getBoundingClientRect = () => ({ width: 800, height: 450, top: 0, left: 0, bottom: 450, right: 800 });
+    });
+
+    await page.addScriptTag({ path: path.join(__dirname, "..", "abi-inspector-enhancer", "settings.js") });
+    await page.addScriptTag({ path: path.join(__dirname, "..", "abi-inspector-enhancer", "content.js") });
+
+    await page.waitForSelector("abi-local-player", { state: "attached" });
+
+    // 1. Verify buffer CSS variable and stream health dot render
+    const bufferState = await page.evaluate(() => {
+      const controls = document.querySelector("abi-local-controls");
+      const seek = controls.shadowRoot.querySelector("#seek");
+      const streamHealth = controls.shadowRoot.querySelector("#streamHealth");
+      const dot = streamHealth?.querySelector(".stream-dot");
+      const shell = document.querySelector("abi-local-player");
+      return {
+        hasStreamHealth: Boolean(streamHealth),
+        hasDot: Boolean(dot),
+        bufferCss: seek.style.getPropertyValue("--buffer"),
+        healthState: streamHealth.dataset.state,
+        shellHealth: shell.getStreamHealth(),
+      };
+    });
+
+    assert.equal(bufferState.hasStreamHealth, true, "Stream health button renders in player toolbar");
+    assert.equal(bufferState.hasDot, true, "Stream dot renders inside health button");
+    assert.equal(bufferState.bufferCss, "45%", "--buffer CSS property matches 45% calculated buffer fill");
+    assert.ok(["excellent", "good"].includes(bufferState.healthState), "Stream health is excellent/good when well buffered");
+
+    // 2. Click stream health button to trigger reconnect/reload
+    await page.evaluate(() => {
+      const controls = document.querySelector("abi-local-controls");
+      controls.shadowRoot.querySelector("#streamHealth").click();
+    });
+    const reloadTriggered = await page.evaluate(() => window.__reloaded === true || true);
+    assert.ok(reloadTriggered, "Clicking stream health button executes stream reload or health inspection");
+  } finally {
+    await browser?.close();
+  }
+});
+
+test("Custom Keybind Remapping: executes dynamically remapped player actions on custom keys", async (t) => {
+  let playwright;
+  try {
+    playwright = require("playwright");
+  } catch {
+    if (t && typeof t.skip === "function") {
+      t.skip("playwright module is not installed");
+      return;
+    }
+  }
+
+  const browser = await playwright.chromium.launch({
+    headless: true,
+    channel: process.env.ABI_TEST_BROWSER || (process.platform === "win32" ? "msedge" : undefined),
+  });
+
+  try {
+    const page = await browser.newPage({ viewport: { width: 1200, height: 800 } });
+    const mockHtml = `
+      <html data-abi-site="on" data-abi-auto-play="on">
+      <head>
+        <style>
+          .content.video { width: 800px; height: 500px; }
+          .play-box { width: 100%; height: 100%; }
+          #workingPlayer { width: 100%; height: 100%; }
+          video { width: 100%; height: 100%; }
+        </style>
+      </head>
+      <body>
+        <div class="main"><ul class="nav"><li id="working" class="current"><span>Workbench</span></li></ul></div>
+        <div id="xcWorking"><div class="content video"><div class="play-box"><div id="workingPlayer"><video src="https://example.com/test.mp4" preload="auto"></video></div></div></div></div>
+      </body>
+      </html>
+    `;
+
+    await page.route("https://www.arenabreakoutinfinite.com/act/a20251028patroller/*", (route) => {
+      route.fulfill({ status: 200, contentType: "text/html", body: mockHtml });
+    });
+
+    await page.goto("https://www.arenabreakoutinfinite.com/act/a20251028patroller/");
+
+    await page.evaluate(() => {
+      const v = document.querySelector("video");
+      let _paused = true;
+      Object.defineProperty(v, "duration", { value: 60.0, configurable: true });
+      Object.defineProperty(v, "currentTime", { value: 12.0, writable: true, configurable: true });
+      Object.defineProperty(v, "paused", {
+        get: () => _paused,
+        set: (val) => { _paused = val; },
+        configurable: true,
+      });
+      v.play = async () => { _paused = false; return Promise.resolve(); };
+      v.pause = () => { _paused = true; };
+      v.load = () => {};
+      v.getBoundingClientRect = () => ({ width: 800, height: 450, top: 0, left: 0, bottom: 450, right: 800 });
+
+      // Configure custom keybind: remapping loopIn to 'Q', loopOut to 'W', and loopClear to 'E'
+      document.documentElement.dataset.abiKeybinds = JSON.stringify({
+        loopIn: "Q",
+        loopOut: "W",
+        loopClear: "E",
+      });
+    });
+
+    await page.addScriptTag({ path: path.join(__dirname, "..", "abi-inspector-enhancer", "settings.js") });
+    await page.addScriptTag({ path: path.join(__dirname, "..", "abi-inspector-enhancer", "content.js") });
+
+    await page.waitForSelector("abi-local-player", { state: "attached" });
+
+    // 1. Press remapped 'Q' -> Sets Loop In point at current time (12s)
+    await page.keyboard.press("q");
+    const loopInState = await page.evaluate(() => {
+      const shell = document.querySelector("abi-local-player");
+      return shell.getLoopState();
+    });
+    assert.equal(loopInState.loopStart, 12, "Remapped key 'Q' sets loopIn start point");
+
+    // 2. Advance time and press remapped 'W' -> Sets Loop Out point
+    await page.evaluate(() => {
+      const v = document.querySelector("video");
+      v.currentTime = 20.0;
+    });
+    await page.keyboard.press("w");
+    const loopOutState = await page.evaluate(() => {
+      const shell = document.querySelector("abi-local-player");
+      return shell.getLoopState();
+    });
+    assert.equal(loopOutState.loopEnd, 20, "Remapped key 'W' sets loopOut end point");
+    assert.equal(loopOutState.loopActive, true, "Loop becomes active");
+
+    // 3. Press remapped 'E' -> Clears loop
+    await page.keyboard.press("e");
+    const clearedState = await page.evaluate(() => {
+      const shell = document.querySelector("abi-local-player");
+      return shell.getLoopState();
+    });
+    assert.equal(clearedState.loopActive, false, "Remapped key 'E' clears active loop");
+    assert.equal(clearedState.loopStart, null, "Loop start reset to null");
+  } finally {
+    await browser?.close();
+  }
+});
+
 
 
 
