@@ -459,7 +459,7 @@ function main() {
     }
 
     /* Right Group Action Buttons */
-    #mute, #fullscreen, #reload, #previous, #next, #pinButton, #gamma, #loopBtn, #visionBtn {
+    #mute, #fullscreen, #reload, #previous, #next, #pinButton, #gamma, #loopBtn {
       width: 30px;
       height: 30px;
       padding: 0;
@@ -774,8 +774,7 @@ function main() {
           <div class="group tool-group" role="group" aria-label="Tools">
             <button id="pinButton" title="Drop moment bookmark (M)" aria-label="Drop moment bookmark (M)">Bookmark</button>
             <button id="loopBtn" title="A/B Loop Repeat: Set In ([) / Out (]); Clear (\)" aria-label="A/B Loop Repeat: Set In ([) / Out (]); Clear (\)">Loop</button>
-            <button id="gamma" title="Shadow & Gamma Boost (G)" aria-label="Shadow & Gamma Boost (G)">Gamma</button>
-            <button id="visionBtn" title="Vision Filter: Silhouette, Invert, Thermal (X or Shift+G)" aria-label="Vision Filter: Silhouette, Invert, Thermal (X or Shift+G)">Vision</button>
+            <button id="gamma" title="Shadow, Gamma & Vision Modes (G)" aria-label="Shadow, Gamma & Vision Modes (G)">Gamma</button>
             <button id="reload" title="Reload player" aria-label="Reload player">Reload</button>
             <button id="fullscreen" title="Fullscreen (F); Escape to exit" aria-pressed="false">Fullscreen</button>
           </div>
@@ -823,8 +822,7 @@ function main() {
     decorate(ui.mute, "volume-high", "", "Mute (Shift+M or icon)");
     decorate(ui.pinButton, "bookmark", "", "Drop moment bookmark (M)");
     decorate(ui.loopBtn, "repeat", "", "A/B Loop Repeat: Set In ([) / Out (]); Clear (\\)");
-    decorate(ui.gamma, "gamma", "", "Shadow & Gamma Boost (G)");
-    decorate(ui.visionBtn, "vision", "", "Vision Filter: Silhouette, Invert, Thermal (X or Shift+G)");
+    decorate(ui.gamma, "gamma", "", "Shadow, Gamma & Vision Modes (G)");
     decorate(ui.reload, "reload", "", "Reload player");
     player.before(shell);
     // Keep the complete original subtree together, including all overlays.
@@ -1336,10 +1334,111 @@ function main() {
       stopZoom();
     });
 
+    let audioCtx = null;
+    function playTacticalCue(type) {
+      if (document.documentElement.dataset.abiTacticalAudio === "off") return;
+      try {
+        const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+        if (!AudioContextClass) return;
+        if (!audioCtx) {
+          audioCtx = new AudioContextClass();
+        }
+        if (audioCtx.state === "suspended") {
+          audioCtx.resume().catch(() => {});
+        }
+        const now = audioCtx.currentTime;
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+
+        switch (type) {
+          case "pin": {
+            osc.type = "sine";
+            osc.frequency.setValueAtTime(880, now);
+            osc.frequency.setValueAtTime(1320, now + 0.04);
+            gain.gain.setValueAtTime(0.04, now);
+            gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.12);
+            osc.start(now);
+            osc.stop(now + 0.12);
+            break;
+          }
+          case "loopIn": {
+            osc.type = "sine";
+            osc.frequency.setValueAtTime(587, now);
+            osc.frequency.exponentialRampToValueAtTime(784, now + 0.05);
+            gain.gain.setValueAtTime(0.035, now);
+            gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.09);
+            osc.start(now);
+            osc.stop(now + 0.09);
+            break;
+          }
+          case "loopOut": {
+            osc.type = "sine";
+            osc.frequency.setValueAtTime(880, now);
+            gain.gain.setValueAtTime(0.04, now);
+            gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.1);
+            osc.start(now);
+            osc.stop(now + 0.1);
+            break;
+          }
+          case "loopClear": {
+            osc.type = "sine";
+            osc.frequency.setValueAtTime(440, now);
+            osc.frequency.exponentialRampToValueAtTime(220, now + 0.06);
+            gain.gain.setValueAtTime(0.03, now);
+            gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.08);
+            osc.start(now);
+            osc.stop(now + 0.08);
+            break;
+          }
+          case "mode": {
+            osc.type = "triangle";
+            osc.frequency.setValueAtTime(1200, now);
+            gain.gain.setValueAtTime(0.03, now);
+            gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.035);
+            osc.start(now);
+            osc.stop(now + 0.035);
+            break;
+          }
+          case "step": {
+            osc.type = "sine";
+            osc.frequency.setValueAtTime(850, now);
+            gain.gain.setValueAtTime(0.02, now);
+            gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.025);
+            osc.start(now);
+            osc.stop(now + 0.025);
+            break;
+          }
+          case "speed": {
+            osc.type = "sine";
+            const rate = (video && Number(video.playbackRate)) || 1;
+            const freq = Math.max(300, Math.min(1200, 440 * rate));
+            osc.frequency.setValueAtTime(freq, now);
+            gain.gain.setValueAtTime(0.03, now);
+            gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.04);
+            osc.start(now);
+            osc.stop(now + 0.04);
+            break;
+          }
+          default: {
+            osc.type = "sine";
+            osc.frequency.setValueAtTime(600, now);
+            gain.gain.setValueAtTime(0.025, now);
+            gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.03);
+            osc.start(now);
+            osc.stop(now + 0.03);
+          }
+        }
+      } catch {}
+    }
+
     let gammaMode = "normal";
     try {
       const saved = localStorage.getItem("abi-gamma-mode");
-      if (saved === "shadow" || saved === "max") gammaMode = saved;
+      if (saved && ["shadow", "max", "silhouette", "invert", "thermal"].includes(saved)) {
+        gammaMode = saved;
+      }
     } catch {}
 
     const GAMMA_PRESETS = {
@@ -1355,45 +1454,6 @@ function main() {
         filter: "brightness(1.75) contrast(1.25) saturate(1.15)",
         name: "Max Brightness",
       },
-    };
-
-    function applyGamma(mode, announce = false) {
-      if (!GAMMA_PRESETS[mode]) mode = "normal";
-      gammaMode = mode;
-      shell.dataset.abiGamma = mode;
-      try {
-        localStorage.setItem("abi-gamma-mode", mode);
-      } catch {}
-      updateVideoFilter();
-      if (ui.gamma) {
-        ui.gamma.classList.toggle("active", mode !== "normal");
-        ui.gamma.setAttribute("aria-pressed", String(mode !== "normal"));
-        ui.gamma.title = `Shadow & Gamma Boost: ${GAMMA_PRESETS[mode].name} (G)`;
-      }
-      if (announce) {
-        notice(`Gamma: ${GAMMA_PRESETS[mode].name}`);
-      }
-    }
-
-    function toggleGamma() {
-      selectVideo();
-      const nextMode = gammaMode === "normal" ? "shadow" : gammaMode === "shadow" ? "max" : "normal";
-      applyGamma(nextMode, true);
-    }
-
-    let visionMode = "normal";
-    try {
-      const savedVision = localStorage.getItem("abi-vision-mode");
-      if (savedVision && ["silhouette", "invert", "thermal"].includes(savedVision)) {
-        visionMode = savedVision;
-      }
-    } catch {}
-
-    const VISION_PRESETS = {
-      normal: {
-        filter: "",
-        name: "Normal",
-      },
       silhouette: {
         filter: "contrast(2.4) brightness(1.1) saturate(0.25)",
         name: "Silhouette Contrast",
@@ -1408,47 +1468,49 @@ function main() {
       },
     };
 
-    function updateVideoFilter() {
-      if (!video) return;
-      const filters = [];
-      if (gammaMode !== "normal" && GAMMA_PRESETS[gammaMode]?.filter) {
-        filters.push(GAMMA_PRESETS[gammaMode].filter);
-      }
-      if (visionMode !== "normal" && VISION_PRESETS[visionMode]?.filter) {
-        filters.push(VISION_PRESETS[visionMode].filter);
-      }
-      video.style.filter = filters.join(" ");
-    }
+    const GAMMA_CYCLE = ["normal", "shadow", "max", "silhouette", "invert", "thermal"];
 
-    function applyVision(mode, announce = false) {
-      if (!VISION_PRESETS[mode]) mode = "normal";
-      visionMode = mode;
-      shell.dataset.abiVision = mode;
+    function applyGamma(mode, announce = false) {
+      if (!GAMMA_PRESETS[mode]) mode = "normal";
+      gammaMode = mode;
+      shell.dataset.abiGamma = mode;
       try {
-        localStorage.setItem("abi-vision-mode", mode);
+        localStorage.setItem("abi-gamma-mode", mode);
       } catch {}
-      updateVideoFilter();
-      if (ui.visionBtn) {
-        ui.visionBtn.classList.toggle("active", mode !== "normal");
-        ui.visionBtn.setAttribute("aria-pressed", String(mode !== "normal"));
-        ui.visionBtn.title = `Vision Filter: ${VISION_PRESETS[mode].name} (X or Shift+G)`;
+      if (video) {
+        video.style.filter = GAMMA_PRESETS[mode].filter;
+      }
+      if (ui.gamma) {
+        ui.gamma.classList.toggle("active", mode !== "normal");
+        ui.gamma.setAttribute("aria-pressed", String(mode !== "normal"));
+        ui.gamma.title = `Shadow, Gamma & Vision: ${GAMMA_PRESETS[mode].name} (G)`;
       }
       if (announce) {
-        notice(`Vision: ${VISION_PRESETS[mode].name}`);
+        notice(`Gamma: ${GAMMA_PRESETS[mode].name}`);
+        playTacticalCue("mode");
       }
     }
 
-    function toggleVision() {
+    function toggleGamma(direction = 1) {
       selectVideo();
-      const modes = ["normal", "silhouette", "invert", "thermal"];
-      const nextIdx = (modes.indexOf(visionMode) + 1) % modes.length;
-      applyVision(modes[nextIdx], true);
+      const currentIdx = GAMMA_CYCLE.indexOf(gammaMode);
+      const nextIdx = (currentIdx + direction + GAMMA_CYCLE.length) % GAMMA_CYCLE.length;
+      applyGamma(GAMMA_CYCLE[nextIdx], true);
     }
 
+    function toggleVision(direction = 1) {
+      toggleGamma(direction);
+    }
+    function applyVision(mode, announce = false) {
+      applyGamma(mode, announce);
+    }
+
+    shell.playTacticalCue = playTacticalCue;
     shell.toggleGamma = toggleGamma;
     shell.applyGamma = applyGamma;
     shell.toggleVision = toggleVision;
     shell.applyVision = applyVision;
+    shell.getGammaState = () => ({ mode: gammaMode, filter: GAMMA_PRESETS[gammaMode]?.filter || "" });
 
     let loopStart = null;
     let loopEnd = null;
@@ -1543,6 +1605,7 @@ function main() {
       loopEnd = null;
       loopActive = false;
       notice("Loop cleared (\\)");
+      playTacticalCue("loopClear");
       renderLoopUI();
     }
 
@@ -1620,6 +1683,7 @@ function main() {
         bookmarks.push(current);
         bookmarks.sort((a, b) => a - b);
         notice(`Bookmark dropped at ${format(current)} (M)`);
+        playTacticalCue("pin");
       }
       renderPins();
     }
@@ -1693,7 +1757,7 @@ function main() {
       video = selected;
       if (video) {
         applyGamma(gammaMode, false);
-        applyVision(visionMode, false);
+        
         renderLoopUI();
         const rootDs = document.documentElement.dataset;
         const initialSpeed = Number(rootDs.abiPlaybackSpeed);
@@ -1881,7 +1945,7 @@ function main() {
     }
     function render() {
       const ready = finite();
-      for (const id of ["play", "slower", "speedval", "faster", "mute", "volume", "pinButton", "loopBtn", "gamma", "visionBtn", "reload"])
+      for (const id of ["play", "slower", "speedval", "faster", "mute", "volume", "pinButton", "loopBtn", "gamma", "reload"])
         if (ui[id]) ui[id].disabled = !video;
       for (const id of [
         "seek",
@@ -1971,6 +2035,7 @@ function main() {
       if (!video) return;
       video.pause();
       jump(direction / 30);
+      playTacticalCue("step");
     }
     async function togglePlay() {
       selectVideo();
@@ -2007,6 +2072,7 @@ function main() {
     function setSpeed(rate) {
       if (!video) return;
       video.playbackRate = rate;
+      playTacticalCue("speed");
       const currentSrc = video.currentSrc || video.src || "loaded";
       video.dataset.abiSpeedInitialized = currentSrc;
       const rootDs = document.documentElement.dataset;
@@ -2051,7 +2117,6 @@ function main() {
       pinButton: toggleBookmark,
       loopBtn: toggleLoop,
       gamma: toggleGamma,
-      visionBtn: toggleVision,
       reload: reloadVideo,
       fullscreen,
     };
@@ -2426,7 +2491,7 @@ function main() {
         if (event.shiftKey && event.key.toLowerCase() === "g") {
           event.preventDefault();
           event.stopImmediatePropagation();
-          toggleVision();
+          toggleGamma(-1);
           return;
         }
         if (event.key.toLowerCase() === "x") {
@@ -2593,13 +2658,16 @@ function main() {
   document.addEventListener(
     "keydown",
     (event) => {
+      const isAllowedShift =
+        event.shiftKey &&
+        ["m", "g", "+"].includes(event.key.toLowerCase());
       if (
         event.defaultPrevented ||
         event.ctrlKey ||
         event.metaKey ||
         event.altKey ||
-        event.shiftKey ||
-        event.isComposing
+        event.isComposing ||
+        (event.shiftKey && !isAllowedShift)
       )
         return;
       // Respect all editing and interactive controls, including links/buttons anywhere
@@ -2624,13 +2692,16 @@ function main() {
   document.addEventListener(
     "keyup",
     (event) => {
+      const isAllowedShift =
+        event.shiftKey &&
+        ["m", "g", "+"].includes(event.key.toLowerCase());
       if (
         event.defaultPrevented ||
         event.ctrlKey ||
         event.metaKey ||
         event.altKey ||
-        event.shiftKey ||
-        event.isComposing
+        event.isComposing ||
+        (event.shiftKey && !isAllowedShift)
       )
         return;
       if (

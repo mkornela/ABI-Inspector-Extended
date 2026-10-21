@@ -91,6 +91,78 @@
       challengeExclusive: "Exclusive",
       challengeWeeklyTooltip: "Can be done multiple times",
       challengeExclusiveTooltip: "Can be done only once per account",
+      searchSettingsAria: "Search settings",
+      searchClear: "Clear search",
+      noSettingsMatch: "No settings match your search.",
+      resetSectionTitle: "Reset section to defaults",
+      playbackResetToast: "Playback reset ✓",
+      interfaceResetToast: "Interface reset ✓",
+      verdictsResetToast: "Verdicts reset ✓",
+      privacyResetToast: "Privacy reset ✓",
+      allDefaultsRestoredToast: "All defaults restored ✓",
+      settingControlsTitle: "Video controls & shortcuts",
+      settingControlsDesc: "Show the local player toolbar, frame-by-frame navigation, and playback shortcuts.",
+      chipPlayPause: "Play/Pause",
+      chipPause: "Pause",
+      chipFrame: "Frame",
+      chipMute: "Mute",
+      chipFullscreen: "Fullscreen",
+      settingAutoPlayTitle: "Auto-play on load",
+      settingAutoPlayDesc: "Start playback automatically when opening an inspection case.",
+      settingLoopTitle: "Loop playback",
+      settingLoopDesc: "Automatically repeat the evidence video when reaching the end.",
+      settingTacticalAudioTitle: "Tactical audio feedback cues",
+      settingTacticalAudioDesc: "Play subtle client-side synthesized clicks when dropping bookmarks, changing speed, cycling vision modes, or toggling loops.",
+      settingVolumeTitle: "Default player volume",
+      settingVolumeDesc: "Remembered for future inspection videos.",
+      volumeMute: "Mute (0%)",
+      settingSpeedTitle: "Default playback speed",
+      settingSpeedDesc: "Initial speed applied to new inspection videos.",
+      keyOr: "or",
+      keyHoldZ: "Hold Z",
+      keyRightClickHold: "Right-Click Hold",
+      keyDoubleClick: "Double-Click",
+      keyToolbarButton: "Toolbar Button",
+      keyClickTimeBadge: "Click Time",
+      keyPlayPauseDesc: "Play / Pause",
+      keyMuteDesc: "Mute / Unmute",
+      keySpeedDesc: "Slower / Faster Speed",
+      keyLoopDesc: "A/B Loop Repeat (In / Out)",
+      keyClearLoopDesc: "Clear A/B Loop",
+      keySeek5sDesc: "Seek Back / Forward 5s",
+      keySkip10sDesc: "Skip 10s Backward / Forward",
+      keyFrameDesc: "Previous / Next Frame",
+      keyBookmarkDesc: "Drop Bookmark / Pin",
+      keyMillisecondsDesc: "Toggle Milliseconds",
+      keyLoupeDesc: "Tactical Loupe (2.5× Zoom)",
+      keyGammaDesc: "Shadow & Gamma Boost",
+      keyVisionDesc: "Vision Filter (Silhouette / Invert)",
+      keyFullscreenDesc: "Toggle Fullscreen",
+      keyReloadStreamDesc: "Reload Player Stream",
+      keyNoViolationDesc: "No Violation",
+      keyViolationDesc: "Violation",
+      keyUncertainDesc: "Uncertain",
+      keySubmitFinalDesc: "Submit Final Verdict",
+      settingSiteTitle: "Site modifications",
+      settingSiteDesc: "Enable custom overview stats board, responsive layout, tab navigation, and verdict dialogs.",
+      settingSkipIntroTitle: "Skip intro screen on load",
+      settingSkipIntroDesc: "Directly enter the inspection workbench/overview when logged in without clicking Start Inspection.",
+      settingVerdictEnhancementsTitle: "Verdict dialog enhancements",
+      settingVerdictEnhancementsDesc: "Violation quick-tag reason chips, localized placeholders, character counters (x / 50), and 3-category limit badge.",
+      settingVerdictHotkeysTitle: "Quick verdict hotkeys",
+      settingVerdictHotkeysDesc: "Press keyboard shortcuts on the inspection workbench to instantly submit your verdict.",
+      settingNotesTitle: "Enhanced inspection notice",
+      settingNotesDesc: "Use the enhanced, concise notice. Turn off to restore original site wording.",
+      settingColorKeyTitle: "Role & distance color key",
+      settingColorKeyDesc: "Color-code markers for teammates (green), enemies (amber), and scavs/bots (blue).",
+      settingPrivacyTitle: "Streamer / Privacy mode",
+      settingPrivacyDesc: "Anonymize player name, ID, rank XP, and sensitive inspection data for streams or screenshots.",
+      livePreview: "Live Preview",
+      aboutSystemHeading: "About & System",
+      statusActive: "Active",
+      reloadPageToApply: "Reload page to apply",
+      creditsText: "Local preferences for Arena Breakout: Infinite inspection workbench.",
+      madeBy: "Made by",
     },
     de: {
       overview: "Datenübersicht",
@@ -181,6 +253,78 @@
       challengeExclusive: "Exklusiv",
       challengeWeeklyTooltip: "Kann mehrmals abgeschlossen werden",
       challengeExclusiveTooltip: "Kann nur einmal pro Konto abgeschlossen werden",
+      searchSettingsAria: "Einstellungen suchen",
+      searchClear: "Suche löschen",
+      noSettingsMatch: "Keine Einstellungen entsprechen Ihrer Suche.",
+      resetSectionTitle: "Bereich auf Standard zurücksetzen",
+      playbackResetToast: "Wiedergabe zurückgesetzt ✓",
+      interfaceResetToast: "Oberfläche zurückgesetzt ✓",
+      verdictsResetToast: "Urteile zurückgesetzt ✓",
+      privacyResetToast: "Datenschutz zurückgesetzt ✓",
+      allDefaultsRestoredToast: "Alle Standardwerte wiederhergestellt ✓",
+      settingControlsTitle: "Videosteuerung & Tastenkürzel",
+      settingControlsDesc: "Lokale Spieler-Symbolleiste, Bild-für-Bild-Navigation und Wiedergabe-Tastenkürzel anzeigen.",
+      chipPlayPause: "Wiedergabe/Pause",
+      chipPause: "Pause",
+      chipFrame: "Einzelbild",
+      chipMute: "Stummschalten",
+      chipFullscreen: "Vollbild",
+      settingAutoPlayTitle: "Automatische Wiedergabe beim Laden",
+      settingAutoPlayDesc: "Wiedergabe beim Öffnen eines Überprüfungsfalls automatisch starten.",
+      settingLoopTitle: "Endlosschleife",
+      settingLoopDesc: "Beweisvideo am Ende automatisch wiederholen.",
+      settingTacticalAudioTitle: "Taktische Audio-Rückmeldungen",
+      settingTacticalAudioDesc: "Dezente akustische Bestätigungstöne bei Lesezeichen, Geschwindigkeitsänderungen, Sichtmodi und Schleifen abspielen.",
+      settingVolumeTitle: "Standard-Lautstärke",
+      settingVolumeDesc: "Wird für zukünftige Überprüfungsvideos gespeichert.",
+      volumeMute: "Stumm (0%)",
+      settingSpeedTitle: "Standard-Wiedergabegeschwindigkeit",
+      settingSpeedDesc: "Anfangsgeschwindigkeit für neue Überprüfungsvideos.",
+      keyOr: "oder",
+      keyHoldZ: "Z gedrückt halten",
+      keyRightClickHold: "Rechtsklick halten",
+      keyDoubleClick: "Doppelklick",
+      keyToolbarButton: "Symbolleisten-Schaltfläche",
+      keyClickTimeBadge: "Zeit anklicken",
+      keyPlayPauseDesc: "Wiedergabe / Pause",
+      keyMuteDesc: "Stummschalten / Aufheben",
+      keySpeedDesc: "Langsamer / Schneller",
+      keyLoopDesc: "A/B-Schleifenwiederholung (Start / Ende)",
+      keyClearLoopDesc: "A/B-Schleife löschen",
+      keySeek5sDesc: "5s vor- / zurückspringen",
+      keySkip10sDesc: "10s vor- / zurückspringen",
+      keyFrameDesc: "Vorheriges / Nächstes Einzelbild",
+      keyBookmarkDesc: "Lesezeichen / Pin setzen",
+      keyMillisecondsDesc: "Millisekunden umschalten",
+      keyLoupeDesc: "Taktische Lupe (2,5× Zoom)",
+      keyGammaDesc: "Schatten- & Gamma-Verstärkung",
+      keyVisionDesc: "Sichtfilter (Silhouette / Invertiert)",
+      keyFullscreenDesc: "Vollbild umschalten",
+      keyReloadStreamDesc: "Videostream neu laden",
+      keyNoViolationDesc: "Kein Verstoß",
+      keyViolationDesc: "Verstoß",
+      keyUncertainDesc: "Unsicher",
+      keySubmitFinalDesc: "Endgültiges Urteil abgeben",
+      settingSiteTitle: "Seitenmodifikationen",
+      settingSiteDesc: "Benutzerdefinierte Statistik-Übersicht, responsives Layout, Tab-Navigation und Urteilsdialoge aktivieren.",
+      settingSkipIntroTitle: "Intro beim Laden überspringen",
+      settingSkipIntroDesc: "Nach dem Anmelden direkt zur Werkbank/Übersicht gelangen, ohne auf Überprüfung starten zu klicken.",
+      settingVerdictEnhancementsTitle: "Verbesserte Urteilsdialoge",
+      settingVerdictEnhancementsDesc: "Schnell-Tags für Verstoßgründe, lokalisierte Platzhalter, Zeichenzähler (x / 50) und 3-Kategorien-Grenze.",
+      settingVerdictHotkeysTitle: "Schnellurteil-Tastenkürzel",
+      settingVerdictHotkeysDesc: "Tastaturkürzel auf der Inspektions-Werkbank drücken, um Urteil sofort einzureichen.",
+      settingNotesTitle: "Optimierte Inspektionshinweise",
+      settingNotesDesc: "Prägnante Hinweise verwenden. Deaktivieren, um Originaltext der Seite wiederherzustellen.",
+      settingColorKeyTitle: "Farbcodierung für Rollen & Distanz",
+      settingColorKeyDesc: "Farbliche Markierungen für Teammitglieder (grün), Feinde (bernstein) und Scavs/Bots (blau).",
+      settingPrivacyTitle: "Streamer- / Datenschutzmodus",
+      settingPrivacyDesc: "Spielernamen, ID, Rang-EP und sensible Überprüfungsdaten für Streams oder Screenshots anonymisieren.",
+      livePreview: "Live-Vorschau",
+      aboutSystemHeading: "Über & System",
+      statusActive: "Aktiv",
+      reloadPageToApply: "Seite neu laden zum Anwenden",
+      creditsText: "Lokale Einstellungen für die Arena Breakout: Infinite Überprüfungs-Werkbank.",
+      madeBy: "Erstellt von",
     },
     ru: {
       overview: "Обзор данных",
@@ -271,6 +415,78 @@
       challengeExclusive: "Эксклюзивно",
       challengeWeeklyTooltip: "Можно выполнять несколько раз",
       challengeExclusiveTooltip: "Можно выполнить только один раз на аккаунт",
+      searchSettingsAria: "Поиск настроек",
+      searchClear: "Очистить поиск",
+      noSettingsMatch: "Настройки не найдены.",
+      resetSectionTitle: "Сбросить раздел к значениям по умолчанию",
+      playbackResetToast: "Воспроизведение сброшено ✓",
+      interfaceResetToast: "Интерфейс сброшен ✓",
+      verdictsResetToast: "Вердикты сброшены ✓",
+      privacyResetToast: "Конфиденциальность сброшена ✓",
+      allDefaultsRestoredToast: "Все настройки сброшены ✓",
+      settingControlsTitle: "Управление видео и горячие клавиши",
+      settingControlsDesc: "Отображать панель плеера, покадровую навигацию и горячие клавиши воспроизведения.",
+      chipPlayPause: "Воспр./Пауза",
+      chipPause: "Пауза",
+      chipFrame: "Кадр",
+      chipMute: "Заглушить",
+      chipFullscreen: "Полный экран",
+      settingAutoPlayTitle: "Автовоспроизведение при загрузке",
+      settingAutoPlayDesc: "Автоматически начинать воспроизведение при открытии дела.",
+      settingLoopTitle: "Зацикливание видео",
+      settingLoopDesc: "Автоматически повторять видео при достижении конца.",
+      settingTacticalAudioTitle: "Тактические звуковые сигналы",
+      settingTacticalAudioDesc: "Воспроизводить мягкие синтезированные щелчки при установке меток, смене скорости, переключении режимов и циклов.",
+      settingVolumeTitle: "Громкость плеера по умолчанию",
+      settingVolumeDesc: "Сохраняется для будущих видео проверок.",
+      volumeMute: "Без звука (0%)",
+      settingSpeedTitle: "Скорость воспроизведения по умолчанию",
+      settingSpeedDesc: "Начальная скорость для новых видео проверок.",
+      keyOr: "или",
+      keyHoldZ: "Удерживать Z",
+      keyRightClickHold: "Удерживать ПКМ",
+      keyDoubleClick: "Двойной клик",
+      keyToolbarButton: "Кнопка на панели",
+      keyClickTimeBadge: "Клик по времени",
+      keyPlayPauseDesc: "Воспроизведение / Пауза",
+      keyMuteDesc: "Вкл./Выкл. звук",
+      keySpeedDesc: "Медленнее / Быстрее",
+      keyLoopDesc: "Повтор цикла A/B (Начало / Конец)",
+      keyClearLoopDesc: "Сбросить цикл A/B",
+      keySeek5sDesc: "Перемотка на 5с назад / вперед",
+      keySkip10sDesc: "Пропуск 10с назад / вперед",
+      keyFrameDesc: "Предыдущий / Следующий кадр",
+      keyBookmarkDesc: "Поставить закладку / метку",
+      keyMillisecondsDesc: "Миллисекунды (вкл./выкл.)",
+      keyLoupeDesc: "Тактическая лупа (2.5× зум)",
+      keyGammaDesc: "Усиление теней и гаммы",
+      keyVisionDesc: "Фильтр видимости (Силуэт / Инверсия)",
+      keyFullscreenDesc: "Полноэкранный режим",
+      keyReloadStreamDesc: "Перезагрузить поток видео",
+      keyNoViolationDesc: "Без нарушений",
+      keyViolationDesc: "Нарушение",
+      keyUncertainDesc: "Не уверен",
+      keySubmitFinalDesc: "Подтвердить вердикт",
+      settingSiteTitle: "Модификации сайта",
+      settingSiteDesc: "Включить панель статистики, адаптивный интерфейс, навигацию по вкладкам и окна вердиктов.",
+      settingSkipIntroTitle: "Пропускать заставку при входе",
+      settingSkipIntroDesc: "Сразу переходить к рабочему столу/обзору без нажатия кнопки «Начать проверку».",
+      settingVerdictEnhancementsTitle: "Улучшенные окна вердиктов",
+      settingVerdictEnhancementsDesc: "Быстрые теги нарушений, локализованные подсказки, счетчик символов (x / 50) и лимит 3 категорий.",
+      settingVerdictHotkeysTitle: "Горячие клавиши быстрых вердиктов",
+      settingVerdictHotkeysDesc: "Отправляйте вердикты нажатием клавиш прямо в рабочей зоне проверки.",
+      settingNotesTitle: "Улучшенные примечания к проверке",
+      settingNotesDesc: "Лаконичные и понятные подсказки. Отключите для возврата к оригинальному тексту сайта.",
+      settingColorKeyTitle: "Цветовые маркеры ролей и дистанции",
+      settingColorKeyDesc: "Цветовая маркировка союзников (зеленый), врагов (янтарный) и ботов (синий).",
+      settingPrivacyTitle: "Режим стримера / Конфиденциальность",
+      settingPrivacyDesc: "Скрытие никнейма, ID, опыта ранга и личных данных для трансляций и скриншотов.",
+      livePreview: "Предпросмотр",
+      aboutSystemHeading: "О расширении и системе",
+      statusActive: "Активно",
+      reloadPageToApply: "Перезагрузить страницу для применения",
+      creditsText: "Локальные настройки для рабочей зоны проверок Arena Breakout: Infinite.",
+      madeBy: "Создатель:",
     },
     fr: {
       overview: "Aperçu des données",
@@ -361,6 +577,78 @@
       challengeExclusive: "Exclusif",
       challengeWeeklyTooltip: "Peut être accompli plusieurs fois",
       challengeExclusiveTooltip: "Ne peut être accompli qu'une seule fois par compte",
+      searchSettingsAria: "Rechercher dans les paramètres",
+      searchClear: "Effacer la recherche",
+      noSettingsMatch: "Aucun paramètre ne correspond à votre recherche.",
+      resetSectionTitle: "Réinitialiser la section aux valeurs par défaut",
+      playbackResetToast: "Lecture réinitialisée ✓",
+      interfaceResetToast: "Interface réinitialisée ✓",
+      verdictsResetToast: "Verdicts réinitialisés ✓",
+      privacyResetToast: "Confidentialité réinitialisée ✓",
+      allDefaultsRestoredToast: "Paramètres par défaut restaurés ✓",
+      settingControlsTitle: "Commandes vidéo & raccourcis",
+      settingControlsDesc: "Afficher la barre de contrôle, la navigation image par image et les raccourcis de lecture.",
+      chipPlayPause: "Lecture/Pause",
+      chipPause: "Pause",
+      chipFrame: "Image",
+      chipMute: "Muet",
+      chipFullscreen: "Plein écran",
+      settingAutoPlayTitle: "Lecture automatique au chargement",
+      settingAutoPlayDesc: "Démarrer la lecture automatiquement à l'ouverture d'un dossier d'inspection.",
+      settingLoopTitle: "Lecture en boucle",
+      settingLoopDesc: "Répéter automatiquement la vidéo de preuve lorsqu'elle arrive à la fin.",
+      settingTacticalAudioTitle: "Signaux audio tactiques",
+      settingTacticalAudioDesc: "Jouer de subtils clics audio lors de la pose de repères, du changement de vitesse, du filtre de vision ou des boucles.",
+      settingVolumeTitle: "Volume par défaut du lecteur",
+      settingVolumeDesc: "Mémorisé pour les futures vidéos d'inspection.",
+      volumeMute: "Muet (0%)",
+      settingSpeedTitle: "Vitesse de lecture par défaut",
+      settingSpeedDesc: "Vitesse initiale appliquée aux nouvelles vidéos d'inspection.",
+      keyOr: "ou",
+      keyHoldZ: "Maintenir Z",
+      keyRightClickHold: "Maintenir Clic droit",
+      keyDoubleClick: "Double-clic",
+      keyToolbarButton: "Bouton barre d'outils",
+      keyClickTimeBadge: "Cliquer sur le temps",
+      keyPlayPauseDesc: "Lecture / Pause",
+      keyMuteDesc: "Activer / Couper le son",
+      keySpeedDesc: "Ralentir / Accélérer",
+      keyLoopDesc: "Boucle A/B (Début / Fin)",
+      keyClearLoopDesc: "Effacer la boucle A/B",
+      keySeek5sDesc: "Reculer / Avancer de 5s",
+      keySkip10sDesc: "Sauter 10s arrière / avant",
+      keyFrameDesc: "Image précédente / suivante",
+      keyBookmarkDesc: "Poser un signet / repère",
+      keyMillisecondsDesc: "Afficher les millisecondes",
+      keyLoupeDesc: "Loupe tactique (Zoom 2.5×)",
+      keyGammaDesc: "Rehaussement des ombres & gamma",
+      keyVisionDesc: "Filtre de vision (Silhouette / Négatif)",
+      keyFullscreenDesc: "Plein écran",
+      keyReloadStreamDesc: "Recharger le flux vidéo",
+      keyNoViolationDesc: "Aucune infraction",
+      keyViolationDesc: "Infraction",
+      keyUncertainDesc: "Incertain",
+      keySubmitFinalDesc: "Confirmer le verdict final",
+      settingSiteTitle: "Modifications du site",
+      settingSiteDesc: "Activer le tableau de statistiques personnalisé, la mise en page adaptative et les fenêtres de verdict.",
+      settingSkipIntroTitle: "Passer l'introduction au chargement",
+      settingSkipIntroDesc: "Accéder directement à l'espace d'inspection après la connexion sans cliquer sur Démarrer l'inspection.",
+      settingVerdictEnhancementsTitle: "Améliorations du dialogue de verdict",
+      settingVerdictEnhancementsDesc: "Tags rapides pour motifs d'infraction, suggestions localisées, compteur (x / 50) et limite de 3 catégories.",
+      settingVerdictHotkeysTitle: "Raccourcis de verdict rapide",
+      settingVerdictHotkeysDesc: "Utilisez les touches du clavier sur l'espace d'inspection pour soumettre immédiatement votre verdict.",
+      settingNotesTitle: "Notes d'inspection optimisées",
+      settingNotesDesc: "Afficher des consignes claires et concises. Désactiver pour rétablir le texte original.",
+      settingColorKeyTitle: "Légende des couleurs par rôle & distance",
+      settingColorKeyDesc: "Code couleur pour coéquipiers (vert), ennemis (ambre) et bots/scavs (bleu).",
+      settingPrivacyTitle: "Mode Streameur / Confidentialité",
+      settingPrivacyDesc: "Anonymiser le pseudo, l'identifiant, l'EXP de rang et les données sensibles pour streams ou captures.",
+      livePreview: "Aperçu en direct",
+      aboutSystemHeading: "À propos & Système",
+      statusActive: "Actif",
+      reloadPageToApply: "Recharger la page pour appliquer",
+      creditsText: "Préférences locales pour l'atelier d'inspection d'Arena Breakout: Infinite.",
+      madeBy: "Créé par",
     },
     es: {
       overview: "Resumen de datos",
@@ -451,6 +739,78 @@
       challengeExclusive: "Exclusivo",
       challengeWeeklyTooltip: "Se puede completar varias veces",
       challengeExclusiveTooltip: "Solo se puede completar una vez por cuenta",
+      searchSettingsAria: "Buscar ajustes",
+      searchClear: "Borrar búsqueda",
+      noSettingsMatch: "No se encontraron ajustes coincidentes.",
+      resetSectionTitle: "Restablecer sección a valores predeterminados",
+      playbackResetToast: "Reproducción restablecida ✓",
+      interfaceResetToast: "Interfaz restablecida ✓",
+      verdictsResetToast: "Veredictos restablecidos ✓",
+      privacyResetToast: "Privacidad restablecida ✓",
+      allDefaultsRestoredToast: "Valores predeterminados restaurados ✓",
+      settingControlsTitle: "Controles de video y atajos",
+      settingControlsDesc: "Mostrar la barra de herramientas local, navegación fotograma a fotograma y atajos de reproducción.",
+      chipPlayPause: "Repr./Pausa",
+      chipPause: "Pausa",
+      chipFrame: "Fotograma",
+      chipMute: "Silenciar",
+      chipFullscreen: "Pantalla completa",
+      settingAutoPlayTitle: "Reproducción automática al cargar",
+      settingAutoPlayDesc: "Iniciar reproducción automáticamente al abrir un caso de inspección.",
+      settingLoopTitle: "Repetir en bucle",
+      settingLoopDesc: "Repetir automáticamente el video de evidencia al llegar al final.",
+      settingTacticalAudioTitle: "Señales de audio tácticas",
+      settingTacticalAudioDesc: "Reproducir sutiles clics de confirmación al colocar marcadores, cambiar velocidad, alternar modos de visión o bucles.",
+      settingVolumeTitle: "Volumen predeterminado del reproductor",
+      settingVolumeDesc: "Recordado para futuros videos de inspección.",
+      volumeMute: "Silencio (0%)",
+      settingSpeedTitle: "Velocidad de reproducción predeterminada",
+      settingSpeedDesc: "Velocidad inicial aplicada a nuevos videos de inspección.",
+      keyOr: "o",
+      keyHoldZ: "Mantener Z",
+      keyRightClickHold: "Mantener clic derecho",
+      keyDoubleClick: "Doble clic",
+      keyToolbarButton: "Botón de barra",
+      keyClickTimeBadge: "Clic en tiempo",
+      keyPlayPauseDesc: "Reproducir / Pausar",
+      keyMuteDesc: "Silenciar / Activar sonido",
+      keySpeedDesc: "Más lento / Más rápido",
+      keyLoopDesc: "Bucle A/B (Inicio / Fin)",
+      keyClearLoopDesc: "Borrar bucle A/B",
+      keySeek5sDesc: "Avanzar / Retroceder 5s",
+      keySkip10sDesc: "Saltar 10s atrás / adelante",
+      keyFrameDesc: "Fotograma anterior / siguiente",
+      keyBookmarkDesc: "Colocar marcador / pin",
+      keyMillisecondsDesc: "Alternar milisegundos",
+      keyLoupeDesc: "Lupa táctica (Zoom 2.5×)",
+      keyGammaDesc: "Realce de sombras y gamma",
+      keyVisionDesc: "Filtro de visión (Silueta / Invertido)",
+      keyFullscreenDesc: "Pantalla completa",
+      keyReloadStreamDesc: "Recargar flujo de video",
+      keyNoViolationDesc: "Sin infracción",
+      keyViolationDesc: "Infracción",
+      keyUncertainDesc: "Incierto",
+      keySubmitFinalDesc: "Enviar veredicto final",
+      settingSiteTitle: "Modificaciones del sitio",
+      settingSiteDesc: "Habilitar panel de estadísticas personalizado, diseño adaptable, pestañas y diálogos de veredicto.",
+      settingSkipIntroTitle: "Omitir introducción al cargar",
+      settingSkipIntroDesc: "Acceder directamente al banco de inspección/resumen tras iniciar sesión sin hacer clic en Iniciar inspección.",
+      settingVerdictEnhancementsTitle: "Mejoras en diálogos de veredicto",
+      settingVerdictEnhancementsDesc: "Etiquetas rápidas de motivo, marcadores de posición traducidos, contador (x / 50) y límite de 3 categorías.",
+      settingVerdictHotkeysTitle: "Atajos de veredicto rápido",
+      settingVerdictHotkeysDesc: "Presione teclas de acceso rápido en el banco de inspección para enviar su veredicto al instante.",
+      settingNotesTitle: "Aviso de inspección mejorado",
+      settingNotesDesc: "Utilice avisos claros y concisos. Desactive para restaurar el texto original del sitio.",
+      settingColorKeyTitle: "Clave de colores por rol y distancia",
+      settingColorKeyDesc: "Codificación por color para compañeros (verde), enemigos (ámbar) y bots/scavs (azul).",
+      settingPrivacyTitle: "Modo Streamer / Privacidad",
+      settingPrivacyDesc: "Anonimizar nombre, ID, EXP de rango y datos sensibles para directos o capturas de pantalla.",
+      livePreview: "Vista previa en vivo",
+      aboutSystemHeading: "Acerca de y sistema",
+      statusActive: "Activo",
+      reloadPageToApply: "Recargar página para aplicar",
+      creditsText: "Preferencias locales para el banco de trabajo de inspección de Arena Breakout: Infinite.",
+      madeBy: "Creado por",
     },
     ja: {
       overview: "データの概要",
@@ -541,6 +901,78 @@
       challengeExclusive: "限定",
       challengeWeeklyTooltip: "何度でも達成可能",
       challengeExclusiveTooltip: "1アカウントにつき1回のみ達成可能",
+      searchSettingsAria: "設定を検索",
+      searchClear: "検索をクリア",
+      noSettingsMatch: "一致する設定が見つかりません。",
+      resetSectionTitle: "このセクションを初期値に戻す",
+      playbackResetToast: "再生設定をリセットしました ✓",
+      interfaceResetToast: "インターフェースをリセットしました ✓",
+      verdictsResetToast: "判定設定をリセットしました ✓",
+      privacyResetToast: "プライバシー設定をリセットしました ✓",
+      allDefaultsRestoredToast: "すべての初期設定を復元しました ✓",
+      settingControlsTitle: "動画操作とショートカット",
+      settingControlsDesc: "ローカルプレイヤーバー、コマ送り操作、再生ショートカットを表示します。",
+      chipPlayPause: "再生/一時停止",
+      chipPause: "一時停止",
+      chipFrame: "コマ送り",
+      chipMute: "消音",
+      chipFullscreen: "全画面",
+      settingAutoPlayTitle: "読み込み時に自動再生",
+      settingAutoPlayDesc: "審査案件を開いたときに自動で動画再生を開始します。",
+      settingLoopTitle: "ループ再生",
+      settingLoopDesc: "証拠動画の終わりに達したときに自動で最初から再生します。",
+      settingTacticalAudioTitle: "タクティカル音声フィードバック",
+      settingTacticalAudioDesc: "ブックマーク設置、再生速度変更、視認モード切替、ループ設定時に微細な効果音を鳴らします。",
+      settingVolumeTitle: "デフォルト音量",
+      settingVolumeDesc: "今後の審査動画用に記憶されます。",
+      volumeMute: "ミュート (0%)",
+      settingSpeedTitle: "デフォルト再生速度",
+      settingSpeedDesc: "新しい審査動画に適用される初期再生速度です。",
+      keyOr: "または",
+      keyHoldZ: "Zキー長押し",
+      keyRightClickHold: "右クリック長押し",
+      keyDoubleClick: "ダブルクリック",
+      keyToolbarButton: "ツールバーボタン",
+      keyClickTimeBadge: "時間をクリック",
+      keyPlayPauseDesc: "再生 / 一時停止",
+      keyMuteDesc: "ミュート / 解除",
+      keySpeedDesc: "速度 ダウン / アップ",
+      keyLoopDesc: "A/Bループ再生 (開始 / 終了)",
+      keyClearLoopDesc: "A/Bループをクリア",
+      keySeek5sDesc: "5秒 戻る / 進む",
+      keySkip10sDesc: "10秒スキップ 前後",
+      keyFrameDesc: "前 / 次のフレーム",
+      keyBookmarkDesc: "ブックマーク / ピン設置",
+      keyMillisecondsDesc: "ミリ秒表示切替",
+      keyLoupeDesc: "タクティカルルーペ (2.5倍ズーム)",
+      keyGammaDesc: "影部・ガンマ強調",
+      keyVisionDesc: "視認フィルター (シルエット / 反転)",
+      keyFullscreenDesc: "全画面表示の切替",
+      keyReloadStreamDesc: "動画ストリーム再読み込み",
+      keyNoViolationDesc: "違反なし",
+      keyViolationDesc: "違反あり",
+      keyUncertainDesc: "判断保留",
+      keySubmitFinalDesc: "最終判定を提出",
+      settingSiteTitle: "サイト拡張機能",
+      settingSiteDesc: "カスタム統計概要パネル、レスポンシブ配置、タブ遷移、判定ダイアログを有効にします。",
+      settingSkipIntroTitle: "開始演出のスキップ",
+      settingSkipIntroDesc: "ログイン後、「審査開始」を押さずに直接ワークベンチ/概要画面へ移動します。",
+      settingVerdictEnhancementsTitle: "判定ダイアログ拡張",
+      settingVerdictEnhancementsDesc: "違反理由クイックタグ、多言語プレースホルダー、文字数カウンター (x / 50)、3項目制限バッジ。",
+      settingVerdictHotkeysTitle: "クイック判定ショートカット",
+      settingVerdictHotkeysDesc: "審査ワークベンチでキーを押すだけで即座に判定を提出します。",
+      settingNotesTitle: "見やすい審査注意事項",
+      settingNotesDesc: "簡潔で分かりやすい注意事項を表示します。オフにするとサイト本来の文言に戻ります。",
+      settingColorKeyTitle: "所属・距離の色分け表示",
+      settingColorKeyDesc: "味方（緑）、敵（アンバー）、ボット/野良（青）を色分け表示します。",
+      settingPrivacyTitle: "配信者・プライバシー保護モード",
+      settingPrivacyDesc: "配信やスクリーンショット用に、プレイヤー名、ID、ランクXPなどの機密情報を匿名化します。",
+      livePreview: "ライブプレビュー",
+      aboutSystemHeading: "情報とシステム",
+      statusActive: "有効",
+      reloadPageToApply: "変更を適用するにはページを再読み込み",
+      creditsText: "Arena Breakout: Infinite 審査ワークベンチ専用のローカル環境設定です。",
+      madeBy: "開発者:",
     },
     "pt-BR": {
       overview: "Visão Geral dos Dados",
@@ -631,6 +1063,78 @@
       challengeExclusive: "Exclusivo",
       challengeWeeklyTooltip: "Pode ser concluído várias vezes",
       challengeExclusiveTooltip: "Pode ser concluído apenas uma vez por conta",
+      searchSettingsAria: "Pesquisar configurações",
+      searchClear: "Limpar pesquisa",
+      noSettingsMatch: "Nenhuma configuração encontrada.",
+      resetSectionTitle: "Redefinir seção para os padrões",
+      playbackResetToast: "Reprodução redefinida ✓",
+      interfaceResetToast: "Interface redefinida ✓",
+      verdictsResetToast: "Vereditos redefinidos ✓",
+      privacyResetToast: "Privacidade redefinida ✓",
+      allDefaultsRestoredToast: "Todos os padrões restaurados ✓",
+      settingControlsTitle: "Controles de vídeo e atalhos",
+      settingControlsDesc: "Exibir barra do reprodutor, navegação quadro a quadro e atalhos de reprodução.",
+      chipPlayPause: "Repr./Pausar",
+      chipPause: "Pausar",
+      chipFrame: "Quadro",
+      chipMute: "Mudo",
+      chipFullscreen: "Tela cheia",
+      settingAutoPlayTitle: "Reprodução automática ao carregar",
+      settingAutoPlayDesc: "Iniciar o vídeo automaticamente ao abrir um caso de inspeção.",
+      settingLoopTitle: "Repetir em loop",
+      settingLoopDesc: "Repetir o vídeo de evidência automaticamente ao chegar ao fim.",
+      settingTacticalAudioTitle: "Sinais sonoros táticos",
+      settingTacticalAudioDesc: "Reproduzir cliques sutis ao adicionar marcadores, alterar velocidade, alternar modos de visão ou loops.",
+      settingVolumeTitle: "Volume padrão do reprodutor",
+      settingVolumeDesc: "Lembrado para futuros vídeos de inspeção.",
+      volumeMute: "Mudo (0%)",
+      settingSpeedTitle: "Velocidade padrão de reprodução",
+      settingSpeedDesc: "Velocidade inicial aplicada aos novos vídeos de inspeção.",
+      keyOr: "ou",
+      keyHoldZ: "Segurar Z",
+      keyRightClickHold: "Segurar Botão Direito",
+      keyDoubleClick: "Clique duplo",
+      keyToolbarButton: "Botão da barra",
+      keyClickTimeBadge: "Clicar no tempo",
+      keyPlayPauseDesc: "Reproduzir / Pausar",
+      keyMuteDesc: "Silenciar / Ativar som",
+      keySpeedDesc: "Mais lento / Mais rápido",
+      keyLoopDesc: "Loop A/B (Início / Fim)",
+      keyClearLoopDesc: "Limpar loop A/B",
+      keySeek5sDesc: "Avançar / Voltar 5s",
+      keySkip10sDesc: "Pular 10s trás / frente",
+      keyFrameDesc: "Quadro anterior / seguinte",
+      keyBookmarkDesc: "Adicionar marcador / pin",
+      keyMillisecondsDesc: "Alternar milissegundos",
+      keyLoupeDesc: "Lupa tática (Zoom 2.5×)",
+      keyGammaDesc: "Realce de sombras e gama",
+      keyVisionDesc: "Filtro de visão (Silhueta / Invertido)",
+      keyFullscreenDesc: "Alternar tela cheia",
+      keyReloadStreamDesc: "Recarregar transmissão do vídeo",
+      keyNoViolationDesc: "Sem violação",
+      keyViolationDesc: "Violação",
+      keyUncertainDesc: "Incerto",
+      keySubmitFinalDesc: "Enviar veredito final",
+      settingSiteTitle: "Modificações do site",
+      settingSiteDesc: "Ativar painel de estatísticas personalizado, layout responsivo, abas e diálogos de veredito.",
+      settingSkipIntroTitle: "Pular introdução ao carregar",
+      settingSkipIntroDesc: "Entrar direto na bancada/visão geral ao fazer login, sem clicar em Iniciar Inspeção.",
+      settingVerdictEnhancementsTitle: "Melhorias no diálogo de veredito",
+      settingVerdictEnhancementsDesc: "Tags rápidas de motivo, campos traduzidos, contador de caracteres (x / 50) e limite de 3 categorias.",
+      settingVerdictHotkeysTitle: "Atalhos de veredito rápido",
+      settingVerdictHotkeysDesc: "Pressione teclas na bancada de inspeção para enviar seu veredito instantaneamente.",
+      settingNotesTitle: "Avisos de inspeção aprimorados",
+      settingNotesDesc: "Avisos claros e diretos ao ponto. Desative para restaurar o texto original do site.",
+      settingColorKeyTitle: "Legenda de cores por função e distância",
+      settingColorKeyDesc: "Cores para aliados (verde), inimigos (âmbar) e bots/scavs (azul).",
+      settingPrivacyTitle: "Modo Streamer / Privacidade",
+      settingPrivacyDesc: "Ocultar nome, ID, XP de ranque e dados sensíveis para transmissões ou capturas de tela.",
+      livePreview: "Pré-visualização ao vivo",
+      aboutSystemHeading: "Sobre e Sistema",
+      statusActive: "Ativo",
+      reloadPageToApply: "Recarregar página para aplicar",
+      creditsText: "Preferências locais para a bancada de inspeção do Arena Breakout: Infinite.",
+      madeBy: "Criado por",
     },
     "zh-Hant": {
       overview: "數據總覽",
@@ -721,6 +1225,78 @@
       challengeExclusive: "限定",
       challengeWeeklyTooltip: "可重複多次完成",
       challengeExclusiveTooltip: "每個帳號僅限完成一次",
+      searchSettingsAria: "搜尋設定",
+      searchClear: "清除搜尋",
+      noSettingsMatch: "未找到符合的設定。",
+      resetSectionTitle: "將此區塊重設為預設值",
+      playbackResetToast: "播放設定已重設 ✓",
+      interfaceResetToast: "介面設定已重設 ✓",
+      verdictsResetToast: "裁決設定已重設 ✓",
+      privacyResetToast: "隱私設定已重設 ✓",
+      allDefaultsRestoredToast: "已恢復所有預設值 ✓",
+      settingControlsTitle: "影片控制與快捷鍵",
+      settingControlsDesc: "顯示本機播放器工具列、逐格導覽以及播放快捷鍵。",
+      chipPlayPause: "播放/暫停",
+      chipPause: "暫停",
+      chipFrame: "逐格",
+      chipMute: "靜音",
+      chipFullscreen: "全螢幕",
+      settingAutoPlayTitle: "載入時自動播放",
+      settingAutoPlayDesc: "開啟巡查案件時自動開始播放影片。",
+      settingLoopTitle: "循環播放",
+      settingLoopDesc: "證據影片播放完畢後自動重新循環。",
+      settingTacticalAudioTitle: "戰術音效反饋",
+      settingTacticalAudioDesc: "在新增標記、變更速度、切換視效模式或循環重播時播放微弱的提示音效。",
+      settingVolumeTitle: "預設播放音量",
+      settingVolumeDesc: "將記憶並套用於日後的巡查影片。",
+      volumeMute: "靜音 (0%)",
+      settingSpeedTitle: "預設播放速度",
+      settingSpeedDesc: "套用於新巡查影片的初始播放速度。",
+      keyOr: "或",
+      keyHoldZ: "長按 Z",
+      keyRightClickHold: "長按滑鼠右鍵",
+      keyDoubleClick: "按兩下",
+      keyToolbarButton: "工具列按鈕",
+      keyClickTimeBadge: "點擊時間",
+      keyPlayPauseDesc: "播放 / 暫停",
+      keyMuteDesc: "靜音 / 取消靜音",
+      keySpeedDesc: "減速 / 加速",
+      keyLoopDesc: "A/B 循環重播 (起點 / 終點)",
+      keyClearLoopDesc: "清除 A/B 循環",
+      keySeek5sDesc: "快退 / 快進 5 秒",
+      keySkip10sDesc: "快退 / 快進 10 秒",
+      keyFrameDesc: "上一格 / 下一格",
+      keyBookmarkDesc: "新增標記 / 圖釘",
+      keyMillisecondsDesc: "切換毫秒顯示",
+      keyLoupeDesc: "戰術放大鏡 (2.5× 縮放)",
+      keyGammaDesc: "陰影與伽瑪增強",
+      keyVisionDesc: "視效濾鏡 (輪廓 / 反相)",
+      keyFullscreenDesc: "切換全螢幕",
+      keyReloadStreamDesc: "重新載入影片串流",
+      keyNoViolationDesc: "無違規",
+      keyViolationDesc: "違規",
+      keyUncertainDesc: "不確定",
+      keySubmitFinalDesc: "送出最終裁決",
+      settingSiteTitle: "網站增強功能",
+      settingSiteDesc: "啟用自訂數據總覽看板、響應式版面、分頁導覽與裁決對話方塊。",
+      settingSkipIntroTitle: "載入時跳過開場畫面",
+      settingSkipIntroDesc: "登入後直接進入巡查工作台/總覽，無需點擊開始巡查。",
+      settingVerdictEnhancementsTitle: "裁決對話方塊增強",
+      settingVerdictEnhancementsDesc: "違規快速標籤、在地化提示文字、字數計數器 (x / 50) 與 3 項分類上限標籤。",
+      settingVerdictHotkeysTitle: "快速裁決快捷鍵",
+      settingVerdictHotkeysDesc: "在巡查工作台上按下鍵盤快速鍵即可立即送出裁決。",
+      settingNotesTitle: "最佳化巡查須知",
+      settingNotesDesc: "採用精簡清晰的注意事項。停用即可恢復官方原始文字。",
+      settingColorKeyTitle: "身分與距離顏色對照",
+      settingColorKeyDesc: "隊友（綠色）、敵人（琥珀色）與機動兵/遊蕩者（藍色）的顏色標記。",
+      settingPrivacyTitle: "實況主 / 隱私保護模式",
+      settingPrivacyDesc: "隱藏玩家暱稱、ID、軍階經驗值等敏感資料，適用於直播或螢幕截圖。",
+      livePreview: "即時預覽",
+      aboutSystemHeading: "關於與系統",
+      statusActive: "已啟用",
+      reloadPageToApply: "重新整理頁面以套用變更",
+      creditsText: "暗區突圍：無限 巡查工作台本機偏好設定。",
+      madeBy: "製作人：",
     },
     cn: {
       overview: "数据总览",
@@ -811,6 +1387,78 @@
       challengeExclusive: "限定",
       challengeWeeklyTooltip: "可重复多次完成",
       challengeExclusiveTooltip: "每个账号仅限完成一次",
+      searchSettingsAria: "搜索设置",
+      searchClear: "清除搜索",
+      noSettingsMatch: "未找到匹配的设置。",
+      resetSectionTitle: "恢复本区默认设置",
+      playbackResetToast: "播放设置已重置 ✓",
+      interfaceResetToast: "界面设置已重置 ✓",
+      verdictsResetToast: "裁决设置已重置 ✓",
+      privacyResetToast: "隐私设置已重置 ✓",
+      allDefaultsRestoredToast: "已恢复全部默认设置 ✓",
+      settingControlsTitle: "视频控制与快捷键",
+      settingControlsDesc: "显示本地播放器工具栏、逐帧导航以及播放快捷键。",
+      chipPlayPause: "播放/暂停",
+      chipPause: "暂停",
+      chipFrame: "逐帧",
+      chipMute: "静音",
+      chipFullscreen: "全屏",
+      settingAutoPlayTitle: "加载时自动播放",
+      settingAutoPlayDesc: "打开巡查案例时自动开始播放视频。",
+      settingLoopTitle: "循环播放",
+      settingLoopDesc: "证据视频播放完毕后自动循环重播。",
+      settingTacticalAudioTitle: "战术音效反馈",
+      settingTacticalAudioDesc: "在添加标记、调节速度、切换视觉模式或循环重放时播放轻柔的提示音效。",
+      settingVolumeTitle: "默认播放音量",
+      settingVolumeDesc: "将记忆并应用于后续的巡查视频。",
+      volumeMute: "静音 (0%)",
+      settingSpeedTitle: "默认播放速度",
+      settingSpeedDesc: "应用于新巡查案例视频的初始播放速度。",
+      keyOr: "或",
+      keyHoldZ: "按住 Z",
+      keyRightClickHold: "按住鼠标右键",
+      keyDoubleClick: "双击",
+      keyToolbarButton: "工具栏按钮",
+      keyClickTimeBadge: "点击时间",
+      keyPlayPauseDesc: "播放 / 暂停",
+      keyMuteDesc: "静音 / 取消静音",
+      keySpeedDesc: "减速 / 加速",
+      keyLoopDesc: "A/B 循环重放 (起点 / 终点)",
+      keyClearLoopDesc: "清除 A/B 循环",
+      keySeek5sDesc: "快退 / 快进 5 秒",
+      keySkip10sDesc: "快退 / 快进 10 秒",
+      keyFrameDesc: "上一帧 / 下一帧",
+      keyBookmarkDesc: "添加标记 / 图钉",
+      keyMillisecondsDesc: "切换毫秒显示",
+      keyLoupeDesc: "战术放大镜 (2.5× 缩放)",
+      keyGammaDesc: "阴影与伽玛增强",
+      keyVisionDesc: "视觉滤镜 (轮廓 / 反相)",
+      keyFullscreenDesc: "切换全屏",
+      keyReloadStreamDesc: "重新加载视频流",
+      keyNoViolationDesc: "无违规",
+      keyViolationDesc: "违规",
+      keyUncertainDesc: "无法确定",
+      keySubmitFinalDesc: "提交最终裁决",
+      settingSiteTitle: "站点增强功能",
+      settingSiteDesc: "启用自定义数据总览看板、自适应布局、标签页导航与裁决对话框。",
+      settingSkipIntroTitle: "加载时跳过入场动画",
+      settingSkipIntroDesc: "登录后直接进入巡查工作台/总览，无需点击开始巡查。",
+      settingVerdictEnhancementsTitle: "裁决弹窗增强",
+      settingVerdictEnhancementsDesc: "违规快捷标签、多语言占位提示、字数计数器 (x / 50) 与 3 项分类上限徽章。",
+      settingVerdictHotkeysTitle: "快捷裁决快捷键",
+      settingVerdictHotkeysDesc: "在巡查工作台上按键盘快捷键即可直接提交裁决结果。",
+      settingNotesTitle: "优化巡查须知",
+      settingNotesDesc: "采用清晰精炼的注意事项。关闭后恢复官方默认文案。",
+      settingColorKeyTitle: "身份与距离颜色对照",
+      settingColorKeyDesc: "队友（绿色）、敌人（琥珀金）与游荡者/人机（蓝色）的颜色标识。",
+      settingPrivacyTitle: "主播 / 隐私保护模式",
+      settingPrivacyDesc: "隐藏玩家昵称、ID、段位经验等敏感数据，专为直播与录屏优化。",
+      livePreview: "实时预览",
+      aboutSystemHeading: "关于与系统",
+      statusActive: "已启用",
+      reloadPageToApply: "刷新页面以应用更改",
+      creditsText: "暗区突围：无限 巡查工作台本地个性化配置。",
+      madeBy: "开发者：",
     },
   };
 
@@ -1082,7 +1730,7 @@
 
   const WATERMARK = `
 ================================================================================
-  ABI INSPECTOR EXTENDED \u2014 v3.0.4
+  ABI INSPECTOR EXTENDED \u2014 v3.0.5
   Enhanced Patroller Interface & Local Playback Controls
   Author: deem (https://github.com/mkornela)
   Status: Extension Loaded & Active
@@ -1128,7 +1776,7 @@
     window.__abiExtendedBannerLogged = true;
     try {
       console.log(
-        "%c ABI INSPECTOR EXTENDED %c v3.0.4 %c deem %c ACTIVE \n%cEnhanced Patroller Interface & Local Playback Controls (https://github.com/mkornela)",
+        "%c ABI INSPECTOR EXTENDED %c v3.0.5 %c deem %c ACTIVE \n%cEnhanced Patroller Interface & Local Playback Controls (https://github.com/mkornela)",
         "background: #d49a37; color: #0b0f11; font-weight: bold; font-family: monospace; border-radius: 3px 0 0 3px; padding: 3px 8px; font-size: 11px;",
         "background: #182226; color: #d49a37; font-weight: bold; font-family: monospace; padding: 3px 8px; font-size: 11px; border-left: 1px solid #2a373c;",
         "background: #222f35; color: #c4d0d0; font-family: monospace; padding: 3px 8px; font-size: 11px; border-left: 1px solid #2a373c;",
@@ -2862,15 +3510,16 @@
     hudAccent: "amber",
     leaveGuard: true,
     autoHideHud: true,
+    tacticalAudio: true,
   };
 
   function getExtensionVersion() {
     try {
       if (typeof chrome !== "undefined" && chrome?.runtime?.getManifest) {
-        return chrome.runtime.getManifest()?.version || "3.0.4";
+        return chrome.runtime.getManifest()?.version || "3.0.5";
       }
     } catch {}
-    return "3.0.4";
+    return "3.0.5";
   }
 
   function safeStorageGet(defaults) {
@@ -2926,6 +3575,7 @@
     const panel = document.createElement("section");
     panel.className = "abi-extension-settings";
     panel.setAttribute("aria-label", "ABI Inspector Extended Settings");
+    panel.dataset.abiSettingsLang = typeof getCurrentLang === "function" ? getCurrentLang() : "en";
 
     // 0. Sticky Topbar: Search & Saved Toast
     const topbar = document.createElement("div");
@@ -2947,15 +3597,15 @@
     const searchInput = document.createElement("input");
     searchInput.type = "search";
     searchInput.className = "abi-settings-search-input";
-    searchInput.placeholder = "Search settings (e.g., volume, hotkeys, privacy)...";
-    searchInput.setAttribute("aria-label", "Search settings");
+    searchInput.placeholder = safeT("searchPlaceholder", "Search settings (e.g., volume, hotkeys, privacy)...");
+    searchInput.setAttribute("aria-label", safeT("searchSettingsAria", "Search settings"));
 
     const searchClear = document.createElement("button");
     searchClear.type = "button";
     searchClear.className = "abi-settings-search-clear";
     searchClear.textContent = "✕";
-    searchClear.title = "Clear search";
-    searchClear.setAttribute("aria-label", "Clear search");
+    searchClear.title = safeT("searchClear", "Clear search");
+    searchClear.setAttribute("aria-label", safeT("searchClear", "Clear search"));
     searchClear.hidden = true;
 
     searchBar.append(searchIcon, searchInput, searchClear);
@@ -2964,12 +3614,12 @@
     toast.className = "abi-settings-toast";
     toast.setAttribute("role", "status");
     toast.setAttribute("aria-live", "polite");
-    toast.textContent = "Saved ✓";
+    toast.textContent = safeT("savedToast", "Saved ✓");
 
     topbar.append(searchBar, toast);
 
     let toastTimer = null;
-    function showToast(msg = "Saved ✓") {
+    function showToast(msg = safeT("savedToast", "Saved ✓")) {
       toast.textContent = msg;
       toast.classList.add("show");
       if (toastTimer) clearTimeout(toastTimer);
@@ -3023,7 +3673,7 @@
     emptyState.className = "abi-settings-empty";
     emptyState.hidden = true;
     const emptyMsg = document.createElement("p");
-    emptyMsg.textContent = "No settings match your search.";
+    emptyMsg.textContent = safeT("noSettingsMatch", "No settings match your search.");
     emptyState.append(emptyMsg);
     body.append(emptyState);
 
@@ -3038,8 +3688,8 @@
         const resetBtn = document.createElement("button");
         resetBtn.type = "button";
         resetBtn.className = "abi-settings-reset-section-btn";
-        resetBtn.textContent = "Reset section";
-        resetBtn.title = `Reset ${titleText} to defaults`;
+        resetBtn.textContent = safeT("resetSection", "Reset section");
+        resetBtn.title = safeT("resetSectionTitle", `Reset ${titleText} to defaults`);
         resetBtn.addEventListener("click", onReset);
         head.append(resetBtn);
       }
@@ -3068,17 +3718,17 @@
     const controlRow = makeSettingsToggle(
       "abi-settings-controls",
       "controls",
-      "Video controls & shortcuts",
-      "Show the local player toolbar, frame-by-frame navigation, and playback shortcuts.",
+      safeT("settingControlsTitle", "Video controls & shortcuts"),
+      safeT("settingControlsDesc", "Show the local player toolbar, frame-by-frame navigation, and playback shortcuts."),
       "playback video player controls pause play seek frame volume shortcuts fullscreen space k j l",
       makeKeyChips([
-        "<kbd>Space</kbd> Play/Pause",
-        "<kbd>K</kbd> Pause",
+        "<kbd>Space</kbd> " + safeT("chipPlayPause", "Play/Pause"),
+        "<kbd>K</kbd> " + safeT("chipPause", "Pause"),
         "<kbd>J</kbd> / <kbd>L</kbd> ±5s",
         "<kbd>←</kbd> / <kbd>→</kbd> ±1s",
-        "<kbd>,</kbd> / <kbd>.</kbd> Frame",
-        "<kbd>M</kbd> Mute",
-        "<kbd>F</kbd> Fullscreen",
+        "<kbd>,</kbd> / <kbd>.</kbd> " + safeT("chipFrame", "Frame"),
+        "<kbd>M</kbd> " + safeT("chipMute", "Mute"),
+        "<kbd>F</kbd> " + safeT("chipFullscreen", "Fullscreen"),
       ]),
       showToast,
     );
@@ -3086,8 +3736,8 @@
     const autoPlayRow = makeSettingsToggle(
       "abi-settings-autoplay",
       "autoPlay",
-      "Auto-play on load",
-      "Start playback automatically when opening an inspection case.",
+      safeT("settingAutoPlayTitle", "Auto-play on load"),
+      safeT("settingAutoPlayDesc", "Start playback automatically when opening an inspection case."),
       "autoplay play start automatic video",
       null,
       showToast,
@@ -3096,8 +3746,8 @@
     const loopRow = makeSettingsToggle(
       "abi-settings-loop",
       "loopVideo",
-      "Loop playback",
-      "Automatically repeat the evidence video when reaching the end.",
+      safeT("settingLoopTitle", "Loop playback"),
+      safeT("settingLoopDesc", "Automatically repeat the evidence video when reaching the end."),
       "loop repeat video replay",
       null,
       showToast,
@@ -3113,12 +3763,22 @@
       showToast,
     );
 
+    const tacticalAudioRow = makeSettingsToggle(
+      "abi-settings-tactical-audio",
+      "tacticalAudio",
+      safeT("settingTacticalAudioTitle", "Tactical audio feedback cues"),
+      safeT("settingTacticalAudioDesc", "Play subtle client-side synthesized clicks when dropping bookmarks, changing speed, cycling vision modes, or toggling loops."),
+      "audio sound cues feedback sfx clicks chime effects mute",
+      null,
+      showToast,
+    );
+
     const volumeRow = document.createElement("div");
     volumeRow.className = "abi-settings-volume";
     volumeRow.dataset.keywords = "volume audio sound mute loudness default player";
     const volumeLabel = document.createElement("label");
     volumeLabel.htmlFor = "abi-settings-volume-slider";
-    volumeLabel.textContent = "Default player volume";
+    volumeLabel.textContent = safeT("settingVolumeTitle", "Default player volume");
     const volumeOutput = document.createElement("output");
     volumeOutput.htmlFor = volumeLabel.htmlFor;
     volumeOutput.textContent = "100%";
@@ -3127,7 +3787,7 @@
     volumeHeading.append(volumeLabel, volumeOutput);
 
     const volumeHelp = document.createElement("p");
-    volumeHelp.textContent = "Remembered for future inspection videos.";
+    volumeHelp.textContent = safeT("settingVolumeDesc", "Remembered for future inspection videos.");
 
     const volumeSlider = document.createElement("input");
     volumeSlider.id = volumeLabel.htmlFor;
@@ -3135,7 +3795,7 @@
     volumeSlider.min = "0";
     volumeSlider.max = "100";
     volumeSlider.step = "1";
-    volumeSlider.setAttribute("aria-label", "Default player volume");
+    volumeSlider.setAttribute("aria-label", safeT("settingVolumeTitle", "Default player volume"));
 
     const volumePresets = document.createElement("div");
     volumePresets.className = "abi-volume-presets";
@@ -3155,7 +3815,7 @@
       showToast("Saved ✓");
     });
 
-    for (const [pLabel, pVal] of [["Mute (0%)", 0], ["50%", 50], ["100%", 100]]) {
+    for (const [pLabel, pVal] of [[safeT("volumeMute", "Mute (0%)"), 0], ["50%", 50], ["100%", 100]]) {
       const chip = document.createElement("button");
       chip.type = "button";
       chip.className = "abi-volume-chip";
@@ -3177,7 +3837,7 @@
     speedRow.className = "abi-settings-speed";
     speedRow.dataset.keywords = "speed rate fast slow playback 1x 1.25x 1.5x 2x";
     const speedLabel = document.createElement("label");
-    speedLabel.textContent = "Default playback speed";
+    speedLabel.textContent = safeT("settingSpeedTitle", "Default playback speed");
     const speedOutput = document.createElement("output");
     speedOutput.textContent = "1×";
     const speedHeading = document.createElement("div");
@@ -3185,7 +3845,7 @@
     speedHeading.append(speedLabel, speedOutput);
 
     const speedHelp = document.createElement("p");
-    speedHelp.textContent = "Initial speed applied to new inspection videos.";
+    speedHelp.textContent = safeT("settingSpeedDesc", "Initial speed applied to new inspection videos.");
 
     const speedPresets = document.createElement("div");
     speedPresets.className = "abi-speed-presets";
@@ -3206,7 +3866,7 @@
     }
     speedRow.append(speedHeading, speedHelp, speedPresets);
 
-    const playbackHead = makeSectionHeading("Playback", async () => {
+    const playbackHead = makeSectionHeading(safeT("playback", "Playback"), async () => {
       const playbackDefaults = {
         controls: true,
         autoPlay: true,
@@ -3221,6 +3881,8 @@
       panel.querySelector("#abi-settings-loop").checked = false;
       panel.querySelector("#abi-settings-autohide-hud").checked = true;
       delete document.documentElement.dataset.abiAutoHideHud;
+      panel.querySelector("#abi-settings-tactical-audio").checked = true;
+      delete document.documentElement.dataset.abiTacticalAudio;
       volumeSlider.value = "100";
       volumeOutput.value = "100%";
       volumeSlider.style.setProperty("--abi-volume-fill", "100%");
@@ -3228,11 +3890,11 @@
       speedOutput.textContent = "1×";
       speedPresets.querySelectorAll(".abi-speed-chip").forEach((c) => c.classList.toggle("active", c.dataset.speed === "1"));
       updateSettingsStatus(panel, await safeStorageGet(settingsDefaults));
-      showToast("Playback reset ✓");
+      showToast(safeT("playbackResetToast", "Playback reset ✓"));
     });
     playbackHead.querySelector("h2").id = "abi-settings-playback-title";
 
-    playback.append(playbackHead, controlRow, autoPlayRow, loopRow, autoHideHudRow, volumeRow, speedRow);
+    playback.append(playbackHead, controlRow, autoPlayRow, loopRow, autoHideHudRow, tacticalAudioRow, volumeRow, speedRow);
 
     // 2. Keybinds Card
     const keybindsSection = document.createElement("section");
@@ -3276,9 +3938,9 @@
 
     // Playback & Speed
     keybindsGrid.append(makeKeybindCategory(safeT("playbackKeys", "Playback & Speed"), [
-      { desc: "Play / Pause", keys: "<kbd>Space</kbd> <span class='abi-key-or'>or</span> <kbd>K</kbd>", keywords: "play pause space k" },
-      { desc: "Mute / Unmute", keys: "<kbd>Shift + M</kbd>", keywords: "mute sound audio shift m" },
-      { desc: "Slower / Faster Speed", keys: "<kbd>-</kbd> <span class='abi-key-or'>/</span> <kbd>+</kbd>", keywords: "speed slower faster minus plus" },
+      { desc: safeT("keyPlayPauseDesc", "Play / Pause"), keys: "<kbd>Space</kbd> <span class='abi-key-or'>" + safeT("keyOr", "or") + "</span> <kbd>K</kbd>", keywords: "play pause space k" },
+      { desc: safeT("keyMuteDesc", "Mute / Unmute"), keys: "<kbd>Shift + M</kbd>", keywords: "mute sound audio shift m" },
+      { desc: safeT("keySpeedDesc", "Slower / Faster Speed"), keys: "<kbd>-</kbd> <span class='abi-key-or'>/</span> <kbd>+</kbd>", keywords: "speed slower faster minus plus" },
     ]));
 
     // Timeline & Review Navigation
@@ -3294,19 +3956,18 @@
 
     // Tactical Investigation Tools
     keybindsGrid.append(makeKeybindCategory(safeT("investigationKeys", "Investigation & View Tools"), [
-      { desc: "Tactical Loupe (2.5× Zoom)", keys: "<kbd>Hold Z</kbd> <span class='abi-key-or'>or</span> <kbd>Right-Click Hold</kbd>", keywords: "zoom loupe magnify z right click" },
-      { desc: "Shadow & Gamma Boost", keys: "<kbd>G</kbd>", keywords: "gamma shadow boost brightness g" },
-      { desc: "Vision Filter (Silhouette / Invert)", keys: "<kbd>X</kbd> <span class='abi-key-or'>or</span> <kbd>Shift + G</kbd>", keywords: "vision filter silhouette invert negative thermal x" },
-      { desc: "Toggle Fullscreen", keys: "<kbd>F</kbd> <span class='abi-key-or'>or</span> <kbd>Double-Click</kbd>", keywords: "fullscreen cinema expand f dblclick" },
-      { desc: "Reload Player Stream", keys: "<span class='abi-key-badge'>Toolbar Button</span>", keywords: "reload refresh stream unfreeze" },
+      { desc: safeT("keyLoupeDesc", "Tactical Loupe (2.5× Zoom)"), keys: "<kbd>" + safeT("keyHoldZ", "Hold Z") + "</kbd> <span class='abi-key-or'>" + safeT("keyOr", "or") + "</span> <kbd>" + safeT("keyRightClickHold", "Right-Click Hold") + "</kbd>", keywords: "zoom loupe magnify z right click" },
+      { desc: safeT("keyGammaDesc", "Shadow & Gamma Boost"), keys: "<kbd>G</kbd> <span class='abi-key-or'>" + safeT("keyOr", "or") + "</span> <kbd>Shift + G</kbd> <span class='abi-key-or'>" + safeT("keyOr", "or") + "</span> <kbd>X</kbd>", keywords: "gamma shadow boost brightness vision silhouette invert negative thermal g x" },
+      { desc: safeT("keyFullscreenDesc", "Toggle Fullscreen"), keys: "<kbd>F</kbd> <span class='abi-key-or'>" + safeT("keyOr", "or") + "</span> <kbd>" + safeT("keyDoubleClick", "Double-Click") + "</kbd>", keywords: "fullscreen cinema expand f dblclick" },
+      { desc: safeT("keyReloadStreamDesc", "Reload Player Stream"), keys: "<span class='abi-key-badge'>" + safeT("keyToolbarButton", "Toolbar Button") + "</span>", keywords: "reload refresh stream unfreeze" },
     ]));
 
     // Quick Verdicts
     keybindsGrid.append(makeKeybindCategory(safeT("verdictKeys", "Quick Verdicts (Workbench)"), [
-      { desc: "No Violation", keys: "<kbd>1</kbd> <span class='abi-key-or'>or</span> <kbd>V</kbd>", keywords: "verdict no violation innocent clean 1 v" },
-      { desc: "Violation", keys: "<kbd>2</kbd> <span class='abi-key-or'>or</span> <kbd>U</kbd>", keywords: "verdict violation guilty cheat 2 u" },
-      { desc: "Uncertain", keys: "<kbd>3</kbd> <span class='abi-key-or'>or</span> <kbd>I</kbd>", keywords: "verdict uncertain unsure 3 i" },
-      { desc: "Submit Final Verdict", keys: "<kbd>Enter</kbd>", keywords: "submit verdict enter confirm" },
+      { desc: safeT("keyNoViolationDesc", "No Violation"), keys: "<kbd>1</kbd> <span class='abi-key-or'>" + safeT("keyOr", "or") + "</span> <kbd>V</kbd>", keywords: "verdict no violation innocent clean 1 v" },
+      { desc: safeT("keyViolationDesc", "Violation"), keys: "<kbd>2</kbd> <span class='abi-key-or'>" + safeT("keyOr", "or") + "</span> <kbd>U</kbd>", keywords: "verdict violation guilty cheat 2 u" },
+      { desc: safeT("keyUncertainDesc", "Uncertain"), keys: "<kbd>3</kbd> <span class='abi-key-or'>" + safeT("keyOr", "or") + "</span> <kbd>I</kbd>", keywords: "verdict uncertain unsure 3 i" },
+      { desc: safeT("keySubmitFinalDesc", "Submit Final Verdict"), keys: "<kbd>Enter</kbd>", keywords: "submit verdict enter confirm" },
     ]));
 
     keybindsSection.append(keybindsHead, keybindsGrid);
@@ -3320,8 +3981,8 @@
     const siteRow = makeSettingsToggle(
       "abi-settings-site",
       "site",
-      "Site modifications",
-      "Enable custom overview stats board, responsive layout, tab navigation, and verdict dialogs.",
+      safeT("settingSiteTitle", "Site modifications"),
+      safeT("settingSiteDesc", "Enable custom overview stats board, responsive layout, tab navigation, and verdict dialogs."),
       "site interface responsive layout tabs stats board navigation",
       null,
       showToast,
@@ -3329,8 +3990,8 @@
     const skipIntroRow = makeSettingsToggle(
       "abi-settings-skip-intro",
       "skipIntro",
-      "Skip intro screen on load",
-      "Directly enter the inspection workbench/overview when logged in without clicking Start Inspection.",
+      safeT("settingSkipIntroTitle", "Skip intro screen on load"),
+      safeT("settingSkipIntroDesc", "Directly enter the inspection workbench/overview when logged in without clicking Start Inspection."),
       "intro skip start inspection login bypass enter screen",
       null,
       showToast,
@@ -3378,7 +4039,7 @@
     }
     accentRow.append(accentHeading, accentHelp, accentPresets);
 
-    const interfaceHead = makeSectionHeading("Interface", async () => {
+    const interfaceHead = makeSectionHeading(safeT("interface", "Interface"), async () => {
       const interfaceDefaults = { site: true, skipIntro: true, hudAccent: "amber" };
       await safeStorageSet(interfaceDefaults);
       panel.querySelector("#abi-settings-site").checked = true;
@@ -3390,7 +4051,7 @@
       window.dispatchEvent(new CustomEvent("abi-accent-change", { detail: { accent: "amber" } }));
       updateDependencies(panel);
       updateSettingsStatus(panel, await safeStorageGet(settingsDefaults));
-      showToast("Interface reset ✓");
+      showToast(safeT("interfaceResetToast", "Interface reset ✓"));
     });
     interfaceHead.querySelector("h2").id = "abi-settings-interface-title";
 
@@ -3405,8 +4066,8 @@
     const verdictEnhancementsRow = makeSettingsToggle(
       "abi-settings-verdict-enhancements",
       "verdictEnhancements",
-      "Verdict dialog enhancements",
-      "Violation quick-tag reason chips, localized placeholders, character counters (x / 50), and 3-category limit badge.",
+      safeT("settingVerdictEnhancementsTitle", "Verdict dialog enhancements"),
+      safeT("settingVerdictEnhancementsDesc", "Violation quick-tag reason chips, localized placeholders, character counters (x / 50), and 3-category limit badge."),
       "verdict dialog violation counter placeholder english modal chips tags quick reason",
       null,
       showToast,
@@ -3415,13 +4076,13 @@
     const verdictHotkeysRow = makeSettingsToggle(
       "abi-settings-verdict-hotkeys",
       "verdictHotkeys",
-      "Quick verdict hotkeys",
-      "Press keyboard shortcuts on the inspection workbench to instantly submit your verdict.",
+      safeT("settingVerdictHotkeysTitle", "Quick verdict hotkeys"),
+      safeT("settingVerdictHotkeysDesc", "Press keyboard shortcuts on the inspection workbench to instantly submit your verdict."),
       "hotkey hotkeys key shortcut verdict 1 2 3 v u i instant submit",
       makeKeyChips([
-        "<kbd>1</kbd> or <kbd>V</kbd> Violation",
-        "<kbd>2</kbd> or <kbd>U</kbd> Uncertain",
-        "<kbd>3</kbd> or <kbd>I</kbd> No Violation",
+        "<kbd>1</kbd> " + safeT("keyOr", "or") + " <kbd>V</kbd> " + safeT("keyViolationDesc", "Violation"),
+        "<kbd>2</kbd> " + safeT("keyOr", "or") + " <kbd>U</kbd> " + safeT("keyUncertainDesc", "Uncertain"),
+        "<kbd>3</kbd> " + safeT("keyOr", "or") + " <kbd>I</kbd> " + safeT("keyNoViolationDesc", "No Violation"),
       ]),
       showToast,
     );
@@ -3429,8 +4090,8 @@
     const notesRow = makeSettingsToggle(
       "abi-settings-notes",
       "inspectionNotes",
-      "Enhanced inspection notice",
-      "Use the enhanced, concise notice. Turn off to restore original site wording.",
+      safeT("settingNotesTitle", "Enhanced inspection notice"),
+      safeT("settingNotesDesc", "Use the enhanced, concise notice. Turn off to restore original site wording."),
       "notice notes warning inspection banner rule text",
       null,
       showToast,
@@ -3439,8 +4100,8 @@
     const colorKeyRow = makeSettingsToggle(
       "abi-settings-color-key",
       "colorKey",
-      "Role & distance color key",
-      "Color-code markers for teammates (green), enemies (amber), and scavs/bots (blue).",
+      safeT("settingColorKeyTitle", "Role & distance color key"),
+      safeT("settingColorKeyDesc", "Color-code markers for teammates (green), enemies (amber), and scavs/bots (blue)."),
       "color key role distance teammate enemy scav bot marker",
       null,
       showToast,
@@ -3456,7 +4117,7 @@
       showToast,
     );
 
-    const verdictsHead = makeSectionHeading("Verdicts", async () => {
+    const verdictsHead = makeSectionHeading(safeT("verdicts", "Verdicts"), async () => {
       const verdictsDefaults = {
         verdictEnhancements: true,
         verdictHotkeys: false,
@@ -3473,7 +4134,7 @@
       delete document.documentElement.dataset.abiLeaveGuard;
       updateDependencies(panel);
       updateSettingsStatus(panel, await safeStorageGet(settingsDefaults));
-      showToast("Verdicts reset ✓");
+      showToast(safeT("verdictsResetToast", "Verdicts reset ✓"));
     });
     verdictsHead.querySelector("h2").id = "abi-settings-verdicts-title";
 
@@ -3493,15 +4154,15 @@
     const privacyCopy = document.createElement("span");
     privacyCopy.className = "abi-settings-copy";
     const privacyStrong = document.createElement("strong");
-    privacyStrong.textContent = "Streamer / Privacy mode";
+    privacyStrong.textContent = safeT("settingPrivacyTitle", "Streamer / Privacy mode");
     const privacyHelp = document.createElement("small");
-    privacyHelp.textContent = "Anonymize player name, ID, rank XP, and sensitive inspection data for streams or screenshots.";
+    privacyHelp.textContent = safeT("settingPrivacyDesc", "Anonymize player name, ID, rank XP, and sensitive inspection data for streams or screenshots.");
 
     const privacyPreview = document.createElement("div");
     privacyPreview.className = "abi-privacy-preview-box";
     const previewTitle = document.createElement("div");
     previewTitle.className = "abi-privacy-preview-title";
-    previewTitle.textContent = "Live Preview";
+    previewTitle.textContent = safeT("livePreview", "Live Preview");
     const previewLine = document.createElement("div");
     previewLine.className = "abi-privacy-preview-line";
     const previewOrig = document.createElement("span");
@@ -3545,7 +4206,7 @@
 
     privacyRow.append(privacyCopy, privacyInput, privacySwitch);
 
-    const privacyHead = makeSectionHeading("Privacy", () => {
+    const privacyHead = makeSectionHeading(safeT("privacy", "Privacy"), () => {
       privacyAnonymized = false;
       try {
         localStorage.setItem(privacyStorageKey, "false");
@@ -3553,7 +4214,7 @@
       privacyInput.checked = false;
       updatePrivacyPreviewState(false);
       scheduleUpdate();
-      showToast("Privacy reset ✓");
+      showToast(safeT("privacyResetToast", "Privacy reset ✓"));
     });
     privacyHead.querySelector("h2").id = "abi-settings-privacy-title";
 
@@ -3565,7 +4226,7 @@
     aboutGroup.className = "abi-settings-group abi-settings-about";
     aboutGroup.setAttribute("aria-labelledby", "abi-settings-about-title");
 
-    const aboutHead = makeSectionHeading("About & System");
+    const aboutHead = makeSectionHeading(safeT("aboutSystemHeading", "About & System"));
     aboutHead.querySelector("h2").id = "abi-settings-about-title";
 
     const aboutInfo = document.createElement("div");
@@ -3580,7 +4241,7 @@
     aboutVersion.textContent = `v${getExtensionVersion()}`;
     const statusBadge = document.createElement("span");
     statusBadge.className = "abi-settings-status-badge";
-    statusBadge.textContent = "Active";
+    statusBadge.textContent = safeT("statusActive", "Active");
     badgesWrap.append(aboutVersion, statusBadge);
     aboutInfo.append(aboutCopy, badgesWrap);
 
@@ -3591,7 +4252,7 @@
     const resetBtn = document.createElement("button");
     resetBtn.type = "button";
     resetBtn.className = "abi-settings-btn abi-settings-btn-neutral";
-    resetBtn.textContent = "Restore Defaults";
+    resetBtn.textContent = safeT("restoreDefaults", "Restore Defaults");
     resetBtn.addEventListener("click", async () => {
       await safeStorageSet(settingsDefaults);
       privacyAnonymized = false;
@@ -3607,6 +4268,8 @@
       setCheck("#abi-settings-loop", false);
       setCheck("#abi-settings-autohide-hud", true);
       delete document.documentElement.dataset.abiAutoHideHud;
+      setCheck("#abi-settings-tactical-audio", true);
+      delete document.documentElement.dataset.abiTacticalAudio;
       setCheck("#abi-settings-site", true);
       setCheck("#abi-settings-skip-intro", true);
       setCheck("#abi-settings-privacy", false);
@@ -3631,9 +4294,9 @@
       window.dispatchEvent(new CustomEvent("abi-accent-change", { detail: { accent: "amber" } }));
       updateSettingsStatus(panel, await safeStorageGet(settingsDefaults));
       scheduleUpdate();
-      showToast("All defaults restored ✓");
+      showToast(safeT("allDefaultsRestoredToast", "All defaults restored ✓"));
       const prevText = resetBtn.textContent;
-      resetBtn.textContent = "Defaults restored ✓";
+      resetBtn.textContent = safeT("defaultsRestoredToast", "Defaults restored ✓");
       resetBtn.disabled = true;
       setTimeout(() => {
         resetBtn.textContent = prevText;
@@ -3644,7 +4307,7 @@
     const reloadBtn = document.createElement("button");
     reloadBtn.type = "button";
     reloadBtn.className = "abi-settings-btn abi-settings-btn-accent abi-settings-reload-btn";
-    reloadBtn.textContent = "Reload page to apply";
+    reloadBtn.textContent = safeT("reloadPageToApply", "Reload page to apply");
     reloadBtn.hidden = true;
     reloadBtn.addEventListener("click", () => location.reload());
 
@@ -3654,10 +4317,10 @@
     creditsRow.className = "abi-settings-credits";
     creditsRow.dataset.keywords = "credits author deem mkornela";
     const creditsText = document.createElement("span");
-    creditsText.textContent = "Local preferences for Arena Breakout: Infinite inspection workbench. ";
+    creditsText.textContent = safeT("creditsText", "Local preferences for Arena Breakout: Infinite inspection workbench.") + " ";
     const creditsAuthor = document.createElement("span");
     creditsAuthor.className = "abi-settings-author";
-    creditsAuthor.innerHTML = 'Made by <a href="https://github.com/mkornela" target="_blank" rel="noopener noreferrer">deem</a>';
+    creditsAuthor.innerHTML = `${safeT("madeBy", "Made by")} <a href="https://github.com/mkornela" target="_blank" rel="noopener noreferrer">deem</a>`;
     creditsRow.append(creditsText, creditsAuthor);
 
     aboutGroup.append(aboutHead, aboutInfo, actionsRow, creditsRow);
@@ -3741,6 +4404,7 @@
       setCheck("#abi-settings-autoplay", current.autoPlay);
       setCheck("#abi-settings-loop", current.loopVideo);
       setCheck("#abi-settings-autohide-hud", current.autoHideHud !== false);
+      setCheck("#abi-settings-tactical-audio", current.tacticalAudio !== false);
       setCheck("#abi-settings-site", current.site);
       setCheck("#abi-settings-skip-intro", current.skipIntro !== false);
       setCheck("#abi-settings-privacy", privacyAnonymized);
@@ -3888,7 +4552,16 @@
   function activateSettings(nav, brand) {
     const main = nav.closest(".main");
     if (!main) return;
-    const panel = main.querySelector(":scope > .abi-extension-settings") || createSettingsPanel();
+    const currentLang = typeof getCurrentLang === "function" ? getCurrentLang() : "en";
+    let panel = main.querySelector(":scope > .abi-extension-settings");
+    if (panel && panel.dataset.abiSettingsLang !== currentLang) {
+      panel.remove();
+      panel = null;
+    }
+    if (!panel) {
+      panel = createSettingsPanel();
+      panel.dataset.abiSettingsLang = currentLang;
+    }
     if (!panel.isConnected) main.append(panel);
     const pages = [...main.children].filter((child) =>
       child !== nav &&

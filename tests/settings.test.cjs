@@ -45,7 +45,7 @@ test("Settings panel redesign: DOM structure, search, dependencies, key chips, a
       };
       window.chrome = {
         runtime: {
-          getManifest: () => ({ version: "3.0.4" }),
+          getManifest: () => ({ version: "3.0.5" }),
         },
         storage: {
           local: {
@@ -186,6 +186,145 @@ test("Settings panel redesign: DOM structure, search, dependencies, key chips, a
     assert.equal(await page.locator(".abi-accent-chip.active").getAttribute("data-accent"), "amber", "Reset interface section restores amber accent");
     currentHtmlAccent = await page.evaluate(() => document.documentElement.dataset.abiHudAccent);
     assert.equal(currentHtmlAccent, "amber", "document.documentElement restored to amber");
+  } finally {
+    await browser?.close();
+  }
+});
+
+test("Settings panel localization: renders in German, Russian, and Chinese when active language is set", async (t) => {
+  let playwright;
+  try {
+    playwright = require("playwright");
+  } catch {
+    if (t && typeof t.skip === "function") {
+      t.skip("playwright module is not installed");
+      return;
+    }
+  }
+  const { chromium } = playwright;
+  const browser = await chromium.launch({
+    headless: true,
+    channel: process.env.ABI_TEST_BROWSER || (process.platform === "win32" ? "msedge" : "chromium"),
+  });
+
+  try {
+    const page = await browser.newPage({ viewport: { width: 1280, height: 800 } });
+    await page.setContent(`<!DOCTYPE html><html><head></head><body><div class="main"></div></body></html>`);
+    await page.addStyleTag({ path: path.join(root, "layout.css") });
+
+    // Mock chrome.storage.local, chrome.runtime, and load site-ui.js
+    await page.evaluate(() => {
+      window.storageMock = {
+        controls: true,
+        playerVolume: 100,
+        playbackSpeed: 1,
+        autoPlay: true,
+        loopVideo: false,
+        site: true,
+        skipIntro: true,
+        inspectionNotes: true,
+        colorKey: true,
+        verdictEnhancements: true,
+        verdictHotkeys: false,
+        hudAccent: "amber",
+        leaveGuard: true,
+        autoHideHud: true,
+      };
+      window.chrome = {
+        runtime: {
+          getManifest: () => ({ version: "3.0.5" }),
+        },
+        storage: {
+          local: {
+            get: (keys, cb) => {
+              const res = { ...window.storageMock };
+              if (cb) cb(res);
+              return Promise.resolve(res);
+            },
+            set: (data, cb) => {
+              Object.assign(window.storageMock, data);
+              if (cb) cb();
+              return Promise.resolve();
+            },
+          },
+        },
+      };
+      window.privacyAnonymized = false;
+      window.privacyStorageKey = "abi_privacy_mode";
+      window.root = document.documentElement;
+      window.scheduleUpdate = () => {};
+    });
+
+    const siteUiSource = fs.readFileSync(path.join(root, "site-ui.js"), "utf8");
+    // Extract I18N and helper functions plus settings functions
+    const i18nAndSettingsCode = siteUiSource.slice(
+      siteUiSource.indexOf("  const I18N = {"),
+      siteUiSource.indexOf("  function configureSettingsNavigation("),
+    );
+
+    // 1. Test German (de)
+    await page.evaluate((code) => {
+      document.documentElement.dataset.abiLang = "de";
+      window.eval(code);
+      const container = document.querySelector(".main");
+      container.innerHTML = "";
+      const panel = createSettingsPanel();
+      container.appendChild(panel);
+    }, i18nAndSettingsCode);
+
+    const deNav = page.locator(".abi-settings-nav-btn");
+    assert.equal(await deNav.nth(0).textContent(), "Wiedergabe", "German nav 0: Wiedergabe");
+    assert.equal(await deNav.nth(1).textContent(), "Tastenbelegung", "German nav 1: Tastenbelegung");
+    assert.equal(await deNav.nth(2).textContent(), "Benutzeroberfläche", "German nav 2: Benutzeroberfläche");
+    assert.equal(await deNav.nth(3).textContent(), "Urteile", "German nav 3: Urteile");
+    assert.equal(await deNav.nth(4).textContent(), "Datenschutz", "German nav 4: Datenschutz");
+    assert.equal(await deNav.nth(5).textContent(), "Über", "German nav 5: Über");
+    assert.ok(
+      (await page.locator("#abi-section-playback").textContent()).includes("Videosteuerung & Tastenkürzel"),
+      "German video controls title localized"
+    );
+
+    // 2. Test Russian (ru)
+    await page.evaluate(() => {
+      document.documentElement.dataset.abiLang = "ru";
+      const container = document.querySelector(".main");
+      container.innerHTML = "";
+      const panel = createSettingsPanel();
+      container.appendChild(panel);
+    });
+
+    const ruNav = page.locator(".abi-settings-nav-btn");
+    assert.equal(await ruNav.nth(0).textContent(), "Воспроизведение", "Russian nav 0: Воспроизведение");
+    assert.equal(await ruNav.nth(1).textContent(), "Горячие клавиши", "Russian nav 1: Горячие клавиши");
+    assert.equal(await ruNav.nth(2).textContent(), "Интерфейс", "Russian nav 2: Интерфейс");
+    assert.equal(await ruNav.nth(3).textContent(), "Вердикты", "Russian nav 3: Вердикты");
+    assert.equal(await ruNav.nth(4).textContent(), "Приватность", "Russian nav 4: Приватность");
+    assert.equal(await ruNav.nth(5).textContent(), "О расширении", "Russian nav 5: О расширении");
+    assert.ok(
+      (await page.locator("#abi-section-playback").textContent()).includes("Управление видео и горячие клавиши"),
+      "Russian video controls title localized"
+    );
+
+    // 3. Test Simplified Chinese (cn)
+    await page.evaluate(() => {
+      document.documentElement.dataset.abiLang = "cn";
+      const container = document.querySelector(".main");
+      container.innerHTML = "";
+      const panel = createSettingsPanel();
+      container.appendChild(panel);
+    });
+
+    const cnNav = page.locator(".abi-settings-nav-btn");
+    assert.equal(await cnNav.nth(0).textContent(), "播放", "Chinese nav 0: 播放");
+    assert.equal(await cnNav.nth(1).textContent(), "快捷键", "Chinese nav 1: 快捷键");
+    assert.equal(await cnNav.nth(2).textContent(), "界面", "Chinese nav 2: 界面");
+    assert.equal(await cnNav.nth(3).textContent(), "裁决", "Chinese nav 3: 裁决");
+    assert.equal(await cnNav.nth(4).textContent(), "隐私", "Chinese nav 4: 隐私");
+    assert.equal(await cnNav.nth(5).textContent(), "关于", "Chinese nav 5: 关于");
+    assert.ok(
+      (await page.locator("#abi-section-playback").textContent()).includes("视频控制与快捷键"),
+      "Chinese video controls title localized"
+    );
   } finally {
     await browser?.close();
   }

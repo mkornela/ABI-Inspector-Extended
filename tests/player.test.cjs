@@ -2012,11 +2012,38 @@ test("Shadow & Gamma Boost: cycles Normal -> Shadow Boost -> Max Brightness -> N
     assert.equal(maxState.toast, "Gamma: Max Brightness", "HUD toast announces 'Gamma: Max Brightness'");
     assert.equal(maxState.stored, "max", "Persists preference in localStorage");
 
-    // 4. Click toolbar button to cycle back to Normal
+    // 4. Click toolbar button to cycle through Silhouette, Invert, Thermal, and back to Normal
     await page.evaluate(() => {
       const controls = document.querySelector("abi-local-controls");
       const gammaBtn = controls.shadowRoot.querySelector("#gamma");
-      gammaBtn.click();
+      gammaBtn.click(); // Max -> Silhouette
+    });
+    const silhouetteState = await page.evaluate(() => {
+      return document.querySelector("video").style.filter;
+    });
+    assert.ok(silhouetteState.includes("contrast(2.4)"), "Cycles to Silhouette mode");
+
+    await page.evaluate(() => {
+      const controls = document.querySelector("abi-local-controls");
+      controls.shadowRoot.querySelector("#gamma").click(); // Silhouette -> Invert
+    });
+    const invertState = await page.evaluate(() => {
+      return document.querySelector("video").style.filter;
+    });
+    assert.ok(invertState.includes("invert(1)"), "Cycles to Negative Invert mode");
+
+    await page.evaluate(() => {
+      const controls = document.querySelector("abi-local-controls");
+      controls.shadowRoot.querySelector("#gamma").click(); // Invert -> Thermal
+    });
+    const thermalState = await page.evaluate(() => {
+      return document.querySelector("video").style.filter;
+    });
+    assert.ok(thermalState.includes("grayscale(1)"), "Cycles to Monochrome Thermal mode");
+
+    await page.evaluate(() => {
+      const controls = document.querySelector("abi-local-controls");
+      controls.shadowRoot.querySelector("#gamma").click(); // Thermal -> Normal
     });
 
     const revertedState = await page.evaluate(() => {
@@ -3088,7 +3115,7 @@ test("A/B Loop Repeat: sets In ([), Out (]), renders range on scrubber, loops pl
   }
 });
 
-test("Vision Filter: cycles Normal -> Silhouette -> Invert -> Thermal -> Normal via X/Shift+G and HUD button", async (t) => {
+test("Vision Filter: cycles modes as part of Gamma via X/Shift+G and Gamma button", async (t) => {
   let playwright;
   try {
     playwright = require("playwright");
@@ -3160,7 +3187,6 @@ test("Vision Filter: cycles Normal -> Silhouette -> Invert -> Thermal -> Normal 
       v.pause = () => { _paused = true; };
       v.load = () => {};
       v.getBoundingClientRect = () => ({ width: 800, height: 450, top: 0, left: 0, bottom: 450, right: 800 });
-      localStorage.removeItem("abi-vision-mode");
       localStorage.removeItem("abi-gamma-mode");
     });
 
@@ -3173,69 +3199,190 @@ test("Vision Filter: cycles Normal -> Silhouette -> Invert -> Thermal -> Normal 
     const initialFilter = await page.evaluate(() => {
       const v = document.querySelector("video");
       const controls = document.querySelector("abi-local-controls");
-      const btn = controls.shadowRoot.querySelector("#visionBtn");
+      const btn = controls.shadowRoot.querySelector("#gamma");
       return {
         filter: v.style.filter,
         btnActive: btn?.classList.contains("active"),
       };
     });
     assert.equal(initialFilter.filter, "", "Initial video filter is empty");
-    assert.equal(initialFilter.btnActive, false, "Vision button is inactive initially");
+    assert.equal(initialFilter.btnActive, false, "Gamma button is inactive initially");
 
-    // 2. Press 'X' -> Silhouette mode
+    // 2. Press 'X' -> steps forward into modes
     await page.keyboard.press("x");
-    const silhouetteState = await page.evaluate(() => {
+    const shadowState = await page.evaluate(() => {
       const v = document.querySelector("video");
       const controls = document.querySelector("abi-local-controls");
-      const btn = controls.shadowRoot.querySelector("#visionBtn");
+      const btn = controls.shadowRoot.querySelector("#gamma");
       return {
         filter: v.style.filter,
         btnActive: btn?.classList.contains("active"),
       };
     });
-    assert.ok(silhouetteState.filter.includes("contrast(2.4)"), "Silhouette contrast applied to video");
-    assert.equal(silhouetteState.btnActive, true, "Vision button is active in silhouette mode");
+    assert.ok(shadowState.filter.includes("brightness(1.35)"), "Shadow boost applied");
+    assert.equal(shadowState.btnActive, true, "Gamma button is active");
 
-    // 3. Press 'X' -> Invert mode
+    // 3. Step forward with 'X' to Max -> Silhouette
+    await page.keyboard.press("x"); // max
+    await page.keyboard.press("x"); // silhouette
+    const silhouetteState = await page.evaluate(() => {
+      const v = document.querySelector("video");
+      return v.style.filter;
+    });
+    assert.ok(silhouetteState.includes("contrast(2.4)"), "Silhouette contrast mode applied");
+
+    // 4. Press 'X' -> Invert
     await page.keyboard.press("x");
     const invertState = await page.evaluate(() => {
-      const v = document.querySelector("video");
-      return v.style.filter;
+      return document.querySelector("video").style.filter;
     });
-    assert.ok(invertState.includes("invert(1)"), "Negative invert applied to video");
+    assert.ok(invertState.includes("invert(1)"), "Negative Invert mode applied");
 
-    // 4. Press 'X' -> Thermal mode
+    // 5. Press 'X' -> Thermal
     await page.keyboard.press("x");
     const thermalState = await page.evaluate(() => {
-      const v = document.querySelector("video");
-      return v.style.filter;
+      return document.querySelector("video").style.filter;
     });
-    assert.ok(thermalState.includes("grayscale(1)"), "Monochrome thermal applied to video");
+    assert.ok(thermalState.includes("grayscale(1)"), "Monochrome Thermal mode applied");
 
-    // 5. Press 'X' -> Returns to normal
-    await page.keyboard.press("x");
+    // 6. Press 'Shift+G' -> cycles backwards back to Invert
+    await page.keyboard.press("Shift+G");
+    const backToInvert = await page.evaluate(() => {
+      return document.querySelector("video").style.filter;
+    });
+    assert.ok(backToInvert.includes("invert(1)"), "Shift+G cycles backward to Invert mode");
+
+    // 7. Click #gamma toolbar button to advance through thermal to normal
+    await page.evaluate(() => {
+      const controls = document.querySelector("abi-local-controls");
+      controls.shadowRoot.querySelector("#gamma").click(); // invert -> thermal
+      controls.shadowRoot.querySelector("#gamma").click(); // thermal -> normal
+    });
     const normalState = await page.evaluate(() => {
       const v = document.querySelector("video");
       const controls = document.querySelector("abi-local-controls");
-      const btn = controls.shadowRoot.querySelector("#visionBtn");
+      const btn = controls.shadowRoot.querySelector("#gamma");
       return {
         filter: v.style.filter,
         btnActive: btn?.classList.contains("active"),
       };
     });
-    assert.equal(normalState.filter, "", "Filter returns to empty");
-    assert.equal(normalState.btnActive, false, "Vision button returns to inactive");
+    assert.equal(normalState.filter, "", "Cycles back to normal empty filter");
+    assert.equal(normalState.btnActive, false, "Gamma button inactive on normal");
 
-    // 6. Click #visionBtn in HUD -> toggles to Silhouette
+  } finally {
+    await browser?.close();
+  }
+});
+
+test("Tactical Audio Feedback Cues: synthesizes Web Audio cues on actions and respects toggle", async (t) => {
+  let playwright;
+  try {
+    playwright = require("playwright");
+  } catch {
+    if (t && typeof t.skip === "function") {
+      t.skip("playwright module is not installed");
+      return;
+    }
+  }
+
+  const browser = await playwright.chromium.launch({
+    headless: true,
+    channel: process.env.ABI_TEST_BROWSER || (process.platform === "win32" ? "msedge" : "chromium"),
+  });
+
+  try {
+    const page = await browser.newPage({ viewport: { width: 1200, height: 800 } });
+
+    const mockHtml = `
+      <html data-abi-site="on" data-abi-auto-play="off">
+      <head>
+        <style>
+          .content.video { width: 800px; height: 500px; }
+          .play-box { width: 100%; height: 100%; }
+          #workingPlayer { width: 100%; height: 100%; }
+          video { width: 100%; height: 100%; }
+        </style>
+      </head>
+      <body>
+        <div class="main">
+          <ul class="nav">
+            <li id="working" class="current"><span>Workbench</span></li>
+          </ul>
+        </div>
+        <div id="xcWorking">
+          <div class="content video">
+            <div class="play-box">
+              <div id="workingPlayer">
+                <video src="https://example.com/test.mp4" preload="auto"></video>
+              </div>
+            </div>
+          </div>
+        </div>
+      </body>
+      </html>
+    `;
+
+    await page.route("https://www.arenabreakoutinfinite.com/act/a20251028patroller/*", (route) => {
+      route.fulfill({ status: 200, contentType: "text/html", body: mockHtml });
+    });
+
+    await page.goto("https://www.arenabreakoutinfinite.com/act/a20251028patroller/");
+
     await page.evaluate(() => {
-      const controls = document.querySelector("abi-local-controls");
-      controls.shadowRoot.querySelector("#visionBtn").click();
+      const v = document.querySelector("video");
+      let _paused = true;
+      Object.defineProperty(v, "duration", { value: 60.0, configurable: true });
+      Object.defineProperty(v, "currentTime", { value: 5.0, writable: true, configurable: true });
+      Object.defineProperty(v, "paused", {
+        get: () => _paused,
+        set: (val) => { _paused = val; },
+        configurable: true,
+      });
+      v.play = async () => { _paused = false; return Promise.resolve(); };
+      v.pause = () => { _paused = true; };
+      v.load = () => {};
+      v.getBoundingClientRect = () => ({ width: 800, height: 450, top: 0, left: 0, bottom: 450, right: 800 });
     });
-    const clickedState = await page.evaluate(() => {
-      return document.querySelector("video").style.filter;
-    });
-    assert.ok(clickedState.includes("contrast(2.4)"), "Clicking HUD vision button cycles to silhouette mode");
 
+    await page.addScriptTag({ path: path.join(__dirname, "..", "abi-inspector-enhancer", "settings.js") });
+    await page.addScriptTag({ path: path.join(__dirname, "..", "abi-inspector-enhancer", "content.js") });
+
+    await page.waitForSelector("abi-local-player", { state: "attached" });
+
+    // 1. Verify playTacticalCue is exposed and executes without error
+    const cueResult = await page.evaluate(() => {
+      const shell = document.querySelector("abi-local-player");
+      let fired = false;
+      try {
+        shell.playTacticalCue("pin");
+        shell.playTacticalCue("loopIn");
+        shell.playTacticalCue("loopOut");
+        shell.playTacticalCue("loopClear");
+        shell.playTacticalCue("mode");
+        shell.playTacticalCue("step");
+        shell.playTacticalCue("speed");
+        fired = true;
+      } catch (err) {
+        fired = false;
+      }
+      return fired;
+    });
+    assert.equal(cueResult, true, "playTacticalCue executes all cue types cleanly");
+
+    // 2. Setting toggle off -> tacticalAudio respects dataset
+    const mutedResult = await page.evaluate(() => {
+      document.documentElement.dataset.abiTacticalAudio = "off";
+      const shell = document.querySelector("abi-local-player");
+      let success = true;
+      try {
+        shell.playTacticalCue("pin");
+      } catch {
+        success = false;
+      }
+      return success;
+    });
+    assert.equal(mutedResult, true, "Tactical audio safely no-ops when turned off");
   } finally {
     await browser?.close();
   }

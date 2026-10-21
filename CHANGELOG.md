@@ -5,6 +5,31 @@ All notable changes to **ABI Inspector Extended** will be documented in this fil
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [3.0.5] - 2026-10-21
+
+### Added
+- **Full Dynamic Extension Settings Localization (9 Languages):**
+  - Added full translation coverage across all 9 supported languages (`en`, `de`, `ru`, `fr`, `es`, `ja`, `pt-BR`, `zh-Hant`, `cn`) for every section, card, toggle, dropdown option, keyboard chip, and status toast in the extension settings panel.
+  - Dynamically re-renders the settings panel in real-time when switching languages from the navigation bar dropdown.
+- **A/B Loop Repeat:**
+  - Instantly isolate and repeat critical suspect sequences:
+    - `[`: Mark Loop In point.
+    - `]`: Mark Loop Out point.
+    - `\`: Clear loop points.
+  - Renders a visible amber timeline segment along the scrubber and an interactive toolbar loop icon with state badges.
+- **Unified Multi-Spectrum Vision & Gamma Modes:**
+  - Integrated high-contrast and thermal vision filters directly into the Gamma pipeline:
+    - `Normal (1.0×)` → `Shadow Boost` → `Max Brightness` → `Silhouette Contrast` → `Negative Invert` → `Monochrome Thermal`.
+    - Cycle forward via `G`, `X`, `V`, or the toolbar button; cycle backward via `Shift+G`.
+- **Tactical Audio Feedback Cues:**
+  - Zero-latency client-side Web Audio API synthesizer for tactile auditory feedback (zero external audio files or network requests).
+  - Subtle clicks and tonal cues on bookmark drops, loop points, gamma/vision cycling, frame stepping, and speed changes.
+  - Fully toggleable via the Extension Settings panel under Playback settings (`tacticalAudio`).
+- **Automated Version Bump and Packaging Tooling:**
+  - Added `scripts/bump-version.cjs` and `scripts/build-zip.cjs` (`npm run bump`, `npm run package`) to automate version synchronization across manifests, scripts, tests, README, and distribution archive creation.
+
+---
+
 ## [3.0.4] - 2026-10-21
 
 ### Added

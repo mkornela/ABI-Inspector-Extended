@@ -1,15 +1,15 @@
 # ABI Inspector Extended
 
-[![Version](https://img.shields.io/badge/version-3.0.4-f59e0b.svg)](CHANGELOG.md)
+[![Version](https://img.shields.io/badge/version-3.0.5-f59e0b.svg)](CHANGELOG.md)
 [![Manifest](https://img.shields.io/badge/manifest-v3-3b82f6.svg)](abi-inspector-enhancer/manifest.json)
-[![Tests](https://img.shields.io/badge/tests-29%20passed-10b981.svg)](tests/)
+[![Tests](https://img.shields.io/badge/tests-31%20passed-10b981.svg)](tests/)
 [![Security](https://img.shields.io/badge/privacy-100%25%20client--side-06b6d4.svg)](#privacy-and-compatibility)
 [![Languages](https://img.shields.io/badge/languages-9%20supported-8b5cf6.svg)](#localization)
 
 > [!WARNING]
 > **Use at your own risk:** I am still awaiting a response from the game developers about the extension and whether it is safe to use.
 
-**Version 3.0.4** · A high-performance tactical interface enhancement for the official Arena Breakout: Infinite Inspector.
+**Version 3.0.5** · A high-performance tactical interface enhancement for the official Arena Breakout: Infinite Inspector.
 
 ABI Inspector Extended elevates the Inspector experience with a streamlined single-row video player HUD, tactical Hold-to-Zoom loupe, shadow and gamma boost, a live 00:00 UTC daily quota countdown clock, animated overview accuracy boards, an in-depth in-site settings and keybinds hub, and full 9-language localization.
 
@@ -62,9 +62,12 @@ All project screenshots live in [`screenshots/`](screenshots/). Inspector identi
 - 🎯 **Single-Row Tactical Video Player:** A unified, compact, ultra-responsive player control bar:
   - **Left Wing:** Play / Pause toggle, jump seek buttons (`-10s`, `-5s`, `+5s`, `+10s`).
   - **Center Deck:** Full-width interactive scrubber timeline with hover-time badge, suspect bookmark pin markers, micro frame stepping buttons (`<` / `>`), and clickable millisecond/fractional time display.
-  - **Right Wing:** Tactile playback speed badge (`0.1×` to `3.0×`), smooth volume slider, suspect bookmark pin dropper, 3-stage Shadow & Gamma Boost, in-place player reload, and native fullscreen toggle.
+  - **Right Wing:** Tactile playback speed badge (`0.1×` to `3.0×`), smooth volume slider, suspect bookmark pin dropper, A/B loop toggle, multi-mode Shadow, Gamma & Vision filter, in-place player reload, and native fullscreen toggle.
+- 🔁 **A/B Loop Repeat:** Mark suspect segments with **`[`** (Loop In) and **`]`** (Loop Out) to loop critical action sequences continuously. An amber highlight illuminates the exact loop region along the scrubber timeline. Press **`\`** or click the loop toolbar icon to clear.
+- ☀️ **Multi-Spectrum Shadow, Gamma & Vision Modes:** Seamlessly cycle through **Normal (1.0×) → Shadow Boost → Max Brightness → Silhouette Contrast → Negative Invert → Monochrome Thermal** with **`G`**, **`X`**, or the toolbar button (or **`Shift+G`** to reverse) to spot concealed silhouettes, thermal contrast signatures, and low-light movement.
+- 🔊 **Tactical Audio Feedback Cues:** Client-side Web Audio synthesis producing subtle, crisp mechanical clicks and tone cues when dropping bookmark pins, setting A/B loop points, stepping frames, switching vision modes, or adjusting playback speed (toggleable in Settings).
+- 🌐 **Full 9-Language Extension Settings Localization:** The entire extension settings panel dynamically translates on-the-fly across English, German, Russian, French, Spanish, Japanese, Brazilian Portuguese, Traditional Chinese, and Simplified Chinese.
 - 🔍 **Tactical Hold-to-Zoom Loupe:** Hold **`Z`** or hold **Right-Click** over the video for instantaneous 2.5× magnification centered precisely on your cursor. Release to return smoothly to 1× framing.
-- ☀️ **Shadow & Gamma Boost:** Cycle through **Normal → Shadow Boost → Max Brightness** with the **`G`** key or player toolbar button to reveal targets lurking in pitch-black corners, dense foliage, or dark interiors.
 - ⏱️ **Daily Server Reset Countdown Clock:** Live countdown badge on the Overview Today card indicating exact hours, minutes, and seconds remaining until the official **00:00 UTC** daily quota refresh.
 - ⌨️ **Dedicated In-Site Keybinds Hub:** Keybinds are now housed in their own dedicated tab inside Settings with visual tactile key chips and clear descriptions.
 - 🎨 **Custom HUD Accent Color Themes:** Choose between **Amber Gold**, **Emerald Green**, **Tactical Blue**, and **Crimson Red** with real-time reactive theme previews.
@@ -167,12 +170,14 @@ Shortcuts apply while focused on the Inspector page or video player. Hotkeys are
 | **Seek ±5s** | `J` / `L` or `←` / `→` | Jump back or forward 5 seconds |
 | **Seek ±10s** | `-10` / `+10` buttons | Jump back or forward 10 seconds via player buttons |
 | **Frame Step** | `,` / `.` (or `<` / `>`) | Step backward or forward one exact frame (~1/30s) |
-| **Adjust Speed** | `[` / `]` | Decrease or increase playback speed by 0.1× |
-| **Reset Speed** | `\` (or click speed badge) | Reset playback speed instantly back to 1.0× |
-| **Mute / Unmute** | `M` (when video focused) | Toggle audio mute |
+| **A/B Loop Repeat** | `[` / `]` | Set Loop In mark (`[`) / Loop Out mark (`]`) |
+| **Clear Loop** | `\` (or loop button) | Clear active A/B loop repeat |
+| **Adjust Speed** | `-` / `=` (or `-` / `+`) | Decrease or increase playback speed by step |
+| **Reset Speed** | Click speed badge | Reset playback speed instantly back to 1.0× |
+| **Mute / Unmute** | `Shift+M` or Mute button | Toggle audio mute |
 | **Bookmark Pin** | `M` / Pin Button | Drop or remove suspect moment marker at current timestamp |
 | **Hold-to-Zoom** | Hold `Z` or Right-Click | 2.5× loupe magnification centered on cursor |
-| **Shadow Boost** | `G` / Gamma Button | Cycle: Normal → Shadow Boost → Max Brightness |
+| **Vision & Gamma Modes** | `G` / `X` (or `Shift+G`) | Cycle forward/backward: Normal → Shadow → Max → Silhouette → Invert → Thermal |
 | **Precision Time** | Click timestamp | Toggle seconds display vs. millisecond fractional time |
 | **Fullscreen** | `F` or Double-Click | Toggle immersive fullscreen mode (`Esc` to exit) |
 
