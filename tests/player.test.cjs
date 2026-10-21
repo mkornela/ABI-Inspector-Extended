@@ -2767,6 +2767,155 @@ test("Fullscreen Auto-Hide Clean HUD: fades out controls and cursor after inacti
   }
 });
 
+test("Frames Control & Smooth Millisecond Playback: timer resides inside frames-control between previous and next buttons without 'Frames' badge, and ticks smoothly during playback", async (t) => {
+  let playwright;
+  try {
+    playwright = require("playwright");
+  } catch {
+    if (t && typeof t.skip === "function") {
+      t.skip("playwright module is not installed");
+      return;
+    }
+  }
+
+  const browser = await playwright.chromium.launch({
+    headless: true,
+    channel: process.env.ABI_TEST_BROWSER || (process.platform === "win32" ? "msedge" : "chromium"),
+  });
+
+  try {
+    const page = await browser.newPage({ viewport: { width: 1200, height: 800 } });
+
+    const mockHtml = `
+      <html data-abi-site="on">
+      <head>
+        <style>
+          .content.video { width: 800px; height: 500px; }
+          .play-box { width: 100%; height: 100%; }
+          #workingPlayer { width: 100%; height: 100%; }
+          video { width: 100%; height: 100%; }
+        </style>
+      </head>
+      <body>
+        <div class="main">
+          <ul class="nav">
+            <li id="working" class="current"><span>Workbench</span></li>
+          </ul>
+        </div>
+        <div id="xcWorking">
+          <div class="content video">
+            <div class="play-box">
+              <div id="workingPlayer">
+                <video src="https://example.com/test.mp4" preload="auto"></video>
+              </div>
+            </div>
+          </div>
+        </div>
+      </body>
+      </html>
+    `;
+
+    await page.route("https://www.arenabreakoutinfinite.com/act/a20251028patroller/*", (route) => {
+      route.fulfill({
+        status: 200,
+        contentType: "text/html",
+        body: mockHtml,
+      });
+    });
+
+    await page.goto("https://www.arenabreakoutinfinite.com/act/a20251028patroller/");
+
+    await page.evaluate(() => {
+      const v = document.querySelector("video");
+      let _paused = true;
+      let _currentTime = 14.41;
+      let _duration = 60;
+      Object.defineProperty(v, "paused", {
+        get: () => _paused,
+        set: (val) => { _paused = val; },
+        configurable: true,
+      });
+      Object.defineProperty(v, "currentTime", {
+        get: () => _currentTime,
+        set: (val) => { _currentTime = val; },
+        configurable: true,
+      });
+      Object.defineProperty(v, "duration", {
+        get: () => _duration,
+        set: (val) => { _duration = val; },
+        configurable: true,
+      });
+      v.play = async () => { _paused = false; v.dispatchEvent(new Event("play")); };
+      v.pause = () => { _paused = true; v.dispatchEvent(new Event("pause")); };
+    });
+
+    await page.addScriptTag({ path: path.join(__dirname, "..", "abi-inspector-enhancer", "settings.js") });
+    await page.addScriptTag({ path: path.join(__dirname, "..", "abi-inspector-enhancer", "content.js") });
+
+    await page.waitForSelector("abi-local-player", { state: "attached" });
+
+    // 1. Verify structure of .frames-control
+    const frameControlInfo = await page.evaluate(() => {
+      const controls = document.querySelector("abi-local-controls");
+      const framesCtrl = controls.shadowRoot.querySelector(".frames-control");
+      const framesBadge = controls.shadowRoot.querySelector(".frames-badge");
+      const childrenIds = Array.from(framesCtrl?.children || []).map((el) => el.id || el.className);
+      const timeEl = controls.shadowRoot.querySelector("#time");
+      return {
+        hasFramesControl: Boolean(framesCtrl),
+        hasFramesBadge: Boolean(framesBadge),
+        framesControlText: framesCtrl?.textContent,
+        childrenIds,
+        timeInsideFramesControl: framesCtrl?.contains(timeEl),
+        previousId: framesCtrl?.firstElementChild?.id,
+        nextId: framesCtrl?.lastElementChild?.id,
+      };
+    });
+
+    assert.equal(frameControlInfo.hasFramesControl, true, "Center deck has .frames-control element");
+    assert.equal(frameControlInfo.hasFramesBadge, false, "The word 'Frames' badge element has been removed");
+    assert.equal(frameControlInfo.timeInsideFramesControl, true, "Video timer is mounted directly inside .frames-control");
+    assert.equal(frameControlInfo.previousId, "previous", "First child of frames-control is #previous button");
+    assert.equal(frameControlInfo.nextId, "next", "Last child of frames-control is #next button");
+    assert.deepEqual(
+      frameControlInfo.childrenIds,
+      ["previous", "time", "next"],
+      "Child layout is strictly [previous, time, next]",
+    );
+
+    // 2. Enable millisecond precision
+    await page.evaluate(() => {
+      const controls = document.querySelector("abi-local-controls");
+      const timeEl = controls.shadowRoot.querySelector("#time");
+      timeEl.click();
+    });
+
+    const initialMsText = await page.evaluate(() => {
+      const controls = document.querySelector("abi-local-controls");
+      return controls.shadowRoot.querySelector("#time").textContent;
+    });
+    assert.equal(initialMsText, "00:14.41 / 01:00.00", "Displays initial time 00:14.41");
+
+    // 3. Play video and advance currentTime smoothly (simulating rAF playback ticks without timeupdate)
+    await page.evaluate(async () => {
+      const v = document.querySelector("video");
+      await v.play();
+      // Advance to .45
+      v.currentTime = 14.45;
+      await new Promise((r) => requestAnimationFrame(r));
+    });
+
+    const updatedMsText = await page.evaluate(() => {
+      const controls = document.querySelector("abi-local-controls");
+      return controls.shadowRoot.querySelector("#time").textContent;
+    });
+    assert.equal(updatedMsText, "00:14.45 / 01:00.00", "Smoothly updates to 00:14.45 via requestAnimationFrame without needing timeupdate event");
+
+  } finally {
+    await browser?.close();
+  }
+});
+
 
 
 

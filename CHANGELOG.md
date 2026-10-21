@@ -5,6 +5,22 @@ All notable changes to **ABI Inspector Extended** will be documented in this fil
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [3.0.2] - 2026-10-21
+
+### Changed
+- **Unified Center Deck Frame Stepping & Video Timer:**
+  - Removed the static "Frames" text badge from the center control pill.
+  - Placed the interactive video playback timer (`#time`) directly in its place, centered between the previous frame (`<`) and next frame (`>`) micro-stepping buttons.
+  - Streamlined the center deck into a unified, symmetrical `[ < ] MM:SS / MM:SS [ > ]` control group, eliminating layout clutter while keeping frame navigation and current timestamp tightly coupled.
+
+### Fixed
+- **Smooth 60 FPS Millisecond / Fractional Playback Timer:**
+  - Implemented an active `requestAnimationFrame` playback tick loop that drives the time display and seek progress at native display refresh rates during active playback.
+  - Eliminated the 150-250ms visual jumps (such as jumping abruptly from `.41` to `.55`) caused by default browser HTML5 `timeupdate` throttling.
+  - Standardized fractional second calculations to uniform 10ms centisecond slices (`Math.floor((totalSec * 100 + 1e-4) % 100)`), resolving floating-point precision edge cases and providing buttery-smooth timer advancement across all playback speeds.
+
+---
+
 ## [3.0.1] - 2026-10-20
 
 ### Removed

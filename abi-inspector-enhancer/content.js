@@ -191,7 +191,12 @@ function main() {
 
     /* Timecode Display */
     .time {
-      font-size: 13px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      height: 26px;
+      box-sizing: border-box;
+      font-size: 12.5px;
       font-variant-numeric: tabular-nums;
       white-space: nowrap;
       color: #8fa09d;
@@ -199,17 +204,17 @@ function main() {
       letter-spacing: 0.02em;
       cursor: pointer;
       user-select: none;
-      padding: 3px 6px;
+      padding: 0 8px;
       border-radius: 4px;
       border: 1px solid transparent;
       transition: color .15s ease, background .15s ease, border-color .15s ease;
     }
     .time:hover {
       color: #ffffff;
-      background: rgba(255,255,255,0.06);
-      border-color: rgba(255,255,255,0.1);
+      background: rgba(255,255,255,0.08);
+      border-color: rgba(255,255,255,0.12);
     }
-    .time:focus-visible { outline: 1px solid #e66b4e; outline-offset: 2px; }
+    .time:focus-visible { outline: 1px solid var(--abi-accent,#e66b4e); outline-offset: 1px; }
 
     /* Center Frames Control */
     .frames-control {
@@ -234,15 +239,6 @@ function main() {
       background: rgba(255,255,255,0.1);
       color: #ffffff;
       transform: none;
-    }
-    .frames-badge {
-      font-size: 10.5px;
-      font-weight: 800;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-      padding: 0 6px;
-      color: #8fa09d;
-      user-select: none;
     }
 
     /* Button Styles */
@@ -489,7 +485,6 @@ function main() {
     }
     @container (max-width: 650px) {
       .center { gap: 6px; }
-      .frames-badge { display: none; }
       #volume { display: none; }
     }
     @media(max-width:600px) {
@@ -548,7 +543,7 @@ function main() {
     if (!Number.isFinite(value)) return showMs ? "--:--.--" : "--:--";
     const totalSec = Math.max(0, value);
     const seconds = Math.floor(totalSec);
-    const ms = Math.min(99, Math.max(0, Math.round((totalSec - seconds) * 100)));
+    const ms = Math.min(99, Math.max(0, Math.floor(((totalSec * 100) + 1e-4) % 100)));
     const h = Math.floor(seconds / 3600);
     const base = `${h ? `${h}:` : ""}${String(Math.floor(seconds / 60) % 60).padStart(2, "0")}:${String(seconds % 60).padStart(2, "0")}`;
     return showMs ? `${base}.${String(ms).padStart(2, "0")}` : base;
@@ -684,10 +679,9 @@ function main() {
           <div class="group seek-group" role="group" aria-label="Seek"><button id="back10" title="Back 10 seconds">−10s</button><button id="back5" title="Back 5 seconds (J or Left)">−5s</button><button id="forward5" title="Forward 5 seconds (L or Right)">+5s</button><button id="forward10" title="Forward 10 seconds">+10s</button></div>
         </div>
         <div class="center">
-          <span class="time" id="time" role="button" tabindex="0" title="Click to toggle millisecond precision">00:00 / --:--</span>
-          <div class="frames-control" role="group" aria-label="Frame stepping">
+          <div class="frames-control" role="group" aria-label="Frame stepping and time">
             <button id="previous" title="Previous frame (,)" aria-label="Previous frame (comma)"></button>
-            <span class="frames-badge" aria-hidden="true">Frames</span>
+            <span class="time" id="time" role="button" tabindex="0" title="Click to toggle millisecond precision">00:00 / --:--</span>
             <button id="next" title="Next frame (.)" aria-label="Next frame (period)"></button>
           </div>
         </div>
@@ -1101,6 +1095,7 @@ function main() {
     let modalTransitionUntil = 0;
     let hadOpenModal = false;
     let isUserSeeking = false;
+    let rafId = null;
     try {
       precisionMs =
         localStorage.getItem("abi-time-precision") === "ms" ||
@@ -1432,6 +1427,7 @@ function main() {
       const allVideos = [...scope.querySelectorAll("video")];
       if (!allVideos.length) {
         if (video) {
+          stopPlaybackLoop();
           mediaLife?.abort();
           video = null;
           render();
@@ -1449,6 +1445,7 @@ function main() {
       );
       const selected = playingVideo || visibleVideos[0] || allVideos[0] || null;
       if (selected === video) return;
+      stopPlaybackLoop();
       mediaLife?.abort();
       video = selected;
       if (video) {
@@ -1505,6 +1502,7 @@ function main() {
             name,
             (event) => {
               if (event.type === "loadstart") {
+                stopPlaybackLoop();
                 delete video.dataset.abiUserPaused;
                 delete video.dataset.abiUserPlayed;
                 delete video.dataset.abiAutoplayed;
@@ -1530,7 +1528,16 @@ function main() {
                 } else {
                   delete video.dataset.abiUserPaused;
                   video.dataset.abiUserPlayed = "true";
+                  startPlaybackLoop();
                 }
+              }
+              if (
+                event.type === "pause" ||
+                event.type === "ended" ||
+                event.type === "emptied" ||
+                event.type === "error"
+              ) {
+                stopPlaybackLoop();
               }
               if (event.type === "timeupdate") {
                 if (
@@ -1566,6 +1573,53 @@ function main() {
       }
       render();
     }
+    function updateTimeAndSeek() {
+      const ready = finite();
+      const cur = video?.currentTime || 0;
+      const dur = ready ? video.duration : 0;
+      ui.time.textContent = `${format(cur, precisionMs)} / ${format(dur, precisionMs)}`;
+      ui.seek.max = ready ? String(dur) : "1";
+      if (!isScrubbing) {
+        ui.seek.value = ready ? String(cur) : "0";
+      }
+      const fillTime = isScrubbing ? Number(ui.seek.value) : cur;
+      ui.seek.style.setProperty(
+        "--fill",
+        `${ready && dur > 0 ? Math.max(0, Math.min(100, (fillTime / dur) * 100)) : 0}%`,
+      );
+      ui.seek.setAttribute(
+        "aria-valuetext",
+        `${format(cur, precisionMs)} of ${format(dur, precisionMs)}`,
+      );
+    }
+    function tickPlayback() {
+      if (video && !video.paused && !video.ended) {
+        if (
+          !isUserSeeking &&
+          !isScrubbing &&
+          Number.isFinite(video.currentTime) &&
+          video.currentTime > 0.3
+        ) {
+          lastStablePlaybackTime = video.currentTime;
+        }
+        updateTimeAndSeek();
+        rafId = requestAnimationFrame(tickPlayback);
+      } else {
+        rafId = null;
+      }
+    }
+    function startPlaybackLoop() {
+      if (rafId !== null) return;
+      if (video && !video.paused && !video.ended) {
+        rafId = requestAnimationFrame(tickPlayback);
+      }
+    }
+    function stopPlaybackLoop() {
+      if (rafId !== null) {
+        cancelAnimationFrame(rafId);
+        rafId = null;
+      }
+    }
     function render() {
       const ready = finite();
       for (const id of ["play", "slower", "speedval", "faster", "mute", "volume", "pinButton", "reload"])
@@ -1592,20 +1646,12 @@ function main() {
         "aria-label",
         !video || video.paused ? "Play video" : "Pause video",
       );
-      ui.time.textContent = `${format(video?.currentTime || 0, precisionMs)} / ${format(video?.duration, precisionMs)}`;
-      ui.seek.max = ready ? String(video.duration) : "1";
-      if (!isScrubbing) {
-        ui.seek.value = ready ? String(video.currentTime) : "0";
+      updateTimeAndSeek();
+      if (!paused && !video.ended) {
+        startPlaybackLoop();
+      } else {
+        stopPlaybackLoop();
       }
-      const fillTime = isScrubbing ? Number(ui.seek.value) : (video?.currentTime || 0);
-      ui.seek.style.setProperty(
-        "--fill",
-        `${ready ? Math.max(0, Math.min(100, (fillTime / video.duration) * 100)) : 0}%`,
-      );
-      ui.seek.setAttribute(
-        "aria-valuetext",
-        `${format(video?.currentTime || 0, precisionMs)} of ${format(video?.duration, precisionMs)}`,
-      );
       if (video) {
         ui.volume.value = String(video.volume);
         const displayMuted = isScrubbing ? preScrubMuted : video.muted;
@@ -2148,6 +2194,7 @@ function main() {
       toggleGamma,
       applyGamma,
       destroy() {
+        stopPlaybackLoop();
         shell.removeAttribute("data-controls-ready");
         stopZoom();
         if (video) video.style.filter = "";
