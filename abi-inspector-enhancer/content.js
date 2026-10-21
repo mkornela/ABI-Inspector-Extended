@@ -195,19 +195,27 @@ function main() {
       align-items: center;
       justify-content: center;
       height: 26px;
+      min-width: 96px;
       box-sizing: border-box;
-      font-size: 12.5px;
+      font-family: ui-monospace, "Cascadia Mono", "Segoe UI Mono", "Liberation Mono", Menlo, Monaco, Consolas, monospace;
+      font-size: 12px;
       font-variant-numeric: tabular-nums;
+      font-feature-settings: "tnum" 1;
       white-space: nowrap;
       color: #8fa09d;
       font-weight: 700;
-      letter-spacing: 0.02em;
+      letter-spacing: 0.03em;
       cursor: pointer;
       user-select: none;
       padding: 0 8px;
       border-radius: 4px;
       border: 1px solid transparent;
+      text-align: center;
       transition: color .15s ease, background .15s ease, border-color .15s ease;
+    }
+    .time[data-precision="ms"],
+    :host-context([data-time-precision="ms"]) .time {
+      min-width: 142px;
     }
     .time:hover {
       color: #ffffff;
@@ -1577,6 +1585,7 @@ function main() {
       const ready = finite();
       const cur = video?.currentTime || 0;
       const dur = ready ? video.duration : 0;
+      ui.time.dataset.precision = precisionMs ? "ms" : "normal";
       ui.time.textContent = `${format(cur, precisionMs)} / ${format(dur, precisionMs)}`;
       ui.seek.max = ready ? String(dur) : "1";
       if (!isScrubbing) {

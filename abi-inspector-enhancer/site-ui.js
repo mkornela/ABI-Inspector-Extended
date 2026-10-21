@@ -1046,7 +1046,7 @@
 
   const WATERMARK = `
 ================================================================================
-  ABI INSPECTOR EXTENDED \u2014 v3.0.2
+  ABI INSPECTOR EXTENDED \u2014 v3.0.3
   Enhanced Patroller Interface & Local Playback Controls
   Author: deem (https://github.com/mkornela)
   Status: Extension Loaded & Active
@@ -1092,7 +1092,7 @@
     window.__abiExtendedBannerLogged = true;
     try {
       console.log(
-        "%c ABI INSPECTOR EXTENDED %c v3.0.2 %c deem %c ACTIVE \n%cEnhanced Patroller Interface & Local Playback Controls (https://github.com/mkornela)",
+        "%c ABI INSPECTOR EXTENDED %c v3.0.3 %c deem %c ACTIVE \n%cEnhanced Patroller Interface & Local Playback Controls (https://github.com/mkornela)",
         "background: #d49a37; color: #0b0f11; font-weight: bold; font-family: monospace; border-radius: 3px 0 0 3px; padding: 3px 8px; font-size: 11px;",
         "background: #182226; color: #d49a37; font-weight: bold; font-family: monospace; padding: 3px 8px; font-size: 11px; border-left: 1px solid #2a373c;",
         "background: #222f35; color: #c4d0d0; font-family: monospace; padding: 3px 8px; font-size: 11px; border-left: 1px solid #2a373c;",
@@ -2493,6 +2493,7 @@
     } else if (langBtn && langBtn.parentElement === actions) {
       topNav.insertBefore(langBtn, actions);
     }
+    updateLanguageMenu();
     for (const source of [
       topNav.querySelector("#login"),
       sourceHome,
@@ -2501,6 +2502,238 @@
       source?.classList.toggle("abi-account-source-hidden", toolbarEnabled);
     }
   }
+
+  const LANGUAGE_NAMES = {
+    en: {
+      en: "English",
+      de: "German",
+      ru: "Russian",
+      fr: "French",
+      es: "Spanish",
+      ja: "Japanese",
+      "pt-BR": "Portuguese (Brazil)",
+      "zh-Hant": "Traditional Chinese",
+      cn: "Simplified Chinese",
+    },
+    de: {
+      en: "Englisch",
+      de: "Deutsch",
+      ru: "Russisch",
+      fr: "Französisch",
+      es: "Spanisch",
+      ja: "Japanisch",
+      "pt-BR": "Portugiesisch (Brasilien)",
+      "zh-Hant": "Traditionelles Chinesisch",
+      cn: "Vereinfachtes Chinesisch",
+    },
+    ru: {
+      en: "Английский",
+      de: "Немецкий",
+      ru: "Русский",
+      fr: "Французский",
+      es: "Испанский",
+      ja: "Японский",
+      "pt-BR": "Португальский (Бразилия)",
+      "zh-Hant": "Традиционный китайский",
+      cn: "Упрощенный китайский",
+    },
+    fr: {
+      en: "Anglais",
+      de: "Allemand",
+      ru: "Russe",
+      fr: "Français",
+      es: "Espagnol",
+      ja: "Japonais",
+      "pt-BR": "Portugais (Brésil)",
+      "zh-Hant": "Chinois traditionnel",
+      cn: "Chinois simplifié",
+    },
+    es: {
+      en: "Inglés",
+      de: "Alemán",
+      ru: "Ruso",
+      fr: "Francés",
+      es: "Español",
+      ja: "Japonés",
+      "pt-BR": "Portugués (Brasil)",
+      "zh-Hant": "Chino tradicional",
+      cn: "Chino simplificado",
+    },
+    ja: {
+      en: "英語",
+      de: "ドイツ語",
+      ru: "ロシア語",
+      fr: "フランス語",
+      es: "スペイン語",
+      ja: "日本語",
+      "pt-BR": "ポルトガル語 (ブラジル)",
+      "zh-Hant": "繁体字中国語",
+      cn: "簡体字中国語",
+    },
+    "pt-BR": {
+      en: "Inglês",
+      de: "Alemão",
+      ru: "Russo",
+      fr: "Francês",
+      es: "Espanhol",
+      ja: "Japonês",
+      "pt-BR": "Português (Brasil)",
+      "zh-Hant": "Chinês Tradicional",
+      cn: "Chinês Simplificado",
+    },
+    "zh-Hant": {
+      en: "英文",
+      de: "德文",
+      ru: "俄文",
+      fr: "法文",
+      es: "西班牙文",
+      ja: "日文",
+      "pt-BR": "葡萄牙文 (巴西)",
+      "zh-Hant": "繁體中文",
+      cn: "簡體中文",
+    },
+    cn: {
+      en: "英语",
+      de: "德语",
+      ru: "俄语",
+      fr: "法语",
+      es: "西班牙语",
+      ja: "日语",
+      "pt-BR": "葡萄牙语 (巴西)",
+      "zh-Hant": "繁体中文",
+      cn: "简体中文",
+    },
+  };
+
+  const LANG_TEXT_MAP = {
+    // English
+    english: "en",
+    german: "de",
+    russian: "ru",
+    french: "fr",
+    spanish: "es",
+    japanese: "ja",
+    portuguese: "pt-BR",
+    "traditional chinese": "zh-Hant",
+    "simplified chinese": "cn",
+    // German
+    englisch: "en",
+    deutsch: "de",
+    russisch: "ru",
+    "französisch": "fr",
+    spanisch: "es",
+    japanisch: "ja",
+    portugiesisch: "pt-BR",
+    "traditionelles chinesisch": "zh-Hant",
+    "vereinfachtes chinesisch": "cn",
+    // Russian
+    "английский": "en",
+    "немецкий": "de",
+    "русский": "ru",
+    "французский": "fr",
+    "испанский": "es",
+    "японский": "ja",
+    "португальский": "pt-BR",
+    "традиционный китайский": "zh-Hant",
+    "упрощенный китайский": "cn",
+    // French
+    anglais: "en",
+    allemand: "de",
+    russe: "ru",
+    "français": "fr",
+    espagnol: "es",
+    japonais: "ja",
+    portugais: "pt-BR",
+    "chinois traditionnel": "zh-Hant",
+    "chinois simplifié": "cn",
+    // Spanish
+    "inglés": "en",
+    "alemán": "de",
+    ruso: "ru",
+    "francés": "fr",
+    "español": "es",
+    "japonés": "ja",
+    "portugués": "pt-BR",
+    "chino tradicional": "zh-Hant",
+    "chino simplificado": "cn",
+    // Japanese
+    "英語": "en",
+    "ドイツ語": "de",
+    "ロシア語": "ru",
+    "フランス語": "fr",
+    "スペイン語": "es",
+    "日本語": "ja",
+    "ポルトガル語": "pt-BR",
+    "繁体字中国語": "zh-Hant",
+    "簡体字中国語": "cn",
+    // Portuguese
+    "inglês": "en",
+    "alemão": "de",
+    "francês": "fr",
+    espanhol: "es",
+    "chinês tradicional": "zh-Hant",
+    "chinês simplificado": "cn",
+    // Chinese (Trad & Simp)
+    "英文": "en",
+    "英语": "en",
+    "德文": "de",
+    "德语": "de",
+    "俄文": "ru",
+    "俄语": "ru",
+    "法文": "fr",
+    "法语": "fr",
+    "西班牙文": "es",
+    "西班牙语": "es",
+    "日文": "ja",
+    "日语": "ja",
+    "葡萄牙文": "pt-BR",
+    "葡萄牙语": "pt-BR",
+    "繁體中文": "zh-Hant",
+    "繁体中文": "zh-Hant",
+    "簡體中文": "cn",
+    "简体中文": "cn",
+    "中文": "cn",
+  };
+
+  function updateLanguageMenu() {
+    const currentLang = getCurrentLang();
+    const langItems = document.querySelectorAll("._langNav_ li, #langBtn li");
+    for (const item of langItems) {
+      if (!item.dataset.lang) {
+        const text = (item.textContent || "").trim().toLowerCase();
+        for (const [key, code] of Object.entries(LANG_TEXT_MAP)) {
+          if (text.includes(key)) {
+            item.dataset.lang = code;
+            break;
+          }
+        }
+      }
+      const code = item.dataset.lang;
+      if (code) {
+        const localizedName = LANGUAGE_NAMES[currentLang]?.[code] || LANGUAGE_NAMES.en?.[code];
+        if (localizedName) {
+          const targetNode = item.querySelector("a, span") || item;
+          if (targetNode.textContent.trim() !== localizedName) {
+            targetNode.textContent = localizedName;
+          }
+          item.setAttribute("title", localizedName);
+        }
+      }
+    }
+
+    const triggerBtn = document.querySelector("._langNav_ > a, #langBtn > a");
+    if (triggerBtn && !triggerBtn.dataset.abiCustomLabel) {
+      const activeLangName = LANGUAGE_NAMES[currentLang]?.[currentLang] || LANGUAGE_NAMES.en?.[currentLang];
+      if (activeLangName) {
+        const targetBtnNode = triggerBtn.querySelector("span") || triggerBtn;
+        if (targetBtnNode.textContent.trim() !== activeLangName) {
+          targetBtnNode.textContent = activeLangName;
+        }
+      }
+    }
+  }
+
+  const updateLanguageMenuFlags = updateLanguageMenu;
 
   function applyPrivacyMask() {
     root.toggleAttribute("data-abi-anonymized", privacyAnonymized);
@@ -2598,10 +2831,10 @@
   function getExtensionVersion() {
     try {
       if (typeof chrome !== "undefined" && chrome?.runtime?.getManifest) {
-        return chrome.runtime.getManifest()?.version || "3.0.2";
+        return chrome.runtime.getManifest()?.version || "3.0.3";
       }
     } catch {}
-    return "3.0.2";
+    return "3.0.3";
   }
 
   function safeStorageGet(defaults) {

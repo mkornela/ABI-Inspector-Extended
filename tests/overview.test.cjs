@@ -332,7 +332,7 @@ test("Overview renders live counts and XP, updates without duplicate cards, and 
       return logs;
     }, siteUiSource.slice(siteUiSource.indexOf("  function logExtensionBanner()"), siteUiSource.indexOf("  const HAS_CJK =")));
     assert.ok(
-      loggedMessages.some((m) => m.includes("ABI INSPECTOR EXTENDED") && m.includes("v3.0.2") && m.includes("deem") && m.includes("ACTIVE")),
+      loggedMessages.some((m) => m.includes("ABI INSPECTOR EXTENDED") && m.includes("v3.0.3") && m.includes("deem") && m.includes("ACTIVE")),
       "Console banner is logged with extension name, version, author, and active status"
     );
 
@@ -545,6 +545,20 @@ test("Multilingual localization: dynamic language switching across 9 supported l
             <a id="a3_1">退出登录</a>
             <a class="home-btn">返回官网</a>
             <a class="safe-link">安全中心</a>
+            <div id="langBtn" class="_langNav_">
+              <a>English</a>
+              <ul>
+                <li data-lang="en">English</li>
+                <li data-lang="de">Deutsch</li>
+                <li data-lang="ru">Русский</li>
+                <li data-lang="fr">Français</li>
+                <li data-lang="es">Español</li>
+                <li data-lang="ja">日本語</li>
+                <li data-lang="pt-BR">Português</li>
+                <li data-lang="zh-Hant">繁體中文</li>
+                <li data-lang="cn">简体中文</li>
+              </ul>
+            </div>
           </div>
           <div class="main">
             <ul class="nav">
@@ -629,6 +643,9 @@ test("Multilingual localization: dynamic language switching across 9 supported l
     assert.ok((await page.locator("#xcWorking #p46_1").textContent()).includes("added by the official inspection system"));
     assert.equal(await page.locator(".box.notice .abi-faq-card").count(), 1);
     assert.equal(await page.locator(".box.notice .abi-guideline-faq-question-prefix").textContent(), "Q:");
+    assert.equal(await page.locator("._langNav_ li[data-lang='es']").textContent(), "Spanish");
+    assert.equal(await page.locator("._langNav_ li[data-lang='de']").textContent(), "German");
+    assert.equal(await page.locator("._langNav_ li[data-lang='cn']").textContent(), "Simplified Chinese");
 
     // 2. Switch to German (de)
     await page.evaluate(() => {
@@ -653,6 +670,10 @@ test("Multilingual localization: dynamic language switching across 9 supported l
       ["Teamkameraden", "Gegner", "Scavs (Bots)"]
     );
     assert.ok((await page.locator("#xcWorking #p46_1").textContent()).includes("vom offiziellen Überprüfungssystem hinzugefügt"));
+    assert.equal(await page.locator("._langNav_ li[data-lang='es']").textContent(), "Spanisch");
+    assert.equal(await page.locator("._langNav_ li[data-lang='de']").textContent(), "Deutsch");
+    assert.equal(await page.locator("._langNav_ li[data-lang='en']").textContent(), "Englisch");
+    assert.equal(await page.locator("._langNav_ li[data-lang='cn']").textContent(), "Vereinfachtes Chinesisch");
 
     // 3. Switch to Russian (ru)
     await page.evaluate(() => {
@@ -692,6 +713,10 @@ test("Multilingual localization: dynamic language switching across 9 supported l
       await page.locator("#xcWorking #p46_2 .abi-color-name").allTextContents(),
       ["Compañeros", "Enemigos", "Scavs (bots)"]
     );
+    assert.equal(await page.locator("._langNav_ li[data-lang='es']").textContent(), "Español");
+    assert.equal(await page.locator("._langNav_ li[data-lang='de']").textContent(), "Alemán");
+    assert.equal(await page.locator("._langNav_ li[data-lang='en']").textContent(), "Inglés");
+    assert.equal(await page.locator("._langNav_ li[data-lang='cn']").textContent(), "Chino simplificado");
 
     // 5. Switch to Japanese (ja)
     await page.evaluate(() => {

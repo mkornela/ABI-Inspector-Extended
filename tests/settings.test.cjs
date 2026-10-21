@@ -45,7 +45,7 @@ test("Settings panel redesign: DOM structure, search, dependencies, key chips, a
       };
       window.chrome = {
         runtime: {
-          getManifest: () => ({ version: "3.0.2" }),
+          getManifest: () => ({ version: "3.0.3" }),
         },
         storage: {
           local: {

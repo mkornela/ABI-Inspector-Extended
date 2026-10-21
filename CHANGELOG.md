@@ -5,6 +5,27 @@ All notable changes to **ABI Inspector Extended** will be documented in this fil
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [3.0.3] - 2026-10-21
+
+### Added
+- **Full Dynamic Language Menu Localization:**
+  - Localized the language selector dropdown items based on the actively selected language.
+  - When browsing in English, languages display in English (`English`, `German`, `Spanish`, `Simplified Chinese`, etc.).
+  - When switched to Deutsch, languages instantly display in German (`Englisch`, `Deutsch`, `Spanisch`, `Vereinfachtes Chinesisch`, etc.).
+  - Complete matrix support across all 9 languages (`en`, `de`, `ru`, `fr`, `es`, `ja`, `pt-BR`, `zh-Hant`, `cn`), with bidirectional text recognition in `LANG_TEXT_MAP`.
+  - Expanded dropdown menu width to `200px` to comfortably accommodate long localized titles like "Traditionelles Chinesisch" and "Portugiesisch (Brasilien)".
+- **Language Menu Country Flags:**
+  - Added crisp, vector SVG country flag icons to the top navigation language dropdown for all 9 supported languages.
+  - Implemented via inline vector SVG data URIs with high-DPI crispness and rounded corners, bypassing Windows system font limitations that prevent emoji flags from rendering.
+  - Automatically tags dynamically created language items with corresponding `data-lang` attributes during navigation updates.
+
+### Fixed
+- **Jitter-Free Equal-Width Video Timer Digits:**
+  - Configured the video playback timer (`#time` within the frame-step control pill) with OpenType tabular figures (`font-variant-numeric: tabular-nums`, `font-feature-settings: "tnum" 1`) and a cross-platform monospace tabular font stack (`ui-monospace`, `Cascadia Mono`, `Segoe UI Mono`, `Consolas`, `monospace`).
+  - Added dedicated `min-width` guarantees (`96px` in standard mode, `142px` in millisecond precision mode) and centered alignment, ensuring digits like `1` and `9` occupy identical widths with zero layout shifting or size pulsation as the video plays.
+
+---
+
 ## [3.0.2] - 2026-10-21
 
 ### Changed

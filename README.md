@@ -1,6 +1,6 @@
 # ABI Inspector Extended
 
-[![Version](https://img.shields.io/badge/version-3.0.2-f59e0b.svg)](CHANGELOG.md)
+[![Version](https://img.shields.io/badge/version-3.0.3-f59e0b.svg)](CHANGELOG.md)
 [![Manifest](https://img.shields.io/badge/manifest-v3-3b82f6.svg)](abi-inspector-enhancer/manifest.json)
 [![Tests](https://img.shields.io/badge/tests-26%20passed-10b981.svg)](tests/)
 [![Security](https://img.shields.io/badge/privacy-100%25%20client--side-06b6d4.svg)](#privacy-and-compatibility)
@@ -9,7 +9,7 @@
 > [!WARNING]
 > **Use at your own risk:** I am still awaiting a response from the game developers about the extension and whether it is safe to use.
 
-**Version 3.0.2** · A high-performance tactical interface enhancement for the official Arena Breakout: Infinite Inspector.
+**Version 3.0.3** · A high-performance tactical interface enhancement for the official Arena Breakout: Infinite Inspector.
 
 ABI Inspector Extended elevates the Inspector experience with a streamlined single-row video player HUD, tactical Hold-to-Zoom loupe, shadow and gamma boost, a live 00:00 UTC daily quota countdown clock, animated overview accuracy boards, an in-depth in-site settings and keybinds hub, and full 9-language localization.
 
